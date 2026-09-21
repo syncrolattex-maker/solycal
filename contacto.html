@@ -863,7 +863,11 @@
 
                 try {
                   // Try sending to CRM API endpoint
-                  var endpoints = ['http://localhost:3000/api/leads', '/api/leads'];
+                  var endpoints = [
+                    'https://solycal-crm.vercel.app/api/leads',
+                    'http://localhost:3000/api/leads',
+                    '/api/leads'
+                  ];
                   var sent = false;
                   for (var i = 0; i < endpoints.length; i++) {
                     try {

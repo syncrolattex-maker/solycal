@@ -369,7 +369,6 @@
     .loader-char {
       display: inline-block;
       opacity: 0;
-      transform: translateY(18px);
       will-change: opacity, transform;
     }
 
@@ -521,12 +520,12 @@
   <!-- PANTALLA DE CARGA INICIAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) -->
   <div id="solycal-loader" aria-hidden="false">
     <div class="loader-brand-container">
-      <!-- Icono Logo 'S' de Solycal (Aparece en el centro y se mueve a la izquierda) -->
-      <img id="loader-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="w-14 sm:w-20 md:w-24 h-auto object-contain flex-shrink-0">
+      <!-- Icono Logo 'S' de Solycal en tamaño compacto y equilibrado -->
+      <img id="loader-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="w-8 sm:w-10 md:w-12 h-auto object-contain flex-shrink-0">
 
-      <!-- Contenedor del texto SOLYCAL con letras individuales para animación progresiva a modo de carga -->
+      <!-- Contenedor del texto SOLYCAL con letras individuales para animación progresiva smooth -->
       <div id="loader-logo-text-wrap" class="overflow-hidden flex items-center ml-0 pl-0">
-        <div id="loader-letters" class="font-display font-bold text-3xl sm:text-5xl md:text-6xl tracking-wider text-white flex items-center">
+        <div id="loader-letters" class="font-display font-bold text-2xl sm:text-3xl md:text-4xl tracking-wider text-white flex items-center">
           <span class="loader-char">S</span>
           <span class="loader-char">O</span>
           <span class="loader-char">L</span>
@@ -1059,12 +1058,11 @@
           document.body.style.overflow = 'hidden';
 
           // 1. Estado Inicial:
-          // La 'S' se coloca perfectamente en el centro geométrico de la pantalla
+          // La 'S' se coloca centrada limpia sin sombras
           gsap.set(loaderIcon, { 
             opacity: 0, 
-            scale: 0.4,
-            xPercent: 0,
-            yPercent: 0
+            scale: 0.6,
+            filter: "none"
           });
 
           // El contenedor de texto empieza replegado
@@ -1074,21 +1072,20 @@
             marginLeft: 0
           });
 
-          // Cada una de las letras SOLYCAL ocultas preparadas para la carga
+          // Cada una de las letras SOLYCAL preparadas para una aparición fluida y suave
           gsap.set(loaderChars, { 
             opacity: 0, 
-            y: 25,
-            scale: 0.8
+            x: -8,
+            filter: "none"
           });
 
           const loadTl = gsap.timeline({
             onComplete: () => {
-              // Una vez completada la animación de SOLYCAL, se lanza la web
+              // Lanzamiento suave y limpio de la web sin saltos ni sombras
               gsap.to(solycalLoader, {
                 opacity: 0,
-                scale: 1.05,
-                duration: 0.65,
-                ease: "power3.inOut",
+                duration: 0.6,
+                ease: "power2.inOut",
                 onComplete: () => {
                   solycalLoader.classList.add('loader-hidden');
                   document.body.style.overflow = '';
@@ -1099,43 +1096,37 @@
           });
 
           loadTl
-            // PASO 1: Aparece el logo 'S' en el centro de la pantalla con impacto
+            // PASO 1: Aparece el logo 'S' en el centro con fade y escala suave y orgánica
             .to(loaderIcon, {
               opacity: 1,
               scale: 1,
-              duration: 0.75,
-              ease: "back.out(1.7)"
+              duration: 0.7,
+              ease: "power3.out"
             })
-            // Pequeña pausa dramática para apreciar el logo
-            .to({}, { duration: 0.25 })
+            // Pausa breve equilibrada
+            .to({}, { duration: 0.2 })
 
-            // PASO 2: La 'S' se aparta fluidamente a la izquierda
-            // mientras se abre el espacio para el texto SOLYCAL
+            // PASO 2: La 'S' se aparta suavemente (smooth) a la izquierda
             .to(loaderLettersWrap, {
               width: "auto",
               opacity: 1,
-              marginLeft: "1.25rem",
-              duration: 0.55,
+              marginLeft: "1rem",
+              duration: 0.6,
               ease: "power3.inOut"
             })
 
-            // PASO 3: Aparecen a modo de carga las letras S - O - L - Y - C - A - L
-            // Una a una secuencialmente con ritmo constante y preciso de carga técnica
+            // PASO 3: Aparición muy fluida (smooth) de las letras SOLYCAL
+            // Flujo progresivo natural y continuo a modo de carga
             .to(loaderChars, {
               opacity: 1,
-              y: 0,
-              scale: 1,
-              stagger: 0.11, // Cada letra entra como paso de carga
-              duration: 0.4,
-              ease: "back.out(2)"
-            }, "-=0.25")
-
-            // Ligero pulso final al completar todas las letras antes de lanzar la web
-            .to(loaderIcon, {
-              filter: "drop-shadow(0 0 15px rgba(241,181,65,0.8))",
-              duration: 0.3,
+              x: 0,
+              stagger: 0.08, // Transición suave entre cada letra
+              duration: 0.5,
               ease: "power2.out"
-            }, "+=0.15");
+            }, "-=0.35")
+
+            // Breve pausa para apreciar la palabra completa limpia y sin ninguna sombra dorada
+            .to({}, { duration: 0.35 });
 
         } else if (solycalLoader) {
           solycalLoader.style.display = 'none';

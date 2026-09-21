@@ -1,0 +1,19 @@
+# Dependencias y logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de extracción temporal
+extract_legal.js
+cookies_text.txt
+legal_text.txt
+privacidad_text.txt
+solycal_raw.html
+sobre_nosotros.html
+build.py
+gen.py

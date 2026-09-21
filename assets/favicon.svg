@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <!-- Filtro para colorear la imagen blanca original al amarillo/acento de Solycal (#F1B541) -->
+    <filter id="accentColor" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="
+        0 0 0 0 0.945
+        0 0 0 0 0.709
+        0 0 0 0 0.254
+        0 0 0 1 0" />
+    </filter>
+  </defs>
+  <!-- Fondo redondeado sutil estilo app moderna -->
+  <rect width="120" height="120" rx="28" fill="#07080a" stroke="#F1B541" stroke-width="3" stroke-opacity="0.25"/>
+  <!-- Logo original de Solycal en color acento #F1B541 -->
+  <image href="data:image/png;base64,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" x="22" y="16" width="76" height="88" filter="url(#accentColor)" />
+</svg>

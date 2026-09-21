@@ -348,16 +348,31 @@
       position: fixed;
       inset: 0;
       z-index: 99999;
-      background-color: #07080a;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      transition: opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.5s ease;
+      pointer-events: auto;
+    }
+    .loader-curtain {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 50.5%;
+      background-color: #07080a;
+      z-index: 1;
+      will-change: transform;
+    }
+    .loader-curtain-top {
+      top: 0;
+      transform-origin: top center;
+    }
+    .loader-curtain-bottom {
+      bottom: 0;
+      transform-origin: bottom center;
     }
     #solycal-loader.loader-hidden {
-      opacity: 0;
-      visibility: hidden;
+      display: none !important;
       pointer-events: none;
     }
     .loader-brand-container {
@@ -365,6 +380,8 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      z-index: 10;
+      will-change: opacity, transform;
     }
     .loader-char {
       display: inline-block;
@@ -519,7 +536,9 @@
 
   <!-- PANTALLA DE CARGA INICIAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) -->
   <div id="solycal-loader" aria-hidden="false">
-    <div class="loader-brand-container">
+    <div class="loader-curtain loader-curtain-top"></div>
+    <div class="loader-curtain loader-curtain-bottom"></div>
+    <div class="loader-brand-container" id="loader-brand-box">
       <!-- Icono Logo 'S' de Solycal en tamaño compacto y equilibrado -->
       <img id="loader-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="w-8 sm:w-10 md:w-12 h-auto object-contain flex-shrink-0">
 
@@ -950,21 +969,24 @@
         // APARECEN A MODO DE CARGA LAS LETRAS SOLYCAL -> SE LANZA LA WEB
         // =========================================================================
         const solycalLoader = document.getElementById('solycal-loader');
+        const loaderBrandBox = document.getElementById('loader-brand-box');
         const loaderIcon = document.getElementById('loader-logo-icon');
         const loaderLettersWrap = document.getElementById('loader-logo-text-wrap');
         const loaderChars = document.querySelectorAll('.loader-char');
+        const curtainTop = document.querySelector('.loader-curtain-top');
+        const curtainBottom = document.querySelector('.loader-curtain-bottom');
 
-        // Función para lanzar la web (entrada de hero y secciones)
-        const playHeroEntrance = () => {
+        // Función para lanzar la web con sincronización suave
+        const playHeroEntrance = (delay = 0) => {
           if (document.querySelector('.hero-sub')) {
-            const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+            const heroTl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: delay });
             heroTl
               .from('.hero-sub', { opacity: 0, y: -20, duration: 0.8 })
-              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.4")
+              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.5")
               .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
               .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
-              .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.15, duration: 0.7 }, "-=0.5")
-              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.5, ease: "power2.out" }, 0);
+              .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
+              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.6, ease: "power2.out" }, 0);
           }
         };
 
@@ -975,75 +997,86 @@
           document.body.style.overflow = 'hidden';
 
           // 1. Estado Inicial:
-          // La 'S' se coloca centrada limpia sin sombras
           gsap.set(loaderIcon, { 
             opacity: 0, 
             scale: 0.6,
             filter: "none"
           });
 
-          // El contenedor de texto empieza replegado
           gsap.set(loaderLettersWrap, { 
             width: 0, 
             opacity: 0,
             marginLeft: 0
           });
 
-          // Cada una de las letras SOLYCAL preparadas para una aparición fluida y suave
           gsap.set(loaderChars, { 
             opacity: 0, 
             x: -8,
             filter: "none"
           });
 
-          const loadTl = gsap.timeline({
-            onComplete: () => {
-              // Lanzamiento suave y limpio de la web sin saltos ni sombras
-              gsap.to(solycalLoader, {
-                opacity: 0,
-                duration: 0.6,
-                ease: "power2.inOut",
-                onComplete: () => {
-                  solycalLoader.classList.add('loader-hidden');
-                  document.body.style.overflow = '';
-                  playHeroEntrance();
-                }
-              });
-            }
-          });
+          const loadTl = gsap.timeline();
 
           loadTl
-            // PASO 1: Aparece el logo 'S' en el centro con fade y escala suave y orgánica
+            // PASO 1: Aparece el logo 'S' en el centro con escala suave
             .to(loaderIcon, {
               opacity: 1,
               scale: 1,
-              duration: 0.7,
+              duration: 0.65,
               ease: "power3.out"
             })
-            // Pausa breve equilibrada
-            .to({}, { duration: 0.2 })
+            // Pausa sutil
+            .to({}, { duration: 0.18 })
 
-            // PASO 2: La 'S' se aparta suavemente (smooth) a la izquierda
+            // PASO 2: La 'S' se aparta suavemente (smooth) a la izquierda abriendo espacio
             .to(loaderLettersWrap, {
               width: "auto",
               opacity: 1,
               marginLeft: "1rem",
-              duration: 0.6,
+              duration: 0.55,
               ease: "power3.inOut"
             })
 
-            // PASO 3: Aparición muy fluida (smooth) de las letras SOLYCAL
-            // Flujo progresivo natural y continuo a modo de carga
+            // PASO 3: Aparición progresiva muy fluida (smooth) de las letras SOLYCAL
             .to(loaderChars, {
               opacity: 1,
               x: 0,
-              stagger: 0.08, // Transición suave entre cada letra
-              duration: 0.5,
+              stagger: 0.07,
+              duration: 0.45,
               ease: "power2.out"
-            }, "-=0.35")
+            }, "-=0.3")
 
-            // Breve pausa para apreciar la palabra completa limpia y sin ninguna sombra dorada
-            .to({}, { duration: 0.35 });
+            // Breve pausa para apreciar la identidad completa
+            .to({}, { duration: 0.4 })
+
+            // PASO 4: TRANSICIÓN DE APERTURA CINEMATOGRÁFICA Y FLUIDA
+            // 4.1 Desvanecer y elevar con sutileza el logotipo
+            .to(loaderBrandBox, {
+              opacity: 0,
+              scale: 1.05,
+              y: -10,
+              duration: 0.4,
+              ease: "power2.in"
+            })
+            // 4.2 Apertura en persiana split arquitectónica de arriba y abajo desvelando la web
+            .to(curtainTop, {
+              scaleY: 0,
+              duration: 0.75,
+              ease: "power4.inOut"
+            }, "-=0.15")
+            .to(curtainBottom, {
+              scaleY: 0,
+              duration: 0.75,
+              ease: "power4.inOut",
+              onStart: () => {
+                // Iniciar la entrada de la web en perfecta sincronía mientras la cortina se abre
+                playHeroEntrance(0.1);
+              },
+              onComplete: () => {
+                solycalLoader.classList.add('loader-hidden');
+                document.body.style.overflow = '';
+              }
+            }, "<");
 
         } else if (solycalLoader) {
           solycalLoader.style.display = 'none';
@@ -1070,7 +1103,7 @@
             marginLeft: 0 
           });
 
-          const logoTl = gsap.timeline({ delay: hasLoadedBefore ? 0.1 : 2.6 });
+          const logoTl = gsap.timeline({ delay: hasLoadedBefore ? 0.1 : 2.45 });
           logoTl
             .to(logoIcon, { 
               opacity: 1, 

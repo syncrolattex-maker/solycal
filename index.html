@@ -723,24 +723,21 @@
     </div>
   </div>
 
-<!-- HERO SECTION EDITORIAL & BOLD WITH YOUTUBE VIDEO BACKGROUND -->
+<!-- HERO SECTION EDITORIAL & BOLD WITH HIGH-TECH CNC PLASMA CUTTING IMAGE BACKGROUND -->
 <section class="min-h-[94vh] flex items-center relative pt-12 pb-24 border-b border-white/5 overflow-hidden">
-  <!-- YouTube Background Video Container Full-Width -->
-  <div class="video-background-wrapper">
-    <iframe 
-      id="bg-video"
-      class="opacity-45"
-      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3" 
-      title="SOLYCAL Video Corporativo"
-      frameborder="0" 
-      allow="autoplay; encrypted-media" 
-      allowfullscreen>
-    </iframe>
+  <!-- Background Image: Corte Plasma / Láser HD Hypertherm TrueHole (header.jpg) -->
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <img 
+      id="bg-hero-image"
+      src="assets/header.jpg" 
+      alt="Corte por plasma y láser térmico de alta definición - SOLYCAL Soldadura y Calderería Valenciana" 
+      class="w-full h-full object-cover object-center opacity-65 scale-105 filter brightness-90 contrast-105"
+    >
   </div>
-  <!-- Dark & Industrial Overlays Full-Width -->
-  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#07080a] via-[#07080a]/75 to-[#07080a]/50"></div>
-  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/70"></div>
-  <div class="absolute inset-0 z-[1] pointer-events-none dot-grid opacity-40"></div>
+  <!-- Dark & Industrial Overlays Full-Width for Optimal Editorial Readability -->
+  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#07080a] via-[#07080a]/80 to-[#07080a]/55"></div>
+  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/75"></div>
+  <div class="absolute inset-0 z-[1] pointer-events-none dot-grid opacity-35"></div>
 
   <div class="w-full px-6 w-full relative z-10">
     
@@ -961,27 +958,15 @@
       </div>
 
       <div class="lg:col-span-6 relative reveal">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Tarjeta 1: Planta Principal -->
-          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
-            <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
-            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
-              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">5.000 m²</span>
-              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Planta & Calderería</p>
-              <p class="text-neutral-400 text-[11px] mt-0.5">7 Puentes Grúa &bull; 16 Tn</p>
+        <div class="rounded-3xl overflow-hidden border border-white/10 relative group">
+          <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-[460px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6 font-mono text-xs text-neutral-300 flex justify-between items-end">
+            <div>
+              <p class="text-white font-bold font-display text-lg">Nave Principal de Calderería</p>
+              <p class="text-neutral-400">Torrent, Valencia &bull; 7 Puentes Grúa</p>
             </div>
-          </div>
-
-          <!-- Tarjeta 2: Corte Plasma y Láser HD (Foto header.jpg) -->
-          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
-            <img src="assets/header.jpg" alt="Corte plasma de alta definición Hypertherm TrueHole - SOLYCAL" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
-            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
-              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">HD TrueHole</span>
-              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Corte Térmico CNC</p>
-              <p class="text-neutral-400 text-[11px] mt-0.5">Espesores de hasta 50 mm</p>
-            </div>
+            <span class="px-3 py-1 rounded-full bg-brand-yellow text-black font-bold">16 TN</span>
           </div>
         </div>
       </div>
@@ -1193,7 +1178,7 @@
               .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
               .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
               .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.6, ease: "power2.out" }, 0);
+              .from('#bg-hero-image', { opacity: 0, scale: 1.18, duration: 1.8, ease: "power2.out" }, 0);
           }
         };
 

@@ -343,6 +343,48 @@
       color: #F1B541;
     }
 
+    /* PRELOADER INTRO INDUSTRIAL SOLYCAL (ANIMACIÓN DE CARGA) */
+    #solycal-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background-color: #07080a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.6s ease;
+    }
+    #solycal-loader.loader-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px dashed rgba(241, 181, 65, 0.25);
+      animation: loaderSpin 12s linear infinite;
+      pointer-events: none;
+    }
+    .loader-ring-outer {
+      width: 220px;
+      height: 220px;
+    }
+    .loader-ring-inner {
+      width: 170px;
+      height: 170px;
+      border-style: dotted;
+      border-color: rgba(255, 255, 255, 0.15);
+      animation-duration: 8s;
+      animation-direction: reverse;
+    }
+    @keyframes loaderSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     /* BACKDROP DIM DE FONDO */
     .joby-backdrop-dim {
       position: fixed;
@@ -487,6 +529,39 @@
 </head>
 <body class="antialiased">
 
+
+  <!-- PANTALLA DE CARGA INICIAL (PRELOADER CON ANIMACIÓN DE LOGO SOLYCAL) -->
+  <div id="solycal-loader" aria-hidden="false">
+    <!-- Anillos concéntricos de precisión industrial -->
+    <div class="loader-ring loader-ring-outer"></div>
+    <div class="loader-ring loader-ring-inner"></div>
+
+    <div class="relative z-10 flex flex-col items-center">
+      <!-- Icono del Logo con halo de brillo radiante -->
+      <div id="loader-logo-wrap" class="relative flex items-center justify-center mb-6">
+        <div class="absolute inset-0 rounded-full bg-brand-yellow/15 blur-2xl transform scale-150"></div>
+        <img id="loader-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="relative z-10 w-16 sm:w-20 h-auto object-contain drop-shadow-[0_0_20px_rgba(241,181,65,0.4)]">
+      </div>
+
+      <!-- Nombre de la marca que se expande -->
+      <div class="overflow-hidden flex items-center justify-center mb-4">
+        <span id="loader-logo-text" class="font-display font-bold text-2xl sm:text-3xl tracking-[0.3em] text-white uppercase inline-block">
+          SOLYCAL
+        </span>
+      </div>
+
+      <!-- Subtítulo técnico y barra de progreso industrial -->
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-44 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+          <div id="loader-progress-bar" class="absolute left-0 top-0 bottom-0 bg-brand-yellow w-0 rounded-full shadow-[0_0_10px_#F1B541]"></div>
+        </div>
+        <div class="flex items-center justify-between w-44 font-mono text-[10px] text-neutral-400 uppercase tracking-widest pt-1">
+          <span id="loader-status-text">PRECISIÓN INDUSTRIAL</span>
+          <span id="loader-percent" class="text-brand-yellow font-semibold">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
   <header class="sticky top-0 z-[140] bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5">
@@ -890,13 +965,117 @@
       if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
-        // LOGO INTRO ANIMATION (Se reproduce en cada visita o cambio de página):
+        // =========================================================================
+        // PRELOADER INDUSTRIAL CON ANIMACIÓN DE LOGO SOLYCAL (LOADING SCREEN)
+        // =========================================================================
+        const solycalLoader = document.getElementById('solycal-loader');
+        const loaderIcon = document.getElementById('loader-logo-icon');
+        const loaderText = document.getElementById('loader-logo-text');
+        const loaderBar = document.getElementById('loader-progress-bar');
+        const loaderPercent = document.getElementById('loader-percent');
+        const loaderStatus = document.getElementById('loader-status-text');
+
+        // Función para ejecutar la animación del Hero una vez se levante el loader
+        const playHeroEntrance = () => {
+          if (document.querySelector('.hero-sub')) {
+            const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+            heroTl
+              .from('.hero-sub', { opacity: 0, y: -20, duration: 0.8 })
+              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.4")
+              .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
+              .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
+              .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.15, duration: 0.7 }, "-=0.5")
+              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.5, ease: "power2.out" }, 0);
+          }
+        };
+
+        // Verificamos si ya se vio el preloader en esta sesión para no ralentizar navegación interna repetida
+        const hasLoadedBefore = sessionStorage.getItem('solycal_preloader_seen');
+
+        if (solycalLoader && !hasLoadedBefore) {
+          sessionStorage.setItem('solycal_preloader_seen', 'true');
+          
+          // Bloquear scroll durante la carga
+          document.body.style.overflow = 'hidden';
+
+          // Estado inicial de los elementos del loader
+          gsap.set(loaderIcon, { opacity: 0, scale: 0.3, rotation: -20, filter: "brightness(0.5)" });
+          gsap.set(loaderText, { opacity: 0, letterSpacing: "0.8em", y: 20 });
+          gsap.set(loaderBar, { width: "0%" });
+
+          const loadTl = gsap.timeline({
+            onComplete: () => {
+              // Desaparece el preloader de forma suave
+              gsap.to(solycalLoader, {
+                opacity: 0,
+                scale: 1.04,
+                duration: 0.7,
+                ease: "power3.inOut",
+                onComplete: () => {
+                  solycalLoader.classList.add('loader-hidden');
+                  document.body.style.overflow = '';
+                  playHeroEntrance();
+                }
+              });
+            }
+          });
+
+          // 1. Aparición impactante del icono del logo con destello y rotación elástica
+          loadTl
+            .to(loaderIcon, {
+              opacity: 1,
+              scale: 1,
+              rotation: 0,
+              filter: "brightness(1.2)",
+              duration: 0.8,
+              ease: "back.out(1.8)"
+            })
+            // 2. Revelado del texto SOLYCAL con expansión de kerning
+            .to(loaderText, {
+              opacity: 1,
+              letterSpacing: "0.3em",
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out"
+            }, "-=0.3")
+            // 3. Simulación de carga fluida industrial 0% -> 100%
+            .to(loaderBar, {
+              width: "100%",
+              duration: 1.2,
+              ease: "power2.inOut",
+              onUpdate: function() {
+                const progress = Math.round(this.progress() * 100);
+                if (loaderPercent) loaderPercent.textContent = progress + '%';
+                if (loaderStatus) {
+                  if (progress > 75) loaderStatus.textContent = 'LISTO';
+                  else if (progress > 45) loaderStatus.textContent = 'CALDERERÍA & CORTE HD';
+                  else loaderStatus.textContent = 'PRECISIÓN INDUSTRIAL';
+                }
+              }
+            }, "-=0.4")
+            // 4. Pulso final de confirmación del logo
+            .to(loaderIcon, {
+              scale: 1.1,
+              duration: 0.25,
+              yoyo: true,
+              repeat: 1,
+              ease: "power2.out"
+            }, "+=0.1");
+
+        } else if (solycalLoader) {
+          // Si ya se ha visto en la sesión, ocultar directamente y disparar animación
+          solycalLoader.style.display = 'none';
+          playHeroEntrance();
+        } else {
+          playHeroEntrance();
+        }
+
+        // LOGO INTRO ANIMATION EN HEADER (Se reproduce al entrar a la página):
         const logoLink = document.getElementById('brand-logo-link');
         const logoIcon = document.getElementById('brand-logo-icon');
         const logoText = document.getElementById('brand-logo-text');
         
         if (logoLink && logoIcon && logoText) {
-          // Estado inicial: logo a la izquierda pequeño/invisible, texto oculto
           gsap.set(logoIcon, { 
             opacity: 0, 
             scale: 0.4,
@@ -909,16 +1088,14 @@
             marginLeft: 0 
           });
 
-          const logoTl = gsap.timeline({ delay: 0.15 });
+          const logoTl = gsap.timeline({ delay: hasLoadedBefore ? 0.1 : 2.6 });
           logoTl
-            // Paso 1: Aparece el logo a la izquierda con impacto y rebote elástico
             .to(logoIcon, { 
               opacity: 1, 
               scale: 1, 
               duration: 0.6, 
               ease: "back.out(1.8)" 
             })
-            // Paso 2: A continuación el texto SOLYCAL emerge y se despliega a su derecha
             .to(logoText, { 
               opacity: 1, 
               x: 0, 
@@ -927,19 +1104,6 @@
               duration: 0.65, 
               ease: "power3.out" 
             }, "-=0.25");
-        }
-
-        // Hero Entrance Timeline
-        const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-        if (document.querySelector('.hero-sub')) {
-          heroTl
-            .from('.hero-sub', { opacity: 0, y: -20, duration: 0.8, delay: 0.2 })
-            .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.4")
-            .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
-            .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
-            .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.15, duration: 0.7 }, "-=0.5")
-            .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.5, ease: "power2.out" }, 0);
         }
 
         // EFECTO SCRUBBED RANDOM REVEAL FIEL A MADEWITHGSAP TUTORIAL 090:

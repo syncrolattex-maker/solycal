@@ -325,23 +325,23 @@ function getHead(title, description, canonicalPath = '') {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      transition: background-color 0.4s var(--joby-cubic), border-color 0.4s ease, transform 0.3s ease;
+      width: auto;
+      height: 32px;
+      padding: 0 4px;
+      background: transparent;
+      border: none;
+      transition: transform 0.3s ease;
       cursor: pointer;
       z-index: 150;
     }
     .joby-burger-btn:hover {
-      background: rgba(241, 181, 65, 0.15);
-      border-color: rgba(241, 181, 65, 0.6);
-      transform: scale(1.04);
+      background: transparent;
+      border: none;
+      transform: scale(1.06);
     }
     .joby-burger-icon {
       position: relative;
-      width: 22px;
+      width: 24px;
       height: 10px;
       display: flex;
       flex-direction: column;
@@ -362,14 +362,17 @@ function getHead(title, description, canonicalPath = '') {
       transform: scaleX(0.7);
       transform-origin: right center;
     }
+    .joby-burger-btn:hover .joby-burger-line {
+      background-color: #F1B541;
+    }
     /* Estado activo / abierto: Cruz limpia de 2 líneas */
     .joby-burger-btn.is-active {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: transparent;
+      border: none;
     }
     .joby-burger-btn.is-active:hover {
-      border-color: #F1B541;
-      background: rgba(241, 181, 65, 0.2);
+      background: transparent;
+      border: none;
     }
     .joby-burger-btn.is-active .joby-burger-line:nth-child(1) {
       transform: translateY(4.25px) rotate(45deg);

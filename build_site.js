@@ -427,31 +427,6 @@ function getHead(title, description, canonicalPath = '') {
       will-change: opacity, transform;
     }
 
-    /* TRANSICIÓN DE BARRAS HORIZONTALES ESTILO MADE IN UX STUDIO (SOLYCAL PALETTE) */
-    #page-transition-curtain {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 99990;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .transition-bar {
-      flex: 1;
-      width: 100%;
-      background: #07080a;
-      border-bottom: 1px solid rgba(241, 181, 65, 0.12);
-      transform: scaleX(0);
-      transform-origin: left center;
-      will-change: transform;
-    }
-    .transition-bar:last-child {
-      border-bottom: none;
-    }
-
     /* BACKDROP DIM DE FONDO */
     .joby-backdrop-dim {
       position: fixed;
@@ -650,15 +625,6 @@ function getHeader(activeSlug) {
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- OVERLAY DE TRANSICIÓN CON BARRAS HORIZONTALES (Estilo Made in UX Studio) -->
-  <div id="page-transition-curtain" aria-hidden="true">
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
@@ -1805,90 +1771,6 @@ function getFooter() {
 
           requestAnimationFrame(renderBitPatterns);
         }
-
-        // =========================================================================
-        // TRANSICIÓN DE BARRAS HORIZONTALES (Estilo Made in UX Studio)
-        // Se ejecuta al entrar a una página y al hacer clic en enlaces internos
-        // =========================================================================
-        const curtain = document.getElementById('page-transition-curtain');
-        if (curtain) {
-          const bars = curtain.querySelectorAll('.transition-bar');
-
-          // Revelar página inicial mediante persianas horizontales salientes hacia la derecha
-          const revealPage = () => {
-            gsap.set(bars, { scaleX: 1, transformOrigin: 'right center' });
-            gsap.to(bars, {
-              scaleX: 0,
-              duration: 0.65,
-              stagger: 0.05,
-              ease: "power3.inOut"
-            });
-          };
-
-          // Si viene de navegación interna o ya pasó el loader, ejecutar revelado
-          if (sessionStorage.getItem('solycal_nav_transition') === 'true') {
-            sessionStorage.removeItem('solycal_nav_transition');
-            revealPage();
-          }
-
-          // Interceptar enlaces internos para crear la transición de salida con barras en cascada
-          document.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (!link) return;
-
-            const href = link.getAttribute('href');
-            const target = link.getAttribute('target');
-
-            // Ignorar enlaces externos, anclas (#), tel:, mailto: o target _blank
-            if (
-              !href ||
-              href.startsWith('#') ||
-              href.startsWith('mailto:') ||
-              href.startsWith('tel:') ||
-              href.startsWith('javascript:') ||
-              target === '_blank' ||
-              link.hasAttribute('download')
-            ) {
-              return;
-            }
-
-            // Verificar si es un enlace de misma página o archivo local (.html)
-            const isLocal = !href.startsWith('http') || href.includes(window.location.hostname);
-            if (!isLocal) return;
-
-            // Si es la misma página exacta, no animar
-            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-            const targetPath = href.split('#')[0].split('?')[0].split('/').pop() || 'index.html';
-            if (currentPath === targetPath && !href.includes('#')) return;
-
-            e.preventDefault();
-
-            // Si el menú Joby está abierto, cerrarlo inmediatamente
-            if (jobyOverlay && jobyOverlay.classList.contains('is-open')) {
-              jobyToggle.classList.remove('is-active');
-              if (jobyToggleWrap) jobyToggleWrap.classList.remove('is-active');
-              jobyToggle.setAttribute('aria-expanded', 'false');
-              if (jobyBackdrop) jobyBackdrop.classList.remove('is-open');
-              if (jobyWaves) jobyWaves.classList.remove('is-open');
-              jobyOverlay.classList.remove('is-open');
-              jobyOverlay.setAttribute('aria-hidden', 'true');
-              document.body.style.overflow = '';
-            }
-
-            // Animación de entrada de barras (de izquierda a derecha con stagger)
-            gsap.set(bars, { transformOrigin: 'left center', scaleX: 0 });
-            gsap.to(bars, {
-              scaleX: 1,
-              duration: 0.55,
-              stagger: 0.05,
-              ease: "power3.inOut",
-              onComplete: () => {
-                sessionStorage.setItem('solycal_nav_transition', 'true');
-                window.location.href = href;
-              }
-            });
-          });
-        }
       }
     });
 
@@ -2140,15 +2022,27 @@ ${getHeader('inicio')}
       </div>
 
       <div class="lg:col-span-6 relative reveal">
-        <div class="rounded-3xl overflow-hidden border border-white/10 relative group">
-          <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-[460px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-          <div class="absolute bottom-6 left-6 right-6 font-mono text-xs text-neutral-300 flex justify-between items-end">
-            <div>
-              <p class="text-white font-bold font-display text-lg">Nave Principal de Calderería</p>
-              <p class="text-neutral-400">Torrent, Valencia &bull; 7 Puentes Grúa</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Tarjeta 1: Planta Principal -->
+          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
+            <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
+              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">5.000 m²</span>
+              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Planta & Calderería</p>
+              <p class="text-neutral-400 text-[11px] mt-0.5">7 Puentes Grúa &bull; 16 Tn</p>
             </div>
-            <span class="px-3 py-1 rounded-full bg-brand-yellow text-black font-bold">16 TN</span>
+          </div>
+
+          <!-- Tarjeta 2: Corte Plasma y Láser HD (Foto header.jpg) -->
+          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
+            <img src="assets/header.jpg" alt="Corte plasma de alta definición Hypertherm TrueHole - SOLYCAL" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
+              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">HD TrueHole</span>
+              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Corte Térmico CNC</p>
+              <p class="text-neutral-400 text-[11px] mt-0.5">Espesores de hasta 50 mm</p>
+            </div>
           </div>
         </div>
       </div>

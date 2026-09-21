@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  client    String?
+  email     String
+  phone     String
+  message   String
+  status    String   @default("nuevo") // "nuevo" | "evaluacion" | "descartado"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  title     String
+  client    String?
+  status    String   @default("oficina_tecnica") // "oficina_tecnica" | "taller" | "facturado"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quotes    Quote[]
+}
+
+model Quote {
+  id             String   @id @default(cuid())
+  projectId      String
+  amount         Float
+  steelKg        Float
+  estimatedHours Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}

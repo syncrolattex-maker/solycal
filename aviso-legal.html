@@ -372,6 +372,31 @@
       will-change: opacity, transform;
     }
 
+    /* TRANSICIÓN DE BARRAS HORIZONTALES ESTILO MADE IN UX STUDIO (SOLYCAL PALETTE) */
+    #page-transition-curtain {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 99990;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .transition-bar {
+      flex: 1;
+      width: 100%;
+      background: #07080a;
+      border-bottom: 1px solid rgba(241, 181, 65, 0.12);
+      transform: scaleX(0);
+      transform-origin: left center;
+      will-change: transform;
+    }
+    .transition-bar:last-child {
+      border-bottom: none;
+    }
+
     /* BACKDROP DIM DE FONDO */
     .joby-backdrop-dim {
       position: fixed;
@@ -536,6 +561,15 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- OVERLAY DE TRANSICIÓN CON BARRAS HORIZONTALES (Estilo Made in UX Studio) -->
+  <div id="page-transition-curtain" aria-hidden="true">
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
@@ -1769,6 +1803,90 @@
           }
 
           requestAnimationFrame(renderBitPatterns);
+        }
+
+        // =========================================================================
+        // TRANSICIÓN DE BARRAS HORIZONTALES (Estilo Made in UX Studio)
+        // Se ejecuta al entrar a una página y al hacer clic en enlaces internos
+        // =========================================================================
+        const curtain = document.getElementById('page-transition-curtain');
+        if (curtain) {
+          const bars = curtain.querySelectorAll('.transition-bar');
+
+          // Revelar página inicial mediante persianas horizontales salientes hacia la derecha
+          const revealPage = () => {
+            gsap.set(bars, { scaleX: 1, transformOrigin: 'right center' });
+            gsap.to(bars, {
+              scaleX: 0,
+              duration: 0.65,
+              stagger: 0.05,
+              ease: "power3.inOut"
+            });
+          };
+
+          // Si viene de navegación interna o ya pasó el loader, ejecutar revelado
+          if (sessionStorage.getItem('solycal_nav_transition') === 'true') {
+            sessionStorage.removeItem('solycal_nav_transition');
+            revealPage();
+          }
+
+          // Interceptar enlaces internos para crear la transición de salida con barras en cascada
+          document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (!link) return;
+
+            const href = link.getAttribute('href');
+            const target = link.getAttribute('target');
+
+            // Ignorar enlaces externos, anclas (#), tel:, mailto: o target _blank
+            if (
+              !href ||
+              href.startsWith('#') ||
+              href.startsWith('mailto:') ||
+              href.startsWith('tel:') ||
+              href.startsWith('javascript:') ||
+              target === '_blank' ||
+              link.hasAttribute('download')
+            ) {
+              return;
+            }
+
+            // Verificar si es un enlace de misma página o archivo local (.html)
+            const isLocal = !href.startsWith('http') || href.includes(window.location.hostname);
+            if (!isLocal) return;
+
+            // Si es la misma página exacta, no animar
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const targetPath = href.split('#')[0].split('?')[0].split('/').pop() || 'index.html';
+            if (currentPath === targetPath && !href.includes('#')) return;
+
+            e.preventDefault();
+
+            // Si el menú Joby está abierto, cerrarlo inmediatamente
+            if (jobyOverlay && jobyOverlay.classList.contains('is-open')) {
+              jobyToggle.classList.remove('is-active');
+              if (jobyToggleWrap) jobyToggleWrap.classList.remove('is-active');
+              jobyToggle.setAttribute('aria-expanded', 'false');
+              if (jobyBackdrop) jobyBackdrop.classList.remove('is-open');
+              if (jobyWaves) jobyWaves.classList.remove('is-open');
+              jobyOverlay.classList.remove('is-open');
+              jobyOverlay.setAttribute('aria-hidden', 'true');
+              document.body.style.overflow = '';
+            }
+
+            // Animación de entrada de barras (de izquierda a derecha con stagger)
+            gsap.set(bars, { transformOrigin: 'left center', scaleX: 0 });
+            gsap.to(bars, {
+              scaleX: 1,
+              duration: 0.55,
+              stagger: 0.05,
+              ease: "power3.inOut",
+              onComplete: () => {
+                sessionStorage.setItem('solycal_nav_transition', 'true');
+                window.location.href = href;
+              }
+            });
+          });
         }
       }
     });

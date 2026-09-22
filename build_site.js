@@ -1816,7 +1816,7 @@ ${getHeader('inicio')}
     <iframe 
       id="bg-video"
       class="opacity-75"
-      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3" 
+      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3" 
       title="SOLYCAL Video Corporativo"
       frameborder="0" 
       allow="autoplay; encrypted-media" 

@@ -948,15 +948,14 @@ function getFooter() {
 
         // Función para lanzar la web con sincronización suave
         const playHeroEntrance = (delay = 0) => {
-          if (document.querySelector('.hero-sub')) {
+          if (document.querySelector('.hero-title')) {
             const heroTl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: delay });
             heroTl
-              .from('.hero-sub', { opacity: 0, y: -20, duration: 0.8 })
-              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.5")
+              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 })
               .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
               .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
               .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.6, ease: "power2.out" }, 0);
+              .from('#bg-video', { opacity: 0, scale: 1.12, duration: 1.6, ease: "power2.out" }, 0);
           }
         };
 
@@ -1360,9 +1359,9 @@ function getFooter() {
         }
 
         // =========================================================================
-        // EFECTO WELDING (WANDERING PARTICLES - OpenProcessing #446535 ADAPTATION)
-        // Fondo interactivo de soldadura: SOLO activo al mover el cursor
-        // Colores: Estrictamente corporativos Solycal (#F1B541, #E5A52A) y grises industriales
+        // EFECTO WELDING (WANDERING PARTICLES - AMBIENTAL SIN INTERACCIÓN DE CURSOR)
+        // Fondo sutil y atmosférico de partículas de soldadura / chispa tenue
+        // Sin interacción con el cursor (eliminado según directriz de diseño)
         // =========================================================================
         const weldingCanvas = document.getElementById('welding-canvas');
         const weldingSection = document.getElementById('welding-section');
@@ -1372,31 +1371,16 @@ function getFooter() {
           let width = 0;
           let height = 0;
 
-          // Parámetros basados en OpenProcessing #446535 (Wandering Particles / Justin Windle)
-          const MAX_PARTICLES = 180;
-          // Paleta Corporativa Estricta: Amarillo Solycal, Ámbar corporativo y escala de grises de calderería
+          const MAX_PARTICLES = 60;
           const WELDING_COLORS = [
             '#F1B541', // Amarillo Principal Solycal
             '#E5A52A', // Ámbar / Dorado Corporativo
-            '#FDE68A', // Acento amarillo claro / chispa
-            '#E2E8F0', // Gris acero pulido muy claro
-            '#94A3B8', // Gris metálico medio
-            '#64748B', // Gris acero oscuro
-            '#334155'  // Gris antracita
+            'rgba(241, 181, 65, 0.6)',
+            'rgba(226, 232, 240, 0.4)',
+            'rgba(148, 163, 184, 0.3)'
           ];
 
           const particles = [];
-          const wander1 = 0.5;
-          const wander2 = 2.0;
-          const drag1 = 0.90;
-          const drag2 = 0.98;
-          const force1 = 1.8;
-          const force2 = 7.0;
-          const theta1 = -0.5;
-          const theta2 = 0.5;
-          const size1 = 4;
-          const size2 = 75; // Tamaño dinámico
-          const sizeScalar = 0.962;
 
           function resizeCanvas() {
             const rect = weldingSection.getBoundingClientRect();
@@ -1406,18 +1390,17 @@ function getFooter() {
           resizeCanvas();
           window.addEventListener('resize', resizeCanvas);
 
-          // Constructor Particle
           function Particle(x, y, size) {
             this.alive = true;
-            this.size = size || 10;
-            this.wander = 0.15;
+            this.size = size || (Math.random() * 3 + 1.5);
+            this.wander = 0.12;
             this.theta = Math.random() * Math.PI * 2;
-            this.drag = 0.92;
-            this.color = '#F1B541';
-            this.x = x || width / 2;
-            this.y = y || height / 2;
-            this.vx = 0;
-            this.vy = 0;
+            this.drag = 0.96;
+            this.color = WELDING_COLORS[Math.floor(Math.random() * WELDING_COLORS.length)];
+            this.x = x || (Math.random() * width);
+            this.y = y || (height * 0.7 + Math.random() * (height * 0.3));
+            this.vx = (Math.random() - 0.5) * 1.2;
+            this.vy = -(Math.random() * 1.5 + 0.5);
           }
 
           Particle.prototype.move = function() {
@@ -1425,11 +1408,10 @@ function getFooter() {
             this.y += this.vy;
             this.vx *= this.drag;
             this.vy *= this.drag;
-            this.theta += (Math.random() * (theta2 - theta1) + theta1) * this.wander;
-            this.vx += Math.sin(this.theta) * 0.1;
-            this.vy += Math.cos(this.theta) * 0.1;
-            this.size *= sizeScalar;
-            this.alive = this.size > 0.4;
+            this.theta += (Math.random() - 0.5) * this.wander;
+            this.vx += Math.sin(this.theta) * 0.05;
+            this.size *= 0.985;
+            this.alive = this.size > 0.3 && this.y > 0;
           };
 
           Particle.prototype.show = function(context) {
@@ -1438,40 +1420,6 @@ function getFooter() {
             context.arc(this.x, this.y, Math.max(0.1, this.size), 0, Math.PI * 2);
             context.fill();
           };
-
-          function spawnParticle(x, y, customSize) {
-            if (particles.length >= MAX_PARTICLES) {
-              particles.shift();
-            }
-            const size = customSize || (Math.random() * (size2 - size1) + size1);
-            const p = new Particle(x, y, size);
-            p.wander = Math.random() * (wander2 - wander1) + wander1;
-            p.color = WELDING_COLORS[Math.floor(Math.random() * WELDING_COLORS.length)];
-            p.drag = Math.random() * (drag2 - drag1) + drag1;
-            const theta = Math.random() * Math.PI * 2;
-            const force = Math.random() * (force2 - force1) + force1;
-            p.vx = Math.sin(theta) * force;
-            p.vy = Math.cos(theta) * force;
-            particles.push(p);
-          }
-
-          function handlePointerInteraction(clientX, clientY, count = 4) {
-            const rect = weldingCanvas.getBoundingClientRect();
-            const px = clientX - rect.left;
-            const py = clientY - rect.top;
-            for (let i = 0; i < count; i++) {
-              spawnParticle(px, py);
-            }
-          }
-
-          // La interacción SOLO se activa con el cursor (movimiento o clic del ratón/touch)
-          weldingSection.addEventListener('pointermove', (e) => {
-            handlePointerInteraction(e.clientX, e.clientY, Math.floor(Math.random() * 3) + 3);
-          });
-
-          weldingSection.addEventListener('pointerdown', (e) => {
-            handlePointerInteraction(e.clientX, e.clientY, 10);
-          });
 
           // Optimización de rendimiento con IntersectionObserver
           let isSectionVisible = true;
@@ -1482,22 +1430,29 @@ function getFooter() {
           }, { threshold: 0.05 });
           observer.observe(weldingSection);
 
+          let frameCount = 0;
           function renderWelding() {
             requestAnimationFrame(renderWelding);
             if (!isSectionVisible) return;
 
-            // 1. Limpieza con el negro corporativo base (#07080a)
+            frameCount++;
+            // Emisión ambiental suave y automática desde el fondo sin necesidad de cursor
+            if (frameCount % 12 === 0 && particles.length < MAX_PARTICLES) {
+              const spawnX = Math.random() * width;
+              const spawnY = height - 10;
+              particles.push(new Particle(spawnX, spawnY));
+            }
+
+            // 1. Limpieza base (#07080a)
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#07080a';
             ctx.fillRect(0, 0, width, height);
 
-            // Si no hay partículas activas generadas por el cursor, no procesar bucle
             if (particles.length === 0) return;
 
-            // 2. Fusión luminosa aditiva ('lighter') idéntica al sketch #446535
+            // 2. Fusión aditiva sutil
             ctx.globalCompositeOperation = 'lighter';
 
-            // Actualizar y dibujar partículas exclusivamente emitidas por el cursor
             for (let i = particles.length - 1; i >= 0; i--) {
               const p = particles[i];
               if (p.alive) {
@@ -1818,12 +1773,12 @@ const indexHtml = `${getHead('SOLYCAL | Soldadura y Calderería Industrial Valen
 ${getHeader('inicio')}
 
 <!-- HERO SECTION EDITORIAL & BOLD WITH YOUTUBE BACKGROUND VIDEO -->
-<section class="min-h-[94vh] flex items-center relative pt-12 pb-24 border-b border-white/5 overflow-hidden">
+<section class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden">
   <!-- YouTube Background Video (Responsive & Scaled) -->
   <div class="video-background-wrapper">
     <iframe 
       id="bg-video"
-      class="opacity-45"
+      class="opacity-75"
       src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3" 
       title="SOLYCAL Video Corporativo"
       frameborder="0" 
@@ -1831,33 +1786,20 @@ ${getHeader('inicio')}
       allowfullscreen>
     </iframe>
   </div>
-  <!-- Dark & Industrial Overlays Full-Width -->
-  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#07080a] via-[#07080a]/75 to-[#07080a]/50"></div>
-  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/70"></div>
-  <div class="absolute inset-0 z-[1] pointer-events-none dot-grid opacity-40"></div>
+  <!-- Dark & Industrial Overlays Full-Width - Calibrado para dar protagonismo al vídeo manteniendo legibilidad -->
+  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#07080a]/90 via-[#07080a]/50 to-transparent"></div>
+  <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/50"></div>
+  <div class="absolute inset-0 z-[1] pointer-events-none dot-grid opacity-25"></div>
 
-  <div class="w-full px-6 w-full relative z-10">
+  <div class="w-full px-6 relative z-10">
     
-    <!-- Top Micro Indicators -->
-    <div class="hero-sub flex items-center justify-between pb-8 mb-8 border-b border-white/10 font-mono text-xs text-neutral-400">
-      <div class="flex items-center gap-3">
-        <span class="line-indicator"></span>
-        <span class="text-white uppercase tracking-wider font-semibold">SOLYCAL S.L. &bull; VALENCIA</span>
-      </div>
-      <div class="hidden md:flex items-center gap-6">
-        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span> 5.000 m² DE PLANTA</span>
-        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span> 7 PUENTES GRÚA (16 TN)</span>
-        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span> EN 1090-1 &bull; ISO 9001</span>
-      </div>
-    </div>
-
-    <!-- Big Headline with Cattaneo aesthetic (Animado por GSAP) -->
-    <div class="max-w-5xl space-y-6">
-      <span class="hero-tag font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block">// CALDERERÍA INDUSTRIAL & SOLDADURA DE PRECISIÓN</span>
-      <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.04]">
+    <!-- Headline con jerarquía equilibrada (más protagonismo al fondo) -->
+    <div class="max-w-4xl space-y-4">
+      <span class="hero-tag font-mono text-xs uppercase tracking-widest text-brand-yellow font-semibold block">// CALDERERÍA INDUSTRIAL & SOLDADURA DE PRECISIÓN</span>
+      <h1 class="hero-title text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight leading-[1.08]">
         Transformamos el metal en ingeniería <span class="text-brand-yellow">de alta exigencia.</span>
       </h1>
-      <p class="hero-desc text-lg sm:text-xl text-neutral-300 font-sans max-w-3xl leading-relaxed pt-2">
+      <p class="hero-desc text-sm sm:text-base text-neutral-300/90 font-sans max-w-2xl leading-relaxed">
         Desde el desarrollo de planos en nuestra oficina técnica hasta la fabricación en taller y el montaje final en obra civil. Especialistas en acero inoxidable, aluminio, acero al carbono y corte plasma HD TrueHole en Valencia.
       </p>
     </div>
@@ -2031,51 +1973,64 @@ ${getHeader('inicio')}
   </div>
 </section>
 
-<!-- VISUAL STORY: PLANTA & INSTALACIONES PREVIEW -->
-<section class="py-28 bg-[#090b0e] border-b border-white/5 relative">
-  <div class="w-full px-6">
+<!-- FEATURED SECTION: CORTE TÉRMICO CNC CON FONDO COMPLETO INDUSTRIAL (assets/header.jpg) -->
+<section class="relative py-28 border-b border-white/5 overflow-hidden">
+  <!-- Full-bleed background image with industrial dark overlay -->
+  <div class="absolute inset-0 z-0">
+    <img src="assets/header.jpg" alt="Mesa de oxicorte y plasma CNC de alta definición en SOLYCAL" class="w-full h-full object-cover object-center scale-105" loading="lazy">
+    <div class="absolute inset-0 bg-[#07080a]/85 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#07080a] via-[#07080a]/80 to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/70"></div>
+    <div class="absolute inset-0 dot-grid opacity-30"></div>
+  </div>
+
+  <div class="w-full px-6 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-      <div class="lg:col-span-6 space-y-6 reveal">
-        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// INFRAESTRUCTURA DE VANGUARDIA</span>
+      <div class="lg:col-span-7 space-y-6 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
+          <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
+        </div>
         <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-          5.000 m² diseñados para la máxima eficiencia y pureza de materiales.
+          Corte plasma de alta definición y oxicorte hasta 50 mm.
         </h2>
-        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans">
-          Nuestra planta en el Polígono Industrial Masía del Juez (Torrent, Valencia) está organizada en naves independientes para evitar cualquier contaminación cruzada entre acero al carbono e inoxidable.
+        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-2xl">
+          Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
         </p>
-        <div class="pt-2 flex flex-col sm:flex-row gap-4 font-mono text-xs">
-          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full bg-white text-black font-semibold uppercase tracking-wider hover:bg-brand-yellow transition-all inline-flex items-center gap-2">
-            <span>Ver Naves y Maquinaria</span>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs">
+          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
+            <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
+            <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
+          </div>
+          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
+            <span class="text-neutral-400 block text-[11px]">Espesor máx. carbono</span>
+            <span class="text-brand-yellow font-bold text-base mt-1 block">50 mm</span>
+          </div>
+          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm col-span-2 sm:col-span-1">
+            <span class="text-neutral-400 block text-[11px]">Inoxidable</span>
+            <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
+          </div>
+        </div>
+        <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
+          <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
+            <span>Ficha Técnica Corte Plasma</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
-          <a href="calidad.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:bg-white/5 transition-all inline-flex items-center gap-2">
-            <span>Certificados ISO & CE</span>
+          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+            <span>Ver Maquinaria de Corte</span>
           </a>
         </div>
       </div>
 
-      <div class="lg:col-span-6 relative reveal">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Tarjeta 1: Planta Principal -->
-          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
-            <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
-            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
-              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">5.000 m²</span>
-              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Planta & Calderería</p>
-              <p class="text-neutral-400 text-[11px] mt-0.5">7 Puentes Grúa &bull; 16 Tn</p>
-            </div>
-          </div>
-
-          <!-- Tarjeta 2: Corte Plasma y Láser HD (Foto header.jpg) -->
-          <div class="rounded-2xl overflow-hidden border border-white/10 relative group h-[260px] sm:h-[460px]">
-            <img src="assets/header.jpg" alt="Corte plasma y láser CNC de alta definición Hypertherm TrueHole - SOLYCAL" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
-            <div class="absolute bottom-5 left-5 right-5 font-mono text-xs text-neutral-300">
-              <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">HD TrueHole</span>
-              <p class="text-white font-bold font-display text-base sm:text-lg leading-tight">Corte Térmico CNC</p>
-              <p class="text-neutral-400 text-[11px] mt-0.5">Espesores de hasta 50 mm</p>
-            </div>
+      <div class="lg:col-span-5 relative reveal">
+        <!-- Tarjeta de Planta Principal y Capacidad de Elevación -->
+        <div class="rounded-2xl overflow-hidden border border-white/15 relative group h-[280px] sm:h-[440px] shadow-2xl bg-brand-dark">
+          <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6 font-mono text-xs text-neutral-300">
+            <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">5.000 m² PLANTA</span>
+            <p class="text-white font-bold font-display text-lg sm:text-xl leading-tight">Calderería Pesada & Estructuras</p>
+            <p class="text-neutral-300 text-xs mt-1">7 Puentes Grúa &bull; Capacidad hasta 16 Toneladas</p>
           </div>
         </div>
       </div>

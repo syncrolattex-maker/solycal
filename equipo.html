@@ -956,15 +956,14 @@
 
         // Función para lanzar la web con sincronización suave
         const playHeroEntrance = (delay = 0) => {
-          if (document.querySelector('.hero-sub')) {
+          if (document.querySelector('.hero-title')) {
             const heroTl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: delay });
             heroTl
-              .from('.hero-sub', { opacity: 0, y: -20, duration: 0.8 })
-              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 }, "-=0.5")
+              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 })
               .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
               .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
               .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video', { opacity: 0, scale: 1.15, duration: 1.6, ease: "power2.out" }, 0);
+              .from('#bg-video', { opacity: 0, scale: 1.12, duration: 1.6, ease: "power2.out" }, 0);
           }
         };
 
@@ -1368,9 +1367,9 @@
         }
 
         // =========================================================================
-        // EFECTO WELDING (WANDERING PARTICLES - OpenProcessing #446535 ADAPTATION)
-        // Fondo interactivo de soldadura: SOLO activo al mover el cursor
-        // Colores: Estrictamente corporativos Solycal (#F1B541, #E5A52A) y grises industriales
+        // EFECTO WELDING (WANDERING PARTICLES - AMBIENTAL SIN INTERACCIÓN DE CURSOR)
+        // Fondo sutil y atmosférico de partículas de soldadura / chispa tenue
+        // Sin interacción con el cursor (eliminado según directriz de diseño)
         // =========================================================================
         const weldingCanvas = document.getElementById('welding-canvas');
         const weldingSection = document.getElementById('welding-section');
@@ -1380,31 +1379,16 @@
           let width = 0;
           let height = 0;
 
-          // Parámetros basados en OpenProcessing #446535 (Wandering Particles / Justin Windle)
-          const MAX_PARTICLES = 180;
-          // Paleta Corporativa Estricta: Amarillo Solycal, Ámbar corporativo y escala de grises de calderería
+          const MAX_PARTICLES = 60;
           const WELDING_COLORS = [
             '#F1B541', // Amarillo Principal Solycal
             '#E5A52A', // Ámbar / Dorado Corporativo
-            '#FDE68A', // Acento amarillo claro / chispa
-            '#E2E8F0', // Gris acero pulido muy claro
-            '#94A3B8', // Gris metálico medio
-            '#64748B', // Gris acero oscuro
-            '#334155'  // Gris antracita
+            'rgba(241, 181, 65, 0.6)',
+            'rgba(226, 232, 240, 0.4)',
+            'rgba(148, 163, 184, 0.3)'
           ];
 
           const particles = [];
-          const wander1 = 0.5;
-          const wander2 = 2.0;
-          const drag1 = 0.90;
-          const drag2 = 0.98;
-          const force1 = 1.8;
-          const force2 = 7.0;
-          const theta1 = -0.5;
-          const theta2 = 0.5;
-          const size1 = 4;
-          const size2 = 75; // Tamaño dinámico
-          const sizeScalar = 0.962;
 
           function resizeCanvas() {
             const rect = weldingSection.getBoundingClientRect();
@@ -1414,18 +1398,17 @@
           resizeCanvas();
           window.addEventListener('resize', resizeCanvas);
 
-          // Constructor Particle
           function Particle(x, y, size) {
             this.alive = true;
-            this.size = size || 10;
-            this.wander = 0.15;
+            this.size = size || (Math.random() * 3 + 1.5);
+            this.wander = 0.12;
             this.theta = Math.random() * Math.PI * 2;
-            this.drag = 0.92;
-            this.color = '#F1B541';
-            this.x = x || width / 2;
-            this.y = y || height / 2;
-            this.vx = 0;
-            this.vy = 0;
+            this.drag = 0.96;
+            this.color = WELDING_COLORS[Math.floor(Math.random() * WELDING_COLORS.length)];
+            this.x = x || (Math.random() * width);
+            this.y = y || (height * 0.7 + Math.random() * (height * 0.3));
+            this.vx = (Math.random() - 0.5) * 1.2;
+            this.vy = -(Math.random() * 1.5 + 0.5);
           }
 
           Particle.prototype.move = function() {
@@ -1433,11 +1416,10 @@
             this.y += this.vy;
             this.vx *= this.drag;
             this.vy *= this.drag;
-            this.theta += (Math.random() * (theta2 - theta1) + theta1) * this.wander;
-            this.vx += Math.sin(this.theta) * 0.1;
-            this.vy += Math.cos(this.theta) * 0.1;
-            this.size *= sizeScalar;
-            this.alive = this.size > 0.4;
+            this.theta += (Math.random() - 0.5) * this.wander;
+            this.vx += Math.sin(this.theta) * 0.05;
+            this.size *= 0.985;
+            this.alive = this.size > 0.3 && this.y > 0;
           };
 
           Particle.prototype.show = function(context) {
@@ -1446,40 +1428,6 @@
             context.arc(this.x, this.y, Math.max(0.1, this.size), 0, Math.PI * 2);
             context.fill();
           };
-
-          function spawnParticle(x, y, customSize) {
-            if (particles.length >= MAX_PARTICLES) {
-              particles.shift();
-            }
-            const size = customSize || (Math.random() * (size2 - size1) + size1);
-            const p = new Particle(x, y, size);
-            p.wander = Math.random() * (wander2 - wander1) + wander1;
-            p.color = WELDING_COLORS[Math.floor(Math.random() * WELDING_COLORS.length)];
-            p.drag = Math.random() * (drag2 - drag1) + drag1;
-            const theta = Math.random() * Math.PI * 2;
-            const force = Math.random() * (force2 - force1) + force1;
-            p.vx = Math.sin(theta) * force;
-            p.vy = Math.cos(theta) * force;
-            particles.push(p);
-          }
-
-          function handlePointerInteraction(clientX, clientY, count = 4) {
-            const rect = weldingCanvas.getBoundingClientRect();
-            const px = clientX - rect.left;
-            const py = clientY - rect.top;
-            for (let i = 0; i < count; i++) {
-              spawnParticle(px, py);
-            }
-          }
-
-          // La interacción SOLO se activa con el cursor (movimiento o clic del ratón/touch)
-          weldingSection.addEventListener('pointermove', (e) => {
-            handlePointerInteraction(e.clientX, e.clientY, Math.floor(Math.random() * 3) + 3);
-          });
-
-          weldingSection.addEventListener('pointerdown', (e) => {
-            handlePointerInteraction(e.clientX, e.clientY, 10);
-          });
 
           // Optimización de rendimiento con IntersectionObserver
           let isSectionVisible = true;
@@ -1490,22 +1438,29 @@
           }, { threshold: 0.05 });
           observer.observe(weldingSection);
 
+          let frameCount = 0;
           function renderWelding() {
             requestAnimationFrame(renderWelding);
             if (!isSectionVisible) return;
 
-            // 1. Limpieza con el negro corporativo base (#07080a)
+            frameCount++;
+            // Emisión ambiental suave y automática desde el fondo sin necesidad de cursor
+            if (frameCount % 12 === 0 && particles.length < MAX_PARTICLES) {
+              const spawnX = Math.random() * width;
+              const spawnY = height - 10;
+              particles.push(new Particle(spawnX, spawnY));
+            }
+
+            // 1. Limpieza base (#07080a)
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#07080a';
             ctx.fillRect(0, 0, width, height);
 
-            // Si no hay partículas activas generadas por el cursor, no procesar bucle
             if (particles.length === 0) return;
 
-            // 2. Fusión luminosa aditiva ('lighter') idéntica al sketch #446535
+            // 2. Fusión aditiva sutil
             ctx.globalCompositeOperation = 'lighter';
 
-            // Actualizar y dibujar partículas exclusivamente emitidas por el cursor
             for (let i = particles.length - 1; i >= 0; i--) {
               const p = particles[i];
               if (p.alive) {

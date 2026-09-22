@@ -2003,54 +2003,39 @@ ${getHeader('inicio')}
   </div>
 
   <div class="w-full px-6 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-      <div class="lg:col-span-7 space-y-6 reveal">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
-          <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
-          <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
+    <div class="max-w-4xl space-y-6 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
+        <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+        Corte plasma de alta definición y oxicorte hasta 50 mm.
+      </h2>
+      <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-3xl">
+        Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs max-w-3xl">
+        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
+          <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
+          <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
         </div>
-        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-          Corte plasma de alta definición y oxicorte hasta 50 mm.
-        </h2>
-        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-2xl">
-          Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
-        </p>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs">
-          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
-            <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
-            <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
-          </div>
-          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
-            <span class="text-neutral-400 block text-[11px]">Espesor máx. carbono</span>
-            <span class="text-brand-yellow font-bold text-base mt-1 block">50 mm</span>
-          </div>
-          <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm col-span-2 sm:col-span-1">
-            <span class="text-neutral-400 block text-[11px]">Inoxidable</span>
-            <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
-          </div>
+        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
+          <span class="text-neutral-400 block text-[11px]">Espesor máx. carbono</span>
+          <span class="text-brand-yellow font-bold text-base mt-1 block">50 mm</span>
         </div>
-        <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
-          <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
-            <span>Ficha Técnica Corte Plasma</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </a>
-          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
-            <span>Ver Maquinaria de Corte</span>
-          </a>
+        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
+          <span class="text-neutral-400 block text-[11px]">Inoxidable</span>
+          <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
         </div>
       </div>
-
-      <div class="lg:col-span-5 relative reveal">
-        <!-- Tarjeta de Planta Principal y Capacidad de Elevación -->
-        <div class="rounded-2xl overflow-hidden border border-white/15 relative group h-[280px] sm:h-[440px] shadow-2xl bg-brand-dark">
-          <img src="assets/instalaciones.jpg" alt="Instalaciones de calderería industrial y soldadura en Torrent, Valencia - Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-          <div class="absolute bottom-6 left-6 right-6 font-mono text-xs text-neutral-300">
-            <span class="px-2.5 py-0.5 rounded-full bg-brand-yellow text-black font-bold text-[10px] uppercase tracking-wider inline-block mb-2">5.000 m² PLANTA</span>
-            <p class="text-white font-bold font-display text-lg sm:text-xl leading-tight">Calderería Pesada & Estructuras</p>
-            <p class="text-neutral-300 text-xs mt-1">7 Puentes Grúa &bull; Capacidad hasta 16 Toneladas</p>
-          </div>
-        </div>
+      <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
+        <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
+          <span>Ficha Técnica Corte Plasma</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+        <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+          <span>Ver Maquinaria de Corte</span>
+        </a>
       </div>
     </div>
   </div>

@@ -859,9 +859,6 @@ function getFooter() {
             Soldadura y Calderería Valenciana S.L. Planta de 5.000 m² equipada con 7 puentes grúa de hasta 16 Tn y corte plasma HD Hypertherm en Torrent (Valencia).
           </p>
           <div class="pt-2">
-            ${getSocialIcons('w-5 h-5', 'flex items-center gap-4')}
-          </div>
-          <div class="pt-2">
             <img src="assets/cert-lrqa.png" alt="Certificaciones LRQA" class="h-8 w-auto opacity-70">
           </div>
         </div>
@@ -900,17 +897,20 @@ function getFooter() {
         </div>
       </div>
 
-      <!-- Bottom Bar -->
-      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-neutral-500">
-        <p>&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
-        <div class="flex items-center gap-6">
-          ${getSocialIcons('w-4 h-4', 'flex items-center gap-4')}
-          <span class="text-neutral-700 hidden sm:inline">|</span>
-          <div class="flex gap-6">
-            <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
-            <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
-            <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
-          </div>
+      <!-- SUBFOOTER / BARRA INFERIOR CON REDES SOCIALES -->
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
+        <p class="order-3 md:order-1 text-center md:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+        
+        <!-- Redes Sociales Oficiales en el Subfooter (Iconos directos sin círculos) -->
+        <div class="order-1 md:order-2 flex items-center">
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
+        </div>
+
+        <!-- Enlaces Legales -->
+        <div class="order-2 md:order-3 flex items-center gap-6">
+          <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
+          <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
+          <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
         </div>
       </div>
     </div>

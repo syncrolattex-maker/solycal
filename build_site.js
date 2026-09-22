@@ -2508,85 +2508,48 @@ ${getFooter()}
 const contactoHtml = `${getHead('Contacto y Presupuestos de Calderería | SOLYCAL Torrent', 'Contacta con la oficina técnica de Solycal en Torrent (Valencia). Teléfono: +34 96 150 40 38 - info@solycal.es. Envía tus planos para valoración inmediata.', 'contacto.html')}
 ${getHeader('contacto')}
 
-<!-- HERO WITH INTERACTIVE KINETIC SPHERE ("DON'T TOUCH ME" - OPENPROCESSING #2812705) -->
-<div class="relative py-16 sm:py-20 lg:py-24 border-b border-white/5 bg-[#090b0e] overflow-hidden dot-grid">
-  <div class="w-full px-6 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-      
-      <!-- Left Editorial Column -->
-      <div class="lg:col-span-6 space-y-6">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
-          <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
-          <span>// 06 CONTACTO &amp; COTIZACIÓN TÉCNICA</span>
+<!-- HERO "HABLEMOS DE TU PRÓXIMO PROYECTO" WITH "DON'T TOUCH ME" SPHERE BLEEDING OFF THE RIGHT EDGE -->
+<section id="contacto-hero" class="relative py-24 sm:py-32 lg:py-40 border-b border-white/5 bg-[#090b0e] overflow-hidden">
+  
+  <!-- Canvas "Don't touch me" esfera de partículas entrecortada a la derecha -->
+  <div class="absolute -right-28 sm:-right-44 md:-right-60 lg:-right-72 xl:-right-80 top-1/2 -translate-y-1/2 w-[540px] sm:w-[720px] md:w-[860px] lg:w-[1020px] aspect-square pointer-events-auto z-0 select-none">
+    <canvas id="dont-touch-me-canvas" class="w-full h-full block cursor-crosshair opacity-85 hover:opacity-100 transition-opacity duration-700"></canvas>
+    <!-- Gradientes sutiles para fundir perfectamente con el fondo general -->
+    <div class="absolute inset-0 bg-gradient-to-r from-[#090b0e] via-transparent to-transparent pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#090b0e]/70 via-transparent to-[#090b0e]/70 pointer-events-none"></div>
+  </div>
+
+  <!-- Fondo técnico tenue -->
+  <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
+
+  <!-- Contenido textual frontal a la izquierda -->
+  <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto">
+    <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
+      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+        Hablemos de tu próximo proyecto.
+      </h1>
+      <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+        Envíanos planos, especificaciones o concerta una visita técnica a nuestra planta en Torrent (Valencia).
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2 font-mono text-xs text-neutral-400">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="text-neutral-300">Oficina Técnica Activa</span>
         </div>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight leading-tight">
-          Hablemos de tu próximo proyecto.
-        </h1>
-        <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
-          Envíanos planos en formato CAD/BIM, especificaciones o concierta una visita técnica a nuestra planta en Torrent (Valencia). Valoración en menos de 24 horas por nuestro equipo de oficina técnica.
-        </p>
-
-        <!-- Technical Badges -->
-        <div class="flex flex-wrap items-center gap-3 pt-2 font-mono text-xs text-neutral-400">
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span class="text-neutral-300">Oficina Técnica Activa</span>
-          </div>
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10">
-            <span class="text-brand-yellow font-bold">&lt; 24h</span>
-            <span class="text-neutral-300">Plazo de Respuesta</span>
-          </div>
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10">
-            <span class="text-brand-yellow font-bold">5.000 m²</span>
-            <span class="text-neutral-300">Capacidad Fabril</span>
-          </div>
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
+          <span class="text-brand-yellow font-bold">&lt; 24h</span>
+          <span class="text-neutral-300">Plazo de Respuesta</span>
         </div>
-      </div>
-
-      <!-- Right Column: Interactive Kinetic Canvas Card ("Don't touch me") -->
-      <div class="lg:col-span-6 flex justify-center lg:justify-end">
-        <div class="w-full max-w-lg rounded-3xl bg-[#0a0c0e] border border-white/10 p-4 sm:p-6 shadow-2xl relative overflow-hidden group">
-          
-          <!-- Card Header Bar -->
-          <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span>
-              <span class="font-mono text-[11px] uppercase tracking-wider text-brand-yellow font-bold">// EXPERIMENTO CINÉTICO &bull; "DON'T TOUCH ME"</span>
-            </div>
-            <a href="https://openprocessing.org/sketch/2812705" target="_blank" rel="noopener noreferrer" class="font-mono text-[10px] text-neutral-400 hover:text-brand-yellow uppercase tracking-wider transition-colors inline-flex items-center gap-1" title="Ver sketch original en OpenProcessing">
-              <span>NOEL #2812705</span>
-              <i data-lucide="external-link" class="w-3 h-3"></i>
-            </a>
-          </div>
-
-          <!-- Canvas Container -->
-          <div id="canvas-container" class="relative w-full aspect-[4/3] rounded-2xl bg-[#050608] border border-white/5 overflow-hidden flex items-center justify-center cursor-crosshair select-none">
-            <canvas id="dont-touch-me-canvas" class="w-full h-full block"></canvas>
-            
-            <!-- Floating Interaction Hint -->
-            <div id="touch-hint" class="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none transition-opacity duration-500">
-              <div class="px-3.5 py-1.5 rounded-full bg-black/85 border border-white/20 text-white font-mono text-[11px] tracking-wide backdrop-blur-md flex items-center gap-2 shadow-lg">
-                <i data-lucide="hand" class="w-3.5 h-3.5 text-brand-yellow animate-pulse"></i>
-                <span>Pasa el cursor o toca para dispersar el campo</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card Footer Metrics -->
-          <div class="flex items-center justify-between pt-3 mt-3 border-t border-white/5 font-mono text-[10px] text-neutral-400">
-            <span class="flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-              <span class="text-white font-semibold">8.000 PARTÍCULAS 3D</span>
-            </span>
-            <span class="text-neutral-400 uppercase tracking-wider">REPULSIÓN CINÉTICA ELASTIC</span>
-          </div>
-
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
+          <span class="text-brand-yellow font-bold">5.000 m²</span>
+          <span class="text-neutral-300">Capacidad Fabril</span>
         </div>
       </div>
-
     </div>
   </div>
-</div>
+</section>
 
 <section class="py-24 bg-[#07080a]">
   <div class="w-full px-6">
@@ -2701,18 +2664,16 @@ ${getHeader('contacto')}
   </div>
 </section>
 
-<!-- INTERACTIVE "DON'T TOUCH ME" ENGINE SCRIPT (NOEL OPENPROCESSING #2812705 ADAPTATION) -->
+<!-- INTERACTIVE "DON'T TOUCH ME" ENGINE SCRIPT (NOEL OPENPROCESSING #2812705) -->
 <script>
   (function() {
     const canvas = document.getElementById('dont-touch-me-canvas');
+    const heroSection = document.getElementById('contacto-hero');
     if (!canvas) return;
 
-    const container = document.getElementById('canvas-container');
-    const touchHint = document.getElementById('touch-hint');
     const ctx = canvas.getContext('2d');
-
     const isMobile = /iPhone|iPod|iPad|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
-    const particlesCount = isMobile ? 3800 : 7500;
+    const particlesCount = isMobile ? 3600 : 7500;
     const attraction = 0.01;
     const damping = 0.90;
     const repelStrength = 28;
@@ -2720,14 +2681,13 @@ ${getHeader('contacto')}
     let width = 0;
     let height = 0;
     let dpr = 1;
-    let radius = 180;
-    let repelRadius = 80;
+    let radius = 240;
+    let repelRadius = 95;
     let repelRadiusSq = repelRadius * repelRadius;
     let angle = 0;
     let mouseX = -9999;
     let mouseY = -9999;
     let mouseInside = false;
-    let isInteracting = false;
     let animationFrameId = null;
     let isVisible = true;
 
@@ -2747,9 +2707,8 @@ ${getHeader('contacto')}
     }
 
     function resize() {
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
 
@@ -2758,7 +2717,7 @@ ${getHeader('contacto')}
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const minDim = Math.min(width, height);
-      radius = minDim * 0.40;
+      radius = minDim * 0.44;
       repelRadius = radius * 0.38;
       repelRadiusSq = repelRadius * repelRadius;
 
@@ -2777,40 +2736,37 @@ ${getHeader('contacto')}
       mouseX = (clientX - rect.left) - width / 2;
       mouseY = (clientY - rect.top) - height / 2;
       mouseInside = true;
-
-      if (!isInteracting) {
-        isInteracting = true;
-        if (touchHint) touchHint.style.opacity = '0';
-      }
     }
 
-    canvas.addEventListener('mousemove', (e) => {
-      updateCoords(e.clientX, e.clientY);
-    });
+    if (heroSection) {
+      heroSection.addEventListener('mousemove', (e) => {
+        updateCoords(e.clientX, e.clientY);
+      });
 
-    canvas.addEventListener('mouseleave', () => {
-      mouseInside = false;
-      mouseX = -9999;
-      mouseY = -9999;
-    });
+      heroSection.addEventListener('mouseleave', () => {
+        mouseInside = false;
+        mouseX = -9999;
+        mouseY = -9999;
+      });
 
-    canvas.addEventListener('touchstart', (e) => {
-      if (e.touches.length > 0) {
-        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: true });
+      heroSection.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
 
-    canvas.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: true });
+      heroSection.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
 
-    canvas.addEventListener('touchend', () => {
-      mouseInside = false;
-      mouseX = -9999;
-      mouseY = -9999;
-    });
+      heroSection.addEventListener('touchend', () => {
+        mouseInside = false;
+        mouseX = -9999;
+        mouseY = -9999;
+      });
+    }
 
     window.addEventListener('resize', resize);
     resize();
@@ -2830,7 +2786,7 @@ ${getHeader('contacto')}
         return;
       }
 
-      ctx.fillStyle = '#050608';
+      ctx.fillStyle = '#090b0e';
       ctx.fillRect(0, 0, width, height);
 
       const cx = width / 2;

@@ -7,6 +7,8 @@ import StatsCards from "@/components/StatsCards";
 import KanbanBoard from "@/components/KanbanBoard";
 import LeadsSection from "@/components/LeadsSection";
 import QuotesSection from "@/components/QuotesSection";
+import QuoteCalculator from "@/components/QuoteCalculator";
+import BottomNav, { MobileTab } from "@/components/BottomNav";
 import ProjectModal from "@/components/ProjectModal";
 import QuoteModal from "@/components/QuoteModal";
 import LeadModal from "@/components/LeadModal";
@@ -14,7 +16,7 @@ import { ProjectRecord, LeadRecord } from "@/lib/db";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function Home() {
-  const [currentTab, setCurrentTab] = useState<"kanban" | "leads" | "quotes">("kanban");
+  const [currentTab, setCurrentTab] = useState<MobileTab>("kanban");
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [leads, setLeads] = useState<LeadRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -220,7 +222,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen bg-brand-black text-white selection:bg-brand-yellow selection:text-black">
-      {/* Fixed Sidebar */}
+      {/* Desktop Sticky Sidebar */}
       <Sidebar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -240,7 +242,7 @@ export default function Home() {
           isRefreshing={refreshing}
         />
 
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 sm:pb-8 overflow-y-auto">
           {/* Notification Alert Banner */}
           {notice && (
             <div
@@ -278,18 +280,41 @@ export default function Home() {
             </div>
           ) : (
             <>
-              {/* Top KPI Stats */}
-              <StatsCards projects={projects} leads={leads} />
+              {/* Top KPI Stats (En desktop siempre arriba, en móvil también accesible mediante pestaña dedicada) */}
+              <div className={currentTab === "metrics" ? "block" : "hidden sm:block"}>
+                <StatsCards projects={projects} leads={leads} />
+              </div>
+
+              {/* Pestaña Exclusiva de Métricas para Mobile */}
+              {currentTab === "metrics" && (
+                <div className="sm:hidden space-y-4">
+                  <div className="p-4 rounded-xl bg-brand-dark border border-brand-border">
+                    <h3 className="text-sm font-bold uppercase tracking-tight text-white mb-2">
+                      Estado Global de Planta
+                    </h3>
+                    <p className="font-mono text-xs text-brand-textMuted">
+                      Datos consolidados en tiempo real de proyectos, horas de taller y peticiones pendientes.
+                    </p>
+                  </div>
+                  <QuotesSection
+                    projects={projects}
+                    onOpenQuoteModal={(project) => {
+                      setSelectedProjectForQuote(project);
+                      setQuoteModalOpen(true);
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Main Tab Content */}
               {currentTab === "kanban" && (
                 <div>
                   <div className="mb-4 flex items-center justify-between">
                     <div>
-                      <h2 className="text-lg font-bold text-white tracking-tight uppercase">
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight uppercase">
                         Ciclo de Calderería & Oficina Técnica
                       </h2>
-                      <p className="font-mono text-xs text-brand-textMuted">
+                      <p className="font-mono text-[11px] sm:text-xs text-brand-textMuted">
                         Flujo de proyectos industriales según norma EN-1090
                       </p>
                     </div>
@@ -319,18 +344,32 @@ export default function Home() {
               )}
 
               {currentTab === "quotes" && (
-                <QuotesSection
-                  projects={projects}
-                  onOpenQuoteModal={(project) => {
-                    setSelectedProjectForQuote(project);
-                    setQuoteModalOpen(true);
-                  }}
-                />
+                <div className="space-y-6">
+                  {/* Generador de Escandallos Integrado para Móvil y Desktop */}
+                  <QuoteCalculator />
+
+                  {/* Historial de Cotizaciones */}
+                  <QuotesSection
+                    projects={projects}
+                    onOpenQuoteModal={(project) => {
+                      setSelectedProjectForQuote(project);
+                      setQuoteModalOpen(true);
+                    }}
+                  />
+                </div>
               )}
             </>
           )}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (App Nativa) */}
+      <BottomNav
+        currentTab={currentTab}
+        onChangeTab={(tab) => setCurrentTab(tab)}
+        leadsCount={leads.filter((l) => l.status === "nuevo").length}
+        projectsCount={projects.length}
+      />
 
       {/* Modals */}
       <ProjectModal

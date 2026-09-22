@@ -63,8 +63,73 @@ export default function QuotesSection({
         </div>
       </div>
 
-      {/* Quotes Table */}
-      <div className="rounded-2xl bg-brand-dark border border-brand-border overflow-hidden">
+      {/* Mobile Quotes Cards View */}
+      <div className="md:hidden space-y-3">
+        {quoteRows.length === 0 ? (
+          <div className="p-8 text-center rounded-2xl bg-brand-dark border border-brand-border">
+            <span className="font-mono text-xs text-brand-textMuted uppercase tracking-wider">
+              No hay presupuestos registrados
+            </span>
+          </div>
+        ) : (
+          quoteRows.map(({ quote, project }) => (
+            <div
+              key={quote.id}
+              className="p-4 rounded-xl bg-brand-dark border border-brand-border space-y-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <span className="font-mono text-[10px] text-brand-yellow font-bold uppercase block">
+                    #{quote.id.slice(-6).toUpperCase()}
+                  </span>
+                  <div className="font-bold text-white tracking-tight text-sm mt-0.5">
+                    {project.title}
+                  </div>
+                  <div className="font-mono text-xs text-neutral-400">
+                    {project.client || "Cliente general"}
+                  </div>
+                </div>
+                <div className="text-right font-mono">
+                  <span className="text-emerald-400 font-bold text-sm block">
+                    {quote.amount.toLocaleString("es-ES", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    €
+                  </span>
+                  <span className="text-[10px] text-brand-textMuted">
+                    {new Date(quote.createdAt).toLocaleDateString("es-ES")}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 p-2 rounded-lg bg-black/40 border border-brand-border font-mono text-xs">
+                <div className="flex items-center gap-1.5 text-neutral-300">
+                  <Scale className="w-3 h-3 text-brand-yellow" />
+                  <span>{quote.steelKg.toLocaleString("es-ES")} kg</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-neutral-300">
+                  <Clock className="w-3 h-3 text-cyan-400" />
+                  <span>{quote.estimatedHours} h de taller</span>
+                </div>
+              </div>
+
+              <div className="pt-1 flex justify-end">
+                <button
+                  onClick={() => onOpenQuoteModal(project)}
+                  className="w-full py-2 rounded-lg bg-brand-surface hover:bg-brand-yellow/10 border border-brand-border hover:border-brand-yellow/30 text-brand-yellow font-mono text-[11px] uppercase font-bold flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Añadir Otra Cotización</span>
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Quotes Table (Desktop) */}
+      <div className="hidden md:block rounded-2xl bg-brand-dark border border-brand-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

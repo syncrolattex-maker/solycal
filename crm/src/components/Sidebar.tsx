@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 
 interface SidebarProps {
-  currentTab: "kanban" | "leads" | "quotes";
-  setCurrentTab: (tab: "kanban" | "leads" | "quotes") => void;
+  currentTab: "kanban" | "leads" | "quotes" | "metrics";
+  setCurrentTab: (tab: "kanban" | "leads" | "quotes" | "metrics") => void;
   leadsCount: number;
   projectsCount: number;
   totalSteelKg: number;
@@ -29,21 +29,27 @@ export default function Sidebar({
   projectsCount,
   totalSteelKg,
 }: SidebarProps) {
+  const handleSelectTab = (tab: "kanban" | "leads" | "quotes" | "metrics") => {
+    setCurrentTab(tab);
+  };
+
   return (
-    <aside className="w-64 bg-brand-dark border-r border-brand-border flex flex-col justify-between h-screen sticky top-0 shrink-0 select-none">
+    <aside className="hidden lg:flex w-64 bg-brand-dark border-r border-brand-border flex-col justify-between h-screen sticky top-0 shrink-0 select-none">
       <div>
         {/* Brand Header */}
         <div className="p-6 border-b border-brand-border">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">
-              S
-            </div>
-            <div>
-              <div className="text-base font-bold tracking-tight text-white uppercase">
-                SOLYCAL <span className="text-brand-yellow text-xs font-mono font-normal">S.L.</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">
+                S
               </div>
-              <div className="font-mono text-[10px] tracking-widest text-brand-textMuted uppercase">
-                Calderería & Mecanizado
+              <div>
+                <div className="text-base font-bold tracking-tight text-white uppercase">
+                  SOLYCAL <span className="text-brand-yellow text-xs font-mono font-normal">S.L.</span>
+                </div>
+                <div className="font-mono text-[10px] tracking-widest text-brand-textMuted uppercase">
+                  Calderería & Mecanizado
+                </div>
               </div>
             </div>
           </div>
@@ -68,7 +74,7 @@ export default function Sidebar({
           </div>
 
           <button
-            onClick={() => setCurrentTab("kanban")}
+            onClick={() => handleSelectTab("kanban")}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-xs font-medium ${
               currentTab === "kanban"
                 ? "bg-brand-surface text-white border border-brand-yellow/30 shadow-sm"
@@ -89,7 +95,7 @@ export default function Sidebar({
           </button>
 
           <button
-            onClick={() => setCurrentTab("leads")}
+            onClick={() => handleSelectTab("leads")}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-xs font-medium ${
               currentTab === "leads"
                 ? "bg-brand-surface text-white border border-brand-yellow/30 shadow-sm"
@@ -112,7 +118,7 @@ export default function Sidebar({
           </button>
 
           <button
-            onClick={() => setCurrentTab("quotes")}
+            onClick={() => handleSelectTab("quotes")}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-xs font-medium ${
               currentTab === "quotes"
                 ? "bg-brand-surface text-white border border-brand-yellow/30 shadow-sm"

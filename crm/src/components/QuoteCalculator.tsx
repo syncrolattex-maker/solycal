@@ -196,8 +196,8 @@ export default function QuoteCalculator() {
             <span className="font-mono text-xs uppercase tracking-widest text-brand-textMuted block mb-2">
               TOTAL PRESUPUESTO (IVA NO INCLUIDO)
             </span>
-            <div className="flex items-baseline justify-center gap-2">
-              <span className="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-brand-yellow tracking-tight drop-shadow-sm">
+            <div className="flex items-baseline justify-center gap-1.5 sm:gap-2">
+              <span className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-brand-yellow tracking-tight drop-shadow-sm">
                 {state
                   ? state.total.toLocaleString("es-ES", {
                       minimumFractionDigits: 2,
@@ -205,7 +205,7 @@ export default function QuoteCalculator() {
                     })
                   : "0,00"}
               </span>
-              <span className="font-display font-bold text-2xl text-brand-yellow">
+              <span className="font-display font-bold text-xl sm:text-2xl text-brand-yellow">
                 €
               </span>
             </div>

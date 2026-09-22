@@ -189,6 +189,7 @@ const COLUMNS: ColumnMeta[] = [
 export default function KanbanPage() {
   const [projects, setProjects] = useState<MockProject[]>(INITIAL_PROJECTS);
   const [notice, setNotice] = useState<string | null>(null);
+  const [activeMobileTab, setActiveMobileTab] = useState<ColumnId>("nuevo");
 
   const moveProject = (id: string, newStatus: ColumnId) => {
     setProjects((prev) =>
@@ -220,30 +221,30 @@ export default function KanbanPage() {
   return (
     <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-brand-yellow selection:text-black flex flex-col">
       {/* Top Navbar */}
-      <header className="h-16 px-6 lg:px-10 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center font-mono font-bold text-brand-yellow text-base">
+      <header className="h-16 px-4 sm:px-6 lg:px-10 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center font-mono font-bold text-brand-yellow text-sm sm:text-base">
             S
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-white uppercase tracking-tight">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="text-xs sm:text-sm font-bold text-white uppercase tracking-tight">
                 SOLYCAL S.L.
               </span>
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 font-semibold">
-                CRM INDUSTRIAL
+              <span className="font-mono text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 font-semibold">
+                CRM
               </span>
             </div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-brand-textMuted">
-              Tablero Kanban de Producción & Calderería
+            <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-brand-textMuted truncate max-w-[170px] sm:max-w-none">
+              Tablero de Producción
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/"
-            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-brand-surface border border-brand-border text-brand-textMuted hover:text-white font-mono uppercase text-xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-brand-surface border border-brand-border text-brand-textMuted hover:text-white font-mono uppercase text-[11px] sm:text-xs transition-colors"
           >
             <span>Panel Global</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -268,85 +269,113 @@ export default function KanbanPage() {
               setNotice("Proyecto registrado");
               setTimeout(() => setNotice(null), 3000);
             }}
-            className="bg-brand-yellow text-black hover:bg-brand-accent transition-colors rounded-full font-mono uppercase text-xs font-semibold px-5 py-2.5 flex items-center gap-2 shadow-sm"
+            className="bg-brand-yellow text-black hover:bg-brand-accent transition-colors rounded-full font-mono uppercase text-[11px] sm:text-xs font-semibold px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2 shadow-sm whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Crear Presupuesto</span>
+            <span className="hidden xs:inline sm:inline">Crear Presupuesto</span>
+            <span className="inline xs:hidden sm:hidden">Nuevo</span>
           </button>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 p-6 lg:p-10 flex flex-col max-w-[1700px] w-full mx-auto">
+      <main className="flex-1 p-4 sm:p-6 lg:p-10 flex flex-col max-w-[1700px] w-full mx-auto">
         {/* Notice Banner */}
         {notice && (
-          <div className="mb-6 px-4 py-3 rounded-xl bg-brand-dark border border-brand-yellow/40 text-brand-yellow font-mono text-xs uppercase tracking-wider flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mb-4 sm:mb-6 px-4 py-3 rounded-xl bg-brand-dark border border-brand-yellow/40 text-brand-yellow font-mono text-xs uppercase tracking-wider flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-200">
             <span>{notice}</span>
             <button onClick={() => setNotice(null)} className="text-neutral-400 hover:text-white">✕</button>
           </div>
         )}
 
         {/* Header Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 rounded-xl bg-brand-dark border border-brand-border">
-            <span className="block font-mono uppercase tracking-widest text-xs text-brand-textMuted mb-1">
-              TOTAL ACERO EN CURSO
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-brand-dark border border-brand-border">
+            <span className="block font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted mb-1 truncate">
+              ACERO EN CURSO
             </span>
             <div className="flex items-baseline gap-1.5 font-mono">
-              <span className="text-2xl font-bold text-white tracking-tight">
+              <span className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 {totalSteelKg.toLocaleString("es-ES")}
               </span>
-              <span className="text-xs text-brand-yellow uppercase font-bold">KG</span>
+              <span className="text-[10px] sm:text-xs text-brand-yellow uppercase font-bold">KG</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-brand-dark border border-brand-border">
-            <span className="block font-mono uppercase tracking-widest text-xs text-brand-textMuted mb-1">
-              HORAS ESTIMADAS TALLER
+          <div className="p-3.5 sm:p-4 rounded-xl bg-brand-dark border border-brand-border">
+            <span className="block font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted mb-1 truncate">
+              HORAS TALLER
             </span>
             <div className="flex items-baseline gap-1.5 font-mono">
-              <span className="text-2xl font-bold text-white tracking-tight">
+              <span className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 {totalHours.toLocaleString("es-ES")}
               </span>
-              <span className="text-xs text-cyan-400 uppercase font-bold">H</span>
+              <span className="text-[10px] sm:text-xs text-cyan-400 uppercase font-bold">H</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-brand-dark border border-brand-border">
-            <span className="block font-mono uppercase tracking-widest text-xs text-brand-textMuted mb-1">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-brand-dark border border-brand-border">
+            <span className="block font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted mb-1 truncate">
               CARTERA VALORADA
             </span>
             <div className="flex items-baseline gap-1.5 font-mono">
-              <span className="text-2xl font-bold text-white tracking-tight">
+              <span className="text-lg sm:text-2xl font-bold text-white tracking-tight truncate">
                 {totalAmount.toLocaleString("es-ES")}
               </span>
-              <span className="text-xs text-emerald-400 uppercase font-bold">€</span>
+              <span className="text-[10px] sm:text-xs text-emerald-400 uppercase font-bold">€</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-brand-dark border border-brand-border">
-            <span className="block font-mono uppercase tracking-widest text-xs text-brand-textMuted mb-1">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-brand-dark border border-brand-border">
+            <span className="block font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted mb-1 truncate">
               PROYECTOS ACTIVOS
             </span>
             <div className="flex items-baseline gap-1.5 font-mono">
-              <span className="text-2xl font-bold text-brand-yellow tracking-tight">
+              <span className="text-xl sm:text-2xl font-bold text-brand-yellow tracking-tight">
                 {projects.length}
               </span>
-              <span className="text-xs text-brand-textMuted uppercase">EN 4 FASES</span>
+              <span className="text-[10px] sm:text-xs text-brand-textMuted uppercase">TOTAL</span>
             </div>
           </div>
         </div>
 
+        {/* Mobile Column Switcher (Tabs) for 4 cols */}
+        <div className="md:hidden flex items-center p-1 rounded-xl bg-brand-dark border border-brand-border overflow-x-auto gap-1 mb-4">
+          {COLUMNS.map((col) => {
+            const count = projects.filter((p) => p.status === col.id).length;
+            const isActive = activeMobileTab === col.id;
+            return (
+              <button
+                key={col.id}
+                onClick={() => setActiveMobileTab(col.id)}
+                className={`flex-1 min-w-[85px] py-1.5 px-2 rounded-lg font-mono text-[10px] uppercase tracking-wider font-semibold transition-all flex items-center justify-center gap-1 whitespace-nowrap ${
+                  isActive
+                    ? "bg-brand-surface text-brand-yellow border border-brand-yellow/30 shadow-sm"
+                    : "text-brand-textMuted hover:text-white"
+                }`}
+              >
+                <span>{col.label}</span>
+                <span className={`px-1 rounded-full text-[9px] font-bold ${isActive ? "bg-brand-yellow text-black" : "bg-black/50 text-neutral-400"}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         {/* 4-Column Kanban Board */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 flex-1 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 flex-1 items-start">
           {COLUMNS.map((column) => {
             const colProjects = projects.filter((p) => p.status === column.id);
             const colSteelKg = colProjects.reduce((acc, p) => acc + p.steelKg, 0);
+            const isVisibleOnMobile = activeMobileTab === column.id;
 
             return (
               <div
                 key={column.id}
-                className="flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden min-h-[600px] shadow-sm"
+                className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden min-h-[400px] md:min-h-[600px] shadow-sm ${
+                  isVisibleOnMobile ? "flex" : "hidden md:flex"
+                }`}
               >
                 {/* Column Top Bar */}
                 <div className={`p-4 border-b border-brand-border bg-brand-surface/40 flex items-center justify-between`}>

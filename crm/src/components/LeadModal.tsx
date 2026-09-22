@@ -53,19 +53,19 @@ export default function LeadModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-brand-dark border border-brand-border shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-2xl bg-brand-dark border border-brand-border shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[92dvh] flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-brand-border flex items-center justify-between bg-brand-surface/40">
+        <div className="p-4 sm:p-6 border-b border-brand-border flex items-center justify-between bg-brand-surface/40 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow">
               <Inbox className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight uppercase">
+              <h3 className="text-sm sm:text-base font-bold text-white tracking-tight uppercase">
                 Nueva Petición Técnica / Lead
               </h3>
-              <p className="font-mono text-xs text-brand-textMuted">
+              <p className="font-mono text-[11px] sm:text-xs text-brand-textMuted">
                 Captura manual de consulta técnica o comercial
               </p>
             </div>
@@ -79,7 +79,7 @@ export default function LeadModal({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {error && (
             <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs">
               {error}

@@ -59,20 +59,50 @@ export default function KanbanBoard({
   onOpenQuoteModal,
   onNewProject,
 }: KanbanBoardProps) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {COLUMNS.map((col) => {
-        const colProjects = projects.filter((p) => p.status === col.id);
-        const colSteelKg = colProjects.reduce(
-          (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
-          0
-        );
+  const [activeMobileCol, setActiveMobileCol] = React.useState<"oficina_tecnica" | "taller" | "facturado">("oficina_tecnica");
 
-        return (
-          <div
-            key={col.id}
-            className="flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden"
-          >
+  return (
+    <div className="space-y-4">
+      {/* Mobile Column Switcher (Tabs) */}
+      <div className="lg:hidden flex items-center p-1 rounded-xl bg-brand-dark border border-brand-border overflow-x-auto gap-1">
+        {COLUMNS.map((col) => {
+          const count = projects.filter((p) => p.status === col.id).length;
+          const isActive = activeMobileCol === col.id;
+          return (
+            <button
+              key={col.id}
+              onClick={() => setActiveMobileCol(col.id)}
+              className={`flex-1 min-w-[110px] py-2 px-2 rounded-lg font-mono text-[11px] uppercase tracking-wider font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                isActive
+                  ? "bg-brand-surface text-brand-yellow border border-brand-yellow/30 shadow-sm"
+                  : "text-brand-textMuted hover:text-white"
+              }`}
+            >
+              <span>{col.id === "oficina_tecnica" ? "Técnica" : col.id === "taller" ? "Taller" : "Facturado"}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isActive ? "bg-brand-yellow text-black" : "bg-black/50 text-neutral-400"}`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {COLUMNS.map((col) => {
+          const colProjects = projects.filter((p) => p.status === col.id);
+          const colSteelKg = colProjects.reduce(
+            (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
+            0
+          );
+          const isMobileVisible = activeMobileCol === col.id;
+
+          return (
+            <div
+              key={col.id}
+              className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden ${
+                isMobileVisible ? "flex" : "hidden lg:flex"
+              }`}
+            >
             {/* Column Header */}
             <div className={`p-4 border-b border-brand-border bg-brand-surface/40 flex items-center justify-between`}>
               <div className="flex items-center gap-2.5">
@@ -235,6 +265,7 @@ export default function KanbanBoard({
           </div>
         );
       })}
+      </div>
     </div>
   );
 }

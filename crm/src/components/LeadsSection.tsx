@@ -77,8 +77,96 @@ export default function LeadsSection({
         </div>
       </div>
 
-      {/* Leads Table */}
-      <div className="rounded-2xl bg-brand-dark border border-brand-border overflow-hidden">
+      {/* Leads Mobile Cards View (sm/md screens) */}
+      <div className="md:hidden space-y-3">
+        {filteredLeads.length === 0 ? (
+          <div className="p-8 text-center rounded-2xl bg-brand-dark border border-brand-border">
+            <span className="font-mono text-xs text-brand-textMuted uppercase tracking-wider">
+              No hay peticiones registradas
+            </span>
+          </div>
+        ) : (
+          filteredLeads.map((lead) => {
+            const dateStr = new Date(lead.createdAt).toLocaleDateString("es-ES", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            });
+            return (
+              <div
+                key={lead.id}
+                className="p-4 rounded-xl bg-brand-dark border border-brand-border space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-bold text-white tracking-tight text-sm">
+                      {lead.client || "Sin especificar"}
+                    </div>
+                    <div className="font-mono text-[10px] text-brand-textMuted">
+                      #{lead.id.slice(-6)} · {dateStr}
+                    </div>
+                  </div>
+                  <div>
+                    {lead.status === "nuevo" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/40 text-brand-yellow text-[10px] font-bold uppercase tracking-wider">
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
+                        Nuevo
+                      </span>
+                    )}
+                    {lead.status === "evaluacion" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/40 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">
+                        <Clock className="w-2.5 h-2.5" />
+                        Evaluación
+                      </span>
+                    )}
+                    {lead.status === "descartado" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-brand-textMuted text-[10px] uppercase tracking-wider">
+                        Descartado
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-neutral-300">
+                  <a href={`mailto:${lead.email}`} className="flex items-center gap-1 hover:text-brand-yellow">
+                    <Mail className="w-3 h-3 text-brand-textMuted" />
+                    <span className="truncate max-w-[180px]">{lead.email}</span>
+                  </a>
+                  <a href={`tel:${lead.phone}`} className="flex items-center gap-1 hover:text-brand-yellow">
+                    <Phone className="w-3 h-3 text-brand-textMuted" />
+                    <span>{lead.phone}</span>
+                  </a>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-black/40 border border-brand-border text-xs text-neutral-300 font-sans line-clamp-3">
+                  {lead.message}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  {lead.status !== "descartado" ? (
+                    <button
+                      onClick={() => onUpdateStatus(lead.id, "descartado")}
+                      className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-brand-textMuted hover:text-red-400 font-mono text-[10px] uppercase"
+                    >
+                      Descartar
+                    </button>
+                  ) : <div />}
+                  <button
+                    onClick={() => onConvertToProject(lead)}
+                    className="bg-brand-yellow text-black hover:bg-brand-accent transition-colors rounded-full font-mono uppercase text-[10px] font-semibold px-4 py-1.5 flex items-center gap-1 shadow-sm"
+                  >
+                    <span>Convertir a Proyecto</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Leads Table (Desktop) */}
+      <div className="hidden md:block rounded-2xl bg-brand-dark border border-brand-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

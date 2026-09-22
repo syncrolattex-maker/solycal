@@ -2508,22 +2508,22 @@ ${getFooter()}
 const contactoHtml = `${getHead('Contacto y Presupuestos de Calderería | SOLYCAL Torrent', 'Contacta con la oficina técnica de Solycal en Torrent (Valencia). Teléfono: +34 96 150 40 38 - info@solycal.es. Envía tus planos para valoración inmediata.', 'contacto.html')}
 ${getHeader('contacto')}
 
-<!-- HERO "HABLEMOS DE TU PRÓXIMO PROYECTO" WITH "DON'T TOUCH ME" SPHERE BLEEDING OFF THE RIGHT EDGE -->
-<section id="contacto-hero" class="relative py-24 sm:py-32 lg:py-40 border-b border-white/5 bg-[#090b0e] overflow-hidden">
+<!-- SECCIÓN CONTINUA Y UNIFICADA DE CONTACTO (SIN CORTE ENTRE CABECERA Y FORMULARIO) -->
+<section id="contacto-hero" class="relative pt-24 sm:pt-32 pb-24 sm:pb-32 bg-[#07080a] overflow-hidden">
   
-  <!-- Canvas "Don't touch me" esfera de partículas entrecortada a la derecha -->
-  <div class="absolute -right-28 sm:-right-44 md:-right-60 lg:-right-72 xl:-right-80 top-1/2 -translate-y-1/2 w-[540px] sm:w-[720px] md:w-[860px] lg:w-[1020px] aspect-square pointer-events-auto z-0 select-none">
+  <!-- Canvas "Don't touch me" esfera de partículas entrecortada a la derecha sin cortes horizontales -->
+  <div class="absolute -right-28 sm:-right-44 md:-right-60 lg:-right-72 xl:-right-80 top-12 sm:top-16 lg:top-20 w-[540px] sm:w-[720px] md:w-[860px] lg:w-[1020px] aspect-square pointer-events-auto z-0 select-none">
     <canvas id="dont-touch-me-canvas" class="w-full h-full block cursor-crosshair opacity-85 hover:opacity-100 transition-opacity duration-700"></canvas>
-    <!-- Gradientes sutiles para fundir perfectamente con el fondo general -->
-    <div class="absolute inset-0 bg-gradient-to-r from-[#090b0e] via-transparent to-transparent pointer-events-none"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-[#090b0e]/70 via-transparent to-[#090b0e]/70 pointer-events-none"></div>
+    <!-- Gradientes sutiles para fundir perfectamente con el fondo general #07080a -->
+    <div class="absolute inset-0 bg-gradient-to-r from-[#07080a] via-transparent to-transparent pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/80 via-transparent to-[#07080a]/60 pointer-events-none"></div>
   </div>
 
   <!-- Fondo técnico tenue -->
   <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
 
-  <!-- Contenido textual frontal a la izquierda -->
-  <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto">
+  <!-- 01 CABECERA FRONTAL: HABLEMOS DE TU PRÓXIMO PROYECTO -->
+  <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
     <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
       <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
       <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
@@ -2549,10 +2549,9 @@ ${getHeader('contacto')}
       </div>
     </div>
   </div>
-</section>
 
-<section class="py-24 bg-[#07080a]">
-  <div class="w-full px-6">
+  <!-- 02 BLOQUE DE DIRECCIÓN Y FORMULARIO (FLUIDO, SIN CORTE DE SECCIÓN) -->
+  <div class="w-full px-6 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
       
       <!-- Contact Info -->
@@ -2786,7 +2785,7 @@ ${getHeader('contacto')}
         return;
       }
 
-      ctx.fillStyle = '#090b0e';
+      ctx.fillStyle = '#07080a';
       ctx.fillRect(0, 0, width, height);
 
       const cx = width / 2;

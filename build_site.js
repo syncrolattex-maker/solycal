@@ -2041,19 +2041,19 @@ ${getHeader('inicio')}
       <!-- Left column: empty on desktop to keep the CNC plasma torch and sparks clear and defined -->
       <div class="hidden lg:block lg:col-span-5 pointer-events-none"></div>
 
-      <!-- Right column: technical text block, specs and CTAs over solid black gradient -->
-      <div class="lg:col-span-7 space-y-6 reveal">
+      <!-- Right column: technical text block, specs and CTAs over solid black gradient (Right aligned) -->
+      <div class="lg:col-span-7 space-y-6 reveal flex flex-col items-end text-right">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
           <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
           <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
         </div>
-        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight text-right">
           Corte plasma de alta definición y oxicorte hasta 50 mm.
         </h2>
-        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-2xl">
+        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-2xl text-right ml-auto">
           Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
         </p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs max-w-2xl">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs max-w-2xl w-full text-right">
           <div class="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-sm">
             <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
             <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
@@ -2067,12 +2067,12 @@ ${getHeader('inicio')}
             <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
           </div>
         </div>
-        <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
-          <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
+        <div class="pt-4 flex flex-col sm:flex-row justify-end gap-4 font-mono text-xs w-full">
+          <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center justify-center gap-2">
             <span>Ficha Técnica Corte Plasma</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
-          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center justify-center gap-2 backdrop-blur-sm">
             <span>Ver Maquinaria de Corte</span>
           </a>
         </div>

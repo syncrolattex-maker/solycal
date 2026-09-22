@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Scale,
@@ -191,10 +191,70 @@ export default function KanbanPage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [activeMobileTab, setActiveMobileTab] = useState<ColumnId>("nuevo");
 
-  const moveProject = (id: string, newStatus: ColumnId) => {
+  useEffect(() => {
+    const syncLeads = async () => {
+      try {
+        const res = await fetch("/api/leads");
+        if (!res.ok) return;
+        const leads: Array<{
+          id: string;
+          client: string | null;
+          email: string;
+          phone: string;
+          message: string;
+          status: "nuevo" | "evaluacion" | "descartado";
+          createdAt: string;
+        }> = await res.json();
+
+        const leadProjects: MockProject[] = leads
+          .filter((l) => l.status === "nuevo")
+          .map((l) => ({
+            id: l.id,
+            ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
+            title: l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message,
+            client: l.client || "SOLICITUD WEB",
+            status: "nuevo" as const,
+            steelKg: 0,
+            estimatedHours: 0,
+            amount: 0,
+            material: `Petición Web · ${l.email}`,
+            createdAt: new Date(l.createdAt).toLocaleDateString("es-ES"),
+          }));
+
+        setProjects((prev) => {
+          const nonDynamicLeads = prev.filter((p) => !p.id.startsWith("lead-"));
+          return [...leadProjects, ...nonDynamicLeads];
+        });
+      } catch {
+        // Silently ignore if offline
+      }
+    };
+
+    syncLeads();
+    const interval = setInterval(syncLeads, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const moveProject = async (id: string, newStatus: ColumnId) => {
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
     );
+
+    if (id.startsWith("lead-")) {
+      try {
+        await fetch("/api/leads", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id,
+            status: newStatus === "nuevo" ? "nuevo" : "evaluacion",
+          }),
+        });
+      } catch {
+        // Silently ignore
+      }
+    }
+
     setNotice("Estado de proyecto actualizado");
     setTimeout(() => setNotice(null), 3000);
   };

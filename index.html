@@ -852,7 +852,7 @@
 </section>
 
 <!-- SERVICES ACCORDION / EDITORIAL CARDS (Cattaneo Style) -->
-<section class="py-28 bg-[#07080a] border-b border-white/5">
+<section class="py-28 bg-[#07080a]">
   <div class="w-full px-6">
     <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-20 reveal">
       <div>
@@ -950,51 +950,72 @@
   </div>
 </section>
 
-<!-- FEATURED SECTION: CORTE TÉRMICO CNC CON FONDO COMPLETO INDUSTRIAL (assets/header.jpg) -->
-<section class="relative py-28 border-b border-white/5 overflow-hidden">
-  <!-- Full-bleed background image with industrial dark overlay -->
-  <div class="absolute inset-0 z-0">
-    <img src="assets/header.jpg" alt="Mesa de oxicorte y plasma CNC de alta definición en SOLYCAL" class="w-full h-full object-cover object-center scale-105" loading="lazy">
-    <div class="absolute inset-0 bg-[#07080a]/85 backdrop-blur-[2px]"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-[#07080a] via-[#07080a]/80 to-transparent"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/70"></div>
-    <div class="absolute inset-0 dot-grid opacity-30"></div>
+<!-- FEATURED SECTION: CORTE TÉRMICO CNC CON FONDO INDUSTRIAL (assets/header.jpg) -->
+<section class="relative py-32 lg:py-44 bg-[#07080a] overflow-hidden">
+  <!-- Full-bleed background image with high clarity on left and seamless dark gradients -->
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <img src="assets/header.jpg" alt="Mesa de oxicorte y plasma CNC de alta definición en SOLYCAL" class="w-full h-full object-cover object-[25%_center] lg:object-[28%_center]" loading="lazy">
+    
+    <!-- Left subtle vignette so machine sparks & details pop with maximum clarity -->
+    <div class="absolute inset-0 bg-black/10"></div>
+    
+    <!-- Horizontal gradient: clear on left, smoothly fading into deep solid black on the right where text appears -->
+    <div class="hidden lg:block absolute inset-0 bg-gradient-to-r from-transparent via-[#07080a]/40 via-40% to-[#07080a] to-75%"></div>
+    <div class="hidden lg:block absolute inset-y-0 right-0 w-3/5 bg-gradient-to-r from-transparent via-[#07080a]/90 to-[#07080a]"></div>
+
+    <!-- Mobile/Tablet gradient: vertical fade ensuring readability -->
+    <div class="lg:hidden absolute inset-0 bg-gradient-to-b from-[#07080a]/20 via-[#07080a]/80 to-[#07080a]"></div>
+
+    <!-- Seamless top transition: deep black gradient fade so there is no cut between sections -->
+    <div class="absolute top-0 inset-x-0 h-44 sm:h-60 bg-gradient-to-b from-[#07080a] via-[#07080a]/90 to-transparent"></div>
+    
+    <!-- Seamless bottom transition: deep black gradient fade into next section -->
+    <div class="absolute bottom-0 inset-x-0 h-44 sm:h-60 bg-gradient-to-t from-[#07080a] via-[#07080a]/90 to-transparent"></div>
+
+    <!-- Subtle technical grid overlay -->
+    <div class="absolute inset-0 dot-grid opacity-20"></div>
   </div>
 
   <div class="w-full px-6 relative z-10">
-    <div class="max-w-4xl space-y-6 reveal">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
-        <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
-        <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
-      </div>
-      <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-        Corte plasma de alta definición y oxicorte hasta 50 mm.
-      </h2>
-      <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-3xl">
-        Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs max-w-3xl">
-        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
-          <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
-          <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <!-- Left column: empty on desktop to keep the CNC plasma torch and sparks clear and defined -->
+      <div class="hidden lg:block lg:col-span-5 pointer-events-none"></div>
+
+      <!-- Right column: technical text block, specs and CTAs over solid black gradient -->
+      <div class="lg:col-span-7 space-y-6 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 font-mono text-xs text-brand-yellow uppercase tracking-widest">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
+          <span>// CORTE TÉRMICO CNC &bull; TECNOLOGÍA TRUEHOLE</span>
         </div>
-        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
-          <span class="text-neutral-400 block text-[11px]">Espesor máx. carbono</span>
-          <span class="text-brand-yellow font-bold text-base mt-1 block">50 mm</span>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+          Corte plasma de alta definición y oxicorte hasta 50 mm.
+        </h2>
+        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed font-sans max-w-2xl">
+          Equipados con generador Hypertherm HyPerformance HPR260XD y mesa de 9.000 x 2.500 mm. La tecnología TrueHole elimina la conicidad en orificios para tornillería, reduciendo tiempos de mecanizado posterior y optimizando cada chapa con software de nesting inteligente.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-mono text-xs max-w-2xl">
+          <div class="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-sm">
+            <span class="text-neutral-400 block text-[11px]">Bancada útil</span>
+            <span class="text-white font-bold text-base mt-1 block">9.000 x 2.500 mm</span>
+          </div>
+          <div class="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-sm">
+            <span class="text-neutral-400 block text-[11px]">Espesor máx. carbono</span>
+            <span class="text-brand-yellow font-bold text-base mt-1 block">50 mm</span>
+          </div>
+          <div class="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-sm">
+            <span class="text-neutral-400 block text-[11px]">Inoxidable</span>
+            <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
+          </div>
         </div>
-        <div class="p-4 rounded-xl bg-black/50 border border-white/10 backdrop-blur-sm">
-          <span class="text-neutral-400 block text-[11px]">Inoxidable</span>
-          <span class="text-white font-bold text-base mt-1 block">Hasta 15 mm</span>
+        <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
+          <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
+            <span>Ficha Técnica Corte Plasma</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+          <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+            <span>Ver Maquinaria de Corte</span>
+          </a>
         </div>
-      </div>
-      <div class="pt-4 flex flex-col sm:flex-row gap-4 font-mono text-xs">
-        <a href="servicios.html#plasma" class="px-6 py-3.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all inline-flex items-center gap-2">
-          <span>Ficha Técnica Corte Plasma</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-        <a href="instalaciones.html" class="px-6 py-3.5 rounded-full border border-white/20 text-white uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-all inline-flex items-center gap-2 backdrop-blur-sm">
-          <span>Ver Maquinaria de Corte</span>
-        </a>
       </div>
     </div>
   </div>

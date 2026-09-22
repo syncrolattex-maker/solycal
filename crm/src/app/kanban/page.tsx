@@ -192,46 +192,88 @@ export default function KanbanPage() {
   const [activeMobileTab, setActiveMobileTab] = useState<ColumnId>("nuevo");
 
   useEffect(() => {
-    const syncLeads = async () => {
+    const syncData = async () => {
       try {
-        const res = await fetch("/api/leads");
-        if (!res.ok) return;
-        const leads: Array<{
-          id: string;
-          client: string | null;
-          email: string;
-          phone: string;
-          message: string;
-          status: "nuevo" | "evaluacion" | "descartado";
-          createdAt: string;
-        }> = await res.json();
+        const [leadsRes, prjRes] = await Promise.all([
+          fetch("/api/leads"),
+          fetch("/api/projects"),
+        ]);
 
-        const leadProjects: MockProject[] = leads
-          .filter((l) => l.status === "nuevo")
-          .map((l) => ({
-            id: l.id,
-            ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
-            title: l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message,
-            client: l.client || "SOLICITUD WEB",
-            status: "nuevo" as const,
-            steelKg: 0,
-            estimatedHours: 0,
-            amount: 0,
-            material: `Petición Web · ${l.email}`,
-            createdAt: new Date(l.createdAt).toLocaleDateString("es-ES"),
-          }));
+        let leadProjects: MockProject[] = [];
+        if (leadsRes.ok) {
+          const leads: Array<{
+            id: string;
+            client: string | null;
+            email: string;
+            phone: string;
+            message: string;
+            status: "nuevo" | "evaluacion" | "descartado";
+            createdAt: string;
+          }> = await leadsRes.json();
+
+          leadProjects = leads
+            .filter((l) => l.status === "nuevo")
+            .map((l) => ({
+              id: l.id,
+              ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
+              title: l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message,
+              client: l.client || "SOLICITUD WEB",
+              status: "nuevo" as const,
+              steelKg: 0,
+              estimatedHours: 0,
+              amount: 0,
+              material: `Petición Web · ${l.email}`,
+              createdAt: new Date(l.createdAt).toLocaleDateString("es-ES"),
+            }));
+        }
+
+        let dbProjects: MockProject[] = [];
+        if (prjRes.ok) {
+          const projectsData: Array<{
+            id: string;
+            title: string;
+            client: string | null;
+            status: "oficina_tecnica" | "taller" | "facturado";
+            createdAt: string;
+            quotes?: Array<{ steelKg: number; estimatedHours: number; amount: number }>;
+          }> = await prjRes.json();
+
+          dbProjects = projectsData.map((p) => {
+            const steelKg = p.quotes?.reduce((acc, q) => acc + q.steelKg, 0) || 0;
+            const estimatedHours = p.quotes?.reduce((acc, q) => acc + q.estimatedHours, 0) || 0;
+            const amount = p.quotes?.reduce((acc, q) => acc + q.amount, 0) || 0;
+            const statusCol: ColumnId =
+              p.status === "oficina_tecnica" ? "tecnica" : p.status === "taller" ? "taller" : "facturado";
+
+            return {
+              id: p.id,
+              ref: `PRJ-${p.id.slice(-4).toUpperCase()}`,
+              title: p.title,
+              client: p.client || "CLIENTE GENERAL",
+              status: statusCol,
+              steelKg,
+              estimatedHours,
+              amount,
+              material: "Proyecto Técnico Solycal",
+              createdAt: new Date(p.createdAt).toLocaleDateString("es-ES"),
+            };
+          });
+        }
 
         setProjects((prev) => {
-          const nonDynamicLeads = prev.filter((p) => !p.id.startsWith("lead-"));
-          return [...leadProjects, ...nonDynamicLeads];
+          // Keep mock projects that aren't dynamic
+          const staticMocks = prev.filter(
+            (p) => !p.id.startsWith("lead-") && !p.id.startsWith("prj-") && !dbProjects.some((dp) => dp.id === p.id)
+          );
+          return [...leadProjects, ...dbProjects, ...staticMocks];
         });
       } catch {
         // Silently ignore if offline
       }
     };
 
-    syncLeads();
-    const interval = setInterval(syncLeads, 4000);
+    syncData();
+    const interval = setInterval(syncData, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -248,6 +290,21 @@ export default function KanbanPage() {
           body: JSON.stringify({
             id,
             status: newStatus === "nuevo" ? "nuevo" : "evaluacion",
+          }),
+        });
+      } catch {
+        // Silently ignore
+      }
+    } else {
+      // Map to db project status
+      const dbStatus = newStatus === "facturado" ? "facturado" : newStatus === "taller" ? "taller" : "oficina_tecnica";
+      try {
+        await fetch("/api/projects", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id,
+            status: dbStatus,
           }),
         });
       } catch {

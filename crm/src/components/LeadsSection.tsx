@@ -8,8 +8,8 @@ import {
   Phone,
   ArrowRight,
   XCircle,
-  Clock,
   Plus,
+  ChevronDown,
 } from "lucide-react";
 
 interface LeadsSectionProps {
@@ -106,24 +106,35 @@ export default function LeadsSection({
                       #{lead.id.slice(-6)} · {dateStr}
                     </div>
                   </div>
-                  <div>
-                    {lead.status === "nuevo" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/40 text-brand-yellow text-[10px] font-bold uppercase tracking-wider">
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                        Nuevo
-                      </span>
-                    )}
-                    {lead.status === "evaluacion" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/40 text-cyan-400 text-[10px] font-bold uppercase tracking-wider">
-                        <Clock className="w-2.5 h-2.5" />
-                        Evaluación
-                      </span>
-                    )}
-                    {lead.status === "descartado" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-brand-textMuted text-[10px] uppercase tracking-wider">
-                        Descartado
-                      </span>
-                    )}
+                  <div className="relative shrink-0">
+                    <select
+                      value={lead.status}
+                      onChange={(e) =>
+                        onUpdateStatus(
+                          lead.id,
+                          e.target.value as "nuevo" | "evaluacion" | "descartado"
+                        )
+                      }
+                      aria-label="Cambiar estado del lead"
+                      className={`appearance-none font-mono uppercase text-[10px] font-bold tracking-wider py-1 pl-2.5 pr-6 rounded-full border cursor-pointer focus:outline-none ${
+                        lead.status === "nuevo"
+                          ? "bg-brand-yellow/15 border-brand-yellow/40 text-brand-yellow"
+                          : lead.status === "evaluacion"
+                          ? "bg-cyan-400/15 border-cyan-400/40 text-cyan-400"
+                          : "bg-neutral-800 border-neutral-700 text-brand-textMuted"
+                      }`}
+                    >
+                      <option value="nuevo" className="bg-brand-dark text-brand-yellow font-mono">
+                        ● Nuevo
+                      </option>
+                      <option value="evaluacion" className="bg-brand-dark text-cyan-400 font-mono">
+                        ◐ Evaluación
+                      </option>
+                      <option value="descartado" className="bg-brand-dark text-neutral-400 font-mono">
+                        ✕ Descartado
+                      </option>
+                    </select>
+                    <ChevronDown className="w-2.5 h-2.5 text-neutral-400 pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2" />
                   </div>
                 </div>
 
@@ -236,26 +247,38 @@ export default function LeadsSection({
                         </p>
                       </td>
 
-                      {/* Estado */}
+                      {/* Estado con Selector Interactivo */}
                       <td className="py-4 px-6 align-top font-mono text-xs">
-                        {lead.status === "nuevo" && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/40 text-brand-yellow text-[11px] font-bold uppercase tracking-wider">
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-ping"></span>
-                            Nuevo
-                          </span>
-                        )}
-                        {lead.status === "evaluacion" && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/40 text-cyan-400 text-[11px] font-bold uppercase tracking-wider">
-                            <Clock className="w-3 h-3" />
-                            Evaluación
-                          </span>
-                        )}
-                        {lead.status === "descartado" && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-brand-textMuted text-[11px] uppercase tracking-wider">
-                            <XCircle className="w-3 h-3" />
-                            Descartado
-                          </span>
-                        )}
+                        <div className="relative inline-block">
+                          <select
+                            value={lead.status}
+                            onChange={(e) =>
+                              onUpdateStatus(
+                                lead.id,
+                                e.target.value as "nuevo" | "evaluacion" | "descartado"
+                              )
+                            }
+                            aria-label="Cambiar estado del lead"
+                            className={`appearance-none font-mono uppercase text-[11px] font-bold tracking-wider py-1 pl-3 pr-7 rounded-full border cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-brand-yellow/50 ${
+                              lead.status === "nuevo"
+                                ? "bg-brand-yellow/15 border-brand-yellow/40 text-brand-yellow hover:bg-brand-yellow/25"
+                                : lead.status === "evaluacion"
+                                ? "bg-cyan-400/15 border-cyan-400/40 text-cyan-400 hover:bg-cyan-400/25"
+                                : "bg-neutral-800 border-neutral-700 text-brand-textMuted hover:bg-neutral-700 hover:text-neutral-200"
+                            }`}
+                          >
+                            <option value="nuevo" className="bg-brand-dark text-brand-yellow font-mono">
+                              ● Nuevo
+                            </option>
+                            <option value="evaluacion" className="bg-brand-dark text-cyan-400 font-mono">
+                              ◐ Evaluación
+                            </option>
+                            <option value="descartado" className="bg-brand-dark text-neutral-400 font-mono">
+                              ✕ Descartado
+                            </option>
+                          </select>
+                          <ChevronDown className="w-3 h-3 text-neutral-400 pointer-events-none absolute right-2 top-1/2 -translate-y-1/2" />
+                        </div>
                       </td>
 
                       {/* Fecha */}

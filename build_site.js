@@ -2656,88 +2656,377 @@ ${getHeader('instalaciones')}
 ${getFooter()}
 `;
 
-// 4. GENERATE CALIDAD.HTML (Quality and Certification Page)
+// --- MADE FOR AWARD COMPONENT 0024: THREE.JS WEBGL AURORA GRADIENT SHADER ---
+const auroraVertexShader = `void main() { gl_Position = vec4(position, 1.0); }`;
+
+const auroraFragmentShader = `precision highp float;
+
+uniform float uTime;
+uniform vec2  uRes;
+uniform vec2  uMouse;
+uniform vec2  uMouseUV;
+uniform float uReveal;
+
+uniform float uHorizon;
+uniform float uIntensity;
+uniform float uSpreadMax;
+uniform float uCoreGlow;
+uniform float uFlowSpeed;
+uniform float uWaveAmount;
+uniform float uBreath;
+uniform float uColorfulness;
+uniform vec3  uColWhite;
+uniform vec3  uColOrange;
+uniform vec3  uColRed;
+uniform vec3  uColCyan;
+uniform vec3  uColMagenta;
+uniform vec3  uColGold;
+uniform float uParallax;
+uniform float uMouseGlow;
+uniform float uMouseGlowSize;
+uniform float uMouseBend;
+
+float hash(vec2 p) {
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+    mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+    u.y
+  );
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 4; i++) {
+    v += a * noise(p);
+    p = p * 2.03 + vec2(17.3, 9.1);
+    a *= 0.5;
+  }
+  return v;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  float aspect = uRes.x / uRes.y;
+
+  uv += uMouse * vec2(-0.03, -0.02) * uParallax;
+
+  float x = uv.x;
+  float d = uv.y - uHorizon;
+
+  float n1 = fbm(vec2(x * 3.0 - uTime * 0.06, uv.y * 2.0 + uTime * 0.045));
+  float n2 = fbm(vec2(x * 7.0 + uTime * 0.05, uv.y * 5.0 - uTime * 0.06));
+
+  float grow = smoothstep(0.06, 0.72, x + (n1 - 0.5) * 0.12);
+  grow = pow(grow, 1.7);
+
+  float spread = mix(0.014, uSpreadMax, pow(smoothstep(0.18, 1.05, x), 2.1));
+
+  float dd = d + (n1 - 0.5) * uWaveAmount * smoothstep(0.25, 0.9, x);
+
+  vec2 mq = (uv - uMouseUV) * vec2(aspect, 1.0) / max(uMouseGlowSize, 0.01);
+  float mGauss = exp(-dot(mq, mq));
+  dd -= mGauss * (uMouseUV.y - uHorizon) * uMouseBend;
+
+  float band = exp(-abs(dd) / spread);
+  float coreGlow = exp(-abs(d) / 0.028) * grow * uCoreGlow;
+  float halo = exp(-abs(dd) / (spread * 2.6)) * 0.35;
+
+  float light = (band + halo) * grow + coreGlow;
+
+  float flow = fbm(vec2(x * 4.5 + n1, abs(dd) * 3.5 - uTime * uFlowSpeed));
+  light *= 0.72 + 0.55 * flow;
+
+  light *= 1.0 - uBreath + uBreath * sin(uTime * 0.5 + x * 2.0);
+  light += mGauss * uMouseGlow * (0.7 + 0.3 * sin(uTime * 0.8));
+  light *= uIntensity;
+
+  float colorAmt = smoothstep(0.25, 0.85, x) * uColorfulness;
+  float up = smoothstep(0.0, 0.45, dd);
+  float dn = smoothstep(0.0, -0.4, dd);
+
+  vec3 col = uColWhite;
+  col = mix(col, uColGold, smoothstep(0.06, 0.16, abs(dd)) * smoothstep(0.35, 0.0, abs(dd)) * colorAmt * 0.8);
+  col = mix(col, uColOrange, clamp(up * (1.2 + n2 * 0.6) * colorAmt, 0.0, 1.0));
+  col = mix(col, uColRed, clamp((up * 2.4 - 0.9) * colorAmt, 0.0, 1.0));
+  col = mix(col, uColMagenta, clamp((n2 - 0.55) * 2.2, 0.0, 1.0) * (up + dn) * colorAmt * 0.65);
+  col = mix(col, uColCyan, smoothstep(0.72, 1.0, x + (n2 - 0.5) * 0.08) * 0.85);
+  col = mix(col, mix(uColWhite, uColCyan, 0.35), dn * 0.45);
+
+  vec3 color = col * light;
+
+  vec2 ep = (uv - vec2(0.86, 0.0)) * vec2(1.2 * aspect * 0.6, 2.0);
+  float ember = exp(-dot(ep, ep)) * smoothstep(0.0, -0.12, d);
+  color += uColRed * ember * (0.55 + 0.1 * sin(uTime * 0.7));
+
+  vec2 lp = (uv - vec2(0.02, 0.0)) * vec2(2.2, 2.6);
+  color += mix(uColRed, uColMagenta, 0.5) * exp(-dot(lp, lp)) * smoothstep(0.0, -0.12, d) * 0.22;
+
+  float sheen = smoothstep(0.0, -0.5, d) * 0.05 * grow;
+  color += vec3(0.6, 0.68, 0.72) * sheen;
+
+  vec2 sp = uv * vec2(aspect, 1.0) * 90.0;
+  vec2 cell = floor(sp);
+  vec2 fp = fract(sp) - 0.5;
+  float star = step(0.997, hash(cell)) * smoothstep(0.16, 0.0, length(fp));
+  float twinkle = 0.5 + 0.5 * sin(uTime * 1.5 + hash(cell + 7.0) * 50.0);
+  float darkness = 1.0 - clamp(light * 3.0, 0.0, 1.0);
+  color += vec3(0.9) * star * twinkle * darkness * smoothstep(0.75, 0.35, x) * smoothstep(0.35, 0.6, uv.y) * 0.5;
+
+  float vig = smoothstep(0.0, 0.35, uv.y) * 0.15 + 0.85;
+  vig *= 1.0 - 0.45 * pow(1.0 - uv.y, 3.0);
+  vig *= 1.0 - 0.35 * pow(uv.y, 4.0);
+  vig *= 1.0 - 0.30 * pow(clamp(1.0 - x * 1.4, 0.0, 1.0), 2.0);
+  vig *= 1.0 - 0.5 * pow(x, 5.0) * pow(uv.y, 5.0);
+  color *= vig;
+
+  color = 1.0 - exp(-color * 1.5);
+
+  gl_FragColor = vec4(color * uReveal, 1.0);
+}`;
+
+// 4. GENERATE CALIDAD.HTML (Quality and Certification Page with Aurora Shader Background)
 const calidadHtml = `${getHead('Calidad y Certificaciones LRQA ISO 9001, EN 1090-1 | SOLYCAL', 'Certificaciones oficiales acreditadas por Lloyd Register: ISO 9001:2008, Marcado CE EN 1090-1 y Soldeo Ferroviario EN 15085-2.', 'calidad.html')}
 ${getHeader('calidad')}
 
-<div class="py-20 border-b border-white/5 bg-[#090b0e] dot-grid">
-  <div class="w-full px-6">
-    <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">04 // SISTEMA DE GESTIÓN Y NORMAS</span>
-    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
-      La calidad avalada por Lloyd's Register (LRQA).
-    </h1>
-    <p class="text-neutral-400 max-w-2xl font-sans mt-6 text-base leading-relaxed">
-      Desde la toma de datos hasta el montaje final, cada proyecto cuenta con trazabilidad total de materiales y control de producción en fábrica.
-    </p>
+<!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE CALIDAD CON THREE.JS SHADER AURORA HERO (Made for Award Component 0024) -->
+<div id="calidad-page-container" class="relative bg-[#07080a] min-h-screen overflow-hidden">
+  
+  <!-- Canvas WebGL Aurora Fijo de fondo -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="aurora-wrap">
+    <canvas id="aurora-canvas" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
+  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/65 via-[#07080a]/40 to-[#07080a]/80"></div>
+  <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
+
+  <!-- CONTENIDO FRONTAL DE LA PÁGINA (Z-INDEX SUPERIOR) -->
+  <div class="relative z-10">
+
+    <!-- 01 HERO INTRODUCTORIO DE CALIDAD -->
+    <section class="py-24 border-b border-white/5 relative">
+      <div class="w-full px-6">
+        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 04 &bull; SISTEMA DE GESTIÓN Y NORMAS</span>
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
+          La calidad avalada por <span class="text-brand-yellow">Lloyd's Register (LRQA).</span>
+        </h1>
+        <p class="text-neutral-300 max-w-2xl font-sans mt-6 text-base sm:text-lg leading-relaxed">
+          Desde la toma de datos hasta el montaje final, cada proyecto cuenta con trazabilidad total de materiales y control de producción en fábrica.
+        </p>
+
+        <!-- Indicadores de normas integrados -->
+        <div class="mt-8 flex flex-wrap items-center gap-6 font-mono text-xs text-neutral-400">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span>ISO 9001:2008 CERTIFICADA</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span>MARCADO CE EN 1090-1</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span>SOLDEO FERROVIARIO EN 15085-2</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 BLOQUES Y CERTIFICACIONES -->
+    <section class="py-24">
+      <div class="w-full px-6 space-y-20">
+
+        <!-- LRQA Official Badges (Tarjetas Glassmorphism) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
+            <div class="h-32 flex items-center justify-center">
+              <img src="assets/lrqa-9001.png" alt="Certificado ISO 9001:2008 acreditado por Lloyd's Register a Solycal" class="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
+            </div>
+            <div>
+              <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA ISO 9001:2008</span>
+              <h3 class="text-xl font-display font-bold text-white">Gestión de Calidad</h3>
+              <p class="text-xs text-neutral-400 font-sans mt-2">Control de diseño, compras de chapas con certificado 3.1 y calibración de equipos.</p>
+            </div>
+          </div>
+
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
+            <div class="h-32 flex items-center justify-center">
+              <img src="assets/lrqa-1090.png" alt="Certificado Marcado CE EN 1090-1 para estructuras metálicas de Solycal" class="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
+            </div>
+            <div>
+              <span class="font-mono text-xs text-brand-yellow block mb-1">EN 1090-1 &bull; MARCADO CE</span>
+              <h3 class="text-xl font-display font-bold text-white">Estructuras Metálicas</h3>
+              <p class="text-xs text-neutral-400 font-sans mt-2">Obligatorio en la UE para la comercialización de componentes estructurales de acero.</p>
+            </div>
+          </div>
+
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
+            <div class="h-32 flex items-center justify-center">
+              <div class="w-20 h-20 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow group-hover:scale-105 transition-transform">
+                <i data-lucide="train" class="w-10 h-10"></i>
+              </div>
+            </div>
+            <div>
+              <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA EN 15085-2</span>
+              <h3 class="text-xl font-display font-bold text-white">Soldeo Ferroviario</h3>
+              <p class="text-xs text-neutral-400 font-sans mt-2">Acreditación técnica para fabricación de bastidores y componentes de material rodante.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Official Quality Statement (From solycal.es/calidad) -->
+        <div class="p-10 sm:p-14 rounded-3xl bg-[#0a0c0e]/80 border border-white/10 backdrop-blur-md relative reveal shadow-2xl">
+          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// POLÍTICA DE CALIDAD EMPRESARIAL</span>
+          <h3 class="text-2xl sm:text-3xl font-display font-bold text-white mb-6">Compromiso suscrito por la dirección</h3>
+          <div class="space-y-4 text-sm sm:text-base text-neutral-300 font-sans leading-relaxed">
+            <p>
+              "SOLYCAL Soldadura y Calderería Valenciana S.L., como empresa dedicada a prestar servicios de construcción y montaje en el campo metal mecánico, y contando con el compromiso de la alta dirección y participación activa de todo el personal se compromete a:
+            </p>
+            <p class="border-l-2 border-brand-yellow pl-4 italic">
+              Lograr la satisfacción de sus clientes brindándoles productos y servicios de la más alta calidad. Buscar el constante desarrollo profesional de sus trabajadores. Alcanzar la máxima rentabilidad de la empresa y cumplir con los requisitos legales aplicables y los requisitos internos para asegurar la calidad de los servicios que brinda."
+            </p>
+            <p>
+              "Mejorar continuamente la eficacia del sistema de gestión de calidad, seguridad y la protección del medio ambiente en sus procesos a fin de alcanzar la excelencia en los mismos."
+            </p>
+          </div>
+          <div class="pt-8 border-t border-white/5 font-mono text-xs text-neutral-400 flex flex-col sm:flex-row justify-between gap-2">
+            <span>Fdo: Eloy José Molina Salinas &bull; GERENTE</span>
+            <span class="text-brand-yellow">Torrent (Valencia)</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </div>
 </div>
 
-<section class="py-24 bg-[#07080a]">
-  <div class="w-full px-6 space-y-20">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  (function() {
+    if (typeof THREE === 'undefined') return;
 
-    <!-- LRQA Official Badges -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 text-center space-y-6 reveal">
-        <div class="h-32 flex items-center justify-center">
-          <img src="assets/lrqa-9001.png" alt="Certificado ISO 9001:2008 acreditado por Lloyd's Register a Solycal" class="max-h-28 w-auto object-contain" loading="lazy">
-        </div>
-        <div>
-          <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA ISO 9001:2008</span>
-          <h3 class="text-xl font-display font-bold text-white">Gestión de Calidad</h3>
-          <p class="text-xs text-neutral-400 font-sans mt-2">Control de diseño, compras de chapas con certificado 3.1 y calibración de equipos.</p>
-        </div>
-      </div>
+    const canvas = document.getElementById('aurora-canvas');
+    if (!canvas) return;
 
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 text-center space-y-6 reveal">
-        <div class="h-32 flex items-center justify-center">
-          <img src="assets/lrqa-1090.png" alt="Certificado Marcado CE EN 1090-1 para estructuras metálicas de Solycal" class="max-h-28 w-auto object-contain" loading="lazy">
-        </div>
-        <div>
-          <span class="font-mono text-xs text-brand-yellow block mb-1">EN 1090-1 &bull; MARCADO CE</span>
-          <h3 class="text-xl font-display font-bold text-white">Estructuras Metálicas</h3>
-          <p class="text-xs text-neutral-400 font-sans mt-2">Obligatorio en la UE para la comercialización de componentes estructurales de acero.</p>
-        </div>
-      </div>
+    const config = {
+      horizon: 0.44,
+      intensity: 1.35,
+      spreadMax: 0.92,
+      coreGlow: 1.25,
+      flowSpeed: 0.5,
+      waveAmount: 0.22,
+      breath: 0.06,
+      colorfulness: 0.9,
+      colWhite: '#f2efff',
+      colOrange: '#8b5cf6',
+      colRed: '#4c1d95',
+      colCyan: '#38bdf8',
+      colMagenta: '#f0abfc',
+      colGold: '#ff7ad9',
+      parallax: 1.6,
+      mouseGlow: 0.3,
+      mouseGlowSize: 0.2,
+      mouseBend: 0.47
+    };
 
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 text-center space-y-6 reveal">
-        <div class="h-32 flex items-center justify-center">
-          <div class="w-20 h-20 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow">
-            <i data-lucide="train" class="w-10 h-10"></i>
-          </div>
-        </div>
-        <div>
-          <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA EN 15085-2</span>
-          <h3 class="text-xl font-display font-bold text-white">Soldeo Ferroviario</h3>
-          <p class="text-xs text-neutral-400 font-sans mt-2">Acreditación técnica para fabricación de bastidores y componentes de material rodante.</p>
-        </div>
-      </div>
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
 
-    </div>
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    <!-- Official Quality Statement (From solycal.es/calidad) -->
-    <div class="p-10 sm:p-14 rounded-3xl bg-white/[0.02] border border-white/10 relative reveal">
-      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// POLÍTICA DE CALIDAD EMPRESARIAL</span>
-      <h3 class="text-2xl sm:text-3xl font-display font-bold text-white mb-6">Compromiso suscrito por la dirección</h3>
-      <div class="space-y-4 text-sm sm:text-base text-neutral-300 font-sans leading-relaxed">
-        <p>
-          "SOLYCAL Soldadura y Calderería Valenciana S.L., como empresa dedicada a prestar servicios de construcción y montaje en el campo metal mecánico, y contando con el compromiso de la alta dirección y participación activa de todo el personal se compromete a:
-        </p>
-        <p class="border-l-2 border-brand-yellow pl-4 italic">
-          Lograr la satisfacción de sus clientes brindándoles productos y servicios de la más alta calidad. Buscar el constante desarrollo profesional de sus trabajadores. Alcanzar la máxima rentabilidad de la empresa y cumplir con los requisitos legales aplicables y los requisitos internos para asegurar la calidad de los servicios que brinda."
-        </p>
-        <p>
-          "Mejorar continuamente la eficacia del sistema de gestión de calidad, seguridad y la protección del medio ambiente en sus procesos a fin de alcanzar la excelencia en los mismos."
-        </p>
-      </div>
-      <div class="pt-8 border-t border-white/5 font-mono text-xs text-neutral-400 flex flex-col sm:flex-row justify-between gap-2">
-        <span>Fdo: Eloy José Molina Salinas &bull; GERENTE</span>
-        <span class="text-brand-yellow">Torrent (Valencia)</span>
-      </div>
-    </div>
+    const uniforms = {
+      uTime: { value: 0 },
+      uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uMouse: { value: new THREE.Vector2(0, 0) },
+      uMouseUV: { value: new THREE.Vector2(0.63, 0.37) },
+      uReveal: { value: 1 },
+      uHorizon: { value: config.horizon },
+      uIntensity: { value: config.intensity },
+      uSpreadMax: { value: config.spreadMax },
+      uCoreGlow: { value: config.coreGlow },
+      uFlowSpeed: { value: config.flowSpeed },
+      uWaveAmount: { value: config.waveAmount },
+      uBreath: { value: config.breath },
+      uColorfulness: { value: config.colorfulness },
+      uColWhite: { value: new THREE.Color(config.colWhite) },
+      uColOrange: { value: new THREE.Color(config.colOrange) },
+      uColRed: { value: new THREE.Color(config.colRed) },
+      uColCyan: { value: new THREE.Color(config.colCyan) },
+      uColMagenta: { value: new THREE.Color(config.colMagenta) },
+      uColGold: { value: new THREE.Color(config.colGold) },
+      uParallax: { value: config.parallax },
+      uMouseGlow: { value: config.mouseGlow },
+      uMouseGlowSize: { value: config.mouseGlowSize },
+      uMouseBend: { value: config.mouseBend }
+    };
 
-  </div>
-</section>
+    const material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: ${JSON.stringify(auroraVertexShader)},
+      fragmentShader: ${JSON.stringify(auroraFragmentShader)},
+      depthWrite: false,
+      depthTest: false
+    });
+
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(mesh);
+
+    function onResize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setSize(w, h, false);
+      uniforms.uRes.value.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
+      const isPortrait = h > w;
+      uniforms.uHorizon.value = isPortrait ? 0.5 : config.horizon;
+      uniforms.uIntensity.value = config.intensity * (isPortrait ? 1.25 : 1);
+      uniforms.uSpreadMax.value = config.spreadMax * (isPortrait ? 1.25 : 1);
+    }
+    onResize();
+    window.addEventListener('resize', onResize);
+
+    const targetMouse = new THREE.Vector2(0, 0);
+    const targetMouseUV = new THREE.Vector2(0.63, 0.37);
+
+    window.addEventListener('pointermove', function(e) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const nx = e.clientX / w;
+      const ny = e.clientY / h;
+      targetMouse.set(nx - 0.5, -(ny - 0.5));
+      targetMouseUV.set(nx, 1 - ny);
+    });
+
+    window.addEventListener('pointerleave', function() {
+      targetMouse.set(0, 0);
+      targetMouseUV.set(0.63, config.horizon);
+    });
+
+    let startTime = performance.now();
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
+      const elapsed = (performance.now() - startTime) * 0.001;
+      uniforms.uTime.value = elapsed;
+      uniforms.uMouse.value.lerp(targetMouse, 0.04);
+      uniforms.uMouseUV.value.lerp(targetMouseUV, 0.06);
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(renderLoop);
+  })();
+</script>
 
 ${getFooter()}
 `;

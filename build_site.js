@@ -2157,227 +2157,516 @@ ${getHeader('servicios')}
       </div>
     </section>
 
-    <!-- 02 BLOQUES DE SERVICIOS EDITORIALES CON SCROLL PATH JOURNEY -->
-    <section id="services-journey-container" class="py-24 relative overflow-hidden">
+    <!-- 02 BLOQUES DE SERVICIOS: STICKY STACKING CARDS & INTERACCIÓN 3D / HOTSPOTS -->
+    <section id="services-stack-section" class="py-16 sm:py-24 relative">
 
-      <!-- ESTILOS ESPECÍFICOS DEL SCROLL PATH JOURNEY & ESTACIONES -->
+      <!-- ESTILOS ESPECÍFICOS DE INTERACCIÓN 3D, SPOTLIGHT Y HOTSPOTS -->
       <style>
-        .journey-station-badge {
-          position: relative;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          background-color: rgba(255, 255, 255, 0.03);
-          transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        #services-stack-section {
+          perspective: 1400px;
         }
-        .journey-station-badge.is-active {
-          border-color: rgba(241, 181, 65, 0.5) !important;
-          background-color: rgba(241, 181, 65, 0.08) !important;
-          box-shadow: 0 0 25px rgba(241, 181, 65, 0.2);
+        .stack-card {
+          transform-style: preserve-3d;
+          will-change: transform, opacity, filter;
         }
-        .journey-station-badge.is-active .station-code {
-          color: #F1B541 !important;
+        .card-spotlight-layer {
+          transition: opacity 0.5s ease;
         }
-        .journey-station-badge.is-active .station-dot {
-          background-color: #F1B541 !important;
-          box-shadow: 0 0 10px #F1B541;
+        .hotspot-popover {
+          transform: translateY(-50%) scale(0.95);
+          transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .station-dot.is-pulsing::after {
-          content: '';
-          position: absolute;
-          inset: -3px;
-          border-radius: 9999px;
-          border: 1.5px solid #F1B541;
-          animation: station-pulse 1.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        .hotspot-pin:hover .hotspot-popover,
+        .hotspot-popover.is-open {
+          opacity: 1 !important;
+          pointer-events: auto !important;
+          transform: translateY(-50%) scale(1) !important;
         }
-        @keyframes station-pulse {
-          0% { transform: scale(1); opacity: 0.9; }
-          100% { transform: scale(2.8); opacity: 0; }
+        .hotspot-pin:hover .hotspot-btn i,
+        .hotspot-pin.is-open .hotspot-btn i {
+          transform: rotate(45deg);
         }
-        .journey-item-card {
-          will-change: transform, opacity;
+        .stack-nav-btn {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
       </style>
 
-      <!-- SCROLL PATH JOURNEY BACKGROUND SVG TRACK (DESKTOP) -->
-      <div class="absolute inset-0 pointer-events-none z-0 hidden lg:block overflow-hidden" aria-hidden="true">
-        <svg id="journey-svg-desktop" class="w-full h-full" viewBox="0 0 1000 2400" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="solycalJourneyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#F1B541" stop-opacity="0.8"/>
-              <stop offset="35%" stop-color="#F1B541" stop-opacity="1"/>
-              <stop offset="70%" stop-color="#E5A52A" stop-opacity="1"/>
-              <stop offset="100%" stop-color="#F1B541" stop-opacity="0.9"/>
-            </linearGradient>
-            <filter id="plasmaLaserGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="4" result="glow" />
-              <feMerge>
-                <feMergeNode in="glow" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <filter id="sparkAura" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="6" />
-            </filter>
-          </defs>
-
-          <!-- Guía de fondo sutil / Blueprint guide -->
-          <path id="journey-shadow-path" 
-                d="M 500 20 C 440 180, 420 280, 420 400 C 420 620, 580 760, 580 980 C 580 1200, 420 1340, 420 1560 C 420 1780, 580 1920, 580 2120 C 580 2240, 500 2320, 500 2380"
-                fill="none" 
-                stroke="rgba(255,255,255,0.08)" 
-                stroke-width="2" 
-                stroke-dasharray="6 6"/>
-
-          <!-- Trazo activo dibujado con el scroll -->
-          <path id="journey-progress-path" 
-                d="M 500 20 C 440 180, 420 280, 420 400 C 420 620, 580 760, 580 980 C 580 1200, 420 1340, 420 1560 C 420 1780, 580 1920, 580 2120 C 580 2240, 500 2320, 500 2380"
-                fill="none" 
-                stroke="url(#solycalJourneyGrad)" 
-                stroke-width="3" 
-                stroke-linecap="round"
-                filter="url(#plasmaLaserGlow)"/>
-
-          <!-- Cabezal de Plasma / Chispa de Soldadura viajera -->
-          <g id="journey-plasma-spark" opacity="0">
-            <!-- Halo expansivo de plasma -->
-            <circle r="22" fill="#F1B541" fill-opacity="0.18" filter="url(#sparkAura)"/>
-            <circle r="12" fill="#F1B541" fill-opacity="0.5"/>
-            <circle r="6" fill="#F1B541"/>
-            <circle r="2.5" fill="#FFFFFF"/>
-          </g>
-        </svg>
-      </div>
-
-      <!-- MOBILE VERTICAL GUIDE TRACK -->
-      <div class="absolute inset-y-0 left-4 sm:left-8 pointer-events-none z-0 lg:hidden w-[2px]" aria-hidden="true">
-        <div class="w-full h-full bg-white/5 relative">
-          <div id="journey-mobile-progress-bar" class="w-full bg-brand-yellow h-0 shadow-[0_0_10px_#F1B541]"></div>
-          <div id="journey-mobile-spark" class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-brand-yellow/30 flex items-center justify-center top-0 opacity-0 transition-opacity">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+      <!-- BARRA DE TELEMETRÍA Y NAVEGADOR DE ESTACIONES INTERACTIVO (STICKY) -->
+      <div class="sticky top-20 z-40 mb-12 w-full max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex items-center justify-between gap-4 p-2.5 sm:p-3 rounded-2xl bg-[#0a0c0e]/95 border border-white/10 backdrop-blur-md shadow-2xl">
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 text-xs font-mono">
+            <button type="button" data-nav-target="caldereria" class="stack-nav-btn active flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-yellow/40 bg-brand-yellow/10 text-brand-yellow whitespace-nowrap">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow shadow-[0_0_6px_#F1B541]"></span>
+              <span>01 // CALDERERÍA</span>
+            </button>
+            <button type="button" data-nav-target="plasma" class="stack-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/5 text-neutral-400 hover:text-white whitespace-nowrap">
+              <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
+              <span>02 // CORTE PLASMA</span>
+            </button>
+            <button type="button" data-nav-target="soldadura" class="stack-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/5 text-neutral-400 hover:text-white whitespace-nowrap">
+              <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
+              <span>03 // SOLDADURA</span>
+            </button>
+            <button type="button" data-nav-target="estructuras" class="stack-nav-btn flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/5 text-neutral-400 hover:text-white whitespace-nowrap">
+              <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
+              <span>04 // ESTRUCTURAS</span>
+            </button>
+          </div>
+          <div class="hidden md:flex items-center gap-2 text-[11px] font-mono text-neutral-400 pr-2">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-yellow"></i>
+            <span id="stack-counter-indicator" class="text-white font-bold">01 / 04</span>
           </div>
         </div>
       </div>
 
-      <div class="w-full px-6 space-y-28 relative z-10">
+      <!-- CONTENEDOR DE TARJETAS APILADAS (STACKING DECK) -->
+      <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 relative">
 
-        <!-- 01 Calderería -->
-        <div id="caldereria" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="1">
-          <div class="lg:col-span-5 space-y-5 journey-item-card" data-journey-side="left">
-            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
-              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
-              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">01 // TRANSFORMACIÓN DE CHAPA</span>
-            </div>
-            <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Calderería Industrial Pesada & Ligera</h2>
-            <p class="text-sm text-neutral-300 font-sans leading-relaxed">
-              Diseño, conformado y soldadura de tolvas de alimentación, silos de almacenamiento, ciclones de separación, chimeneas, depósitos bajo presión y conductos de aspiración en Torrent (Valencia).
-            </p>
-            <ul class="font-mono text-xs text-neutral-400 space-y-2 pt-2">
-              <li>&bull; Curvado de chapa en cilindros hasta 2.000 x 12 mm</li>
-              <li>&bull; Plegado CNC con máquina Ermaksan de 4 metros</li>
-              <li>&bull; Materiales: Acero al carbono, inoxidable y aleaciones</li>
-            </ul>
-            <div class="pt-4">
-              <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">
-                <span>Consultar requerimiento de calderería</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-          </div>
-          <div class="lg:col-span-7 journey-item-card" data-journey-side="right">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
-              <img src="assets/power2.png" alt="Plegadora industrial Ermaksan CNC para calderería en Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
-            </div>
-          </div>
-        </div>
+        <!-- CARD 01: CALDERERÍA INDUSTRIAL -->
+        <article id="caldereria" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="0">
+          <!-- Spotlight Layer reactivo al cursor -->
+          <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
 
-        <!-- 02 Corte Plasma -->
-        <div id="plasma" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="2">
-          <div class="lg:col-span-7 order-2 lg:order-1 journey-item-card" data-journey-side="left">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
-              <img src="assets/corte-plasma.jpg" alt="Mesa de corte por plasma HD Hypertherm TrueHole en Solycal Valencia" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
-            </div>
-          </div>
-          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2 journey-item-card" data-journey-side="right">
-            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
-              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
-              <span class="station-code font-mono text-[11px] text-brand-yellow uppercase tracking-widest">02 // TECNOLOGÍA HYPERTHERM</span>
-            </div>
-            <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Corte por Plasma de Alta Definición</h2>
-            <p class="text-sm text-neutral-300 font-sans leading-relaxed">
-              Pórtico CNC de 9.000 x 2.500 mm equipado con fuente Hypertherm HPR260XD y tecnología de taladro perfecto TrueHole.
-            </p>
-            <ul class="font-mono text-xs text-neutral-400 space-y-2 pt-2">
-              <li>&bull; Espesor máximo de corte: 50 mm en acero al carbono</li>
-              <li>&bull; Corte en acero inoxidable hasta 15 mm</li>
-              <li>&bull; Software de nesting para máxima optimización de costes</li>
-            </ul>
-            <div class="pt-4">
-              <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">
-                <span>Pedir presupuesto de corte plasma</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-          </div>
-        </div>
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <!-- Columna Texto y Especificaciones -->
+            <div class="lg:col-span-5 space-y-6">
+              <div class="flex items-center justify-between gap-4">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-yellow/30 bg-brand-yellow/10 font-mono text-[11px] text-brand-yellow font-bold uppercase tracking-wider">
+                  <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+                  01 // CAPACIDAD PESADA & LIGERA
+                </span>
+                <span class="font-mono text-xs text-neutral-500">01 / 04</span>
+              </div>
 
-        <!-- 03 Soldadura -->
-        <div id="soldadura" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="3">
-          <div class="lg:col-span-5 space-y-5 journey-item-card" data-journey-side="left">
-            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
-              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
-              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">03 // HOMOLOGACIONES OFICIALES</span>
-            </div>
-            <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Soldadura Técnica Homologada</h2>
-            <p class="text-sm text-neutral-300 font-sans leading-relaxed">
-              Equipo de soldadores homologados bajo normativas europeas para uniones de alta exigencia estructural y estanqueidad.
-            </p>
-            <ul class="font-mono text-xs text-neutral-400 space-y-2 pt-2">
-              <li>&bull; Procedimientos TIG, MIG-MAG y Arco Sumergido</li>
-              <li>&bull; Especialistas en uniones de acero inoxidable y aluminio</li>
-              <li>&bull; Certificación ferroviaria EN 15085-2</li>
-            </ul>
-            <div class="pt-4">
-              <a href="calidad.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">
-                <span>Ver certificaciones y homologaciones</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-          </div>
-          <div class="lg:col-span-7 journey-item-card" data-journey-side="right">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
-              <img src="assets/soldadura.jpg" alt="Operario realizando soldadura homologada TIG en acero inoxidable en taller de Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
-            </div>
-          </div>
-        </div>
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                  Calderería Industrial Pesada & Ligera
+                </h2>
+                <p class="text-sm text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Diseño, conformado y soldadura de tolvas de alimentación, silos de almacenamiento, ciclones de separación, chimeneas, depósitos bajo presión y conductos de aspiración en Torrent (Valencia).
+                </p>
+              </div>
 
-        <!-- 04 Estructuras -->
-        <div id="estructuras" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative" data-station="4">
-          <div class="lg:col-span-7 order-2 lg:order-1 journey-item-card" data-journey-side="left">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
-              <img src="assets/estructuras.jpg" alt="Fabricación de estructuras metálicas y pasarelas industriales con marcado CE en Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
+              <!-- Lista de Capacidades Técnicas -->
+              <div class="space-y-2.5 font-mono text-xs border-y border-white/5 py-4">
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Curvado en frío en cilindros hasta <strong>2.000 x 12 mm</strong></span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Plegado CNC con máquina Ermaksan de <strong>4 metros</strong></span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Materiales: Acero al carbono, inoxidable y aleaciones</span>
+                </div>
+              </div>
+
+              <!-- Métricas Técnicas Industriales -->
+              <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Capacidad Máxima</span>
+                  <span class="text-base font-bold text-white font-mono">16 Toneladas</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Control Calidad</span>
+                  <span class="text-base font-bold text-brand-yellow font-mono">LRQA ISO 9001</span>
+                </div>
+              </div>
+
+              <div>
+                <a href="contacto.html" class="btn-magnetic inline-flex items-center gap-3 px-6 py-3 rounded-full bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)] group">
+                  <span class="btn-magnetic-content flex items-center gap-2">
+                    <span>Consultar requerimiento</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                  </span>
+                </a>
+              </div>
             </div>
+
+            <!-- Columna Fotografía con Hotspots Interactivos -->
+            <div class="lg:col-span-7">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 shadow-2xl group/media">
+                <img src="assets/power2.png" alt="Plegadora industrial Ermaksan CNC para calderería en Solycal" class="w-full h-[360px] sm:h-[420px] object-cover bg-neutral-900 transition-transform duration-700 group-hover/media:scale-105" loading="lazy">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+
+                <!-- HOTSPOT 1: PLEGADORA ERMAKSAN -->
+                <div class="hotspot-pin absolute z-20" style="top: 32%; left: 26%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">TECNOLOGÍA CNC</span>
+                      <span class="font-mono text-[9px] text-neutral-400">ERMAKSAN</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Plegadora de 4.000 mm con compensación hidráulica para perfiles de alta resistencia y espesor.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- HOTSPOT 2: CURVADO CHAPA -->
+                <div class="hotspot-pin absolute z-20" style="top: 68%; left: 62%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute right-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">CURVADO CILÍNDRICO</span>
+                      <span class="font-mono text-[9px] text-neutral-400">HASTA 12 MM</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Conformado de virolas, conos y cilindros de 2.000 mm de desarrollo para tolvas y depósitos.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Badge explicativo en esquina inferior -->
+                <div class="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-neutral-400 bg-black/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                  <i data-lucide="mouse-pointer" class="w-3 h-3 text-brand-yellow"></i>
+                  <span>Explora los puntos técnicos</span>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2 journey-item-card" data-journey-side="right">
-            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
-              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
-              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">04 // MARCADO CE EN 1090-1</span>
+        </article>
+
+        <!-- CARD 02: CORTE POR PLASMA HD -->
+        <article id="plasma" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="1">
+          <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <div class="lg:col-span-5 space-y-6">
+              <div class="flex items-center justify-between gap-4">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-yellow/30 bg-brand-yellow/10 font-mono text-[11px] text-brand-yellow font-bold uppercase tracking-wider">
+                  <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+                  02 // TECNOLOGÍA HYPERTHERM
+                </span>
+                <span class="font-mono text-xs text-neutral-500">02 / 04</span>
+              </div>
+
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                  Corte por Plasma de Alta Definición
+                </h2>
+                <p class="text-sm text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Pórtico CNC de 9.000 x 2.500 mm equipado con fuente Hypertherm HPR260XD y tecnología de taladro perfecto TrueHole para piezas de máxima precisión.
+                </p>
+              </div>
+
+              <div class="space-y-2.5 font-mono text-xs border-y border-white/5 py-4">
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Espesor máximo de corte: <strong>50 mm</strong> en acero al carbono</span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Corte limpio en acero inoxidable hasta <strong>15 mm</strong></span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Software Lantek de nesting para óptimo aprovechamiento</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Mesa de Trabajo</span>
+                  <span class="text-base font-bold text-white font-mono">9.000 x 2.500 mm</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Taladro HD</span>
+                  <span class="text-base font-bold text-brand-yellow font-mono">TrueHole™ Tech</span>
+                </div>
+              </div>
+
+              <div>
+                <a href="contacto.html" class="btn-magnetic inline-flex items-center gap-3 px-6 py-3 rounded-full bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)] group">
+                  <span class="btn-magnetic-content flex items-center gap-2">
+                    <span>Pedir presupuesto de corte</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                  </span>
+                </a>
+              </div>
             </div>
-            <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Estructuras Metálicas & Pasarelas</h2>
-            <p class="text-sm text-neutral-300 font-sans leading-relaxed">
-              Fabricación de estructuras portantes, pasarelas de acceso, bancadas de maquinaria y líneas de vida conforme al marcado CE obligatorio.
-            </p>
-            <ul class="font-mono text-xs text-neutral-400 space-y-2 pt-2">
-              <li>&bull; Control de producción en fábrica certificado</li>
-              <li>&bull; Montaje directo en obra por personal especializado</li>
-              <li>&bull; Tratamientos superficiales: galvanizado, granallado y pintura C5</li>
-            </ul>
-            <div class="pt-4">
-              <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">
-                <span>Solicitar valoración de proyecto estructural</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              </a>
+
+            <div class="lg:col-span-7">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 shadow-2xl group/media">
+                <img src="assets/corte-plasma.jpg" alt="Mesa de corte por plasma HD Hypertherm TrueHole en Solycal Valencia" class="w-full h-[360px] sm:h-[420px] object-cover bg-neutral-900 transition-transform duration-700 group-hover/media:scale-105" loading="lazy">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+
+                <!-- HOTSPOT 1: FUENTE HYPERTHERM -->
+                <div class="hotspot-pin absolute z-20" style="top: 26%; left: 45%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">TRUEHOLE™ TECH</span>
+                      <span class="font-mono text-[9px] text-neutral-400">HPR260XD</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Perforación cilíndrica sin conicidad, lista para roscar o atornillar directamente sin taladro auxiliar.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- HOTSPOT 2: MESA GRAN FORMATO -->
+                <div class="hotspot-pin absolute z-20" style="top: 72%; left: 30%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">GRAN FORMATO</span>
+                      <span class="font-mono text-[9px] text-neutral-400">9 x 2.5 M</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Corte industrial en chapas de dimensiones completas minimizando uniones soldadas.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-neutral-400 bg-black/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                  <i data-lucide="mouse-pointer" class="w-3 h-3 text-brand-yellow"></i>
+                  <span>Explora los puntos técnicos</span>
+                </div>
+              </div>
             </div>
+
           </div>
-        </div>
+        </article>
+
+        <!-- CARD 03: SOLDADURA TÉCNICA HOMOLOGADA -->
+        <article id="soldadura" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="2">
+          <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <div class="lg:col-span-5 space-y-6">
+              <div class="flex items-center justify-between gap-4">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-yellow/30 bg-brand-yellow/10 font-mono text-[11px] text-brand-yellow font-bold uppercase tracking-wider">
+                  <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+                  03 // HOMOLOGACIONES OFICIALES
+                </span>
+                <span class="font-mono text-xs text-neutral-500">03 / 04</span>
+              </div>
+
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                  Soldadura Técnica Homologada
+                </h2>
+                <p class="text-sm text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Equipo de soldadores homologados bajo normativas europeas para uniones de alta exigencia estructural, ensayos no destructivos y estanqueidad.
+                </p>
+              </div>
+
+              <div class="space-y-2.5 font-mono text-xs border-y border-white/5 py-4">
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Procedimientos <strong>TIG, MIG-MAG y Arco Sumergido</strong></span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Especialistas en <strong>acero inoxidable y aluminio</strong></span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Certificación ferroviaria bajo norma <strong>EN 15085-2</strong></span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Norma Europea</span>
+                  <span class="text-base font-bold text-white font-mono">EN 15085 CL1</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Ensayos</span>
+                  <span class="text-base font-bold text-brand-yellow font-mono">Líquidos / Ultrasonidos</span>
+                </div>
+              </div>
+
+              <div>
+                <a href="calidad.html" class="btn-magnetic inline-flex items-center gap-3 px-6 py-3 rounded-full bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)] group">
+                  <span class="btn-magnetic-content flex items-center gap-2">
+                    <span>Ver certificaciones y homologaciones</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 shadow-2xl group/media">
+                <img src="assets/soldadura.jpg" alt="Operario realizando soldadura homologada TIG en acero inoxidable en taller de Solycal" class="w-full h-[360px] sm:h-[420px] object-cover bg-neutral-900 transition-transform duration-700 group-hover/media:scale-105" loading="lazy">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+
+                <!-- HOTSPOT 1: ARCO TIG -->
+                <div class="hotspot-pin absolute z-20" style="top: 38%; left: 48%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">PROCEDIMIENTO TIG</span>
+                      <span class="font-mono text-[9px] text-neutral-400">EN 15085-2</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Soldadura de máxima penetración y acabado radiográfico para recipientes y tubería estanca.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- HOTSPOT 2: TALLER SEGREGADO -->
+                <div class="hotspot-pin absolute z-20" style="top: 70%; left: 24%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">AISLAMIENTO</span>
+                      <span class="font-mono text-[9px] text-neutral-400">CERO CONTAMINACIÓN</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Nave específica de aceros inoxidables aislada físicamente para evitar corrosión galvánica.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-neutral-400 bg-black/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                  <i data-lucide="mouse-pointer" class="w-3 h-3 text-brand-yellow"></i>
+                  <span>Explora los puntos técnicos</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+        <!-- CARD 04: ESTRUCTURAS METÁLICAS & PASARELAS -->
+        <article id="estructuras" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="3">
+          <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <div class="lg:col-span-5 space-y-6">
+              <div class="flex items-center justify-between gap-4">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-yellow/30 bg-brand-yellow/10 font-mono text-[11px] text-brand-yellow font-bold uppercase tracking-wider">
+                  <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+                  04 // MARCADO CE EN 1090-1
+                </span>
+                <span class="font-mono text-xs text-neutral-500">04 / 04</span>
+              </div>
+
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight leading-tight">
+                  Estructuras Metálicas & Pasarelas
+                </h2>
+                <p class="text-sm text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Fabricación de estructuras portantes, pasarelas de acceso, bancadas de maquinaria y líneas de vida conforme al marcado CE obligatorio para edificación y obra civil.
+                </p>
+              </div>
+
+              <div class="space-y-2.5 font-mono text-xs border-y border-white/5 py-4">
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Control de producción en fábrica certificado (<strong>FPC</strong>)</span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Montaje directo en obra por personal homologado</span>
+                </div>
+                <div class="flex items-center gap-3 text-neutral-300">
+                  <div class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                  <span>Tratamientos superficiales: <strong>Galvanizado y Pintura C5</strong></span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Certificación</span>
+                  <span class="text-base font-bold text-white font-mono">Marcado CE</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span class="text-neutral-500 block text-[10px] uppercase">Resistencia</span>
+                  <span class="text-base font-bold text-brand-yellow font-mono">Clase C5 Marina</span>
+                </div>
+              </div>
+
+              <div>
+                <a href="contacto.html" class="btn-magnetic inline-flex items-center gap-3 px-6 py-3 rounded-full bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)] group">
+                  <span class="btn-magnetic-content flex items-center gap-2">
+                    <span>Solicitar valoración estructural</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-neutral-950 shadow-2xl group/media">
+                <img src="assets/estructuras.jpg" alt="Fabricación de estructuras metálicas y pasarelas industriales con marcado CE en Solycal" class="w-full h-[360px] sm:h-[420px] object-cover bg-neutral-900 transition-transform duration-700 group-hover/media:scale-105" loading="lazy">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
+
+                <!-- HOTSPOT 1: MARCADO CE -->
+                <div class="hotspot-pin absolute z-20" style="top: 34%; left: 36%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute left-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">MARCADO CE</span>
+                      <span class="font-mono text-[9px] text-neutral-400">EN 1090-1</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Declaración de prestaciones obligatoria para estructuras metálicas portantes en la Unión Europea.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- HOTSPOT 2: TRATAMIENTO C5 -->
+                <div class="hotspot-pin absolute z-20" style="top: 65%; left: 62%;">
+                  <span class="absolute -inset-2 rounded-full bg-brand-yellow/20 animate-ping pointer-events-none"></span>
+                  <button type="button" class="hotspot-btn relative w-6 h-6 rounded-full bg-brand-yellow text-black font-mono text-[10px] font-bold flex items-center justify-center shadow-[0_0_15px_#F1B541] hover:scale-125 transition-transform" aria-label="Ver detalle técnico">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                  </button>
+                  <div class="hotspot-popover absolute right-8 top-1/2 -translate-y-1/2 w-64 p-3.5 rounded-xl bg-[#07080a]/95 border border-brand-yellow/50 backdrop-blur-md shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-30">
+                    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5">
+                      <span class="font-mono text-[10px] text-brand-yellow font-bold uppercase tracking-wider">ACABADO C5</span>
+                      <span class="font-mono text-[9px] text-neutral-400">ANTICORROSIÓN</span>
+                    </div>
+                    <p class="font-sans text-xs text-neutral-200 leading-snug">
+                      Granallado Sa 2.5 y sistemas de pintura epoxi-poliuretano para ambientes de alta salinidad y químicos.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-neutral-400 bg-black/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                  <i data-lucide="mouse-pointer" class="w-3 h-3 text-brand-yellow"></i>
+                  <span>Explora los puntos técnicos</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </article>
 
       </div>
     </section>
@@ -2385,173 +2674,150 @@ ${getHeader('servicios')}
   </div>
 </div>
 
-<!-- SCRIPT MOTOR GSAP SCROLL PATH JOURNEY & ENTRADAS LATERALES -->
+<!-- MOTOR INTERACTIVO GSAP: STACKING CARDS, 3D TILT, FOCO MAGNÉTICO Y HOTSPOTS -->
 <script>
   (function() {
-    function initServicesJourney() {
+    function initServicesInteractiveStack() {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-      if (typeof MotionPathPlugin !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
-      }
+      gsap.registerPlugin(ScrollTrigger);
 
-      const journeyContainer = document.getElementById('services-journey-container');
-      if (!journeyContainer) return;
-
-      const progressPath = document.getElementById('journey-progress-path');
-      const spark = document.getElementById('journey-plasma-spark');
-      const mobileBar = document.getElementById('journey-mobile-progress-bar');
-      const mobileSpark = document.getElementById('journey-mobile-spark');
-
+      const stackCards = document.querySelectorAll('.stack-card');
+      const navButtons = document.querySelectorAll('.stack-nav-btn');
+      const counterIndicator = document.getElementById('stack-counter-indicator');
       const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // 1. ANIMACIÓN DEL TRAZADO SVG Y CABEZAL/CHISPA VIAJERA
-      if (progressPath && !isReduced) {
-        const pathLength = progressPath.getTotalLength();
-        gsap.set(progressPath, {
-          strokeDasharray: pathLength,
-          strokeDashoffset: pathLength
-        });
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
 
-        const journeyTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: journeyContainer,
-            start: "top 78%",
-            end: "bottom 82%",
-            scrub: 0.8,
-            onEnter: () => {
-              if (spark) gsap.to(spark, { opacity: 1, duration: 0.35 });
-              if (mobileSpark) gsap.to(mobileSpark, { opacity: 1, duration: 0.35 });
-            },
-            onLeave: () => {
-              if (spark) gsap.to(spark, { opacity: 0, duration: 0.35 });
-              if (mobileSpark) gsap.to(mobileSpark, { opacity: 0, duration: 0.35 });
-            },
-            onEnterBack: () => {
-              if (spark) gsap.to(spark, { opacity: 1, duration: 0.35 });
-              if (mobileSpark) gsap.to(mobileSpark, { opacity: 1, duration: 0.35 });
-            },
-            onLeaveBack: () => {
-              if (spark) gsap.to(spark, { opacity: 0, duration: 0.35 });
-              if (mobileSpark) gsap.to(mobileSpark, { opacity: 0, duration: 0.35 });
+      // 1. CINEMÁTICA DE APILAMIENTO CON GSAP (INTERACCIÓN RELATIVA ENTRE TARJETAS)
+      stackCards.forEach((card, index) => {
+        if (!isReduced && index < stackCards.length - 1) {
+          const nextCard = stackCards[index + 1];
+          gsap.to(card, {
+            scale: 0.93,
+            opacity: 0.45,
+            filter: "blur(2.5px) brightness(0.55)",
+            y: -25,
+            ease: "power1.inOut",
+            scrollTrigger: {
+              trigger: nextCard,
+              start: "top 78%",
+              end: "top 28%",
+              scrub: true
             }
+          });
+        }
+
+        // 2. FÍSICA DE INCLINACIÓN 3D Y FOCO MAGNÉTICO CON EL CURSOR
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if (!isTouch && !isReduced) {
+          const setRotateX = gsap.quickTo(card, "rotateX", { duration: 0.45, ease: "power2.out" });
+          const setRotateY = gsap.quickTo(card, "rotateY", { duration: 0.45, ease: "power2.out" });
+
+          card.addEventListener('pointermove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            card.style.setProperty('--mouse-x', x + 'px');
+            card.style.setProperty('--mouse-y', y + 'px');
+
+            const xPct = (x / rect.width) - 0.5;
+            const yPct = (y / rect.height) - 0.5;
+            setRotateY(xPct * 6);
+            setRotateX(-yPct * 6);
+          });
+
+          card.addEventListener('pointerleave', () => {
+            setRotateX(0);
+            setRotateY(0);
+          });
+        }
+
+        // 3. SEGUIMIENTO DE TELEMETRÍA DE TARJETA ACTIVA
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 45%",
+          end: "bottom 45%",
+          onEnter: () => setActiveStation(index),
+          onEnterBack: () => setActiveStation(index)
+        });
+      });
+
+      // 4. CONTROLADOR DEL NAVEGADOR DE ESTACIONES
+      function setActiveStation(index) {
+        navButtons.forEach((btn, idx) => {
+          const isActive = idx === index;
+          btn.classList.toggle('active', isActive);
+          btn.classList.toggle('border-brand-yellow/40', isActive);
+          btn.classList.toggle('bg-brand-yellow/10', isActive);
+          btn.classList.toggle('text-brand-yellow', isActive);
+          btn.classList.toggle('border-white/5', !isActive);
+          btn.classList.toggle('text-neutral-400', !isActive);
+          const dot = btn.querySelector('span');
+          if (dot) {
+            dot.classList.toggle('bg-brand-yellow', isActive);
+            dot.classList.toggle('shadow-[0_0_6px_#F1B541]', isActive);
+            dot.classList.toggle('bg-neutral-600', !isActive);
           }
         });
-
-        // Dibujar el trazo progresivamente con el scroll
-        journeyTl.to(progressPath, {
-          strokeDashoffset: 0,
-          ease: "none"
-        }, 0);
-
-        // Mover la chispa a lo largo del path
-        if (spark && typeof MotionPathPlugin !== 'undefined') {
-          journeyTl.to(spark, {
-            motionPath: {
-              path: progressPath,
-              align: progressPath,
-              alignOrigin: [0.5, 0.5],
-              autoRotate: false
-            },
-            ease: "none"
-          }, 0);
-        }
-
-        // Progreso vertical en dispositivos móviles
-        if (mobileBar) {
-          journeyTl.to(mobileBar, { height: "100%", ease: "none" }, 0);
-        }
-        if (mobileSpark) {
-          journeyTl.to(mobileSpark, { top: "100%", ease: "none" }, 0);
+        if (counterIndicator) {
+          counterIndicator.textContent = '0' + (index + 1) + ' / 04';
         }
       }
 
-      // 2. ANIMACIONES LATERALES SINCRONIZADAS: IMÁGENES Y TEXTOS DESDE LOS LATERALES
-      const serviceItems = journeyContainer.querySelectorAll('.journey-service-item');
-      serviceItems.forEach((item) => {
-        const leftEl = item.querySelector('[data-journey-side="left"]');
-        const rightEl = item.querySelector('[data-journey-side="right"]');
-        const stationBadge = item.querySelector('.journey-station-badge');
-        const stationDot = item.querySelector('.station-dot');
-        const img = item.querySelector('img');
-
-        const isMobile = window.innerWidth < 768;
-        const xDist = isMobile ? 35 : 85;
-
-        if (!isReduced) {
-          const itemTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: item,
-              start: "top 88%",
-              end: "top 35%",
-              scrub: 0.8
-            }
-          });
-
-          if (leftEl) {
-            itemTl.fromTo(leftEl,
-              { x: -xDist, opacity: 0 },
-              { x: 0, opacity: 1, ease: "power2.out" },
-              0
-            );
-          }
-
-          if (rightEl) {
-            itemTl.fromTo(rightEl,
-              { x: xDist, opacity: 0 },
-              { x: 0, opacity: 1, ease: "power2.out" },
-              0
-            );
-          }
-
-          if (img) {
-            itemTl.fromTo(img,
-              { filter: "grayscale(35%) contrast(0.92)", scale: 1.04 },
-              { filter: "grayscale(0%) contrast(1)", scale: 1, ease: "power2.out" },
-              0
-            );
-          }
-        }
-
-        // 3. ACTIVACIÓN Y PULSO DE ESTACIÓN TÉCNICA AL LLEGAR AL SERVICIO
-        ScrollTrigger.create({
-          trigger: item,
-          start: "top 65%",
-          end: "bottom 35%",
-          onEnter: () => {
-            if (stationBadge) stationBadge.classList.add('is-active');
-            if (stationDot) stationDot.classList.add('is-pulsing');
-          },
-          onEnterBack: () => {
-            if (stationBadge) stationBadge.classList.add('is-active');
-            if (stationDot) stationDot.classList.add('is-pulsing');
-          },
-          onLeave: () => {
-            if (stationBadge) stationBadge.classList.remove('is-active');
-            if (stationDot) stationDot.classList.remove('is-pulsing');
-          },
-          onLeaveBack: () => {
-            if (stationBadge) stationBadge.classList.remove('is-active');
-            if (stationDot) stationDot.classList.remove('is-pulsing');
+      navButtons.forEach((btn, idx) => {
+        btn.addEventListener('click', () => {
+          const target = stackCards[idx];
+          if (target) {
+            const topOffset = target.getBoundingClientRect().top + window.pageYOffset - 110;
+            window.scrollTo({ top: topOffset, behavior: 'smooth' });
           }
         });
       });
 
-      // Refrescar ScrollTrigger al cargar todas las imágenes
-      window.addEventListener('load', () => {
-        ScrollTrigger.refresh();
+      // 5. INTERACTIVIDAD DE HOTSPOTS TÉCNICOS (TOOLTIPS EXPLORABLES)
+      const hotspotPins = document.querySelectorAll('.hotspot-pin');
+      hotspotPins.forEach(pin => {
+        const btn = pin.querySelector('.hotspot-btn');
+        const popover = pin.querySelector('.hotspot-popover');
+        
+        if (btn && popover) {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = popover.classList.contains('is-open');
+            document.querySelectorAll('.hotspot-popover.is-open').forEach(p => {
+              p.classList.remove('is-open');
+              p.closest('.hotspot-pin')?.classList.remove('is-open');
+            });
+            if (!isOpen) {
+              popover.classList.add('is-open');
+              pin.classList.add('is-open');
+            }
+          });
+        }
       });
-      window.addEventListener('resize', () => {
-        ScrollTrigger.refresh();
-      }, { passive: true });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.hotspot-popover.is-open').forEach(p => {
+          p.classList.remove('is-open');
+          p.closest('.hotspot-pin')?.classList.remove('is-open');
+        });
+      });
+
+      window.addEventListener('load', () => ScrollTrigger.refresh());
+      window.addEventListener('resize', () => ScrollTrigger.refresh(), { passive: true });
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initServicesJourney);
+      document.addEventListener('DOMContentLoaded', initServicesInteractiveStack);
     } else {
-      initServicesJourney();
+      initServicesInteractiveStack();
     }
   })();
 </script>
+
 
 
 ${getFooter()}

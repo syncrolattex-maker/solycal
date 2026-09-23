@@ -860,7 +860,7 @@
       <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 relative">
 
         <!-- CARD 01: CALDERERÍA INDUSTRIAL -->
-        <article id="caldereria" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="0">
+        <article id="caldereria" class="stack-card sticky top-[144px] rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="0">
           <!-- Spotlight Layer reactivo al cursor -->
           <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
 
@@ -976,7 +976,7 @@
         </article>
 
         <!-- CARD 02: CORTE POR PLASMA HD -->
-        <article id="plasma" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="1">
+        <article id="plasma" class="stack-card sticky top-[144px] rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="1">
           <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
 
           <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -1086,7 +1086,7 @@
         </article>
 
         <!-- CARD 03: SOLDADURA TÉCNICA HOMOLOGADA -->
-        <article id="soldadura" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="2">
+        <article id="soldadura" class="stack-card sticky top-[144px] rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="2">
           <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
 
           <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -1196,7 +1196,7 @@
         </article>
 
         <!-- CARD 04: ESTRUCTURAS METÁLICAS & PASARELAS -->
-        <article id="estructuras" class="stack-card sticky top-28 rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="3">
+        <article id="estructuras" class="stack-card sticky top-[144px] rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 sm:mb-24 bg-[#0a0c0e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300" data-card-index="3">
           <div class="card-spotlight-layer absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(241,181,65,0.12), transparent 70%);"></div>
 
           <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -1408,7 +1408,7 @@
         btn.addEventListener('click', () => {
           const target = stackCards[idx];
           if (target) {
-            const topOffset = target.getBoundingClientRect().top + window.pageYOffset - 110;
+            const topOffset = target.getBoundingClientRect().top + window.pageYOffset - 146;
             window.scrollTo({ top: topOffset, behavior: 'smooth' });
           }
         });

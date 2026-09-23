@@ -96,10 +96,11 @@ function getHead(title, description, canonicalPath = '') {
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- GSAP & ScrollTrigger & Draggable -->
+  <!-- GSAP & ScrollTrigger & Draggable & MotionPath -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -969,7 +970,11 @@ function getFooter() {
     window.addEventListener('DOMContentLoaded', () => {
       // Registrar ScrollTrigger
       if (typeof gsap !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
+        if (typeof MotionPathPlugin !== 'undefined') {
+          gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+        } else {
+          gsap.registerPlugin(ScrollTrigger);
+        }
 
         // =========================================================================
         // PRELOADER INDUSTRIAL: 'S' APARECE -> SE APARTA A LA IZQUIERDA ->
@@ -2152,14 +2157,115 @@ ${getHeader('servicios')}
       </div>
     </section>
 
-    <!-- 02 BLOQUES DE SERVICIOS EDITORIALES -->
-    <section class="py-24">
-      <div class="w-full px-6 space-y-24">
+    <!-- 02 BLOQUES DE SERVICIOS EDITORIALES CON SCROLL PATH JOURNEY -->
+    <section id="services-journey-container" class="py-24 relative overflow-hidden">
+
+      <!-- ESTILOS ESPECÍFICOS DEL SCROLL PATH JOURNEY & ESTACIONES -->
+      <style>
+        .journey-station-badge {
+          position: relative;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.03);
+          transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .journey-station-badge.is-active {
+          border-color: rgba(241, 181, 65, 0.5) !important;
+          background-color: rgba(241, 181, 65, 0.08) !important;
+          box-shadow: 0 0 25px rgba(241, 181, 65, 0.2);
+        }
+        .journey-station-badge.is-active .station-code {
+          color: #F1B541 !important;
+        }
+        .journey-station-badge.is-active .station-dot {
+          background-color: #F1B541 !important;
+          box-shadow: 0 0 10px #F1B541;
+        }
+        .station-dot.is-pulsing::after {
+          content: '';
+          position: absolute;
+          inset: -3px;
+          border-radius: 9999px;
+          border: 1.5px solid #F1B541;
+          animation: station-pulse 1.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+        @keyframes station-pulse {
+          0% { transform: scale(1); opacity: 0.9; }
+          100% { transform: scale(2.8); opacity: 0; }
+        }
+        .journey-item-card {
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <!-- SCROLL PATH JOURNEY BACKGROUND SVG TRACK (DESKTOP) -->
+      <div class="absolute inset-0 pointer-events-none z-0 hidden lg:block overflow-hidden" aria-hidden="true">
+        <svg id="journey-svg-desktop" class="w-full h-full" viewBox="0 0 1000 2400" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="solycalJourneyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#F1B541" stop-opacity="0.8"/>
+              <stop offset="35%" stop-color="#F1B541" stop-opacity="1"/>
+              <stop offset="70%" stop-color="#E5A52A" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#F1B541" stop-opacity="0.9"/>
+            </linearGradient>
+            <filter id="plasmaLaserGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="4" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="sparkAura" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="6" />
+            </filter>
+          </defs>
+
+          <!-- Guía de fondo sutil / Blueprint guide -->
+          <path id="journey-shadow-path" 
+                d="M 500 20 C 440 180, 420 280, 420 400 C 420 620, 580 760, 580 980 C 580 1200, 420 1340, 420 1560 C 420 1780, 580 1920, 580 2120 C 580 2240, 500 2320, 500 2380"
+                fill="none" 
+                stroke="rgba(255,255,255,0.08)" 
+                stroke-width="2" 
+                stroke-dasharray="6 6"/>
+
+          <!-- Trazo activo dibujado con el scroll -->
+          <path id="journey-progress-path" 
+                d="M 500 20 C 440 180, 420 280, 420 400 C 420 620, 580 760, 580 980 C 580 1200, 420 1340, 420 1560 C 420 1780, 580 1920, 580 2120 C 580 2240, 500 2320, 500 2380"
+                fill="none" 
+                stroke="url(#solycalJourneyGrad)" 
+                stroke-width="3" 
+                stroke-linecap="round"
+                filter="url(#plasmaLaserGlow)"/>
+
+          <!-- Cabezal de Plasma / Chispa de Soldadura viajera -->
+          <g id="journey-plasma-spark" opacity="0">
+            <!-- Halo expansivo de plasma -->
+            <circle r="22" fill="#F1B541" fill-opacity="0.18" filter="url(#sparkAura)"/>
+            <circle r="12" fill="#F1B541" fill-opacity="0.5"/>
+            <circle r="6" fill="#F1B541"/>
+            <circle r="2.5" fill="#FFFFFF"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- MOBILE VERTICAL GUIDE TRACK -->
+      <div class="absolute inset-y-0 left-4 sm:left-8 pointer-events-none z-0 lg:hidden w-[2px]" aria-hidden="true">
+        <div class="w-full h-full bg-white/5 relative">
+          <div id="journey-mobile-progress-bar" class="w-full bg-brand-yellow h-0 shadow-[0_0_10px_#F1B541]"></div>
+          <div id="journey-mobile-spark" class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-brand-yellow/30 flex items-center justify-center top-0 opacity-0 transition-opacity">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow shadow-[0_0_8px_#F1B541]"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full px-6 space-y-28 relative z-10">
 
         <!-- 01 Calderería -->
-        <div id="caldereria" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-20 reveal">
-          <div class="lg:col-span-5 space-y-5">
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">01 // TRANSFORMACIÓN DE CHAPA</span>
+        <div id="caldereria" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="1">
+          <div class="lg:col-span-5 space-y-5 journey-item-card" data-journey-side="left">
+            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
+              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
+              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">01 // TRANSFORMACIÓN DE CHAPA</span>
+            </div>
             <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Calderería Industrial Pesada & Ligera</h2>
             <p class="text-sm text-neutral-300 font-sans leading-relaxed">
               Diseño, conformado y soldadura de tolvas de alimentación, silos de almacenamiento, ciclones de separación, chimeneas, depósitos bajo presión y conductos de aspiración en Torrent (Valencia).
@@ -2176,22 +2282,25 @@ ${getHeader('servicios')}
               </a>
             </div>
           </div>
-          <div class="lg:col-span-7">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
-              <img src="assets/power2.png" alt="Plegadora industrial Ermaksan CNC para calderería en Solycal" class="w-full h-[400px] object-cover bg-neutral-900" loading="lazy">
+          <div class="lg:col-span-7 journey-item-card" data-journey-side="right">
+            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
+              <img src="assets/power2.png" alt="Plegadora industrial Ermaksan CNC para calderería en Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
             </div>
           </div>
         </div>
 
         <!-- 02 Corte Plasma -->
-        <div id="plasma" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-20 reveal">
-          <div class="lg:col-span-7 order-2 lg:order-1">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
-              <img src="assets/corte-plasma.jpg" alt="Mesa de corte por plasma HD Hypertherm TrueHole en Solycal Valencia" class="w-full h-[400px] object-cover bg-neutral-900" loading="lazy">
+        <div id="plasma" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="2">
+          <div class="lg:col-span-7 order-2 lg:order-1 journey-item-card" data-journey-side="left">
+            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
+              <img src="assets/corte-plasma.jpg" alt="Mesa de corte por plasma HD Hypertherm TrueHole en Solycal Valencia" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
             </div>
           </div>
-          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2">
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">02 // TECNOLOGÍA HYPERTHERM</span>
+          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2 journey-item-card" data-journey-side="right">
+            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
+              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
+              <span class="station-code font-mono text-[11px] text-brand-yellow uppercase tracking-widest">02 // TECNOLOGÍA HYPERTHERM</span>
+            </div>
             <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Corte por Plasma de Alta Definición</h2>
             <p class="text-sm text-neutral-300 font-sans leading-relaxed">
               Pórtico CNC de 9.000 x 2.500 mm equipado con fuente Hypertherm HPR260XD y tecnología de taladro perfecto TrueHole.
@@ -2211,9 +2320,12 @@ ${getHeader('servicios')}
         </div>
 
         <!-- 03 Soldadura -->
-        <div id="soldadura" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-20 reveal">
-          <div class="lg:col-span-5 space-y-5">
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">03 // HOMOLOGACIONES OFICIALES</span>
+        <div id="soldadura" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center border-b border-white/5 pb-24 relative" data-station="3">
+          <div class="lg:col-span-5 space-y-5 journey-item-card" data-journey-side="left">
+            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
+              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
+              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">03 // HOMOLOGACIONES OFICIALES</span>
+            </div>
             <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Soldadura Técnica Homologada</h2>
             <p class="text-sm text-neutral-300 font-sans leading-relaxed">
               Equipo de soldadores homologados bajo normativas europeas para uniones de alta exigencia estructural y estanqueidad.
@@ -2230,22 +2342,25 @@ ${getHeader('servicios')}
               </a>
             </div>
           </div>
-          <div class="lg:col-span-7">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
-              <img src="assets/soldadura.jpg" alt="Operario realizando soldadura homologada TIG en acero inoxidable en taller de Solycal" class="w-full h-[400px] object-cover bg-neutral-900" loading="lazy">
+          <div class="lg:col-span-7 journey-item-card" data-journey-side="right">
+            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
+              <img src="assets/soldadura.jpg" alt="Operario realizando soldadura homologada TIG en acero inoxidable en taller de Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
             </div>
           </div>
         </div>
 
         <!-- 04 Estructuras -->
-        <div id="estructuras" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center reveal">
-          <div class="lg:col-span-7 order-2 lg:order-1">
-            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
-              <img src="assets/estructuras.jpg" alt="Fabricación de estructuras metálicas y pasarelas industriales con marcado CE en Solycal" class="w-full h-[400px] object-cover bg-neutral-900" loading="lazy">
+        <div id="estructuras" class="journey-service-item grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative" data-station="4">
+          <div class="lg:col-span-7 order-2 lg:order-1 journey-item-card" data-journey-side="left">
+            <div class="rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl transition-all duration-500 hover:border-brand-yellow/30">
+              <img src="assets/estructuras.jpg" alt="Fabricación de estructuras metálicas y pasarelas industriales con marcado CE en Solycal" class="w-full h-[400px] object-cover bg-neutral-900 transition-transform duration-700 hover:scale-105" loading="lazy">
             </div>
           </div>
-          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2">
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">04 // MARCADO CE EN 1090-1</span>
+          <div class="lg:col-span-5 space-y-5 order-1 lg:order-2 journey-item-card" data-journey-side="right">
+            <div class="journey-station-badge inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full">
+              <span class="station-dot relative flex w-2 h-2 rounded-full bg-neutral-600"></span>
+              <span class="station-code font-mono text-[11px] text-neutral-400 uppercase tracking-widest">04 // MARCADO CE EN 1090-1</span>
+            </div>
             <h2 class="text-3xl sm:text-4xl font-display font-bold text-white">Estructuras Metálicas & Pasarelas</h2>
             <p class="text-sm text-neutral-300 font-sans leading-relaxed">
               Fabricación de estructuras portantes, pasarelas de acceso, bancadas de maquinaria y líneas de vida conforme al marcado CE obligatorio.
@@ -2269,6 +2384,175 @@ ${getHeader('servicios')}
 
   </div>
 </div>
+
+<!-- SCRIPT MOTOR GSAP SCROLL PATH JOURNEY & ENTRADAS LATERALES -->
+<script>
+  (function() {
+    function initServicesJourney() {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      if (typeof MotionPathPlugin !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+      }
+
+      const journeyContainer = document.getElementById('services-journey-container');
+      if (!journeyContainer) return;
+
+      const progressPath = document.getElementById('journey-progress-path');
+      const spark = document.getElementById('journey-plasma-spark');
+      const mobileBar = document.getElementById('journey-mobile-progress-bar');
+      const mobileSpark = document.getElementById('journey-mobile-spark');
+
+      const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // 1. ANIMACIÓN DEL TRAZADO SVG Y CABEZAL/CHISPA VIAJERA
+      if (progressPath && !isReduced) {
+        const pathLength = progressPath.getTotalLength();
+        gsap.set(progressPath, {
+          strokeDasharray: pathLength,
+          strokeDashoffset: pathLength
+        });
+
+        const journeyTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: journeyContainer,
+            start: "top 78%",
+            end: "bottom 82%",
+            scrub: 0.8,
+            onEnter: () => {
+              if (spark) gsap.to(spark, { opacity: 1, duration: 0.35 });
+              if (mobileSpark) gsap.to(mobileSpark, { opacity: 1, duration: 0.35 });
+            },
+            onLeave: () => {
+              if (spark) gsap.to(spark, { opacity: 0, duration: 0.35 });
+              if (mobileSpark) gsap.to(mobileSpark, { opacity: 0, duration: 0.35 });
+            },
+            onEnterBack: () => {
+              if (spark) gsap.to(spark, { opacity: 1, duration: 0.35 });
+              if (mobileSpark) gsap.to(mobileSpark, { opacity: 1, duration: 0.35 });
+            },
+            onLeaveBack: () => {
+              if (spark) gsap.to(spark, { opacity: 0, duration: 0.35 });
+              if (mobileSpark) gsap.to(mobileSpark, { opacity: 0, duration: 0.35 });
+            }
+          }
+        });
+
+        // Dibujar el trazo progresivamente con el scroll
+        journeyTl.to(progressPath, {
+          strokeDashoffset: 0,
+          ease: "none"
+        }, 0);
+
+        // Mover la chispa a lo largo del path
+        if (spark && typeof MotionPathPlugin !== 'undefined') {
+          journeyTl.to(spark, {
+            motionPath: {
+              path: progressPath,
+              align: progressPath,
+              alignOrigin: [0.5, 0.5],
+              autoRotate: false
+            },
+            ease: "none"
+          }, 0);
+        }
+
+        // Progreso vertical en dispositivos móviles
+        if (mobileBar) {
+          journeyTl.to(mobileBar, { height: "100%", ease: "none" }, 0);
+        }
+        if (mobileSpark) {
+          journeyTl.to(mobileSpark, { top: "100%", ease: "none" }, 0);
+        }
+      }
+
+      // 2. ANIMACIONES LATERALES SINCRONIZADAS: IMÁGENES Y TEXTOS DESDE LOS LATERALES
+      const serviceItems = journeyContainer.querySelectorAll('.journey-service-item');
+      serviceItems.forEach((item) => {
+        const leftEl = item.querySelector('[data-journey-side="left"]');
+        const rightEl = item.querySelector('[data-journey-side="right"]');
+        const stationBadge = item.querySelector('.journey-station-badge');
+        const stationDot = item.querySelector('.station-dot');
+        const img = item.querySelector('img');
+
+        const isMobile = window.innerWidth < 768;
+        const xDist = isMobile ? 35 : 85;
+
+        if (!isReduced) {
+          const itemTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: item,
+              start: "top 88%",
+              end: "top 35%",
+              scrub: 0.8
+            }
+          });
+
+          if (leftEl) {
+            itemTl.fromTo(leftEl,
+              { x: -xDist, opacity: 0 },
+              { x: 0, opacity: 1, ease: "power2.out" },
+              0
+            );
+          }
+
+          if (rightEl) {
+            itemTl.fromTo(rightEl,
+              { x: xDist, opacity: 0 },
+              { x: 0, opacity: 1, ease: "power2.out" },
+              0
+            );
+          }
+
+          if (img) {
+            itemTl.fromTo(img,
+              { filter: "grayscale(35%) contrast(0.92)", scale: 1.04 },
+              { filter: "grayscale(0%) contrast(1)", scale: 1, ease: "power2.out" },
+              0
+            );
+          }
+        }
+
+        // 3. ACTIVACIÓN Y PULSO DE ESTACIÓN TÉCNICA AL LLEGAR AL SERVICIO
+        ScrollTrigger.create({
+          trigger: item,
+          start: "top 65%",
+          end: "bottom 35%",
+          onEnter: () => {
+            if (stationBadge) stationBadge.classList.add('is-active');
+            if (stationDot) stationDot.classList.add('is-pulsing');
+          },
+          onEnterBack: () => {
+            if (stationBadge) stationBadge.classList.add('is-active');
+            if (stationDot) stationDot.classList.add('is-pulsing');
+          },
+          onLeave: () => {
+            if (stationBadge) stationBadge.classList.remove('is-active');
+            if (stationDot) stationDot.classList.remove('is-pulsing');
+          },
+          onLeaveBack: () => {
+            if (stationBadge) stationBadge.classList.remove('is-active');
+            if (stationDot) stationDot.classList.remove('is-pulsing');
+          }
+        });
+      });
+
+      // Refrescar ScrollTrigger al cargar todas las imágenes
+      window.addEventListener('load', () => {
+        ScrollTrigger.refresh();
+      });
+      window.addEventListener('resize', () => {
+        ScrollTrigger.refresh();
+      }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initServicesJourney);
+    } else {
+      initServicesJourney();
+    }
+  })();
+</script>
+
 
 ${getFooter()}
 `;

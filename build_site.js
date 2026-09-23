@@ -619,7 +619,8 @@ function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-cente
   `;
 }
 
-function getHeader(activeSlug) {
+function getHeader(activeSlug, isTransparent = false) {
+  const isHeaderTransparent = isTransparent || activeSlug === 'calidad';
   const links = [
     { num: '01', title: 'Inicio', href: 'index.html', slug: 'inicio' },
     { num: '02', title: 'Servicios', href: 'servicios.html', slug: 'servicios' },
@@ -676,7 +677,7 @@ function getHeader(activeSlug) {
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
-  <header class="sticky top-0 z-[140] bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5">
+  <header class="sticky top-0 z-[140] ${isHeaderTransparent ? 'bg-transparent border-b border-white/5' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
     <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
@@ -2796,10 +2797,10 @@ void main() {
 
 // 4. GENERATE CALIDAD.HTML (Quality and Certification Page with Aurora Shader Background)
 const calidadHtml = `${getHead('Calidad y Certificaciones LRQA ISO 9001, EN 1090-1 | SOLYCAL', 'Certificaciones oficiales acreditadas por Lloyd Register: ISO 9001:2008, Marcado CE EN 1090-1 y Soldeo Ferroviario EN 15085-2.', 'calidad.html')}
-${getHeader('calidad')}
+${getHeader('calidad', true)}
 
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE CALIDAD CON THREE.JS SHADER AURORA HERO (Made for Award Component 0024) -->
-<div id="calidad-page-container" class="relative bg-[#07080a] min-h-screen overflow-hidden">
+<div id="calidad-page-container" class="relative min-h-screen overflow-hidden">
   
   <!-- Canvas WebGL Aurora Fijo de fondo interactivo -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="aurora-wrap">

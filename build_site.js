@@ -2755,12 +2755,12 @@ void main() {
   float dn = smoothstep(0.0, -0.4, dd);
 
   vec3 col = uColWhite;
-  col = mix(col, uColGold, smoothstep(0.06, 0.16, abs(dd)) * smoothstep(0.35, 0.0, abs(dd)) * colorAmt * 0.8);
+  col = mix(col, uColGold, smoothstep(0.06, 0.16, abs(dd)) * smoothstep(0.35, 0.0, abs(dd)) * colorAmt * 0.85);
   col = mix(col, uColOrange, clamp(up * (1.2 + n2 * 0.6) * colorAmt, 0.0, 1.0));
   col = mix(col, uColRed, clamp((up * 2.4 - 0.9) * colorAmt, 0.0, 1.0));
   col = mix(col, uColMagenta, clamp((n2 - 0.55) * 2.2, 0.0, 1.0) * (up + dn) * colorAmt * 0.65);
-  col = mix(col, uColCyan, smoothstep(0.72, 1.0, x + (n2 - 0.5) * 0.08) * 0.85);
-  col = mix(col, mix(uColWhite, uColCyan, 0.35), dn * 0.45);
+  col = mix(col, uColCyan, smoothstep(0.72, 1.0, x + (n2 - 0.5) * 0.08) * 0.75);
+  col = mix(col, mix(uColWhite, uColGold, 0.45), dn * 0.45);
 
   vec3 color = col * light;
 
@@ -2769,10 +2769,10 @@ void main() {
   color += uColRed * ember * (0.55 + 0.1 * sin(uTime * 0.7));
 
   vec2 lp = (uv - vec2(0.02, 0.0)) * vec2(2.2, 2.6);
-  color += mix(uColRed, uColMagenta, 0.5) * exp(-dot(lp, lp)) * smoothstep(0.0, -0.12, d) * 0.22;
+  color += mix(uColRed, uColOrange, 0.5) * exp(-dot(lp, lp)) * smoothstep(0.0, -0.12, d) * 0.22;
 
-  float sheen = smoothstep(0.0, -0.5, d) * 0.05 * grow;
-  color += vec3(0.6, 0.68, 0.72) * sheen;
+  float sheen = smoothstep(0.0, -0.5, d) * 0.06 * grow;
+  color += vec3(0.95, 0.72, 0.28) * sheen;
 
   vec2 sp = uv * vec2(aspect, 1.0) * 90.0;
   vec2 cell = floor(sp);
@@ -2780,7 +2780,7 @@ void main() {
   float star = step(0.997, hash(cell)) * smoothstep(0.16, 0.0, length(fp));
   float twinkle = 0.5 + 0.5 * sin(uTime * 1.5 + hash(cell + 7.0) * 50.0);
   float darkness = 1.0 - clamp(light * 3.0, 0.0, 1.0);
-  color += vec3(0.9) * star * twinkle * darkness * smoothstep(0.75, 0.35, x) * smoothstep(0.35, 0.6, uv.y) * 0.5;
+  color += vec3(1.0, 0.94, 0.80) * star * twinkle * darkness * smoothstep(0.75, 0.35, x) * smoothstep(0.35, 0.6, uv.y) * 0.45;
 
   float vig = smoothstep(0.0, 0.35, uv.y) * 0.15 + 0.85;
   vig *= 1.0 - 0.45 * pow(1.0 - uv.y, 3.0);
@@ -2801,109 +2801,363 @@ ${getHeader('calidad')}
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE CALIDAD CON THREE.JS SHADER AURORA HERO (Made for Award Component 0024) -->
 <div id="calidad-page-container" class="relative bg-[#07080a] min-h-screen overflow-hidden">
   
-  <!-- Canvas WebGL Aurora Fijo de fondo -->
+  <!-- Canvas WebGL Aurora Fijo de fondo interactivo -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="aurora-wrap">
     <canvas id="aurora-canvas" class="w-full h-full block"></canvas>
   </div>
 
   <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
-  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/65 via-[#07080a]/40 to-[#07080a]/80"></div>
+  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
   <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
 
   <!-- CONTENIDO FRONTAL DE LA PÁGINA (Z-INDEX SUPERIOR) -->
   <div class="relative z-10">
 
-    <!-- 01 HERO INTRODUCTORIO DE CALIDAD -->
-    <section class="py-24 border-b border-white/5 relative">
-      <div class="w-full px-6">
-        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 04 &bull; SISTEMA DE GESTIÓN Y NORMAS</span>
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
-          La calidad avalada por <span class="text-brand-yellow">Lloyd's Register (LRQA).</span>
-        </h1>
-        <p class="text-neutral-300 max-w-2xl font-sans mt-6 text-base sm:text-lg leading-relaxed">
-          Desde la toma de datos hasta el montaje final, cada proyecto cuenta con trazabilidad total de materiales y control de producción en fábrica.
-        </p>
-
-        <!-- Indicadores de normas integrados -->
-        <div class="mt-8 flex flex-wrap items-center gap-6 font-mono text-xs text-neutral-400">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>ISO 9001:2008 CERTIFICADA</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>MARCADO CE EN 1090-1</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>SOLDEO FERROVIARIO EN 15085-2</span>
+    <!-- 01 HERO INTRODUCTORIO DE CALIDAD (ELEGANTE, ESPACIOSO Y EDITORIAL) -->
+    <section class="pt-32 pb-20 sm:pt-40 sm:pb-28 border-b border-white/5 relative">
+      <div class="w-full px-6 max-w-7xl mx-auto">
+        
+        <!-- Live status pill & Section tag -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 04 &bull; SISTEMA DE GESTIÓN Y NORMAS INDUSTRIALES</span>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 text-[11px] font-mono text-brand-yellow uppercase tracking-wider backdrop-blur-md">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
+            Acreditaciones Oficiales LRQA
           </div>
         </div>
+
+        <!-- Main Title -->
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.06] max-w-5xl">
+          Rigor técnico avalado por <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-amber-200 to-brand-accent">Lloyd's Register.</span>
+        </h1>
+
+        <!-- Subtitle / Editorial description -->
+        <p class="text-neutral-300 font-sans mt-8 text-base sm:text-xl max-w-3xl leading-relaxed font-light">
+          En calderería pesada y soldadura estructural, la precisión técnica es la base innegociable de cada proceso. Desde la colada del acero hasta el montaje en obra, garantizamos control documental y trazabilidad 100% verificable.
+        </p>
+
+        <!-- Floating KPI & Standard Badges (Frosted glass pills floating above the horizon) -->
+        <div class="mt-12 flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-xs">
+          <div class="px-4 py-2 rounded-full bg-[#0a0c0e]/60 border border-white/10 backdrop-blur-md text-neutral-200 flex items-center gap-2.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span class="text-white font-bold">ISO 9001:2008</span>
+            <span class="text-neutral-400">| Calidad LRQA</span>
+          </div>
+          <div class="px-4 py-2 rounded-full bg-[#0a0c0e]/60 border border-white/10 backdrop-blur-md text-neutral-200 flex items-center gap-2.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span class="text-white font-bold">EN 1090-1</span>
+            <span class="text-neutral-400">| Marcado CE EXC3</span>
+          </div>
+          <div class="px-4 py-2 rounded-full bg-[#0a0c0e]/60 border border-white/10 backdrop-blur-md text-neutral-200 flex items-center gap-2.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span class="text-white font-bold">EN 15085-2</span>
+            <span class="text-neutral-400">| Soldeo Ferroviario CL-1</span>
+          </div>
+          <div class="px-4 py-2 rounded-full bg-[#0a0c0e]/60 border border-white/10 backdrop-blur-md text-neutral-200 flex items-center gap-2.5 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+            <span class="text-white font-bold">EN 10204 3.1</span>
+            <span class="text-neutral-400">| Trazabilidad Colada</span>
+          </div>
+        </div>
+
+        <!-- Subtle interactive shader cue -->
+        <div class="mt-10 flex items-center gap-2.5 text-xs font-mono text-neutral-400 tracking-wider">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-yellow animate-pulse"></i>
+          <span class="uppercase tracking-widest text-[11px] text-neutral-400">FONDO INTERACTIVO &bull; Desliza el cursor para modular el flujo de plasma térmico</span>
+        </div>
+
       </div>
     </section>
 
-    <!-- 02 BLOQUES Y CERTIFICACIONES -->
-    <section class="py-24">
-      <div class="w-full px-6 space-y-20">
+    <!-- 02 TRIPTYCH CERTIFICACIONES OFICIALES (ELEVATED FROSTED GLASS CARDS) -->
+    <section class="py-24 border-b border-white/5 relative">
+      <div class="w-full px-6 max-w-7xl mx-auto space-y-12">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-3">// ACREDITACIONES INTERNACIONALES</span>
+            <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">Certificaciones de Referencia</h2>
+          </div>
+          <p class="text-sm font-mono text-neutral-400 max-w-md">
+            Auditorías anuales independientes por organismos notificados que garantizan cumplimiento normativo en toda la Unión Europea.
+          </p>
+        </div>
 
-        <!-- LRQA Official Badges (Tarjetas Glassmorphism) -->
+        <!-- Tarjetas Glassmorphism con iluminación de fondo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
-            <div class="h-32 flex items-center justify-center">
-              <img src="assets/lrqa-9001.png" alt="Certificado ISO 9001:2008 acreditado por Lloyd's Register a Solycal" class="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
-            </div>
-            <div>
-              <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA ISO 9001:2008</span>
-              <h3 class="text-xl font-display font-bold text-white">Gestión de Calidad</h3>
-              <p class="text-xs text-neutral-400 font-sans mt-2">Control de diseño, compras de chapas con certificado 3.1 y calibración de equipos.</p>
-            </div>
-          </div>
-
-          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
-            <div class="h-32 flex items-center justify-center">
-              <img src="assets/lrqa-1090.png" alt="Certificado Marcado CE EN 1090-1 para estructuras metálicas de Solycal" class="max-h-28 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
-            </div>
-            <div>
-              <span class="font-mono text-xs text-brand-yellow block mb-1">EN 1090-1 &bull; MARCADO CE</span>
-              <h3 class="text-xl font-display font-bold text-white">Estructuras Metálicas</h3>
-              <p class="text-xs text-neutral-400 font-sans mt-2">Obligatorio en la UE para la comercialización de componentes estructurales de acero.</p>
-            </div>
-          </div>
-
-          <div class="p-8 rounded-3xl bg-[#0a0c0e]/75 border border-white/10 backdrop-blur-md text-center space-y-6 reveal hover:border-brand-yellow/40 transition-all shadow-xl group">
-            <div class="h-32 flex items-center justify-center">
-              <div class="w-20 h-20 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow group-hover:scale-105 transition-transform">
-                <i data-lucide="train" class="w-10 h-10"></i>
+          <!-- Card 1: ISO 9001:2008 -->
+          <div class="p-8 sm:p-10 rounded-3xl bg-[#0a0c0e]/55 border border-white/10 backdrop-blur-xl flex flex-col justify-between reveal hover:border-brand-yellow/50 transition-all duration-500 shadow-2xl group relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none group-hover:bg-brand-yellow/20 transition-all duration-500"></div>
+            
+            <div class="space-y-6 relative z-10">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest font-semibold">NORMA ISO 9001:2008</span>
+                <span class="px-2.5 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-[10px] font-mono text-brand-yellow">AUDITADO LRQA</span>
               </div>
+              
+              <div class="h-32 flex items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:border-white/15 transition-all">
+                <img src="assets/lrqa-9001.png" alt="Certificado ISO 9001:2008 acreditado por Lloyd's Register a Solycal" class="max-h-24 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors">Gestión de Calidad</h3>
+                <p class="text-xs text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Sistema integral de gestión de la calidad para calderería pesada, tubería industrial y estructuras metálicas soldadas.
+                </p>
+              </div>
+
+              <ul class="space-y-2 pt-2 border-t border-white/5 font-mono text-xs text-neutral-400">
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Homologación de aceros europeos</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Calibración metrológica ENAC</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Auditorías continuas de proceso</span>
+                </li>
+              </ul>
             </div>
-            <div>
-              <span class="font-mono text-xs text-brand-yellow block mb-1">NORMA EN 15085-2</span>
-              <h3 class="text-xl font-display font-bold text-white">Soldeo Ferroviario</h3>
-              <p class="text-xs text-neutral-400 font-sans mt-2">Acreditación técnica para fabricación de bastidores y componentes de material rodante.</p>
+
+            <div class="pt-6 mt-6 border-t border-white/5 flex items-center justify-between font-mono text-xs">
+              <span class="text-neutral-500">ALCANCE DOCUMENTAL</span>
+              <span class="text-brand-yellow font-bold">100% TRAZABILIDAD</span>
+            </div>
+          </div>
+
+          <!-- Card 2: EN 1090-1 Marcado CE -->
+          <div class="p-8 sm:p-10 rounded-3xl bg-[#0a0c0e]/55 border border-white/10 backdrop-blur-xl flex flex-col justify-between reveal hover:border-brand-yellow/50 transition-all duration-500 shadow-2xl group relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none group-hover:bg-brand-yellow/20 transition-all duration-500"></div>
+
+            <div class="space-y-6 relative z-10">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest font-semibold">EN 1090-1 &bull; MARCADO CE</span>
+                <span class="px-2.5 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-[10px] font-mono text-brand-yellow">CLASE EXC-3</span>
+              </div>
+
+              <div class="h-32 flex items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:border-white/15 transition-all">
+                <img src="assets/lrqa-1090.png" alt="Certificado Marcado CE EN 1090-1 para estructuras metálicas de Solycal" class="max-h-24 w-auto object-contain group-hover:scale-105 transition-transform" loading="lazy">
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors">Estructuras Metálicas</h3>
+                <p class="text-xs text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Control de Producción en Fábrica (CPF) obligatorio según Reglamento Europeo 305/2011 para componentes estructurales de acero.
+                </p>
+              </div>
+
+              <ul class="space-y-2 pt-2 border-t border-white/5 font-mono text-xs text-neutral-400">
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Ejecución certificada hasta EXC3</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Declaración de Prestaciones (DoP)</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Soldadura con WPQR cualificados</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-white/5 flex items-center justify-between font-mono text-xs">
+              <span class="text-neutral-500">EXIGENCIA NORMATIVA</span>
+              <span class="text-brand-yellow font-bold">OBLIGATORIO UNIÓN EUROPEA</span>
+            </div>
+          </div>
+
+          <!-- Card 3: EN 15085-2 Soldeo Ferroviario -->
+          <div class="p-8 sm:p-10 rounded-3xl bg-[#0a0c0e]/55 border border-white/10 backdrop-blur-xl flex flex-col justify-between reveal hover:border-brand-yellow/50 transition-all duration-500 shadow-2xl group relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none group-hover:bg-brand-yellow/20 transition-all duration-500"></div>
+
+            <div class="space-y-6 relative z-10">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest font-semibold">NORMA EN 15085-2</span>
+                <span class="px-2.5 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-[10px] font-mono text-brand-yellow">NIVEL CL-1</span>
+              </div>
+
+              <div class="h-32 flex items-center justify-center p-3 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:border-white/15 transition-all">
+                <div class="w-16 h-16 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow group-hover:scale-110 group-hover:bg-brand-yellow/20 transition-all">
+                  <i data-lucide="train" class="w-8 h-8"></i>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors">Soldeo Ferroviario</h3>
+                <p class="text-xs text-neutral-300 font-sans mt-3 leading-relaxed">
+                  Homologación del más alto nivel técnico para soldadura y fabricación de componentes estructurales de vehículos ferroviarios.
+                </p>
+              </div>
+
+              <ul class="space-y-2 pt-2 border-t border-white/5 font-mono text-xs text-neutral-400">
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Soldadores EN ISO 9606-1 / 9606-2</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Coordinación IWE / IWT permanente</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+                  <span>Piezas críticas sometidas a fatiga</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-white/5 flex items-center justify-between font-mono text-xs">
+              <span class="text-neutral-500">NIVEL DE EXIGENCIA</span>
+              <span class="text-brand-yellow font-bold">MÁXIMO RANGO TÉCNICO</span>
             </div>
           </div>
 
         </div>
 
-        <!-- Official Quality Statement (From solycal.es/calidad) -->
-        <div class="p-10 sm:p-14 rounded-3xl bg-[#0a0c0e]/80 border border-white/10 backdrop-blur-md relative reveal shadow-2xl">
-          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// POLÍTICA DE CALIDAD EMPRESARIAL</span>
-          <h3 class="text-2xl sm:text-3xl font-display font-bold text-white mb-6">Compromiso suscrito por la dirección</h3>
-          <div class="space-y-4 text-sm sm:text-base text-neutral-300 font-sans leading-relaxed">
+      </div>
+    </section>
+
+    <!-- 03 PROTOCOLO DE TRAZABILIDAD METALÚRGICA EN 4 FASES -->
+    <section class="py-24 border-b border-white/5 relative">
+      <div class="w-full px-6 max-w-7xl mx-auto space-y-14">
+        
+        <div>
+          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-3">// ARQUITECTURA DE CONTROL DE CALIDAD</span>
+          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">Protocolo de Control en 4 Fases Industriales</h2>
+          <p class="text-neutral-300 font-sans mt-4 text-base sm:text-lg max-w-3xl leading-relaxed font-light">
+            Cada chapa, viga y cordón de soldadura responde a un procedimiento documentado desde su origen siderúrgico hasta la entrega final al cliente.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- Paso 01 -->
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/50 border border-white/10 backdrop-blur-xl space-y-5 reveal hover:border-brand-yellow/40 transition-all group shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">FASE 01</span>
+              <span class="font-mono text-2xl font-bold text-white/20 group-hover:text-brand-yellow transition-colors">01</span>
+            </div>
+            <h3 class="text-xl font-display font-bold text-white">Materia Prima &amp; Análisis 3.1</h3>
+            <p class="text-xs text-neutral-300 font-sans leading-relaxed">
+              Recepción exclusiva de acerías europeas homologadas. Verificación de certificado de colada según EN 10204 3.1 y marcado alfanumérico unitario de cada chapa.
+            </p>
+            <div class="pt-4 border-t border-white/5 font-mono text-[11px] text-neutral-400">
+              &bull; Ensayo de tracción &bull; Resiliencia Charpy
+            </div>
+          </div>
+
+          <!-- Paso 02 -->
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/50 border border-white/10 backdrop-blur-xl space-y-5 reveal hover:border-brand-yellow/40 transition-all group shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">FASE 02</span>
+              <span class="font-mono text-2xl font-bold text-white/20 group-hover:text-brand-yellow transition-colors">02</span>
+            </div>
+            <h3 class="text-xl font-display font-bold text-white">Corte CNC &amp; Preparación</h3>
+            <p class="text-xs text-neutral-300 font-sans leading-relaxed">
+              Corte térmico mediante plasma HD TrueHole y oxicorte hasta 50 mm. Biselado robotizado y preparación geométrica de bordes según tolerancias EN ISO 913.
+            </p>
+            <div class="pt-4 border-t border-white/5 font-mono text-[11px] text-neutral-400">
+              &bull; Tolerancia milimétrica &bull; Desbarbado total
+            </div>
+          </div>
+
+          <!-- Paso 03 -->
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/50 border border-white/10 backdrop-blur-xl space-y-5 reveal hover:border-brand-yellow/40 transition-all group shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">FASE 03</span>
+              <span class="font-mono text-2xl font-bold text-white/20 group-hover:text-brand-yellow transition-colors">03</span>
+            </div>
+            <h3 class="text-xl font-display font-bold text-white">Soldeo Homologado &amp; E.N.D.</h3>
+            <p class="text-xs text-neutral-300 font-sans leading-relaxed">
+              Soldadores cualificados (EN ISO 9606-1) con procedimientos WPQR. Ensayos no destructivos: Inspección Visual (VT), Líquidos Penetrantes (PT), Partículas (MT) y Ultrasonidos (UT).
+            </p>
+            <div class="pt-4 border-t border-white/5 font-mono text-[11px] text-neutral-400">
+              &bull; Técnicos Nivel II &bull; Soldadura TIG/MIG/MAG
+            </div>
+          </div>
+
+          <!-- Paso 04 -->
+          <div class="p-8 rounded-3xl bg-[#0a0c0e]/50 border border-white/10 backdrop-blur-xl space-y-5 reveal hover:border-brand-yellow/40 transition-all group shadow-xl">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">FASE 04</span>
+              <span class="font-mono text-2xl font-bold text-white/20 group-hover:text-brand-yellow transition-colors">04</span>
+            </div>
+            <h3 class="text-xl font-display font-bold text-white">Marcado CE &amp; Dossier Final</h3>
+            <p class="text-xs text-neutral-300 font-sans leading-relaxed">
+              Etiquetado de Marcado CE individual, emisión de la Declaración de Prestaciones (DoP) y entrega del Dossier Técnico Final con certificados 3.1, informes E.N.D. y planos as-built.
+            </p>
+            <div class="pt-4 border-t border-white/5 font-mono text-[11px] text-neutral-400">
+              &bull; Dossier técnico &bull; Declaración de Prestaciones
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 04 COMPROMISO DE DIRECCIÓN Y ATENCIÓN TÉCNICA -->
+    <section class="py-24 relative">
+      <div class="w-full px-6 max-w-5xl mx-auto space-y-12">
+
+        <!-- Declaración oficial firmada (Tarjetón Frosted Glass) -->
+        <div class="p-10 sm:p-14 rounded-3xl bg-[#0a0c0e]/65 border border-white/10 backdrop-blur-xl relative reveal shadow-2xl space-y-8">
+          <div class="flex items-center justify-between border-b border-white/5 pb-6">
+            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// POLÍTICA DE CALIDAD EMPRESARIAL</span>
+            <span class="font-mono text-xs text-neutral-500">REGISTRO SGC-SOLYCAL</span>
+          </div>
+
+          <div>
+            <h3 class="text-2xl sm:text-3xl font-display font-bold text-white mb-4">Compromiso suscrito por la alta dirección</h3>
+            <p class="text-xs text-neutral-400 font-mono uppercase tracking-wider">Declaración formal de principios técnicos y medioambientales</p>
+          </div>
+
+          <div class="space-y-5 text-sm sm:text-base text-neutral-300 font-sans leading-relaxed">
             <p>
               "SOLYCAL Soldadura y Calderería Valenciana S.L., como empresa dedicada a prestar servicios de construcción y montaje en el campo metal mecánico, y contando con el compromiso de la alta dirección y participación activa de todo el personal se compromete a:
             </p>
-            <p class="border-l-2 border-brand-yellow pl-4 italic">
-              Lograr la satisfacción de sus clientes brindándoles productos y servicios de la más alta calidad. Buscar el constante desarrollo profesional de sus trabajadores. Alcanzar la máxima rentabilidad de la empresa y cumplir con los requisitos legales aplicables y los requisitos internos para asegurar la calidad de los servicios que brinda."
-            </p>
+            <div class="p-6 rounded-2xl bg-black/40 border-l-2 border-brand-yellow border-y border-r border-white/5 italic text-neutral-200 space-y-3 font-serif sm:text-lg">
+              <p>
+                Lograr la satisfacción de sus clientes brindándoles productos y servicios de la más alta calidad. Buscar el constante desarrollo profesional de sus trabajadores. Alcanzar la máxima rentabilidad de la empresa y cumplir con los requisitos legales aplicables y los requisitos internos para asegurar la calidad de los servicios que brinda."
+              </p>
+            </div>
             <p>
               "Mejorar continuamente la eficacia del sistema de gestión de calidad, seguridad y la protección del medio ambiente en sus procesos a fin de alcanzar la excelencia en los mismos."
             </p>
           </div>
-          <div class="pt-8 border-t border-white/5 font-mono text-xs text-neutral-400 flex flex-col sm:flex-row justify-between gap-2">
-            <span>Fdo: Eloy José Molina Salinas &bull; GERENTE</span>
-            <span class="text-brand-yellow">Torrent (Valencia)</span>
+
+          <div class="pt-8 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs">
+            <div>
+              <span class="text-white font-bold block">Eloy José Molina Salinas</span>
+              <span class="text-neutral-400">GERENTE GENERAL &bull; SOLYCAL S.L.</span>
+            </div>
+            <div class="text-left sm:text-right">
+              <span class="text-brand-yellow block">Torrent (Valencia)</span>
+              <span class="text-neutral-500">Sistema Auditado por Lloyd's Register</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner de Contacto para Auditorías / Dossier Técnico -->
+        <div class="p-8 sm:p-10 rounded-3xl bg-brand-yellow/5 border border-brand-yellow/20 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-6 reveal">
+          <div class="space-y-2 text-center md:text-left">
+            <h4 class="text-xl font-display font-bold text-white">¿Deseas auditar nuestras instalaciones o solicitar un dossier técnico?</h4>
+            <p class="text-xs sm:text-sm text-neutral-300 font-sans">Nuestro departamento de calidad y oficina técnica están a disposición de los inspectores de tu proyecto.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 shrink-0">
+            <a href="contacto.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-yellow text-black font-mono text-xs uppercase font-bold tracking-wider hover:bg-brand-accent transition-all shadow-lg">
+              <span>Contactar Oficina Técnica</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="tel:+34961571400" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.05] border border-white/10 text-white font-mono text-xs uppercase font-semibold tracking-wider hover:bg-white/10 transition-all">
+              <i data-lucide="phone" class="w-4 h-4 text-brand-yellow"></i>
+              <span>+34 96 157 14 00</span>
+            </a>
           </div>
         </div>
 
@@ -2922,24 +3176,24 @@ ${getHeader('calidad')}
     if (!canvas) return;
 
     const config = {
-      horizon: 0.44,
-      intensity: 1.35,
-      spreadMax: 0.92,
-      coreGlow: 1.25,
-      flowSpeed: 0.5,
-      waveAmount: 0.22,
-      breath: 0.06,
-      colorfulness: 0.9,
-      colWhite: '#f2efff',
-      colOrange: '#8b5cf6',
-      colRed: '#4c1d95',
-      colCyan: '#38bdf8',
-      colMagenta: '#f0abfc',
-      colGold: '#ff7ad9',
-      parallax: 1.6,
-      mouseGlow: 0.3,
-      mouseGlowSize: 0.2,
-      mouseBend: 0.47
+      horizon: 0.46,
+      intensity: 1.45,
+      spreadMax: 0.88,
+      coreGlow: 1.35,
+      flowSpeed: 0.42,
+      waveAmount: 0.24,
+      breath: 0.05,
+      colorfulness: 1.0,
+      colWhite: '#FFFDF5',    // Núcleo incandescente arco eléctrico / plasma blanco cálido
+      colOrange: '#F1B541',   // Amarillo corporativo Solycal principal
+      colRed: '#B45309',      // Ámbar forja profunda / acero fundido
+      colCyan: '#FDE68A',     // Destello dorado titanio / luz de soldadura
+      colMagenta: '#E5A52A',  // Acento secundario corporativo Solycal
+      colGold: '#F59E0B',     // Filamentos dorados cálidos
+      parallax: 1.4,
+      mouseGlow: 0.38,
+      mouseGlowSize: 0.22,
+      mouseBend: 0.45
     };
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false });

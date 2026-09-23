@@ -1858,10 +1858,10 @@ ${getHeader('inicio')}
             <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-yellow group-hover:scale-110 transition-transform"></i>
           </span>
         </a>
-        <button type="button" id="btn-hero-video-trigger" class="btn-magnetic px-6 py-4 rounded-full border border-brand-yellow/30 bg-black/40 text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2">
+        <button type="button" id="btn-hero-video-trigger" class="btn-magnetic px-8 py-4 rounded-full border border-white/30 bg-transparent text-white font-mono text-xs uppercase tracking-wider hover:border-white hover:bg-white/5 transition-all group inline-flex items-center gap-2.5">
           <span class="btn-magnetic-glow"></span>
           <span class="btn-magnetic-content">
-            <i data-lucide="play" class="w-3.5 h-3.5 text-brand-yellow fill-brand-yellow"></i>
+            <svg class="w-3.5 h-3.5 fill-white text-white group-hover:scale-110 transition-transform" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             <span>Mostrar Vídeo</span>
           </span>
         </button>
@@ -2110,48 +2110,53 @@ ${getHeader('inicio')}
 
 <!-- DYNAMIC FLOATING POINTER BADGE (MOSTRAR VÍDEO) -->
 <div id="hero-cursor-badge" class="fixed z-50 pointer-events-none opacity-0 transition-opacity duration-200 -translate-x-1/2 -translate-y-1/2 hidden md:block">
-  <div class="px-4 py-2 rounded-full bg-brand-yellow text-black font-mono text-xs font-bold uppercase tracking-wider shadow-[0_0_25px_rgba(241,181,65,0.6)] flex items-center gap-2 whitespace-nowrap">
-    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+  <div class="px-4 py-2 rounded-full bg-black/85 border border-white/40 text-white font-mono text-xs uppercase tracking-wider backdrop-blur-md shadow-2xl flex items-center gap-2 whitespace-nowrap">
+    <svg class="w-3 h-3 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     <span>Mostrar Vídeo</span>
   </div>
 </div>
 
-<!-- VIDEO LIGHTBOX MODAL -->
-<div id="video-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Vídeo Corporativo SOLYCAL">
-  <div class="relative w-full max-w-5xl rounded-3xl bg-[#0a0c0e] border border-white/15 overflow-hidden shadow-2xl scale-95 transition-transform duration-300" id="video-modal-dialog">
+<!-- VIDEO LIGHTBOX MODAL (SIN CONTENIDO ADICIONAL, NI RASTRO DE YOUTUBE NI DESCRIPCIONES, SOLO PLAY Y PAUSE) -->
+<div id="video-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Reproductor Vídeo">
+  <div class="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden bg-black border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.9)] scale-95 transition-transform duration-300 select-none group" id="video-modal-dialog">
     
-    <!-- Modal Header -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/60">
-      <div class="flex items-center gap-3">
-        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span>
-        <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold">// SOLYCAL &bull; INSTALACIONES Y PRODUCCIÓN EN TORRENT</span>
-      </div>
-      <button type="button" id="close-video-modal" class="px-3.5 py-1.5 rounded-full border border-white/20 text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow transition-colors flex items-center gap-1.5 group" aria-label="Cerrar reproductor">
-        <span>Cerrar</span>
-        <i data-lucide="x" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i>
-      </button>
-    </div>
-
-    <!-- Video Player Container (16:9) -->
-    <div class="relative w-full aspect-video bg-black">
+    <!-- Video Iframe Cropped & Scaled (Oculta completamente cabecera de YouTube, logos y sugerencias) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center bg-black">
       <iframe 
         id="modal-video-iframe" 
-        class="w-full h-full"
+        class="w-[114%] h-[114%] max-w-none pointer-events-none scale-[1.08] object-cover" 
         src="" 
-        title="SOLYCAL Video Corporativo Completo" 
+        title="SOLYCAL Video" 
         frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
         allowfullscreen>
       </iframe>
     </div>
 
-    <!-- Modal Footer -->
-    <div class="px-6 py-3 border-t border-white/10 bg-black/60 flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] text-neutral-400">
-      <span>5.000 m² DE PLANTA &bull; 7 PUENTES GRÚA &bull; CORTE PLASMA HD</span>
-      <a href="instalaciones.html" class="text-brand-yellow hover:underline flex items-center gap-1">
-        <span>Conocer maquinaria e instalaciones</span>
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-      </a>
+    <!-- Superficie interactiva (Clic en el vídeo reproduce / pausa) -->
+    <div id="video-click-surface" class="absolute inset-0 z-10 cursor-pointer"></div>
+
+    <!-- Botón Minimalista Cerrar -->
+    <button type="button" id="close-video-modal" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 border border-white/25 text-white flex items-center justify-center hover:border-white hover:bg-black/90 transition-all backdrop-blur-md cursor-pointer" aria-label="Cerrar reproductor">
+      <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+
+    <!-- Indicador central dinámico Play / Pause -->
+    <div id="video-center-indicator" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center transition-opacity duration-200">
+      <div id="btn-video-center-toggle" class="w-20 h-20 rounded-full bg-black/75 border border-white/40 backdrop-blur-md text-white flex items-center justify-center shadow-2xl transition-transform duration-200">
+        <svg id="icon-center-play" class="w-8 h-8 fill-white ml-1" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        <svg id="icon-center-pause" class="w-8 h-8 fill-white hidden" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+      </div>
+    </div>
+
+    <!-- Controles inferiores: Solo Play y Pause -->
+    <div id="video-bottom-controls" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 transition-opacity duration-300 pointer-events-auto">
+      <button type="button" id="btn-video-toggle" class="px-6 py-2.5 rounded-full bg-black/80 border border-white/30 text-white font-mono text-xs uppercase tracking-widest backdrop-blur-md hover:border-white hover:bg-black transition-all flex items-center gap-2.5 shadow-2xl cursor-pointer">
+        <span id="video-toggle-icon">
+          <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </span>
+        <span id="video-toggle-label">PAUSA</span>
+      </button>
     </div>
 
   </div>
@@ -2166,12 +2171,96 @@ ${getHeader('inicio')}
     const modalIframe = document.getElementById('modal-video-iframe');
     const closeBtn = document.getElementById('close-video-modal');
     const btnPlayHero = document.getElementById('btn-hero-video-trigger');
+    const clickSurface = document.getElementById('video-click-surface');
+    const btnVideoToggle = document.getElementById('btn-video-toggle');
+    const centerIndicator = document.getElementById('video-center-indicator');
+    const iconCenterPlay = document.getElementById('icon-center-play');
+    const iconCenterPause = document.getElementById('icon-center-pause');
+    const videoToggleIcon = document.getElementById('video-toggle-icon');
+    const videoToggleLabel = document.getElementById('video-toggle-label');
+    const bottomControls = document.getElementById('video-bottom-controls');
 
-    const videoEmbedUrl = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&rel=0&modestbranding=1';
+    const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1';
+
+    let isPlaying = false;
+    let hideTimer = null;
+
+    function postToIframe(command, args) {
+      if (!modalIframe || !modalIframe.contentWindow) return;
+      modalIframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: command,
+        args: args || ''
+      }), '*');
+    }
+
+    function updateUiState(playing) {
+      isPlaying = playing;
+      if (playing) {
+        if (videoToggleLabel) videoToggleLabel.textContent = 'PAUSA';
+        if (videoToggleIcon) {
+          videoToggleIcon.innerHTML = '<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+        }
+        if (iconCenterPlay) iconCenterPlay.classList.add('hidden');
+        if (iconCenterPause) iconCenterPause.classList.remove('hidden');
+        if (centerIndicator) {
+          centerIndicator.classList.add('opacity-0');
+        }
+      } else {
+        if (videoToggleLabel) videoToggleLabel.textContent = 'PLAY';
+        if (videoToggleIcon) {
+          videoToggleIcon.innerHTML = '<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+        }
+        if (iconCenterPlay) iconCenterPlay.classList.remove('hidden');
+        if (iconCenterPause) iconCenterPause.classList.add('hidden');
+        if (centerIndicator) {
+          centerIndicator.classList.remove('opacity-0');
+        }
+      }
+      resetHideTimer();
+    }
+
+    function playVideo() {
+      postToIframe('playVideo');
+      postToIframe('unMute');
+      updateUiState(true);
+    }
+
+    function pauseVideo() {
+      postToIframe('pauseVideo');
+      updateUiState(false);
+    }
+
+    function togglePlayPause() {
+      if (isPlaying) {
+        pauseVideo();
+      } else {
+        playVideo();
+      }
+    }
+
+    function resetHideTimer() {
+      if (bottomControls) bottomControls.style.opacity = '1';
+      clearTimeout(hideTimer);
+      if (isPlaying) {
+        hideTimer = setTimeout(() => {
+          if (isPlaying && bottomControls) {
+            bottomControls.style.opacity = '0';
+          }
+        }, 2500);
+      }
+    }
 
     function openModal() {
       if (!videoModal || !modalIframe) return;
-      modalIframe.src = videoEmbedUrl;
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo && bgVideo.contentWindow) {
+        bgVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      }
+
+      modalIframe.src = videoEmbedBase;
+      updateUiState(true);
+
       videoModal.classList.remove('opacity-0', 'pointer-events-none');
       if (modalDialog) {
         modalDialog.classList.remove('scale-95');
@@ -2190,6 +2279,13 @@ ${getHeader('inicio')}
       }
       modalIframe.src = '';
       document.body.style.overflow = '';
+      updateUiState(false);
+      clearTimeout(hideTimer);
+
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo && bgVideo.contentWindow) {
+        bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      }
     }
 
     if (btnPlayHero) {
@@ -2206,6 +2302,24 @@ ${getHeader('inicio')}
       });
     }
 
+    if (clickSurface) {
+      clickSurface.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlayPause();
+      });
+    }
+
+    if (btnVideoToggle) {
+      btnVideoToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlayPause();
+      });
+    }
+
+    if (modalDialog) {
+      modalDialog.addEventListener('mousemove', resetHideTimer);
+    }
+
     if (videoModal) {
       videoModal.addEventListener('click', (e) => {
         if (!modalDialog || !modalDialog.contains(e.target)) {
@@ -2215,9 +2329,27 @@ ${getHeader('inicio')}
     }
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && videoModal && !videoModal.classList.contains('pointer-events-none')) {
-        closeModal();
+      if (videoModal && !videoModal.classList.contains('pointer-events-none')) {
+        if (e.key === 'Escape') {
+          closeModal();
+        } else if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          togglePlayPause();
+        }
       }
+    });
+
+    window.addEventListener('message', (event) => {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (data && data.event === 'onStateChange') {
+          if (data.info === 1) {
+            updateUiState(true);
+          } else if (data.info === 2 || data.info === 0) {
+            updateUiState(false);
+          }
+        }
+      } catch (err) {}
     });
 
     // Custom Pointer Badge Follower on Hero Section

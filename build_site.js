@@ -2861,12 +2861,6 @@ ${getHeader('calidad', true)}
           </div>
         </div>
 
-        <!-- Subtle interactive shader cue -->
-        <div class="mt-10 flex items-center gap-2.5 text-xs font-mono text-neutral-400 tracking-wider">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-yellow animate-pulse"></i>
-          <span class="uppercase tracking-widest text-[11px] text-neutral-400">FONDO INTERACTIVO &bull; Desliza el cursor para modular el flujo de plasma térmico</span>
-        </div>
-
       </div>
     </section>
 

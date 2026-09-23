@@ -1044,7 +1044,7 @@
 </section>
 
 <!-- DYNAMIC FLOATING POINTER BADGE (MOSTRAR VÍDEO) -->
-<div id="hero-cursor-badge" class="fixed z-50 pointer-events-none opacity-0 transition-opacity duration-200 -translate-x-1/2 -translate-y-1/2 hidden md:block">
+<div id="hero-cursor-badge" class="fixed z-[80] pointer-events-none opacity-0 transition-opacity duration-200 -translate-x-1/2 -translate-y-1/2 hidden md:block" style="top: -200px; left: -200px;">
   <div class="px-5 py-2.5 rounded-full bg-transparent border border-white text-white font-mono text-xs uppercase tracking-wider backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.15)] flex items-center gap-2.5 whitespace-nowrap">
     <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
     <span>Mostrar Vídeo</span>
@@ -1174,6 +1174,10 @@
       if (bgVideo && bgVideo.contentWindow) {
         bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
       }
+
+      if (typeof updateCursorVisibility === 'function') {
+        updateCursorVisibility();
+      }
     }
 
     if (closeBtn) {
@@ -1223,59 +1227,74 @@
     });
 
     // Custom Pointer Badge Follower on Hero Section
+    let updateCursorVisibility = () => {};
     if (heroSection && heroCursor) {
-      let mouseX = -100;
-      let mouseY = -100;
-      let curX = -100;
-      let curY = -100;
+      let mouseX = -1000;
+      let mouseY = -1000;
+      let curX = -1000;
+      let curY = -1000;
       let isInsideHero = false;
       let isOverInteractive = false;
 
-      heroSection.addEventListener('pointerenter', () => {
-        isInsideHero = true;
-        if (!isOverInteractive) {
-          heroCursor.style.opacity = '1';
-        }
-      });
+      function checkPointerInHero(clientX, clientY) {
+        if (!heroSection) return false;
+        const rect = heroSection.getBoundingClientRect();
+        return (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        );
+      }
 
-      heroSection.addEventListener('pointerleave', () => {
-        isInsideHero = false;
-        heroCursor.style.opacity = '0';
-      });
+      updateCursorVisibility = () => {
+        const isModalOpen = videoModal && !videoModal.classList.contains('pointer-events-none');
+        if (isInsideHero && !isOverInteractive && !isModalOpen) {
+          heroCursor.style.opacity = '1';
+        } else {
+          heroCursor.style.opacity = '0';
+        }
+      };
 
       window.addEventListener('pointermove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        if (curX === -100) {
+        if (curX < -500) {
           curX = mouseX;
           curY = mouseY;
+          heroCursor.style.left = curX + 'px';
+          heroCursor.style.top = curY + 'px';
         }
+
+        isInsideHero = checkPointerInHero(e.clientX, e.clientY);
+
+        const interactive = e.target && e.target.closest ? e.target.closest('a, button, input, [role="button"], select, textarea') : null;
+        isOverInteractive = !!interactive;
+
+        updateCursorVisibility();
       });
 
-      // Ignore cursor badge when hovering over interactive links and buttons
-      const interactiveElements = heroSection.querySelectorAll('a, button, input');
-      interactiveElements.forEach((el) => {
-        el.addEventListener('pointerenter', () => {
-          isOverInteractive = true;
-          heroCursor.style.opacity = '0';
-        });
-        el.addEventListener('pointerleave', () => {
-          isOverInteractive = false;
-          if (isInsideHero) {
-            heroCursor.style.opacity = '1';
-          }
-        });
+      window.addEventListener('scroll', () => {
+        if (curX > -500) {
+          isInsideHero = checkPointerInHero(mouseX, mouseY);
+          updateCursorVisibility();
+        }
+      }, { passive: true });
+
+      document.addEventListener('mouseleave', () => {
+        isInsideHero = false;
+        updateCursorVisibility();
       });
 
       // Clicking on hero background (outside interactive buttons) opens video modal
       heroSection.addEventListener('click', (e) => {
-        if (e.target.closest('a, button, input')) return;
+        if (e.target.closest('a, button, input, [role="button"], select, textarea')) return;
         openModal();
       });
 
-      // Smooth lag follow loop
+      // Smooth lag follow loop (runs continuously so movement is fluid when entering/leaving)
       function followLoop() {
-        if (isInsideHero) {
+        if (curX > -500) {
           curX += (mouseX - curX) * 0.28;
           curY += (mouseY - curY) * 0.28;
           heroCursor.style.left = curX + 'px';
@@ -1283,35 +1302,37 @@
         }
         requestAnimationFrame(followLoop);
       }
-      // Ensure background video autoplays on mobile devices
-      const bgVideo = document.getElementById('bg-video');
-      if (bgVideo) {
-        const sendBgVideoPlay = () => {
-          try {
-            if (bgVideo.contentWindow) {
-              bgVideo.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
-              bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            }
-          } catch (e) {}
-        };
+      requestAnimationFrame(followLoop);
+    }
 
-        bgVideo.addEventListener('load', () => {
-          sendBgVideoPlay();
-          setTimeout(sendBgVideoPlay, 500);
-          setTimeout(sendBgVideoPlay, 1500);
-          setTimeout(sendBgVideoPlay, 3000);
-        });
+    // Ensure background video autoplays on mobile devices
+    const bgVideo = document.getElementById('bg-video');
+    if (bgVideo) {
+      const sendBgVideoPlay = () => {
+        try {
+          if (bgVideo.contentWindow) {
+            bgVideo.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+            bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+          }
+        } catch (e) {}
+      };
 
-        const unlockBgOnMobile = () => {
-          sendBgVideoPlay();
-          window.removeEventListener('touchstart', unlockBgOnMobile);
-          window.removeEventListener('touchend', unlockBgOnMobile);
-          window.removeEventListener('scroll', unlockBgOnMobile);
-        };
-        window.addEventListener('touchstart', unlockBgOnMobile, { passive: true, once: true });
-        window.addEventListener('touchend', unlockBgOnMobile, { passive: true, once: true });
-        window.addEventListener('scroll', unlockBgOnMobile, { passive: true, once: true });
-      }
+      bgVideo.addEventListener('load', () => {
+        sendBgVideoPlay();
+        setTimeout(sendBgVideoPlay, 500);
+        setTimeout(sendBgVideoPlay, 1500);
+        setTimeout(sendBgVideoPlay, 3000);
+      });
+
+      const unlockBgOnMobile = () => {
+        sendBgVideoPlay();
+        window.removeEventListener('touchstart', unlockBgOnMobile);
+        window.removeEventListener('touchend', unlockBgOnMobile);
+        window.removeEventListener('scroll', unlockBgOnMobile);
+      };
+      window.addEventListener('touchstart', unlockBgOnMobile, { passive: true, once: true });
+      window.addEventListener('touchend', unlockBgOnMobile, { passive: true, once: true });
+      window.addEventListener('scroll', unlockBgOnMobile, { passive: true, once: true });
     }
   })();
 </script>

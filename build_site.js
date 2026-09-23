@@ -802,14 +802,18 @@ function getHeader(activeSlug, isTransparent = false) {
   </div>`;
 }
 
-function getFooter() {
+function getFooter(options = {}) {
+  const showMatrix = typeof options === 'boolean' ? options : (options.showMatrix !== false);
+
   return `
+  ${showMatrix ? `
   <!-- INTERACTIVE INDUSTRIAL GRID SEPARATOR (Jhey / GSAP Draggable Matrix) -->
   <div class="interactive-grid-separator">
     <div class="w-full overflow-hidden">
       <div class="separator-grid" id="footer-matrix-grid"></div>
     </div>
   </div>
+  ` : ''}
 
   <!-- FOOTER REFINED EDITORIAL WITH WAVESONSPHERE BACKGROUND BOTTOM-LEFT -->
   <footer id="main-footer" class="relative bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
@@ -1817,10 +1821,12 @@ ${getHeader('inicio')}
     <iframe 
       id="bg-video"
       class="opacity-90"
-      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3" 
+      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3&playsinline=1" 
       title="SOLYCAL Video Corporativo"
       frameborder="0" 
-      allow="autoplay; encrypted-media" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; playsinline" 
+      playsinline
+      webkit-playsinline
       allowfullscreen>
     </iframe>
   </div>
@@ -2399,7 +2405,35 @@ ${getHeader('inicio')}
         }
         requestAnimationFrame(followLoop);
       }
-      requestAnimationFrame(followLoop);
+      // Ensure background video autoplays on mobile devices
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo) {
+        const sendBgVideoPlay = () => {
+          try {
+            if (bgVideo.contentWindow) {
+              bgVideo.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+              bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }
+          } catch (e) {}
+        };
+
+        bgVideo.addEventListener('load', () => {
+          sendBgVideoPlay();
+          setTimeout(sendBgVideoPlay, 500);
+          setTimeout(sendBgVideoPlay, 1500);
+          setTimeout(sendBgVideoPlay, 3000);
+        });
+
+        const unlockBgOnMobile = () => {
+          sendBgVideoPlay();
+          window.removeEventListener('touchstart', unlockBgOnMobile);
+          window.removeEventListener('touchend', unlockBgOnMobile);
+          window.removeEventListener('scroll', unlockBgOnMobile);
+        };
+        window.addEventListener('touchstart', unlockBgOnMobile, { passive: true, once: true });
+        window.addEventListener('touchend', unlockBgOnMobile, { passive: true, once: true });
+        window.addEventListener('scroll', unlockBgOnMobile, { passive: true, once: true });
+      }
     }
   })();
 </script>
@@ -3159,6 +3193,9 @@ ${getHeader('calidad', true)}
       </div>
     </section>
 
+    <!-- FUNDIDO DEGRADADO FLUIDO ENTRE CONTENIDO Y FOOTER -->
+    <div class="w-full h-44 sm:h-64 bg-gradient-to-b from-transparent via-[#050608]/75 to-[#050608] pointer-events-none relative z-10 -mb-px"></div>
+
   </div>
 </div>
 
@@ -3277,7 +3314,7 @@ ${getHeader('calidad', true)}
   })();
 </script>
 
-${getFooter()}
+${getFooter({ showMatrix: false })}
 `;
 
 // 5. GENERATE EQUIPO.HTML (Team Page)

@@ -41,11 +41,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- GSAP & ScrollTrigger & Draggable & MotionPath -->
+  <!-- GSAP & ScrollTrigger & Draggable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -1007,11 +1006,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       // Registrar ScrollTrigger
       if (typeof gsap !== 'undefined') {
-        if (typeof MotionPathPlugin !== 'undefined') {
-          gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
-        } else {
-          gsap.registerPlugin(ScrollTrigger);
-        }
+        gsap.registerPlugin(ScrollTrigger);
 
         // =========================================================================
         // PRELOADER INDUSTRIAL: 'S' APARECE -> SE APARTA A LA IZQUIERDA ->

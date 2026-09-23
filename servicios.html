@@ -794,11 +794,12 @@
     </section>
 
 
+
     <!-- 02 CATEGORIES ACCORDION — SERVICIOS INDUSTRIALES (Ripplix AWE Style) -->
     <section class="py-20 sm:py-28 relative" id="services-accordion-section">
       
       <!-- Section header -->
-      <div class="w-full px-6 mb-16">
+      <div class="w-full px-6 mb-14">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-3">// CAPACIDAD INDUSTRIAL</span>
@@ -813,312 +814,205 @@
         </div>
       </div>
 
-      <!-- Accordion + image layout -->
-      <div class="w-full px-6">
-        <div class="flex flex-col lg:flex-row gap-0 lg:gap-8 items-start">
-          
-          <!-- LEFT: Accordion list -->
-          <div class="w-full lg:w-1/2 xl:w-5/12 order-2 lg:order-1" id="srv-accordion">
+      <!-- Full-width accordion rows -->
+      <div class="w-full" id="srv-accordion">
 
-            <!-- Item 01: Calderería -->
-            <div class="srv-item group border-t border-white/10 cursor-pointer" data-srv="caldereria" data-img="assets/power2.png" data-alt="Calderería industrial pesada y ligera">
-              <div class="flex items-start justify-between gap-4 py-6 sm:py-8 transition-all duration-300">
-                <div class="flex items-start gap-5 min-w-0">
-                  <span class="font-mono text-xs text-brand-yellow/60 shrink-0 mt-1 w-6">01</span>
-                  <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors duration-300 tracking-tight">Calderería Industrial</h3>
-                    <!-- Expandable content -->
-                    <div class="srv-body overflow-hidden transition-all duration-500 ease-in-out max-h-0 opacity-0">
-                      <p class="text-sm text-neutral-400 font-sans leading-relaxed mt-4 mb-4">
-                        Tolvas, silos, ciclones, depósitos bajo presión y conductos de aspiración. Curvado hasta 2.000 × 12 mm. Plegado CNC Ermaksan 4 m. Acero al carbono, inoxidable y aleaciones.
-                      </p>
-                      <ul class="font-mono text-xs text-brand-textMuted space-y-1.5 mb-5">
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Curvado de chapa hasta 12 mm de espesor</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Plegado CNC con máquina Ermaksan de 4 m</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Fabricación de depósitos y vasijas de presión</li>
-                      </ul>
-                      <a href="contacto.html" class="inline-flex items-center gap-1.5 font-mono text-xs text-brand-yellow hover:underline">
-                        Consultar requerimiento
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <!-- Chevron -->
-                <div class="srv-chevron shrink-0 mt-1 w-5 h-5 text-white/30 group-hover:text-brand-yellow transition-all duration-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
+        <!-- ITEM 01 -->
+        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="caldereria">
+          <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
+          <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
+            <div class="flex items-center gap-6 sm:gap-12 min-w-0">
+              <span class="font-mono text-xs text-brand-yellow/50 group-hover:text-brand-yellow/80 transition-colors shrink-0">01</span>
+              <h3 class="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">Calderería Industrial Pesada &amp; Ligera</h3>
             </div>
-
-            <!-- Item 02: Corte Plasma -->
-            <div class="srv-item group border-t border-white/10 cursor-pointer" data-srv="plasma" data-img="assets/corte-plasma.jpg" data-alt="Corte plasma HD Hypertherm TrueHole">
-              <div class="flex items-start justify-between gap-4 py-6 sm:py-8 transition-all duration-300">
-                <div class="flex items-start gap-5 min-w-0">
-                  <span class="font-mono text-xs text-brand-yellow/60 shrink-0 mt-1 w-6">02</span>
-                  <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors duration-300 tracking-tight">Corte Plasma HD TrueHole</h3>
-                    <div class="srv-body overflow-hidden transition-all duration-500 ease-in-out max-h-0 opacity-0">
-                      <p class="text-sm text-neutral-400 font-sans leading-relaxed mt-4 mb-4">
-                        Pórtico CNC 9.000 × 2.500 mm. Fuente Hypertherm HPR260XD. Corte hasta 50 mm en acero al carbono y 15 mm en inoxidable. Software de nesting para optimizar material.
-                      </p>
-                      <ul class="font-mono text-xs text-brand-textMuted space-y-1.5 mb-5">
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Tolerancias de ±0,3 mm en taladros TrueHole</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Corte de aluminio hasta 25 mm</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Marcado e identificación automática de piezas</li>
-                      </ul>
-                      <a href="contacto.html" class="inline-flex items-center gap-1.5 font-mono text-xs text-brand-yellow hover:underline">
-                        Pedir presupuesto de corte
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="srv-chevron shrink-0 mt-1 w-5 h-5 text-white/30 group-hover:text-brand-yellow transition-all duration-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
+            <div class="srv-acc-arrow shrink-0 ml-4 w-9 h-9 rounded-full border border-white/10 group-hover:border-brand-yellow/50 group-hover:bg-brand-yellow/5 flex items-center justify-center transition-all duration-300">
+              <svg class="w-4 h-4 text-white/30 group-hover:text-brand-yellow transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg>
             </div>
-
-            <!-- Item 03: Soldadura -->
-            <div class="srv-item group border-t border-white/10 cursor-pointer" data-srv="soldadura" data-img="assets/soldadura.jpg" data-alt="Soldadura homologada TIG MIG en acero inoxidable">
-              <div class="flex items-start justify-between gap-4 py-6 sm:py-8 transition-all duration-300">
-                <div class="flex items-start gap-5 min-w-0">
-                  <span class="font-mono text-xs text-brand-yellow/60 shrink-0 mt-1 w-6">03</span>
-                  <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors duration-300 tracking-tight">Soldadura Homologada TIG / MIG</h3>
-                    <div class="srv-body overflow-hidden transition-all duration-500 ease-in-out max-h-0 opacity-0">
-                      <p class="text-sm text-neutral-400 font-sans leading-relaxed mt-4 mb-4">
-                        Equipo de soldadores homologados bajo normativas europeas. Procedimientos TIG, MIG-MAG y Arco Sumergido. Certificación ferroviaria EN 15085-2. Especialistas en inoxidable y aluminio.
-                      </p>
-                      <ul class="font-mono text-xs text-brand-textMuted space-y-1.5 mb-5">
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Homologaciones EN ISO 15614 activas</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Control dimensional y ensayos no destructivos</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Certificación ferroviaria EN 15085-2</li>
-                      </ul>
-                      <a href="calidad.html" class="inline-flex items-center gap-1.5 font-mono text-xs text-brand-yellow hover:underline">
-                        Ver certificaciones
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="srv-chevron shrink-0 mt-1 w-5 h-5 text-white/30 group-hover:text-brand-yellow transition-all duration-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 04: Estructuras -->
-            <div class="srv-item group border-t border-white/10 cursor-pointer" data-srv="estructuras" data-img="assets/estructuras.jpg" data-alt="Estructuras metálicas y pasarelas industriales marcado CE">
-              <div class="flex items-start justify-between gap-4 py-6 sm:py-8 transition-all duration-300">
-                <div class="flex items-start gap-5 min-w-0">
-                  <span class="font-mono text-xs text-brand-yellow/60 shrink-0 mt-1 w-6">04</span>
-                  <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors duration-300 tracking-tight">Estructuras Metálicas &amp; Pasarelas</h3>
-                    <div class="srv-body overflow-hidden transition-all duration-500 ease-in-out max-h-0 opacity-0">
-                      <p class="text-sm text-neutral-400 font-sans leading-relaxed mt-4 mb-4">
-                        Fabricación de estructuras portantes, pasarelas de acceso, bancadas de maquinaria y líneas de vida con marcado CE obligatorio EN 1090-1. Montaje en obra por personal propio.
-                      </p>
-                      <ul class="font-mono text-xs text-brand-textMuted space-y-1.5 mb-5">
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Marcado CE EXC2 y EXC3 disponible</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Galvanizado, granallado y pintura anticorrosiva C5</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Montaje y replanteo en obra civil</li>
-                      </ul>
-                      <a href="contacto.html" class="inline-flex items-center gap-1.5 font-mono text-xs text-brand-yellow hover:underline">
-                        Solicitar valoración estructural
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="srv-chevron shrink-0 mt-1 w-5 h-5 text-white/30 group-hover:text-brand-yellow transition-all duration-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 05: Montaje en Obra -->
-            <div class="srv-item group border-t border-b border-white/10 cursor-pointer" data-srv="montaje" data-img="assets/power2.png" data-alt="Montaje industrial en obra civil con puente grúa">
-              <div class="flex items-start justify-between gap-4 py-6 sm:py-8 transition-all duration-300">
-                <div class="flex items-start gap-5 min-w-0">
-                  <span class="font-mono text-xs text-brand-yellow/60 shrink-0 mt-1 w-6">05</span>
-                  <div class="min-w-0">
-                    <h3 class="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-yellow transition-colors duration-300 tracking-tight">Montaje en Obra Civil</h3>
-                    <div class="srv-body overflow-hidden transition-all duration-500 ease-in-out max-h-0 opacity-0">
-                      <p class="text-sm text-neutral-400 font-sans leading-relaxed mt-4 mb-4">
-                        Servicio completo de instalación en planta con personal propio. Coordinamos el transporte especial, el izado con medios auxiliares y el replanteo geométrico de cada conjunto fabricado.
-                      </p>
-                      <ul class="font-mono text-xs text-brand-textMuted space-y-1.5 mb-5">
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Transporte especial de piezas sobredimensionadas</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Coordinación con obra civil y otras industrias</li>
-                        <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-yellow rounded-full shrink-0"></span>Pruebas de presión y estanqueidad en campo</li>
-                      </ul>
-                      <a href="contacto.html" class="inline-flex items-center gap-1.5 font-mono text-xs text-brand-yellow hover:underline">
-                        Consultar proyecto de montaje
-                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="srv-chevron shrink-0 mt-1 w-5 h-5 text-white/30 group-hover:text-brand-yellow transition-all duration-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-            </div>
-
           </div>
-
-          <!-- RIGHT: Sticky image reveal panel (hidden on mobile) -->
-          <div class="hidden lg:block w-full lg:w-1/2 xl:w-7/12 order-1 lg:order-2 lg:sticky lg:top-28 self-start" id="srv-image-panel">
-            <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-brand-dark border border-brand-border">
-              <!-- Image display -->
-              <img id="srv-active-img"
-                src="assets/power2.png"
-                alt="Servicio activo Solycal"
-                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-100">
-              <!-- Dark overlay for contrast -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-              <!-- Active label -->
-              <div class="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
-                <span id="srv-active-label" class="font-mono text-xs text-brand-yellow uppercase tracking-widest opacity-0 transition-opacity duration-300 block"></span>
-                <p id="srv-active-title" class="font-display text-white font-bold text-2xl mt-1 opacity-0 transition-opacity duration-300"></p>
+          <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 border-t border-white/[0.06]">
+              <div class="relative bg-black overflow-hidden" style="min-height:340px">
+                <img src="assets/power2.png" alt="Calderería pesada Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
-              <!-- Decorative corners -->
-              <div class="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-brand-yellow/40 pointer-events-none"></div>
-              <div class="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-brand-yellow/40 pointer-events-none"></div>
-            </div>
-            <!-- Tech specs strip below image -->
-            <div class="mt-4 grid grid-cols-3 gap-3">
-              <div class="p-4 rounded-xl bg-brand-dark border border-brand-border text-center">
-                <span class="font-mono text-brand-yellow font-bold text-lg block">5.000</span>
-                <span class="font-mono text-brand-textMuted text-xs uppercase tracking-widest">m² taller</span>
-              </div>
-              <div class="p-4 rounded-xl bg-brand-dark border border-brand-border text-center">
-                <span class="font-mono text-brand-yellow font-bold text-lg block">16 Tn</span>
-                <span class="font-mono text-brand-textMuted text-xs uppercase tracking-widest">puente grúa</span>
-              </div>
-              <div class="p-4 rounded-xl bg-brand-dark border border-brand-border text-center">
-                <span class="font-mono text-brand-yellow font-bold text-lg block">ISO</span>
-                <span class="font-mono text-brand-textMuted text-xs uppercase tracking-widest">9001 · 1090</span>
+              <div class="px-8 sm:px-12 py-10 sm:py-14 space-y-6 bg-[#07080a]">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">01 // TRANSFORMACIÓN DE CHAPA</span>
+                <p class="text-sm text-neutral-300 font-sans leading-relaxed max-w-md">Tolvas, silos, ciclones, depósitos bajo presión y conductos de aspiración. Diseño y conformado integral desde plano hasta pieza acabada.</p>
+                <ul class="font-mono text-xs text-brand-textMuted space-y-2.5">
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Curvado hasta 2.000 × 12 mm de espesor</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Plegado CNC Ermaksan 4 m</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Acero carbono, inoxidable y aleaciones</li>
+                </ul>
+                <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">Consultar requerimiento<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
               </div>
             </div>
           </div>
-
         </div>
-      </div>
+
+        <!-- ITEM 02 -->
+        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="plasma">
+          <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
+          <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
+            <div class="flex items-center gap-6 sm:gap-12 min-w-0">
+              <span class="font-mono text-xs text-brand-yellow/50 group-hover:text-brand-yellow/80 transition-colors shrink-0">02</span>
+              <h3 class="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">Corte por Plasma HD TrueHole</h3>
+            </div>
+            <div class="srv-acc-arrow shrink-0 ml-4 w-9 h-9 rounded-full border border-white/10 group-hover:border-brand-yellow/50 group-hover:bg-brand-yellow/5 flex items-center justify-center transition-all duration-300">
+              <svg class="w-4 h-4 text-white/30 group-hover:text-brand-yellow transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg>
+            </div>
+          </div>
+          <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 border-t border-white/[0.06]">
+              <div class="relative bg-black overflow-hidden" style="min-height:340px">
+                <img src="assets/corte-plasma.jpg" alt="Corte plasma Hypertherm Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              </div>
+              <div class="px-8 sm:px-12 py-10 sm:py-14 space-y-6 bg-[#07080a]">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">02 // TECNOLOGÍA HYPERTHERM</span>
+                <p class="text-sm text-neutral-300 font-sans leading-relaxed max-w-md">Pórtico CNC 9.000 × 2.500 mm con Hypertherm HPR260XD y TrueHole. Software de nesting para optimización máxima de material.</p>
+                <ul class="font-mono text-xs text-brand-textMuted space-y-2.5">
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Hasta 50 mm en acero al carbono</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Tolerancias ±0,3 mm taladros TrueHole</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Inoxidable 15 mm · Aluminio 25 mm</li>
+                </ul>
+                <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">Pedir presupuesto<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ITEM 03 -->
+        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="soldadura">
+          <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
+          <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
+            <div class="flex items-center gap-6 sm:gap-12 min-w-0">
+              <span class="font-mono text-xs text-brand-yellow/50 group-hover:text-brand-yellow/80 transition-colors shrink-0">03</span>
+              <h3 class="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">Soldadura Técnica Homologada</h3>
+            </div>
+            <div class="srv-acc-arrow shrink-0 ml-4 w-9 h-9 rounded-full border border-white/10 group-hover:border-brand-yellow/50 group-hover:bg-brand-yellow/5 flex items-center justify-center transition-all duration-300">
+              <svg class="w-4 h-4 text-white/30 group-hover:text-brand-yellow transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg>
+            </div>
+          </div>
+          <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 border-t border-white/[0.06]">
+              <div class="relative bg-black overflow-hidden" style="min-height:340px">
+                <img src="assets/soldadura.jpg" alt="Soldadura TIG MIG Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              </div>
+              <div class="px-8 sm:px-12 py-10 sm:py-14 space-y-6 bg-[#07080a]">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">03 // HOMOLOGACIONES OFICIALES</span>
+                <p class="text-sm text-neutral-300 font-sans leading-relaxed max-w-md">Soldadores homologados EN ISO 15614. Procedimientos TIG, MIG-MAG y Arco Sumergido. Certificación ferroviaria EN 15085-2.</p>
+                <ul class="font-mono text-xs text-brand-textMuted space-y-2.5">
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Homologaciones EN ISO 15614 activas</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Control dimensional y END</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Certificación ferroviaria EN 15085-2</li>
+                </ul>
+                <a href="calidad.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">Ver certificaciones<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ITEM 04 -->
+        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="estructuras">
+          <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
+          <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
+            <div class="flex items-center gap-6 sm:gap-12 min-w-0">
+              <span class="font-mono text-xs text-brand-yellow/50 group-hover:text-brand-yellow/80 transition-colors shrink-0">04</span>
+              <h3 class="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">Estructuras Metálicas &amp; Pasarelas CE</h3>
+            </div>
+            <div class="srv-acc-arrow shrink-0 ml-4 w-9 h-9 rounded-full border border-white/10 group-hover:border-brand-yellow/50 group-hover:bg-brand-yellow/5 flex items-center justify-center transition-all duration-300">
+              <svg class="w-4 h-4 text-white/30 group-hover:text-brand-yellow transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg>
+            </div>
+          </div>
+          <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 border-t border-white/[0.06]">
+              <div class="relative bg-black overflow-hidden" style="min-height:340px">
+                <img src="assets/estructuras.jpg" alt="Estructuras metálicas CE Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              </div>
+              <div class="px-8 sm:px-12 py-10 sm:py-14 space-y-6 bg-[#07080a]">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">04 // MARCADO CE EN 1090-1</span>
+                <p class="text-sm text-neutral-300 font-sans leading-relaxed max-w-md">Estructuras portantes, pasarelas, bancadas y líneas de vida con marcado CE EN 1090-1. Ejecución EXC2/EXC3. Montaje en obra con medios propios.</p>
+                <ul class="font-mono text-xs text-brand-textMuted space-y-2.5">
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Marcado CE EXC2 y EXC3</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Galvanizado, granallado, pintura C5</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Replanteo geométrico in situ</li>
+                </ul>
+                <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">Solicitar valoración<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ITEM 05 -->
+        <div class="srv-acc-item border-t border-b border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="montaje">
+          <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
+          <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
+            <div class="flex items-center gap-6 sm:gap-12 min-w-0">
+              <span class="font-mono text-xs text-brand-yellow/50 group-hover:text-brand-yellow/80 transition-colors shrink-0">05</span>
+              <h3 class="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-white/90 group-hover:text-white transition-colors tracking-tight">Montaje e Instalación en Obra</h3>
+            </div>
+            <div class="srv-acc-arrow shrink-0 ml-4 w-9 h-9 rounded-full border border-white/10 group-hover:border-brand-yellow/50 group-hover:bg-brand-yellow/5 flex items-center justify-center transition-all duration-300">
+              <svg class="w-4 h-4 text-white/30 group-hover:text-brand-yellow transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg>
+            </div>
+          </div>
+          <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 border-t border-white/[0.06]">
+              <div class="relative bg-black overflow-hidden" style="min-height:340px">
+                <img src="assets/power2.png" alt="Montaje industrial obra Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              </div>
+              <div class="px-8 sm:px-12 py-10 sm:py-14 space-y-6 bg-[#07080a]">
+                <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">05 // INSTALACIÓN EN PLANTA</span>
+                <p class="text-sm text-neutral-300 font-sans leading-relaxed max-w-md">Coordinación del transporte especial, el izado con medios auxiliares y replanteo geométrico de cada conjunto. Personal propio en obra.</p>
+                <ul class="font-mono text-xs text-brand-textMuted space-y-2.5">
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Transporte de piezas sobredimensionadas</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Coordinación con obra civil</li>
+                  <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[3px]"></span>Pruebas de presión y estanqueidad</li>
+                </ul>
+                <a href="contacto.html" class="inline-flex items-center gap-2 font-mono text-xs text-brand-yellow hover:underline">Consultar montaje<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /srv-accordion -->
     </section>
 
-    <!-- Accordion Script -->
     <script>
-      (function() {
-        const items = document.querySelectorAll('.srv-item');
-        const activeImg = document.getElementById('srv-active-img');
-        const activeLabel = document.getElementById('srv-active-label');
-        const activeTitle = document.getElementById('srv-active-title');
-        let currentOpen = null;
-        let imgTimeout = null;
-
-        const serviceLabels = {
-          caldereria: '01 // TRANSFORMACIÓN DE CHAPA',
-          plasma: '02 // TECNOLOGÍA HYPERTHERM',
-          soldadura: '03 // HOMOLOGACIONES OFICIALES',
-          estructuras: '04 // MARCADO CE EN 1090-1',
-          montaje: '05 // INSTALACIÓN EN PLANTA'
-        };
-        const serviceTitles = {
-          caldereria: 'Calderería Industrial',
-          plasma: 'Corte Plasma HD',
-          soldadura: 'Soldadura Homologada',
-          estructuras: 'Estructuras & Pasarelas',
-          montaje: 'Montaje en Obra'
-        };
-
-        function openItem(item) {
-          const body = item.querySelector('.srv-body');
-          const chevron = item.querySelector('.srv-chevron svg');
-          body.style.maxHeight = body.scrollHeight + 'px';
-          body.style.opacity = '1';
-          if (chevron) chevron.style.transform = 'rotate(180deg)';
-          item.dataset.open = 'true';
-        }
-
-        function closeItem(item) {
-          const body = item.querySelector('.srv-body');
-          const chevron = item.querySelector('.srv-chevron svg');
-          body.style.maxHeight = '0px';
-          body.style.opacity = '0';
-          if (chevron) chevron.style.transform = 'rotate(0deg)';
-          item.dataset.open = 'false';
-        }
-
-        function updateImage(imgSrc, imgAlt, srvKey) {
-          if (!activeImg) return;
-          clearTimeout(imgTimeout);
-          // Fade out, swap, fade in
-          activeImg.style.opacity = '0';
-          activeLabel.style.opacity = '0';
-          activeTitle.style.opacity = '0';
-          imgTimeout = setTimeout(() => {
-            activeImg.src = imgSrc;
-            activeImg.alt = imgAlt;
-            activeLabel.textContent = serviceLabels[srvKey] || '';
-            activeTitle.textContent = serviceTitles[srvKey] || '';
-            activeImg.style.opacity = '1';
-            activeLabel.style.opacity = '1';
-            activeTitle.style.opacity = '1';
-          }, 220);
-        }
-
-        items.forEach((item) => {
-          item.addEventListener('click', () => {
-            const isOpen = item.dataset.open === 'true';
-            const srvKey = item.dataset.srv;
-            const imgSrc = item.dataset.img;
-            const imgAlt = item.dataset.alt;
-
-            // Close all
-            items.forEach(i => {
-              if (i !== item) closeItem(i);
-            });
-
-            if (isOpen) {
-              closeItem(item);
-              currentOpen = null;
-            } else {
-              openItem(item);
-              currentOpen = item;
-              updateImage(imgSrc, imgAlt, srvKey);
-            }
-          });
-
-          // Desktop hover: update image without opening
-          if (window.innerWidth >= 1024) {
-            item.addEventListener('mouseenter', () => {
-              const srvKey = item.dataset.srv;
-              const imgSrc = item.dataset.img;
-              const imgAlt = item.dataset.alt;
-              updateImage(imgSrc, imgAlt, srvKey);
-            });
+    (function(){
+      var items = document.querySelectorAll('.srv-acc-item');
+      function openItem(el){
+        var b = el.querySelector('.srv-acc-body');
+        var img = el.querySelector('.srv-acc-img');
+        var arr = el.querySelector('.srv-acc-arrow svg');
+        b.style.maxHeight = b.scrollHeight + 'px';
+        b.style.opacity = '1';
+        if(img) img.style.transform = 'scale(1)';
+        if(arr) arr.innerHTML = '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>';
+        el.dataset.open = 'true';
+      }
+      function closeItem(el){
+        var b = el.querySelector('.srv-acc-body');
+        var img = el.querySelector('.srv-acc-img');
+        var arr = el.querySelector('.srv-acc-arrow svg');
+        b.style.maxHeight = '0';
+        b.style.opacity = '0';
+        if(img) img.style.transform = 'scale(1.06)';
+        if(arr) arr.innerHTML = '<path d="M12 5v14"/><path d="m5 12 7 7 7-7"/>';
+        el.dataset.open = 'false';
+      }
+      items.forEach(function(item){
+        item.addEventListener('click', function(){
+          var isOpen = item.dataset.open === 'true';
+          items.forEach(function(i){ if(i!==item) closeItem(i); });
+          if(isOpen){ closeItem(item); } else {
+            openItem(item);
+            setTimeout(function(){
+              var r = item.getBoundingClientRect();
+              window.scrollTo({top: r.top + window.scrollY - 90, behavior:'smooth'});
+            }, 80);
           }
         });
-
-        // Open first item by default on desktop, show first image
-        if (window.innerWidth >= 1024 && items.length > 0) {
-          openItem(items[0]);
-          currentOpen = items[0];
-          const first = items[0];
-          if (activeLabel) activeLabel.textContent = serviceLabels[first.dataset.srv] || '';
-          if (activeTitle) activeTitle.textContent = serviceTitles[first.dataset.srv] || '';
-          if (activeLabel) activeLabel.style.opacity = '1';
-          if (activeTitle) activeTitle.style.opacity = '1';
-        }
-      })();
+      });
+    })();
     </script>
-
-  </div>
-</div>
-
 
   
   <!-- INTERACTIVE INDUSTRIAL GRID SEPARATOR (Jhey / GSAP Draggable Matrix) -->

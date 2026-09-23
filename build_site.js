@@ -2141,22 +2141,11 @@ ${getHeader('inicio')}
       <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
 
-    <!-- Indicador central dinámico Play / Pause -->
-    <div id="video-center-indicator" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center transition-opacity duration-200">
-      <div id="btn-video-center-toggle" class="w-20 h-20 rounded-full bg-black/75 border border-white/40 backdrop-blur-md text-white flex items-center justify-center shadow-2xl transition-transform duration-200">
-        <svg id="icon-center-play" class="w-8 h-8 fill-white ml-1" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        <svg id="icon-center-pause" class="w-8 h-8 fill-white hidden" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+    <!-- Indicador central sutil Play: visible solo cuando el usuario pausa el vídeo -->
+    <div id="video-center-indicator" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center opacity-0 transition-opacity duration-200">
+      <div id="btn-video-center-toggle" class="w-16 h-16 rounded-full bg-black/60 border border-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-2xl">
+        <svg id="icon-center-play" class="w-7 h-7 fill-white ml-0.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
       </div>
-    </div>
-
-    <!-- Controles inferiores: Solo Play y Pause -->
-    <div id="video-bottom-controls" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 transition-opacity duration-300 pointer-events-auto">
-      <button type="button" id="btn-video-toggle" class="px-6 py-2.5 rounded-full bg-black/80 border border-white/30 text-white font-mono text-xs uppercase tracking-widest backdrop-blur-md hover:border-white hover:bg-black transition-all flex items-center gap-2.5 shadow-2xl cursor-pointer">
-        <span id="video-toggle-icon">
-          <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-        </span>
-        <span id="video-toggle-label">PAUSA</span>
-      </button>
     </div>
 
   </div>
@@ -2171,18 +2160,11 @@ ${getHeader('inicio')}
     const modalIframe = document.getElementById('modal-video-iframe');
     const closeBtn = document.getElementById('close-video-modal');
     const clickSurface = document.getElementById('video-click-surface');
-    const btnVideoToggle = document.getElementById('btn-video-toggle');
     const centerIndicator = document.getElementById('video-center-indicator');
-    const iconCenterPlay = document.getElementById('icon-center-play');
-    const iconCenterPause = document.getElementById('icon-center-pause');
-    const videoToggleIcon = document.getElementById('video-toggle-icon');
-    const videoToggleLabel = document.getElementById('video-toggle-label');
-    const bottomControls = document.getElementById('video-bottom-controls');
 
     const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1';
 
     let isPlaying = false;
-    let hideTimer = null;
 
     function postToIframe(command, args) {
       if (!modalIframe || !modalIframe.contentWindow) return;
@@ -2195,28 +2177,13 @@ ${getHeader('inicio')}
 
     function updateUiState(playing) {
       isPlaying = playing;
-      if (playing) {
-        if (videoToggleLabel) videoToggleLabel.textContent = 'PAUSA';
-        if (videoToggleIcon) {
-          videoToggleIcon.innerHTML = '<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
-        }
-        if (iconCenterPlay) iconCenterPlay.classList.add('hidden');
-        if (iconCenterPause) iconCenterPause.classList.remove('hidden');
-        if (centerIndicator) {
+      if (centerIndicator) {
+        if (playing) {
           centerIndicator.classList.add('opacity-0');
-        }
-      } else {
-        if (videoToggleLabel) videoToggleLabel.textContent = 'PLAY';
-        if (videoToggleIcon) {
-          videoToggleIcon.innerHTML = '<svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-        }
-        if (iconCenterPlay) iconCenterPlay.classList.remove('hidden');
-        if (iconCenterPause) iconCenterPause.classList.add('hidden');
-        if (centerIndicator) {
+        } else {
           centerIndicator.classList.remove('opacity-0');
         }
       }
-      resetHideTimer();
     }
 
     function playVideo() {
@@ -2235,18 +2202,6 @@ ${getHeader('inicio')}
         pauseVideo();
       } else {
         playVideo();
-      }
-    }
-
-    function resetHideTimer() {
-      if (bottomControls) bottomControls.style.opacity = '1';
-      clearTimeout(hideTimer);
-      if (isPlaying) {
-        hideTimer = setTimeout(() => {
-          if (isPlaying && bottomControls) {
-            bottomControls.style.opacity = '0';
-          }
-        }, 2500);
       }
     }
 
@@ -2279,7 +2234,6 @@ ${getHeader('inicio')}
       modalIframe.src = '';
       document.body.style.overflow = '';
       updateUiState(false);
-      clearTimeout(hideTimer);
 
       const bgVideo = document.getElementById('bg-video');
       if (bgVideo && bgVideo.contentWindow) {
@@ -2299,17 +2253,6 @@ ${getHeader('inicio')}
         e.stopPropagation();
         togglePlayPause();
       });
-    }
-
-    if (btnVideoToggle) {
-      btnVideoToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        togglePlayPause();
-      });
-    }
-
-    if (modalDialog) {
-      modalDialog.addEventListener('mousemove', resetHideTimer);
     }
 
     if (videoModal) {

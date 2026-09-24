@@ -2468,18 +2468,23 @@ ${getHeader('servicios')}
         <!-- DESKTOP: horizontal expanding columns with compressed stacking -->
         <style>
           .srv-col {
-            will-change: flex-grow, filter, box-shadow;
-            transition: filter 0.5s ease,
-                        box-shadow 0.6s ease,
-                        background-color 0.5s ease;
+            will-change: flex-grow;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            touch-action: manipulation;
+            transition: filter 0.35s ease,
+                        box-shadow 0.35s ease,
+                        background-color 0.35s ease;
           }
           .srv-col-bg-img {
             z-index: 1 !important;
+            transform: translateZ(0);
             will-change: transform, opacity;
           }
           .srv-text-gradient, .srv-vert-gradient {
             z-index: 2 !important;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.35s ease;
             will-change: opacity;
           }
           .srv-col-label {
@@ -2489,6 +2494,9 @@ ${getHeader('servicios')}
             position: absolute !important;
             inset: 0 !important;
             z-index: 30 !important;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
             will-change: opacity, transform;
           }
           .srv-col-bar {
@@ -2547,7 +2555,11 @@ ${getHeader('servicios')}
           .srv-mob-col {
             will-change: flex-grow, flex-basis;
             overflow: hidden;
-            transition: background-color 0.4s ease;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            touch-action: manipulation;
+            transition: background-color 0.3s ease;
           }
           .srv-mob-bg-img {
             z-index: 1 !important;
@@ -2557,6 +2569,7 @@ ${getHeader('servicios')}
           }
           .srv-mob-header {
             z-index: 20 !important;
+            touch-action: manipulation;
           }
           .srv-mob-body {
             display: flex !important;
@@ -2564,6 +2577,9 @@ ${getHeader('servicios')}
             overflow-y: auto;
             flex: 1 1 auto;
             min-height: 0;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
             will-change: opacity, transform;
           }
           .srv-mob-bar {
@@ -2607,7 +2623,7 @@ ${getHeader('servicios')}
           <div class="srv-col is-active relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
                data-idx="0" style="flex: 21 1 0%; z-index: 25;">
             <!-- Top yellow accent bar -->
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-1 origin-left transition-transform duration-500 z-30" style="transform: scaleX(1);"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-1 origin-left z-30" style="transform: scaleX(1);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/caldereria-industrial.jpeg"
@@ -2621,7 +2637,7 @@ ${getHeader('servicios')}
             <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <!-- Collapsed label (Vertical spine / stacked tab) -->
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">01</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Calderería Industrial</span>
@@ -2659,7 +2675,7 @@ ${getHeader('servicios')}
           <!-- COL 02: Corte Plasma -->
           <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
                data-idx="1" style="flex: 1 1 0%; z-index: 5;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
@@ -2671,7 +2687,7 @@ ${getHeader('servicios')}
             <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
             <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">02</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Corte Plasma HD</span>
@@ -2708,7 +2724,7 @@ ${getHeader('servicios')}
           <!-- COL 03: Soldadura -->
           <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
                data-idx="2" style="flex: 1 1 0%; z-index: 5;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
@@ -2720,7 +2736,7 @@ ${getHeader('servicios')}
             <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
             <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">03</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Soldadura TIG/MIG</span>
@@ -2757,7 +2773,7 @@ ${getHeader('servicios')}
           <!-- COL 04: Estructuras -->
           <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
                data-idx="3" style="flex: 1 1 0%; z-index: 5;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
@@ -2769,7 +2785,7 @@ ${getHeader('servicios')}
             <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
             <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">04</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Estructuras CE</span>
@@ -2806,7 +2822,7 @@ ${getHeader('servicios')}
           <!-- COL 05: Montaje en Obra -->
           <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 bg-[#090b0e]"
                data-idx="4" style="flex: 1 1 0%; z-index: 5;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/montaje-instalacion.jpeg"
@@ -2818,7 +2834,7 @@ ${getHeader('servicios')}
             <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
             <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">05</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Montaje en Obra</span>
@@ -2859,14 +2875,14 @@ ${getHeader('servicios')}
 
           <!-- ROW 01: Calderería -->
           <div class="srv-mob-col is-active relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="0" style="flex: 1 1 0%;">
-            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(1);"></div>
+            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 origin-top" style="transform: scaleY(1);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="srv-mob-num font-mono text-xs font-bold text-brand-yellow shrink-0">01</span>
                 <span class="srv-mob-title font-display text-sm font-bold text-white uppercase tracking-wider truncate">Calderería Industrial</span>
               </div>
-              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </div>
 
             <div class="srv-mob-body flex-1 overflow-y-auto flex flex-col bg-[#090b0e]">
@@ -2906,14 +2922,14 @@ ${getHeader('servicios')}
 
           <!-- ROW 02: Corte Plasma -->
           <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="1" style="flex: 0 0 56px;">
-            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
+            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="srv-mob-num font-mono text-xs font-bold text-brand-yellow/80 shrink-0">02</span>
                 <span class="srv-mob-title font-display text-sm font-bold text-white uppercase tracking-wider truncate">Corte Plasma HD</span>
               </div>
-              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </div>
 
             <div class="srv-mob-body flex-1 overflow-y-auto flex flex-col bg-[#090b0e]">
@@ -2953,14 +2969,14 @@ ${getHeader('servicios')}
 
           <!-- ROW 03: Soldadura -->
           <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="2" style="flex: 0 0 56px;">
-            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
+            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="srv-mob-num font-mono text-xs font-bold text-brand-yellow/80 shrink-0">03</span>
                 <span class="srv-mob-title font-display text-sm font-bold text-white uppercase tracking-wider truncate">Soldadura TIG / MIG</span>
               </div>
-              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </div>
 
             <div class="srv-mob-body flex-1 overflow-y-auto flex flex-col bg-[#090b0e]">
@@ -3000,14 +3016,14 @@ ${getHeader('servicios')}
 
           <!-- ROW 04: Estructuras -->
           <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="3" style="flex: 0 0 56px;">
-            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
+            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="srv-mob-num font-mono text-xs font-bold text-brand-yellow/80 shrink-0">04</span>
                 <span class="srv-mob-title font-display text-sm font-bold text-white uppercase tracking-wider truncate">Estructuras Metálicas</span>
               </div>
-              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </div>
 
             <div class="srv-mob-body flex-1 overflow-y-auto flex flex-col bg-[#090b0e]">
@@ -3047,14 +3063,14 @@ ${getHeader('servicios')}
 
           <!-- ROW 05: Montaje en Obra -->
           <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer bg-[#090b0e] flex flex-col min-h-0" data-idx="4" style="flex: 0 0 56px;">
-            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
+            <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
               <div class="flex items-center gap-3 min-w-0">
                 <span class="srv-mob-num font-mono text-xs font-bold text-brand-yellow/80 shrink-0">05</span>
                 <span class="srv-mob-title font-display text-sm font-bold text-white uppercase tracking-wider truncate">Montaje en Obra</span>
               </div>
-              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="srv-mob-arr w-4 h-4 text-brand-yellow shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
             </div>
 
             <div class="srv-mob-body flex-1 overflow-y-auto flex flex-col bg-[#090b0e]">
@@ -3099,7 +3115,7 @@ ${getHeader('servicios')}
 
     <script>
     (function(){
-      /* ---- DESKTOP: expanding columns with compressed stacking (Supah Elastic Accordion) ---- */
+      /* ---- DESKTOP: expanding columns with compressed stacking (Fluid Elastic Accordion) ---- */
       var cols = document.querySelectorAll('.srv-col');
       var activeIdx = -1;
 
@@ -3124,24 +3140,24 @@ ${getHeader('servicios')}
               if(content) gsap.set(content, { opacity: 1, x: 0 });
               if(label) gsap.set(label, { opacity: 0, pointerEvents: 'none' });
             } else {
-              // Supah elastic expansion on active column
+              // Fluid elastic expansion on active column: fast, springy, zero dead-time
               gsap.to(col, {
                 flexGrow: 21,
                 flexShrink: 1,
                 flexBasis: '0%',
-                duration: 2.2,
-                ease: 'elastic.out(1, 0.35)',
+                duration: 0.85,
+                ease: 'elastic.out(1, 0.75)',
                 overwrite: 'auto'
               });
-              if(bar) gsap.to(bar, { scaleX: 1, duration: 1.2, ease: 'power3.out', transformOrigin: 'left', overwrite: 'auto' });
-              if(bgImg) gsap.to(bgImg, { opacity: 0.85, scale: 1, duration: 1.8, ease: 'power2.out', overwrite: 'auto' });
+              if(bar) gsap.to(bar, { scaleX: 1, duration: 0.6, ease: 'power3.out', transformOrigin: 'left', overwrite: 'auto' });
+              if(bgImg) gsap.to(bgImg, { opacity: 0.85, scale: 1, duration: 0.85, ease: 'power2.out', overwrite: 'auto' });
               if(content) {
                 gsap.fromTo(content,
-                  { opacity: 0, x: 25 },
-                  { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out', delay: 0.15, overwrite: 'auto' }
+                  { opacity: 0, x: 20 },
+                  { opacity: 1, x: 0, duration: 0.45, ease: 'power2.out', overwrite: 'auto' }
                 );
               }
-              if(label) gsap.to(label, { opacity: 0, duration: 0.3, pointerEvents: 'none', overwrite: 'auto' });
+              if(label) gsap.to(label, { opacity: 0, duration: 0.2, pointerEvents: 'none', overwrite: 'auto' });
             }
           } else {
             col.classList.remove('is-active');
@@ -3155,19 +3171,19 @@ ${getHeader('servicios')}
               if(content) gsap.set(content, { opacity: 0, pointerEvents: 'none' });
               if(label) gsap.set(label, { opacity: 1, pointerEvents: 'auto' });
             } else {
-              // Supah elastic compression on inactive columns
+              // Crisp immediate compression on inactive columns
               gsap.to(col, {
                 flexGrow: 1,
                 flexShrink: 1,
                 flexBasis: '0%',
-                duration: 1.8,
-                ease: 'elastic.out(1, 0.6)',
+                duration: 0.75,
+                ease: 'power3.out',
                 overwrite: 'auto'
               });
-              if(bar) gsap.to(bar, { scaleX: 0, duration: 0.5, ease: 'power2.inOut', transformOrigin: 'left', overwrite: 'auto' });
-              if(bgImg) gsap.to(bgImg, { opacity: 0.30, scale: 1.06, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
-              if(content) gsap.to(content, { opacity: 0, duration: 0.25, pointerEvents: 'none', overwrite: 'auto' });
-              if(label) gsap.to(label, { opacity: 1, duration: 0.4, delay: 0.1, pointerEvents: 'auto', overwrite: 'auto' });
+              if(bar) gsap.to(bar, { scaleX: 0, duration: 0.3, ease: 'power2.inOut', transformOrigin: 'left', overwrite: 'auto' });
+              if(bgImg) gsap.to(bgImg, { opacity: 0.30, scale: 1.06, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
+              if(content) gsap.to(content, { opacity: 0, duration: 0.2, pointerEvents: 'none', overwrite: 'auto' });
+              if(label) gsap.to(label, { opacity: 1, duration: 0.35, pointerEvents: 'auto', overwrite: 'auto' });
             }
           }
         });
@@ -3175,7 +3191,14 @@ ${getHeader('servicios')}
       }
 
       cols.forEach(function(col, idx){
-        col.addEventListener('click', function(){ activateCol(idx, false); });
+        col.addEventListener('pointerdown', function(e){
+          if(e.pointerType === 'mouse' && e.button === 0){
+            activateCol(idx, false);
+          }
+        });
+        col.addEventListener('click', function(){
+          activateCol(idx, false);
+        });
       });
 
       // open first column by default without initial spring jump
@@ -3193,7 +3216,7 @@ ${getHeader('servicios')}
       setSrvColsHeight();
       window.addEventListener('resize', setSrvColsHeight);
 
-      /* ---- MOBILE: vertical expanding columns accordion (Supah Elastic Accordion) ---- */
+      /* ---- MOBILE: vertical expanding columns accordion (Fluid Elastic Accordion) ---- */
       var mobCols = document.querySelectorAll('.srv-mob-col');
       var activeMobIdx = -1;
 
@@ -3215,21 +3238,21 @@ ${getHeader('servicios')}
               if(arr) gsap.set(arr, { rotate: 180, color: '#F1B541' });
               if(body) gsap.set(body, { opacity: 1, y: 0, pointerEvents: 'auto' });
             } else {
-              // Supah elastic expansion on active mobile row
+              // Fluid elastic expansion on active mobile row
               gsap.to(col, {
                 flexGrow: 1,
                 flexShrink: 1,
                 flexBasis: '0%',
-                duration: 2.2,
-                ease: 'elastic.out(1, 0.35)',
+                duration: 0.8,
+                ease: 'elastic.out(1, 0.75)',
                 overwrite: 'auto'
               });
-              if(bar) gsap.to(bar, { scaleY: 1, duration: 1.0, ease: 'power3.out', transformOrigin: 'top', overwrite: 'auto' });
-              if(arr) gsap.to(arr, { rotate: 180, color: '#F1B541', duration: 0.5, overwrite: 'auto' });
+              if(bar) gsap.to(bar, { scaleY: 1, duration: 0.5, ease: 'power3.out', transformOrigin: 'top', overwrite: 'auto' });
+              if(arr) gsap.to(arr, { rotate: 180, color: '#F1B541', duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
               if(body) {
                 gsap.fromTo(body,
-                  { opacity: 0, y: 16 },
-                  { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.15, pointerEvents: 'auto', overwrite: 'auto' }
+                  { opacity: 0, y: 12 },
+                  { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', pointerEvents: 'auto', overwrite: 'auto' }
                 );
               }
             }
@@ -3243,18 +3266,18 @@ ${getHeader('servicios')}
               if(arr) gsap.set(arr, { rotate: 0, color: 'rgba(255,255,255,0.45)' });
               if(body) gsap.set(body, { opacity: 0, pointerEvents: 'none' });
             } else {
-              // Supah elastic compression on inactive mobile rows
+              // Crisp immediate compression on inactive mobile rows
               gsap.to(col, {
                 flexGrow: 0,
                 flexShrink: 0,
                 flexBasis: '56px',
-                duration: 1.8,
-                ease: 'elastic.out(1, 0.6)',
+                duration: 0.65,
+                ease: 'power3.out',
                 overwrite: 'auto'
               });
-              if(bar) gsap.to(bar, { scaleY: 0, duration: 0.4, ease: 'power2.inOut', transformOrigin: 'top', overwrite: 'auto' });
-              if(arr) gsap.to(arr, { rotate: 0, color: 'rgba(255,255,255,0.45)', duration: 0.5, overwrite: 'auto' });
-              if(body) gsap.to(body, { opacity: 0, duration: 0.25, pointerEvents: 'none', overwrite: 'auto' });
+              if(bar) gsap.to(bar, { scaleY: 0, duration: 0.25, ease: 'power2.inOut', transformOrigin: 'top', overwrite: 'auto' });
+              if(arr) gsap.to(arr, { rotate: 0, color: 'rgba(255,255,255,0.45)', duration: 0.3, ease: 'power2.out', overwrite: 'auto' });
+              if(body) gsap.to(body, { opacity: 0, duration: 0.2, pointerEvents: 'none', overwrite: 'auto' });
             }
           }
         });
@@ -3264,11 +3287,23 @@ ${getHeader('servicios')}
       mobCols.forEach(function(col, idx){
         var header = col.querySelector('.srv-mob-header');
         if(header){
+          header.addEventListener('pointerdown', function(e){
+            if(e.pointerType === 'mouse' && e.button === 0){
+              activateMobCol(idx, false);
+            }
+          });
           header.addEventListener('click', function(e){
             e.stopPropagation();
             activateMobCol(idx, false);
           });
         }
+        col.addEventListener('pointerdown', function(e){
+          if(e.pointerType === 'mouse' && e.button === 0){
+            if(col.classList.contains('is-compressed')){
+              activateMobCol(idx, false);
+            }
+          }
+        });
         col.addEventListener('click', function(e){
           if(col.classList.contains('is-compressed')){
             activateMobCol(idx, false);

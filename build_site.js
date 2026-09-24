@@ -2477,13 +2477,13 @@ ${getHeader('servicios')}
       </div>
 
       <!-- Expanding columns container — desktop horizontal, mobile vertical -->
-      <div class="w-full px-6 sm:px-10">
+      <div class="w-full">
 
         <!-- DESKTOP: horizontal expanding columns -->
-        <div class="hidden lg:flex gap-px" id="srv-cols" style="height: 560px;">
+        <div class="hidden lg:flex gap-[1px]" id="srv-cols" style="height: 580px;">
 
           <!-- COL 01 -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border border-brand-border rounded-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                data-idx="0" style="flex-basis: 18%;">
             <!-- Collapsed label — rotated vertical text -->
             <div class="srv-col-label absolute inset-0 flex items-end justify-start p-6 transition-opacity duration-300">
@@ -2512,7 +2512,7 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 02 -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border border-brand-border rounded-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                data-idx="1" style="flex-basis: 18%;">
             <div class="srv-col-label absolute inset-0 flex items-end justify-start p-6 transition-opacity duration-300">
               <div class="flex items-center gap-3">
@@ -2537,7 +2537,7 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 03 -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border border-brand-border rounded-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                data-idx="2" style="flex-basis: 18%;">
             <div class="srv-col-label absolute inset-0 flex items-end justify-start p-6 transition-opacity duration-300">
               <div class="flex items-center gap-3">
@@ -2562,7 +2562,7 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 04 -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border border-brand-border rounded-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                data-idx="3" style="flex-basis: 18%;">
             <div class="srv-col-label absolute inset-0 flex items-end justify-start p-6 transition-opacity duration-300">
               <div class="flex items-center gap-3">
@@ -2587,7 +2587,7 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 05 -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border border-brand-border rounded-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                data-idx="4" style="flex-basis: 18%;">
             <div class="srv-col-label absolute inset-0 flex items-end justify-start p-6 transition-opacity duration-300">
               <div class="flex items-center gap-3">
@@ -2614,7 +2614,7 @@ ${getHeader('servicios')}
         </div><!-- /srv-cols desktop -->
 
         <!-- MOBILE: vertical list accordion -->
-        <div class="flex flex-col lg:hidden divide-y divide-white/[0.08]" id="srv-mobile">
+        <div class="flex flex-col lg:hidden divide-y divide-white/[0.08] px-6 sm:px-10" id="srv-mobile">
           <div class="srv-mob-item py-5 cursor-pointer" data-idx="0">
             <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-4 min-w-0">

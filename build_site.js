@@ -2458,23 +2458,7 @@ ${getHeader('servicios')}
 
 
     <!-- 02 CATEGORIES ACCORDION — Expanding Columns (Ripplix AWE style) -->
-    <section class="pt-20 sm:pt-28 pb-0 relative" id="services-accordion-section">
-
-      <!-- Header -->
-      <div class="w-full px-6 sm:px-10 mb-14">
-        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-3">// CAPACIDAD INDUSTRIAL</span>
-            <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-              Cada proceso,<br>al detalle técnico.
-            </h2>
-          </div>
-          <a href="contacto.html" class="self-start sm:self-auto inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-yellow text-black font-mono text-xs font-semibold uppercase tracking-wider hover:bg-brand-accent transition-colors shrink-0">
-            Solicitar Presupuesto
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
-        </div>
-      </div>
+    <section class="p-0 relative" id="services-accordion-section">
 
       <!-- Expanding columns container — desktop horizontal, mobile vertical -->
       <div class="w-full">
@@ -2729,8 +2713,7 @@ ${getHeader('servicios')}
       }
 
       cols.forEach(function(col, idx){
-        col.addEventListener('mouseenter', function(){ activateCol(idx); });
-        col.addEventListener('click',      function(){ activateCol(idx); });
+        col.addEventListener('click', function(){ activateCol(idx); });
       });
 
       var container = document.getElementById('srv-cols');

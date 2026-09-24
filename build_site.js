@@ -2478,7 +2478,7 @@ ${getHeader('servicios')}
       <div class="w-full" id="srv-accordion">
 
         <!-- ITEM 01 -->
-        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="caldereria">
+        <div class="srv-acc-item border-t border-white/[0.08] relative cursor-pointer group" data-srv="caldereria">
           <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
           <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
             <div class="flex items-center gap-6 sm:gap-12 min-w-0">
@@ -2491,8 +2491,8 @@ ${getHeader('servicios')}
           </div>
           <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
             <div class="border-t border-white/[0.06]">
-              <div class="relative bg-black overflow-hidden" style="min-height:260px">
-                <img src="assets/power2.png" alt="Calderería pesada Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              <div class="w-full overflow-hidden" style="height:300px">
+                <img src="assets/power2.png" alt="Calderería pesada Solycal" class="srv-acc-img w-full h-full object-cover block" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
               <div class="px-8 sm:px-12 py-8 sm:py-10 space-y-5 bg-[#07080a] max-w-5xl">
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">01 // TRANSFORMACIÓN DE CHAPA</span>
@@ -2509,7 +2509,7 @@ ${getHeader('servicios')}
         </div>
 
         <!-- ITEM 02 -->
-        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="plasma">
+        <div class="srv-acc-item border-t border-white/[0.08] relative cursor-pointer group" data-srv="plasma">
           <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
           <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
             <div class="flex items-center gap-6 sm:gap-12 min-w-0">
@@ -2522,8 +2522,8 @@ ${getHeader('servicios')}
           </div>
           <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
             <div class="border-t border-white/[0.06]">
-              <div class="relative bg-black overflow-hidden" style="min-height:260px">
-                <img src="assets/corte-plasma.jpg" alt="Corte plasma Hypertherm Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              <div class="w-full overflow-hidden" style="height:300px">
+                <img src="assets/corte-plasma.jpg" alt="Corte plasma Hypertherm Solycal" class="srv-acc-img w-full h-full object-cover block" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
               <div class="px-8 sm:px-12 py-8 sm:py-10 space-y-5 bg-[#07080a] max-w-5xl">
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">02 // TECNOLOGÍA HYPERTHERM</span>
@@ -2540,7 +2540,7 @@ ${getHeader('servicios')}
         </div>
 
         <!-- ITEM 03 -->
-        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="soldadura">
+        <div class="srv-acc-item border-t border-white/[0.08] relative cursor-pointer group" data-srv="soldadura">
           <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
           <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
             <div class="flex items-center gap-6 sm:gap-12 min-w-0">
@@ -2553,8 +2553,8 @@ ${getHeader('servicios')}
           </div>
           <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
             <div class="border-t border-white/[0.06]">
-              <div class="relative bg-black overflow-hidden" style="min-height:260px">
-                <img src="assets/soldadura.jpg" alt="Soldadura TIG MIG Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              <div class="w-full overflow-hidden" style="height:300px">
+                <img src="assets/soldadura.jpg" alt="Soldadura TIG MIG Solycal" class="srv-acc-img w-full h-full object-cover block" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
               <div class="px-8 sm:px-12 py-8 sm:py-10 space-y-5 bg-[#07080a] max-w-5xl">
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">03 // HOMOLOGACIONES OFICIALES</span>
@@ -2571,7 +2571,7 @@ ${getHeader('servicios')}
         </div>
 
         <!-- ITEM 04 -->
-        <div class="srv-acc-item border-t border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="estructuras">
+        <div class="srv-acc-item border-t border-white/[0.08] relative cursor-pointer group" data-srv="estructuras">
           <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
           <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
             <div class="flex items-center gap-6 sm:gap-12 min-w-0">
@@ -2584,8 +2584,8 @@ ${getHeader('servicios')}
           </div>
           <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
             <div class="border-t border-white/[0.06]">
-              <div class="relative bg-black overflow-hidden" style="min-height:260px">
-                <img src="assets/estructuras.jpg" alt="Estructuras metálicas CE Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              <div class="w-full overflow-hidden" style="height:300px">
+                <img src="assets/estructuras.jpg" alt="Estructuras metálicas CE Solycal" class="srv-acc-img w-full h-full object-cover block" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
               <div class="px-8 sm:px-12 py-8 sm:py-10 space-y-5 bg-[#07080a] max-w-5xl">
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">04 // MARCADO CE EN 1090-1</span>
@@ -2602,7 +2602,7 @@ ${getHeader('servicios')}
         </div>
 
         <!-- ITEM 05 -->
-        <div class="srv-acc-item border-t border-b border-white/[0.08] relative overflow-hidden cursor-pointer group" data-srv="montaje">
+        <div class="srv-acc-item border-t border-b border-white/[0.08] relative cursor-pointer group" data-srv="montaje">
           <div class="srv-acc-bar absolute left-0 top-0 bottom-0 w-[2px] bg-brand-yellow scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100"></div>
           <div class="flex items-center justify-between px-6 sm:px-10 py-6 sm:py-8">
             <div class="flex items-center gap-6 sm:gap-12 min-w-0">
@@ -2615,8 +2615,8 @@ ${getHeader('servicios')}
           </div>
           <div class="srv-acc-body" style="max-height:0;overflow:hidden;transition:max-height 0.65s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease;opacity:0">
             <div class="border-t border-white/[0.06]">
-              <div class="relative bg-black overflow-hidden" style="min-height:260px">
-                <img src="assets/power2.png" alt="Montaje industrial obra Solycal" class="srv-acc-img absolute inset-0 w-full h-full object-cover" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
+              <div class="w-full overflow-hidden" style="height:300px">
+                <img src="assets/power2.png" alt="Montaje industrial obra Solycal" class="srv-acc-img w-full h-full object-cover block" style="transform:scale(1.06);transition:transform 0.7s ease" loading="lazy">
               </div>
               <div class="px-8 sm:px-12 py-8 sm:py-10 space-y-5 bg-[#07080a] max-w-5xl">
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">05 // INSTALACIÓN EN PLANTA</span>

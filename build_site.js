@@ -2512,9 +2512,15 @@ ${getHeader('servicios')}
             background-color: #080a0d;
           }
           .srv-col.is-active .srv-col-bg-img {
-            opacity: 0.70;
-            filter: contrast(105%);
+            opacity: 0.85;
+            filter: contrast(110%);
             transform: scale(1);
+          }
+          .srv-col-content h3 {
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
+          }
+          .srv-col-content p, .srv-col-content ul {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
           }
         </style>
 
@@ -2533,8 +2539,9 @@ ${getHeader('servicios')}
                  loading="eager">
 
             <!-- Readability overlays: Deep dark on text side, transparent to see the machine/steel on right -->
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+            <!-- Degradado potente desde las letras hacia la imagen -->
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <!-- Collapsed label (Vertical spine / stacked tab) -->
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
@@ -2586,8 +2593,9 @@ ${getHeader('servicios')}
                  class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
                  loading="eager">
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+            <!-- Degradado potente desde las letras hacia la imagen -->
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">02</span>
@@ -2637,8 +2645,9 @@ ${getHeader('servicios')}
                  class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
                  loading="eager">
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+            <!-- Degradado potente desde las letras hacia la imagen -->
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">03</span>
@@ -2688,8 +2697,9 @@ ${getHeader('servicios')}
                  class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
                  loading="eager">
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+            <!-- Degradado potente desde las letras hacia la imagen -->
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">04</span>
@@ -2739,8 +2749,9 @@ ${getHeader('servicios')}
                  class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
                  loading="eager">
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+            <!-- Degradado potente desde las letras hacia la imagen -->
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">05</span>

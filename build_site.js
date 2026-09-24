@@ -191,6 +191,14 @@ function getHead(title, description, canonicalPath = '') {
       z-index: 0;
       background-color: #07080a;
     }
+    .video-background-wrapper video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none !important;
+    }
     .video-scaler {
       position: absolute;
       top: 50%;
@@ -1822,22 +1830,22 @@ function getFooter(options = {}) {
 const indexHtml = `${getHead('SOLYCAL | Soldadura y Calderería Industrial Valencia', 'Fabricación de calderería industrial pesada y ligera, corte por plasma HD TrueHole, soldadura homologada TIG/MIG y estructuras metálicas con marcado CE en Torrent, Valencia.', '')}
 ${getHeader('inicio')}
 
-<!-- HERO SECTION EDITORIAL & BOLD WITH YOUTUBE BACKGROUND VIDEO -->
+<!-- HERO SECTION EDITORIAL & BOLD WITH INDUSTRIAL BACKGROUND VIDEO -->
 <section id="hero-section" class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden cursor-pointer">
-  <!-- YouTube Background Video (Responsive & Scaled) -->
+  <!-- Clean HTML5 Background Video (Zero controls, 100% clean ambient loop) -->
   <div class="video-background-wrapper" id="bg-video-wrapper">
-    <div class="video-scaler">
-      <iframe 
-        id="bg-video"
-        class="opacity-90"
-        src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3&playsinline=1&disablekb=1&fs=0" 
-        title="SOLYCAL Video Corporativo"
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; playsinline" 
-        playsinline
-        webkit-playsinline>
-      </iframe>
-    </div>
+    <video 
+      id="bg-video"
+      class="w-full h-full object-cover pointer-events-none opacity-85"
+      autoplay 
+      muted 
+      loop 
+      playsinline 
+      webkit-playsinline
+      preload="auto"
+      poster="assets/hero-bg.jpg">
+      <source src="assets/hero-bg.mp4" type="video/mp4">
+    </video>
   </div>
 
   <!-- DYNAMIC FLOATING POINTER BADGE (VER VÍDEO - PERFIL BLANCO FLOTANTE) -->
@@ -2164,7 +2172,7 @@ ${getHeader('inicio')}
     const closeBtn = document.getElementById('close-video-modal');
     const clickSurface = document.getElementById('video-click-surface');
 
-    const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1';
+    const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
 
     let isPlaying = false;
 
@@ -2191,8 +2199,12 @@ ${getHeader('inicio')}
     function openModal() {
       if (!videoModal || !modalIframe) return;
       const bgVideo = document.getElementById('bg-video');
-      if (bgVideo && bgVideo.contentWindow) {
-        bgVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      if (bgVideo) {
+        if (typeof bgVideo.pause === 'function') {
+          bgVideo.pause();
+        } else if (bgVideo.contentWindow) {
+          bgVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
       }
 
       modalIframe.src = videoEmbedBase;
@@ -2219,8 +2231,12 @@ ${getHeader('inicio')}
       isPlaying = false;
 
       const bgVideo = document.getElementById('bg-video');
-      if (bgVideo && bgVideo.contentWindow) {
-        bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      if (bgVideo) {
+        if (typeof bgVideo.play === 'function') {
+          bgVideo.play().catch(() => {});
+        } else if (bgVideo.contentWindow) {
+          bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        }
       }
 
       if (typeof updateCursorVisibility === 'function') {
@@ -2350,34 +2366,40 @@ ${getHeader('inicio')}
       }
     });
 
-    // Ensure background video autoplays on mobile devices
+    // Ensure background video autoplays cleanly across browsers & devices
     const bgVideo = document.getElementById('bg-video');
     if (bgVideo) {
-      const sendBgVideoPlay = () => {
-        try {
-          if (bgVideo.contentWindow) {
+      if (typeof bgVideo.play === 'function') {
+        const playHtml5Bg = () => {
+          bgVideo.play().catch(() => {});
+        };
+        playHtml5Bg();
+        window.addEventListener('touchstart', playHtml5Bg, { passive: true, once: true });
+        window.addEventListener('scroll', playHtml5Bg, { passive: true, once: true });
+        window.addEventListener('click', playHtml5Bg, { passive: true, once: true });
+      } else if (bgVideo.contentWindow) {
+        const sendBgVideoPlay = () => {
+          try {
             bgVideo.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
             bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-          }
-        } catch (e) {}
-      };
-
-      bgVideo.addEventListener('load', () => {
-        sendBgVideoPlay();
-        setTimeout(sendBgVideoPlay, 500);
-        setTimeout(sendBgVideoPlay, 1500);
-        setTimeout(sendBgVideoPlay, 3000);
-      });
-
-      const unlockBgOnMobile = () => {
-        sendBgVideoPlay();
-        window.removeEventListener('touchstart', unlockBgOnMobile);
-        window.removeEventListener('touchend', unlockBgOnMobile);
-        window.removeEventListener('scroll', unlockBgOnMobile);
-      };
-      window.addEventListener('touchstart', unlockBgOnMobile, { passive: true, once: true });
-      window.addEventListener('touchend', unlockBgOnMobile, { passive: true, once: true });
-      window.addEventListener('scroll', unlockBgOnMobile, { passive: true, once: true });
+          } catch (e) {}
+        };
+        bgVideo.addEventListener('load', () => {
+          sendBgVideoPlay();
+          setTimeout(sendBgVideoPlay, 500);
+          setTimeout(sendBgVideoPlay, 1500);
+          setTimeout(sendBgVideoPlay, 3000);
+        });
+        const unlockBgOnMobile = () => {
+          sendBgVideoPlay();
+          window.removeEventListener('touchstart', unlockBgOnMobile);
+          window.removeEventListener('touchend', unlockBgOnMobile);
+          window.removeEventListener('scroll', unlockBgOnMobile);
+        };
+        window.addEventListener('touchstart', unlockBgOnMobile, { passive: true, once: true });
+        window.addEventListener('touchend', unlockBgOnMobile, { passive: true, once: true });
+        window.addEventListener('scroll', unlockBgOnMobile, { passive: true, once: true });
+      }
     }
   })();
 </script>

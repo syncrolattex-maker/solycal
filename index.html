@@ -145,7 +145,7 @@
       height: 56.25vw; /* 16:9 aspect ratio */
       min-height: 100vh;
       min-width: 177.77vh; /* 16:9 aspect ratio */
-      transform: translate(-50%, -50%) scale(1.15);
+      transform: translate(-50%, -50%) scale(1.35); pointer-events: none;
       pointer-events: none;
     }
     .btn-magnetic {
@@ -800,6 +800,13 @@
             <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-yellow group-hover:scale-110 transition-transform"></i>
           </span>
         </a>
+        <button type="button" id="btn-hero-video-trigger" class="btn-magnetic px-8 py-4 rounded-full border border-white/25 bg-white/[0.04] text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2.5 cursor-pointer backdrop-blur-sm">
+          <span class="btn-magnetic-glow"></span>
+          <span class="btn-magnetic-content flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 fill-white group-hover:fill-brand-yellow transition-colors" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Ver Vídeo</span>
+          </span>
+        </button>
       </div>
 
       <div class="font-mono text-xs text-neutral-500 flex items-center gap-3">
@@ -1043,8 +1050,135 @@
   </div>
 </section>
 
+
+<!-- VIDEO LIGHTBOX MODAL (REPRODUCTOR LIMPIO) -->
+<div id="video-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-3 sm:p-6 lg:p-8" role="dialog" aria-modal="true" aria-label="Reproductor Vídeo">
+  <div class="relative w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[1500px] aspect-video rounded-2xl overflow-hidden bg-black border border-white/20 shadow-[0_0_60px_rgba(0,0,0,0.95)] scale-95 transition-transform duration-300 select-none group" id="video-modal-dialog">
+    <div class="absolute inset-0 overflow-hidden flex items-center justify-center bg-black">
+      <iframe 
+        id="modal-video-iframe" 
+        class="w-[114%] h-[114%] max-w-none scale-[1.08] object-cover" 
+        src="" 
+        title="SOLYCAL Video" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div id="video-click-surface" class="absolute inset-0 z-10 cursor-pointer"></div>
+    <button type="button" id="close-video-modal" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 border border-white/25 text-white flex items-center justify-center hover:border-white hover:bg-black/90 transition-all backdrop-blur-md cursor-pointer" aria-label="Cerrar reproductor">
+      <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+</div>
 <script>
   (function() {
+    const btnPlayHero = document.getElementById('btn-hero-video-trigger');
+    const videoModal = document.getElementById('video-modal');
+    const modalDialog = document.getElementById('video-modal-dialog');
+    const modalIframe = document.getElementById('modal-video-iframe');
+    const closeBtn = document.getElementById('close-video-modal');
+    const clickSurface = document.getElementById('video-click-surface');
+
+    const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1';
+
+    let isPlaying = false;
+
+    function postToIframe(command, args) {
+      if (!modalIframe || !modalIframe.contentWindow) return;
+      modalIframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: command,
+        args: args || ''
+      }), '*');
+    }
+
+    function togglePlayPause() {
+      if (isPlaying) {
+        postToIframe('pauseVideo');
+        isPlaying = false;
+      } else {
+        postToIframe('playVideo');
+        postToIframe('unMute');
+        isPlaying = true;
+      }
+    }
+
+    function openModal() {
+      if (!videoModal || !modalIframe) return;
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo && bgVideo.contentWindow) {
+        bgVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      }
+
+      modalIframe.src = videoEmbedBase;
+      isPlaying = true;
+
+      videoModal.classList.remove('opacity-0', 'pointer-events-none');
+      if (modalDialog) {
+        modalDialog.classList.remove('scale-95');
+        modalDialog.classList.add('scale-100');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (!videoModal || !modalIframe) return;
+      videoModal.classList.add('opacity-0', 'pointer-events-none');
+      if (modalDialog) {
+        modalDialog.classList.remove('scale-100');
+        modalDialog.classList.add('scale-95');
+      }
+      modalIframe.src = '';
+      document.body.style.overflow = '';
+      isPlaying = false;
+
+      const bgVideo = document.getElementById('bg-video');
+      if (bgVideo && bgVideo.contentWindow) {
+        bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      }
+    }
+
+    if (btnPlayHero) {
+      btnPlayHero.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal();
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeModal();
+      });
+    }
+
+    if (clickSurface) {
+      clickSurface.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlayPause();
+      });
+    }
+
+    if (videoModal) {
+      videoModal.addEventListener('click', (e) => {
+        if (!modalDialog || !modalDialog.contains(e.target)) {
+          closeModal();
+        }
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (videoModal && !videoModal.classList.contains('pointer-events-none')) {
+        if (e.key === 'Escape') {
+          closeModal();
+        } else if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          togglePlayPause();
+        }
+      }
+    });
+
     // Ensure background video autoplays on mobile devices
     const bgVideo = document.getElementById('bg-video');
     if (bgVideo) {

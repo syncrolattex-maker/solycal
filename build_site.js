@@ -1815,7 +1815,7 @@ const indexHtml = `${getHead('SOLYCAL | Soldadura y Calderería Industrial Valen
 ${getHeader('inicio')}
 
 <!-- HERO SECTION EDITORIAL & BOLD WITH YOUTUBE BACKGROUND VIDEO -->
-<section id="hero-section" class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden cursor-pointer">
+<section id="hero-section" class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden">
   <!-- YouTube Background Video (Responsive & Scaled) -->
   <div class="video-background-wrapper">
     <iframe 
@@ -2108,268 +2108,8 @@ ${getHeader('inicio')}
   </div>
 </section>
 
-<!-- DYNAMIC FLOATING POINTER BADGE (MOSTRAR VÍDEO) -->
-<div id="hero-cursor-badge" class="fixed z-[80] pointer-events-none opacity-0 transition-opacity duration-200 -translate-x-1/2 -translate-y-1/2 hidden md:block" style="top: -200px; left: -200px;">
-  <div class="px-5 py-2.5 rounded-full bg-transparent border border-white text-white font-mono text-xs uppercase tracking-wider backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.15)] flex items-center gap-2.5 whitespace-nowrap">
-    <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-    <span>Mostrar Vídeo</span>
-  </div>
-</div>
-
-<!-- VIDEO LIGHTBOX MODAL (SIN CONTENIDO ADICIONAL, NI RASTRO DE YOUTUBE NI DESCRIPCIONES, SOLO PLAY Y PAUSE) -->
-<div id="video-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-3 sm:p-6 lg:p-8" role="dialog" aria-modal="true" aria-label="Reproductor Vídeo">
-  <div class="relative w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[1500px] aspect-video rounded-2xl overflow-hidden bg-black border border-white/20 shadow-[0_0_60px_rgba(0,0,0,0.95)] scale-95 transition-transform duration-300 select-none group" id="video-modal-dialog">
-    
-    <!-- Video Iframe Cropped & Scaled (Oculta completamente cabecera de YouTube, logos y sugerencias) -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center bg-black">
-      <iframe 
-        id="modal-video-iframe" 
-        class="w-[114%] h-[114%] max-w-none pointer-events-none scale-[1.08] object-cover" 
-        src="" 
-        title="SOLYCAL Video" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <!-- Superficie interactiva (Clic en el vídeo reproduce / pausa) -->
-    <div id="video-click-surface" class="absolute inset-0 z-10 cursor-pointer"></div>
-
-    <!-- Botón Minimalista Cerrar -->
-    <button type="button" id="close-video-modal" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 border border-white/25 text-white flex items-center justify-center hover:border-white hover:bg-black/90 transition-all backdrop-blur-md cursor-pointer" aria-label="Cerrar reproductor">
-      <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
-
-    <!-- Indicador central sutil Play: visible solo cuando el usuario pausa el vídeo -->
-    <div id="video-center-indicator" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center opacity-0 transition-opacity duration-200">
-      <div id="btn-video-center-toggle" class="w-16 h-16 rounded-full bg-black/60 border border-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-2xl">
-        <svg id="icon-center-play" class="w-7 h-7 fill-white ml-0.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 <script>
   (function() {
-    const heroSection = document.getElementById('hero-section');
-    const heroCursor = document.getElementById('hero-cursor-badge');
-    const videoModal = document.getElementById('video-modal');
-    const modalDialog = document.getElementById('video-modal-dialog');
-    const modalIframe = document.getElementById('modal-video-iframe');
-    const closeBtn = document.getElementById('close-video-modal');
-    const clickSurface = document.getElementById('video-click-surface');
-    const centerIndicator = document.getElementById('video-center-indicator');
-
-    const videoEmbedBase = 'https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1';
-
-    let isPlaying = false;
-
-    function postToIframe(command, args) {
-      if (!modalIframe || !modalIframe.contentWindow) return;
-      modalIframe.contentWindow.postMessage(JSON.stringify({
-        event: 'command',
-        func: command,
-        args: args || ''
-      }), '*');
-    }
-
-    function updateUiState(playing) {
-      isPlaying = playing;
-      if (centerIndicator) {
-        if (playing) {
-          centerIndicator.classList.add('opacity-0');
-        } else {
-          centerIndicator.classList.remove('opacity-0');
-        }
-      }
-    }
-
-    function playVideo() {
-      postToIframe('playVideo');
-      postToIframe('unMute');
-      updateUiState(true);
-    }
-
-    function pauseVideo() {
-      postToIframe('pauseVideo');
-      updateUiState(false);
-    }
-
-    function togglePlayPause() {
-      if (isPlaying) {
-        pauseVideo();
-      } else {
-        playVideo();
-      }
-    }
-
-    function openModal() {
-      if (!videoModal || !modalIframe) return;
-      const bgVideo = document.getElementById('bg-video');
-      if (bgVideo && bgVideo.contentWindow) {
-        bgVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-      }
-
-      modalIframe.src = videoEmbedBase;
-      updateUiState(true);
-
-      videoModal.classList.remove('opacity-0', 'pointer-events-none');
-      if (modalDialog) {
-        modalDialog.classList.remove('scale-95');
-        modalDialog.classList.add('scale-100');
-      }
-      document.body.style.overflow = 'hidden';
-      if (heroCursor) heroCursor.style.opacity = '0';
-    }
-
-    function closeModal() {
-      if (!videoModal || !modalIframe) return;
-      videoModal.classList.add('opacity-0', 'pointer-events-none');
-      if (modalDialog) {
-        modalDialog.classList.remove('scale-100');
-        modalDialog.classList.add('scale-95');
-      }
-      modalIframe.src = '';
-      document.body.style.overflow = '';
-      updateUiState(false);
-
-      const bgVideo = document.getElementById('bg-video');
-      if (bgVideo && bgVideo.contentWindow) {
-        bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-      }
-
-      if (typeof updateCursorVisibility === 'function') {
-        updateCursorVisibility();
-      }
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeModal();
-      });
-    }
-
-    if (clickSurface) {
-      clickSurface.addEventListener('click', (e) => {
-        e.stopPropagation();
-        togglePlayPause();
-      });
-    }
-
-    if (videoModal) {
-      videoModal.addEventListener('click', (e) => {
-        if (!modalDialog || !modalDialog.contains(e.target)) {
-          closeModal();
-        }
-      });
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (videoModal && !videoModal.classList.contains('pointer-events-none')) {
-        if (e.key === 'Escape') {
-          closeModal();
-        } else if (e.key === ' ' || e.code === 'Space') {
-          e.preventDefault();
-          togglePlayPause();
-        }
-      }
-    });
-
-    window.addEventListener('message', (event) => {
-      try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        if (data && data.event === 'onStateChange') {
-          if (data.info === 1) {
-            updateUiState(true);
-          } else if (data.info === 2 || data.info === 0) {
-            updateUiState(false);
-          }
-        }
-      } catch (err) {}
-    });
-
-    // Custom Pointer Badge Follower on Hero Section
-    let updateCursorVisibility = () => {};
-    if (heroSection && heroCursor) {
-      let mouseX = -1000;
-      let mouseY = -1000;
-      let curX = -1000;
-      let curY = -1000;
-      let isInsideHero = false;
-      let isOverInteractive = false;
-
-      function checkPointerInHero(clientX, clientY) {
-        if (!heroSection) return false;
-        const rect = heroSection.getBoundingClientRect();
-        return (
-          clientX >= rect.left &&
-          clientX <= rect.right &&
-          clientY >= rect.top &&
-          clientY <= rect.bottom
-        );
-      }
-
-      updateCursorVisibility = () => {
-        const isModalOpen = videoModal && !videoModal.classList.contains('pointer-events-none');
-        if (isInsideHero && !isOverInteractive && !isModalOpen) {
-          heroCursor.style.opacity = '1';
-        } else {
-          heroCursor.style.opacity = '0';
-        }
-      };
-
-      window.addEventListener('pointermove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        if (curX < -500) {
-          curX = mouseX;
-          curY = mouseY;
-          heroCursor.style.left = curX + 'px';
-          heroCursor.style.top = curY + 'px';
-        }
-
-        isInsideHero = checkPointerInHero(e.clientX, e.clientY);
-
-        const interactive = e.target && e.target.closest ? e.target.closest('a, button, input, [role="button"], select, textarea') : null;
-        isOverInteractive = !!interactive;
-
-        updateCursorVisibility();
-      });
-
-      window.addEventListener('scroll', () => {
-        if (curX > -500) {
-          isInsideHero = checkPointerInHero(mouseX, mouseY);
-          updateCursorVisibility();
-        }
-      }, { passive: true });
-
-      document.addEventListener('mouseleave', () => {
-        isInsideHero = false;
-        updateCursorVisibility();
-      });
-
-      // Clicking on hero background (outside interactive buttons) opens video modal
-      heroSection.addEventListener('click', (e) => {
-        if (e.target.closest('a, button, input, [role="button"], select, textarea')) return;
-        openModal();
-      });
-
-      // Smooth lag follow loop (runs continuously so movement is fluid when entering/leaving)
-      function followLoop() {
-        if (curX > -500) {
-          curX += (mouseX - curX) * 0.28;
-          curY += (mouseY - curY) * 0.28;
-          heroCursor.style.left = curX + 'px';
-          heroCursor.style.top = curY + 'px';
-        }
-        requestAnimationFrame(followLoop);
-      }
-      requestAnimationFrame(followLoop);
-    }
-
     // Ensure background video autoplays on mobile devices
     const bgVideo = document.getElementById('bg-video');
     if (bgVideo) {
@@ -2480,24 +2220,38 @@ ${getHeader('servicios')}
           }
           .srv-text-gradient, .srv-vert-gradient {
             z-index: 2 !important;
+            transition: opacity 0.6s ease;
+            will-change: opacity;
           }
           .srv-col-label {
             z-index: 20 !important;
+            transition: opacity 0.4s ease;
           }
           .srv-col-content {
+            position: absolute !important;
+            inset: 0 !important;
             z-index: 30 !important;
+            transition: opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+            will-change: opacity, transform;
           }
           .srv-col-bar {
             z-index: 40 !important;
           }
+
+          /* FILAS CERRADAS (COMPRIMIDAS) — SIN DEGRADADO (opacity: 0) */
           .srv-col.is-compressed {
-            filter: brightness(0.65);
+            filter: brightness(0.7);
             box-shadow: -15px 0 35px -5px rgba(0, 0, 0, 0.95), inset 1px 0 0 rgba(255, 255, 255, 0.08);
             transform: scaleY(0.995);
           }
+          .srv-col.is-compressed .srv-text-gradient,
+          .srv-col.is-compressed .srv-vert-gradient {
+            opacity: 0 !important;
+            pointer-events: none !important;
+          }
           .srv-col.is-compressed .srv-col-bg-img {
-            opacity: 0.25;
-            filter: grayscale(40%) contrast(110%);
+            opacity: 0.30;
+            filter: grayscale(30%) contrast(110%);
             transform: scale(1.08);
           }
           .srv-col.is-compressed:hover {
@@ -2506,7 +2260,7 @@ ${getHeader('servicios')}
             transform: scaleY(1);
           }
           .srv-col.is-compressed:hover .srv-col-bg-img {
-            opacity: 0.45;
+            opacity: 0.55;
             filter: grayscale(0%);
             transform: scale(1.04);
           }
@@ -2518,16 +2272,40 @@ ${getHeader('servicios')}
             background-color: #F1B541;
             box-shadow: 0 0 8px rgba(241, 181, 65, 0.7);
           }
+          .srv-col.is-compressed .srv-col-content {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(12px) !important;
+          }
+          .srv-col.is-compressed .srv-col-label {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+          }
+
+          /* FILA ACTIVA — CON DEGRADADO ALTO CONTRASTE (opacity: 1) Y TEXTO AL FRENTE */
           .srv-col.is-active {
             filter: brightness(1);
             box-shadow: 0 0 70px rgba(0, 0, 0, 0.95);
             transform: scaleY(1);
             background-color: #080a0d;
           }
+          .srv-col.is-active .srv-text-gradient,
+          .srv-col.is-active .srv-vert-gradient {
+            opacity: 1 !important;
+          }
           .srv-col.is-active .srv-col-bg-img {
             opacity: 0.85;
             filter: contrast(110%);
             transform: scale(1);
+          }
+          .srv-col.is-active .srv-col-content {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translateY(0) !important;
+          }
+          .srv-col.is-active .srv-col-label {
+            opacity: 0 !important;
+            pointer-events: none !important;
           }
           .srv-col-content h3 {
             text-shadow: 0 4px 24px rgba(0, 0, 0, 1);
@@ -2540,10 +2318,10 @@ ${getHeader('servicios')}
         <div class="hidden lg:flex gap-0 overflow-hidden relative border-y border-white/[0.08]" id="srv-cols" style="height: calc(100vh - 80px); min-height: 600px;">
 
           <!-- COL 01: Calderería -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="0" style="flex-basis: 20%;">
+          <div class="srv-col is-active relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="0" style="flex-basis: 84%; z-index: 25;">
             <!-- Top yellow accent bar -->
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-1 origin-left transition-transform duration-500 z-30" style="transform: scaleX(1);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/caldereria-industrial.jpeg"
@@ -2567,7 +2345,7 @@ ${getHeader('servicios')}
 
             <!-- Expanded content (wide canvas ~84%) -->
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 01 &bull; TRANSFORMACIÓN DE CHAPA</span>
@@ -2596,9 +2374,9 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 02: Corte Plasma -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="1" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="1" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
@@ -2619,7 +2397,7 @@ ${getHeader('servicios')}
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 02 &bull; TECNOLOGÍA HYPERTHERM</span>
@@ -2648,9 +2426,9 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 03: Soldadura -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="2" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="2" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
@@ -2671,7 +2449,7 @@ ${getHeader('servicios')}
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 03 &bull; HOMOLOGACIONES OFICIALES</span>
@@ -2700,9 +2478,9 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 04: Estructuras -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="3" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="3" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
@@ -2723,7 +2501,7 @@ ${getHeader('servicios')}
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 04 &bull; MARCADO CE EN 1090-1</span>
@@ -2752,9 +2530,9 @@ ${getHeader('servicios')}
           </div>
 
           <!-- COL 05: Montaje en Obra -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 bg-[#090b0e]"
-               data-idx="4" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 bg-[#090b0e]"
+               data-idx="4" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/montaje-instalacion.jpeg"
@@ -2775,7 +2553,7 @@ ${getHeader('servicios')}
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 05 &bull; INSTALACIÓN EN PLANTA</span>
@@ -2887,38 +2665,18 @@ ${getHeader('servicios')}
 
       function activateCol(idx){
         cols.forEach(function(col, i){
-          var content = col.querySelector('.srv-col-content');
-          var label   = col.querySelector('.srv-col-label');
-          var bar     = col.querySelector('.srv-col-bar');
+          var bar = col.querySelector('.srv-col-bar');
           if(i === idx){
             col.style.flexBasis = WIDE;
             col.style.zIndex    = '25';
             col.classList.remove('is-compressed');
             col.classList.add('is-active');
-            if(content){
-              content.style.clipPath = 'inset(0 0 0% 0)';
-              content.style.opacity  = '1';
-              content.style.pointerEvents = 'auto';
-            }
-            if(label){
-              label.style.opacity    = '0';
-              label.style.pointerEvents = 'none';
-            }
             if(bar) bar.style.transform = 'scaleX(1)';
           } else {
             col.style.flexBasis = NARROW;
             col.style.zIndex    = '5';
             col.classList.remove('is-active');
             col.classList.add('is-compressed');
-            if(content){
-              content.style.clipPath = 'inset(0 0 100% 0)';
-              content.style.opacity  = '0';
-              content.style.pointerEvents = 'none';
-            }
-            if(label){
-              label.style.opacity    = '1';
-              label.style.pointerEvents = 'auto';
-            }
             if(bar) bar.style.transform = 'scaleX(0)';
           }
         });

@@ -820,24 +820,38 @@
           }
           .srv-text-gradient, .srv-vert-gradient {
             z-index: 2 !important;
+            transition: opacity 0.6s ease;
+            will-change: opacity;
           }
           .srv-col-label {
             z-index: 20 !important;
+            transition: opacity 0.4s ease;
           }
           .srv-col-content {
+            position: absolute !important;
+            inset: 0 !important;
             z-index: 30 !important;
+            transition: opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+            will-change: opacity, transform;
           }
           .srv-col-bar {
             z-index: 40 !important;
           }
+
+          /* FILAS CERRADAS (COMPRIMIDAS) — SIN DEGRADADO (opacity: 0) */
           .srv-col.is-compressed {
-            filter: brightness(0.65);
+            filter: brightness(0.7);
             box-shadow: -15px 0 35px -5px rgba(0, 0, 0, 0.95), inset 1px 0 0 rgba(255, 255, 255, 0.08);
             transform: scaleY(0.995);
           }
+          .srv-col.is-compressed .srv-text-gradient,
+          .srv-col.is-compressed .srv-vert-gradient {
+            opacity: 0 !important;
+            pointer-events: none !important;
+          }
           .srv-col.is-compressed .srv-col-bg-img {
-            opacity: 0.25;
-            filter: grayscale(40%) contrast(110%);
+            opacity: 0.30;
+            filter: grayscale(30%) contrast(110%);
             transform: scale(1.08);
           }
           .srv-col.is-compressed:hover {
@@ -846,7 +860,7 @@
             transform: scaleY(1);
           }
           .srv-col.is-compressed:hover .srv-col-bg-img {
-            opacity: 0.45;
+            opacity: 0.55;
             filter: grayscale(0%);
             transform: scale(1.04);
           }
@@ -858,16 +872,40 @@
             background-color: #F1B541;
             box-shadow: 0 0 8px rgba(241, 181, 65, 0.7);
           }
+          .srv-col.is-compressed .srv-col-content {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(12px) !important;
+          }
+          .srv-col.is-compressed .srv-col-label {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+          }
+
+          /* FILA ACTIVA — CON DEGRADADO ALTO CONTRASTE (opacity: 1) Y TEXTO AL FRENTE */
           .srv-col.is-active {
             filter: brightness(1);
             box-shadow: 0 0 70px rgba(0, 0, 0, 0.95);
             transform: scaleY(1);
             background-color: #080a0d;
           }
+          .srv-col.is-active .srv-text-gradient,
+          .srv-col.is-active .srv-vert-gradient {
+            opacity: 1 !important;
+          }
           .srv-col.is-active .srv-col-bg-img {
             opacity: 0.85;
             filter: contrast(110%);
             transform: scale(1);
+          }
+          .srv-col.is-active .srv-col-content {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translateY(0) !important;
+          }
+          .srv-col.is-active .srv-col-label {
+            opacity: 0 !important;
+            pointer-events: none !important;
           }
           .srv-col-content h3 {
             text-shadow: 0 4px 24px rgba(0, 0, 0, 1);
@@ -880,10 +918,10 @@
         <div class="hidden lg:flex gap-0 overflow-hidden relative border-y border-white/[0.08]" id="srv-cols" style="height: calc(100vh - 80px); min-height: 600px;">
 
           <!-- COL 01: Calderería -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="0" style="flex-basis: 20%;">
+          <div class="srv-col is-active relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="0" style="flex-basis: 84%; z-index: 25;">
             <!-- Top yellow accent bar -->
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-1 origin-left transition-transform duration-500 z-30" style="transform: scaleX(1);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/caldereria-industrial.jpeg"
@@ -907,7 +945,7 @@
 
             <!-- Expanded content (wide canvas ~84%) -->
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 01 &bull; TRANSFORMACIÓN DE CHAPA</span>
@@ -936,9 +974,9 @@
           </div>
 
           <!-- COL 02: Corte Plasma -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="1" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="1" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
@@ -959,7 +997,7 @@
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 02 &bull; TECNOLOGÍA HYPERTHERM</span>
@@ -988,9 +1026,9 @@
           </div>
 
           <!-- COL 03: Soldadura -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="2" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="2" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
@@ -1011,7 +1049,7 @@
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 03 &bull; HOMOLOGACIONES OFICIALES</span>
@@ -1040,9 +1078,9 @@
           </div>
 
           <!-- COL 04: Estructuras -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="3" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="3" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
@@ -1063,7 +1101,7 @@
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 04 &bull; MARCADO CE EN 1090-1</span>
@@ -1092,9 +1130,9 @@
           </div>
 
           <!-- COL 05: Montaje en Obra -->
-          <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 bg-[#090b0e]"
-               data-idx="4" style="flex-basis: 20%;">
-            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 bg-[#090b0e]"
+               data-idx="4" style="flex-basis: 4%; z-index: 5;">
+            <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
             <img src="assets/img/Servicios/montaje-instalacion.jpeg"
@@ -1115,7 +1153,7 @@
             </div>
 
             <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
-                 style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
+                 >
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
                   <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 05 &bull; INSTALACIÓN EN PLANTA</span>
@@ -1227,38 +1265,18 @@
 
       function activateCol(idx){
         cols.forEach(function(col, i){
-          var content = col.querySelector('.srv-col-content');
-          var label   = col.querySelector('.srv-col-label');
-          var bar     = col.querySelector('.srv-col-bar');
+          var bar = col.querySelector('.srv-col-bar');
           if(i === idx){
             col.style.flexBasis = WIDE;
             col.style.zIndex    = '25';
             col.classList.remove('is-compressed');
             col.classList.add('is-active');
-            if(content){
-              content.style.clipPath = 'inset(0 0 0% 0)';
-              content.style.opacity  = '1';
-              content.style.pointerEvents = 'auto';
-            }
-            if(label){
-              label.style.opacity    = '0';
-              label.style.pointerEvents = 'none';
-            }
             if(bar) bar.style.transform = 'scaleX(1)';
           } else {
             col.style.flexBasis = NARROW;
             col.style.zIndex    = '5';
             col.classList.remove('is-active');
             col.classList.add('is-compressed');
-            if(content){
-              content.style.clipPath = 'inset(0 0 100% 0)';
-              content.style.opacity  = '0';
-              content.style.pointerEvents = 'none';
-            }
-            if(label){
-              label.style.opacity    = '1';
-              label.style.pointerEvents = 'auto';
-            }
             if(bar) bar.style.transform = 'scaleX(0)';
           }
         });

@@ -775,11 +775,11 @@
     </div>
   </div>
 
-  <!-- Floating Cursor for Watch Video (Hero Section Desktop) -->
-  <div id="hero-cursor-play" class="fixed pointer-events-none z-[120] top-0 left-0 -translate-x-1/2 -translate-y-1/2 opacity-0 scale-50 will-change-transform hidden lg:flex items-center justify-center transition-[opacity,transform] duration-200">
-    <div class="w-24 h-24 rounded-full bg-brand-yellow text-black flex flex-col items-center justify-center gap-1 font-mono shadow-[0_0_35px_rgba(241,181,65,0.7)] select-none border border-brand-yellow/80">
-      <svg class="w-5 h-5 fill-black" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
-      <span class="text-[10px] font-bold uppercase tracking-widest leading-none">Ver Vídeo</span>
+  <!-- DYNAMIC FLOATING POINTER BADGE (VER VÍDEO - PERFIL BLANCO FLOTANTE) -->
+  <div id="hero-cursor-badge" class="fixed z-[120] pointer-events-none opacity-0 transition-opacity duration-200 -translate-x-1/2 -translate-y-1/2 hidden md:block" style="top: -200px; left: -200px;">
+    <div class="px-5 py-2.5 rounded-full bg-black/40 border border-white text-white font-mono text-xs uppercase tracking-wider backdrop-blur-sm shadow-[0_0_20px_rgba(255,255,255,0.15)] flex items-center gap-2.5 whitespace-nowrap select-none">
+      <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <span>Ver Vídeo</span>
     </div>
   </div>
 
@@ -818,8 +818,8 @@
             <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-yellow group-hover:scale-110 transition-transform"></i>
           </span>
         </a>
-        <!-- Botón Ver Vídeo visible en pantallas táctiles donde no hay cursor hover -->
-        <button type="button" id="btn-hero-video-trigger" class="lg:hidden btn-magnetic px-8 py-4 rounded-full border border-white/25 bg-white/[0.04] text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2.5 cursor-pointer backdrop-blur-sm">
+        <!-- Botón Ver Vídeo visible en pantallas móviles donde no hay puntero ratón -->
+        <button type="button" id="btn-hero-video-trigger" class="md:hidden btn-magnetic px-8 py-4 rounded-full border border-white/25 bg-white/[0.04] text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2.5 cursor-pointer backdrop-blur-sm">
           <span class="btn-magnetic-glow"></span>
           <span class="btn-magnetic-content flex items-center gap-2">
             <svg class="w-3.5 h-3.5 fill-white group-hover:fill-brand-yellow transition-colors" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -1139,6 +1139,7 @@
         modalDialog.classList.add('scale-100');
       }
       document.body.style.overflow = 'hidden';
+      if (heroCursor) heroCursor.style.opacity = '0';
     }
 
     function closeModal() {
@@ -1156,6 +1157,10 @@
       if (bgVideo && bgVideo.contentWindow) {
         bgVideo.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
       }
+
+      if (typeof updateCursorVisibility === 'function') {
+        updateCursorVisibility();
+      }
     }
 
     if (btnPlayHero) {
@@ -1165,69 +1170,86 @@
       });
     }
 
-    // Floating Cursor Play Button (Desktop)
+    // Custom Pointer Badge Follower on Hero Section (Perfil Blanco Flotante)
     const heroSection = document.getElementById('hero-section');
-    const heroCursor = document.getElementById('hero-cursor-play');
+    const heroCursor = document.getElementById('hero-cursor-badge');
 
+    let updateCursorVisibility = () => {};
     if (heroSection && heroCursor) {
+      let mouseX = -1000;
+      let mouseY = -1000;
+      let curX = -1000;
+      let curY = -1000;
       let isInsideHero = false;
       let isOverInteractive = false;
 
-      const setCursorPos = (e) => {
-        gsap.to(heroCursor, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.18,
-          ease: "power2.out",
-          overwrite: "auto"
-        });
+      function checkPointerInHero(clientX, clientY) {
+        if (!heroSection) return false;
+        const rect = heroSection.getBoundingClientRect();
+        return (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        );
+      }
+
+      updateCursorVisibility = () => {
+        const isModalOpen = videoModal && !videoModal.classList.contains('pointer-events-none');
+        if (isInsideHero && !isOverInteractive && !isModalOpen) {
+          heroCursor.style.opacity = '1';
+        } else {
+          heroCursor.style.opacity = '0';
+        }
       };
 
-      heroSection.addEventListener('mouseenter', (e) => {
-        isInsideHero = true;
-        setCursorPos(e);
-        if (!isOverInteractive) {
-          gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(1.7)" });
+      window.addEventListener('pointermove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (curX < -500) {
+          curX = mouseX;
+          curY = mouseY;
+          heroCursor.style.left = curX + 'px';
+          heroCursor.style.top = curY + 'px';
         }
+
+        isInsideHero = checkPointerInHero(e.clientX, e.clientY);
+
+        const interactive = e.target && e.target.closest ? e.target.closest('a, button, input, [role="button"], select, textarea, .btn-magnetic') : null;
+        isOverInteractive = !!interactive;
+
+        updateCursorVisibility();
       });
 
-      heroSection.addEventListener('mouseleave', () => {
+      window.addEventListener('scroll', () => {
+        if (curX > -500) {
+          isInsideHero = checkPointerInHero(mouseX, mouseY);
+          updateCursorVisibility();
+        }
+      }, { passive: true });
+
+      document.addEventListener('mouseleave', () => {
         isInsideHero = false;
-        gsap.to(heroCursor, { opacity: 0, scale: 0.3, duration: 0.2, ease: "power2.in" });
+        updateCursorVisibility();
       });
 
-      heroSection.addEventListener('mousemove', (e) => {
-        if (!isInsideHero) {
-          isInsideHero = true;
-          if (!isOverInteractive) {
-            gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(1.7)" });
-          }
-        }
-        setCursorPos(e);
-      });
-
-      // Clicking anywhere on hero section (outside interactive links/buttons) opens video modal
+      // Clicking on hero background (outside interactive buttons) opens video modal
       heroSection.addEventListener('click', (e) => {
-        if (e.target.closest('a, button, input, select, textarea, .btn-magnetic')) {
-          return;
-        }
+        if (e.target.closest('a, button, input, [role="button"], select, textarea, .btn-magnetic')) return;
         openModal();
       });
 
-      // Hide cursor badge when hovering over interactive elements
-      const interactiveElements = heroSection.querySelectorAll('a, button, .btn-magnetic');
-      interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          isOverInteractive = true;
-          gsap.to(heroCursor, { opacity: 0, scale: 0.3, duration: 0.15 });
-        });
-        el.addEventListener('mouseleave', () => {
-          isOverInteractive = false;
-          if (isInsideHero) {
-            gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.5)" });
-          }
-        });
-      });
+      // Smooth lag follow loop
+      function followLoop() {
+        if (curX > -500) {
+          curX += (mouseX - curX) * 0.28;
+          curY += (mouseY - curY) * 0.28;
+          heroCursor.style.left = curX + 'px';
+          heroCursor.style.top = curY + 'px';
+        }
+        requestAnimationFrame(followLoop);
+      }
+      requestAnimationFrame(followLoop);
     }
 
     if (closeBtn) {

@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 
 function getHead(title, description, canonicalPath = '') {
   const url = 'https://solycal.es/' + canonicalPath;
@@ -2458,7 +2458,7 @@ ${getHeader('servicios')}
 
 
     <!-- 02 CATEGORIES ACCORDION — Expanding Columns (Ripplix AWE style) -->
-    <section class="py-20 sm:py-28 relative" id="services-accordion-section">
+    <section class="pt-20 sm:pt-28 pb-0 relative" id="services-accordion-section">
 
       <!-- Header -->
       <div class="w-full px-6 sm:px-10 mb-14">
@@ -2742,6 +2742,18 @@ ${getHeader('servicios')}
 
       // open first by default
       if(cols.length) activateCol(0);
+
+      // Dynamic height: fill from top of columns to bottom of page (footer edge)
+      function setSrvColsHeight(){
+        var el = document.getElementById('srv-cols');
+        if(!el) return;
+        var rect = el.getBoundingClientRect();
+        var topAbs = rect.top + window.scrollY;
+        var pageH  = document.documentElement.scrollHeight;
+        el.style.height = (pageH - topAbs) + 'px';
+      }
+      setSrvColsHeight();
+      window.addEventListener('resize', setSrvColsHeight);
 
       /* ---- MOBILE: vertical accordion ---- */
       var mobItems = document.querySelectorAll('.srv-mob-item');

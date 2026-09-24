@@ -822,16 +822,13 @@
         <!-- DESKTOP: horizontal expanding columns with compressed stacking -->
         <style>
           .srv-col {
-            transition: flex-basis 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-                        filter 0.5s ease,
+            will-change: flex-grow, filter, box-shadow;
+            transition: filter 0.5s ease,
                         box-shadow 0.6s ease,
-                        transform 0.6s ease,
                         background-color 0.5s ease;
-            will-change: flex-basis, filter, box-shadow;
           }
           .srv-col-bg-img {
             z-index: 1 !important;
-            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
             will-change: transform, opacity;
           }
           .srv-text-gradient, .srv-vert-gradient {
@@ -841,13 +838,11 @@
           }
           .srv-col-label {
             z-index: 20 !important;
-            transition: opacity 0.4s ease;
           }
           .srv-col-content {
             position: absolute !important;
             inset: 0 !important;
             z-index: 30 !important;
-            transition: opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
             will-change: opacity, transform;
           }
           .srv-col-bar {
@@ -858,27 +853,19 @@
           .srv-col.is-compressed {
             filter: brightness(0.7);
             box-shadow: -15px 0 35px -5px rgba(0, 0, 0, 0.95), inset 1px 0 0 rgba(255, 255, 255, 0.08);
-            transform: scaleY(0.995);
           }
           .srv-col.is-compressed .srv-text-gradient,
           .srv-col.is-compressed .srv-vert-gradient {
             opacity: 0 !important;
             pointer-events: none !important;
           }
-          .srv-col.is-compressed .srv-col-bg-img {
-            opacity: 0.30;
-            filter: grayscale(30%) contrast(110%);
-            transform: scale(1.08);
-          }
           .srv-col.is-compressed:hover {
             filter: brightness(0.95);
             cursor: pointer;
-            transform: scaleY(1);
           }
           .srv-col.is-compressed:hover .srv-col-bg-img {
             opacity: 0.55;
             filter: grayscale(0%);
-            transform: scale(1.04);
           }
           .srv-col.is-compressed:hover .srv-tab-num {
             color: #F1B541;
@@ -888,40 +875,16 @@
             background-color: #F1B541;
             box-shadow: 0 0 8px rgba(241, 181, 65, 0.7);
           }
-          .srv-col.is-compressed .srv-col-content {
-            opacity: 0 !important;
-            pointer-events: none !important;
-            transform: translateY(12px) !important;
-          }
-          .srv-col.is-compressed .srv-col-label {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-          }
 
           /* FILA ACTIVA — CON DEGRADADO ALTO CONTRASTE (opacity: 1) Y TEXTO AL FRENTE */
           .srv-col.is-active {
             filter: brightness(1);
             box-shadow: 0 0 70px rgba(0, 0, 0, 0.95);
-            transform: scaleY(1);
             background-color: #080a0d;
           }
           .srv-col.is-active .srv-text-gradient,
           .srv-col.is-active .srv-vert-gradient {
             opacity: 1 !important;
-          }
-          .srv-col.is-active .srv-col-bg-img {
-            opacity: 0.85;
-            filter: contrast(110%);
-            transform: scale(1);
-          }
-          .srv-col.is-active .srv-col-content {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-            transform: translateY(0) !important;
-          }
-          .srv-col.is-active .srv-col-label {
-            opacity: 0 !important;
-            pointer-events: none !important;
           }
           .srv-col-content h3 {
             text-shadow: 0 4px 24px rgba(0, 0, 0, 1);
@@ -930,57 +893,44 @@
             text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
           }
 
-          /* ---- MOBILE VERTICAL EXPANDING ACCORDION ---- */
+          /* ---- MOBILE VERTICAL EXPANDING ACCORDION (SUPAH ELASTIC EFFECT) ---- */
           #srv-cols-mob {
             height: calc(100vh - 80px);
             min-height: 560px;
           }
           .srv-mob-col {
-            transition: flex 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        background-color 0.5s ease;
-            will-change: flex;
+            will-change: flex-grow, flex-basis;
+            overflow: hidden;
+            transition: background-color 0.4s ease;
           }
           .srv-mob-bg-img {
             z-index: 1 !important;
-            transition: opacity 0.6s ease, filter 0.6s ease;
           }
           .srv-mob-gradient {
             z-index: 2 !important;
-            transition: opacity 0.5s ease;
           }
           .srv-mob-header {
             z-index: 20 !important;
           }
-          .srv-mob-content {
-            z-index: 30 !important;
-            transition: opacity 0.4s ease 0.12s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.12s;
+          .srv-mob-body {
+            display: flex !important;
+            flex-direction: column;
+            overflow-y: auto;
+            flex: 1 1 auto;
+            min-height: 0;
+            will-change: opacity, transform;
           }
           .srv-mob-bar {
             z-index: 40 !important;
           }
 
-          .srv-mob-col {
-            transition: flex 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
-          }
-
-          /* Fila Móvil Comprimida (Cerrada) — Altura compacta 54px */
+          /* Fila Móvil Comprimida (Cerrada) — Cabecera visible 56px */
           .srv-mob-col.is-compressed {
-            flex: 0 0 54px !important;
             background-color: #07080a;
           }
           .srv-mob-col.is-compressed .srv-mob-body {
-            display: none !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            overflow: hidden !important;
-          }
-          .srv-mob-col.is-compressed .srv-mob-arr {
-            transform: rotate(0deg);
-            opacity: 0.45;
-            color: rgba(255, 255, 255, 0.45);
-          }
-          .srv-mob-col.is-compressed .srv-mob-bar {
-            transform: scaleY(0);
+            pointer-events: none !important;
+            opacity: 0;
           }
           .srv-mob-col.is-compressed .srv-mob-num {
             color: rgba(241, 181, 65, 0.7);
@@ -989,24 +939,13 @@
             color: rgba(255, 255, 255, 0.75);
           }
 
-          /* Fila Móvil Activa (Abierta) — Expandida con imagen arriba y textos abajo */
+          /* Fila Móvil Activa (Abierta) — Expandida con elastic spring */
           .srv-mob-col.is-active {
-            flex: 1 1 0% !important;
             background-color: #090b0e;
           }
           .srv-mob-col.is-active .srv-mob-body {
-            display: flex !important;
-            opacity: 1 !important;
-            flex: 1 1 0% !important;
-            min-height: 0 !important;
-          }
-          .srv-mob-col.is-active .srv-mob-arr {
-            transform: rotate(180deg);
+            pointer-events: auto !important;
             opacity: 1;
-            color: #F1B541;
-          }
-          .srv-mob-col.is-active .srv-mob-bar {
-            transform: scaleY(1);
           }
           .srv-mob-col.is-active .srv-mob-num {
             color: #F1B541;
@@ -1019,8 +958,8 @@
         <div class="hidden lg:flex gap-0 overflow-hidden relative border-y border-white/[0.08]" id="srv-cols" style="height: calc(100vh - 80px); min-height: 600px;">
 
           <!-- COL 01: Calderería -->
-          <div class="srv-col is-active relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="0" style="flex-basis: 84%; z-index: 25;">
+          <div class="srv-col is-active relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="0" style="flex: 21 1 0%; z-index: 25;">
             <!-- Top yellow accent bar -->
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-1 origin-left transition-transform duration-500 z-30" style="transform: scaleX(1);"></div>
 
@@ -1072,8 +1011,8 @@
           </div>
 
           <!-- COL 02: Corte Plasma -->
-          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="1" style="flex-basis: 4%; z-index: 5;">
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="1" style="flex: 1 1 0%; z-index: 5;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
@@ -1121,8 +1060,8 @@
           </div>
 
           <!-- COL 03: Soldadura -->
-          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="2" style="flex-basis: 4%; z-index: 5;">
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="2" style="flex: 1 1 0%; z-index: 5;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
@@ -1170,8 +1109,8 @@
           </div>
 
           <!-- COL 04: Estructuras -->
-          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.08] bg-[#090b0e]"
-               data-idx="3" style="flex-basis: 4%; z-index: 5;">
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 border-r border-white/[0.08] bg-[#090b0e]"
+               data-idx="3" style="flex: 1 1 0%; z-index: 5;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
@@ -1219,8 +1158,8 @@
           </div>
 
           <!-- COL 05: Montaje en Obra -->
-          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer flex-shrink-0 bg-[#090b0e]"
-               data-idx="4" style="flex-basis: 4%; z-index: 5;">
+          <div class="srv-col is-compressed relative overflow-hidden cursor-pointer min-w-0 bg-[#090b0e]"
+               data-idx="4" style="flex: 1 1 0%; z-index: 5;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30" style="transform: scaleX(0);"></div>
 
             <!-- Background photo -->
@@ -1273,7 +1212,7 @@
         <div class="flex flex-col lg:hidden overflow-hidden border-y border-white/[0.08]" id="srv-cols-mob" style="height: calc(100vh - 80px); min-height: 560px;">
 
           <!-- ROW 01: Calderería -->
-          <div class="srv-mob-col is-active relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col" data-idx="0">
+          <div class="srv-mob-col is-active relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="0" style="flex: 1 1 0%;">
             <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(1);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
@@ -1320,7 +1259,7 @@
           </div>
 
           <!-- ROW 02: Corte Plasma -->
-          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col" data-idx="1">
+          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="1" style="flex: 0 0 56px;">
             <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
@@ -1367,7 +1306,7 @@
           </div>
 
           <!-- ROW 03: Soldadura -->
-          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col" data-idx="2">
+          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="2" style="flex: 0 0 56px;">
             <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
@@ -1414,7 +1353,7 @@
           </div>
 
           <!-- ROW 04: Estructuras -->
-          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col" data-idx="3">
+          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer border-b border-white/[0.08] bg-[#090b0e] flex flex-col min-h-0" data-idx="3" style="flex: 0 0 56px;">
             <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
@@ -1461,7 +1400,7 @@
           </div>
 
           <!-- ROW 05: Montaje en Obra -->
-          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer bg-[#090b0e] flex flex-col" data-idx="4">
+          <div class="srv-mob-col is-compressed relative overflow-hidden cursor-pointer bg-[#090b0e] flex flex-col min-h-0" data-idx="4" style="flex: 0 0 56px;">
             <div class="srv-mob-bar absolute top-0 left-0 bottom-0 w-[3px] bg-brand-yellow z-30 transition-transform duration-500 origin-top" style="transform: scaleY(0);"></div>
 
             <div class="srv-mob-header h-14 px-5 flex items-center justify-between relative z-20 shrink-0 select-none bg-[#090b0e]">
@@ -1514,38 +1453,87 @@
 
     <script>
     (function(){
-      /* ---- DESKTOP: expanding columns with compressed stacking ---- */
+      /* ---- DESKTOP: expanding columns with compressed stacking (Supah Elastic Accordion) ---- */
       var cols = document.querySelectorAll('.srv-col');
-      var WIDE  = '84%';
-      var NARROW = '4%';
       var activeIdx = -1;
 
-      function activateCol(idx){
+      function activateCol(idx, isInitial){
+        if(idx === activeIdx && !isInitial) return;
+
         cols.forEach(function(col, i){
           var bar = col.querySelector('.srv-col-bar');
+          var label = col.querySelector('.srv-col-label');
+          var content = col.querySelector('.srv-col-content');
+          var bgImg = col.querySelector('.srv-col-bg-img');
+
           if(i === idx){
-            col.style.flexBasis = WIDE;
-            col.style.zIndex    = '25';
             col.classList.remove('is-compressed');
             col.classList.add('is-active');
-            if(bar) bar.style.transform = 'scaleX(1)';
+            col.style.zIndex = '25';
+
+            if(isInitial){
+              gsap.set(col, { flexGrow: 21, flexShrink: 1, flexBasis: '0%' });
+              if(bar) gsap.set(bar, { scaleX: 1, transformOrigin: 'left' });
+              if(bgImg) gsap.set(bgImg, { opacity: 0.85, scale: 1 });
+              if(content) gsap.set(content, { opacity: 1, x: 0 });
+              if(label) gsap.set(label, { opacity: 0, pointerEvents: 'none' });
+            } else {
+              // Supah elastic expansion on active column
+              gsap.to(col, {
+                flexGrow: 21,
+                flexShrink: 1,
+                flexBasis: '0%',
+                duration: 2.2,
+                ease: 'elastic.out(1, 0.35)',
+                overwrite: 'auto'
+              });
+              if(bar) gsap.to(bar, { scaleX: 1, duration: 1.2, ease: 'power3.out', transformOrigin: 'left', overwrite: 'auto' });
+              if(bgImg) gsap.to(bgImg, { opacity: 0.85, scale: 1, duration: 1.8, ease: 'power2.out', overwrite: 'auto' });
+              if(content) {
+                gsap.fromTo(content,
+                  { opacity: 0, x: 25 },
+                  { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out', delay: 0.15, overwrite: 'auto' }
+                );
+              }
+              if(label) gsap.to(label, { opacity: 0, duration: 0.3, pointerEvents: 'none', overwrite: 'auto' });
+            }
           } else {
-            col.style.flexBasis = NARROW;
-            col.style.zIndex    = '5';
             col.classList.remove('is-active');
             col.classList.add('is-compressed');
-            if(bar) bar.style.transform = 'scaleX(0)';
+            col.style.zIndex = '5';
+
+            if(isInitial){
+              gsap.set(col, { flexGrow: 1, flexShrink: 1, flexBasis: '0%' });
+              if(bar) gsap.set(bar, { scaleX: 0, transformOrigin: 'left' });
+              if(bgImg) gsap.set(bgImg, { opacity: 0.30, scale: 1.06 });
+              if(content) gsap.set(content, { opacity: 0, pointerEvents: 'none' });
+              if(label) gsap.set(label, { opacity: 1, pointerEvents: 'auto' });
+            } else {
+              // Supah elastic compression on inactive columns
+              gsap.to(col, {
+                flexGrow: 1,
+                flexShrink: 1,
+                flexBasis: '0%',
+                duration: 1.8,
+                ease: 'elastic.out(1, 0.6)',
+                overwrite: 'auto'
+              });
+              if(bar) gsap.to(bar, { scaleX: 0, duration: 0.5, ease: 'power2.inOut', transformOrigin: 'left', overwrite: 'auto' });
+              if(bgImg) gsap.to(bgImg, { opacity: 0.30, scale: 1.06, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
+              if(content) gsap.to(content, { opacity: 0, duration: 0.25, pointerEvents: 'none', overwrite: 'auto' });
+              if(label) gsap.to(label, { opacity: 1, duration: 0.4, delay: 0.1, pointerEvents: 'auto', overwrite: 'auto' });
+            }
           }
         });
         activeIdx = idx;
       }
 
       cols.forEach(function(col, idx){
-        col.addEventListener('click', function(){ activateCol(idx); });
+        col.addEventListener('click', function(){ activateCol(idx, false); });
       });
 
-      // open first column by default
-      if(cols.length) activateCol(0);
+      // open first column by default without initial spring jump
+      if(cols.length) activateCol(0, true);
 
       // Ajuste dinámico al alto total visible de la pantalla (viewport height)
       function setSrvColsHeight(){
@@ -1559,21 +1547,72 @@
       setSrvColsHeight();
       window.addEventListener('resize', setSrvColsHeight);
 
-      /* ---- MOBILE: vertical expanding columns accordion ---- */
+      /* ---- MOBILE: vertical expanding columns accordion (Supah Elastic Accordion) ---- */
       var mobCols = document.querySelectorAll('.srv-mob-col');
-      function activateMobCol(idx){
+      var activeMobIdx = -1;
+
+      function activateMobCol(idx, isInitial){
+        if(idx === activeMobIdx && !isInitial) return;
+
         mobCols.forEach(function(col, i){
           var bar = col.querySelector('.srv-mob-bar');
+          var arr = col.querySelector('.srv-mob-arr');
+          var body = col.querySelector('.srv-mob-body');
+
           if(i === idx){
             col.classList.remove('is-compressed');
             col.classList.add('is-active');
-            if(bar) bar.style.transform = 'scaleY(1)';
+
+            if(isInitial){
+              gsap.set(col, { flexGrow: 1, flexShrink: 1, flexBasis: '0%' });
+              if(bar) gsap.set(bar, { scaleY: 1, transformOrigin: 'top' });
+              if(arr) gsap.set(arr, { rotate: 180, color: '#F1B541' });
+              if(body) gsap.set(body, { opacity: 1, y: 0, pointerEvents: 'auto' });
+            } else {
+              // Supah elastic expansion on active mobile row
+              gsap.to(col, {
+                flexGrow: 1,
+                flexShrink: 1,
+                flexBasis: '0%',
+                duration: 2.2,
+                ease: 'elastic.out(1, 0.35)',
+                overwrite: 'auto'
+              });
+              if(bar) gsap.to(bar, { scaleY: 1, duration: 1.0, ease: 'power3.out', transformOrigin: 'top', overwrite: 'auto' });
+              if(arr) gsap.to(arr, { rotate: 180, color: '#F1B541', duration: 0.5, overwrite: 'auto' });
+              if(body) {
+                gsap.fromTo(body,
+                  { opacity: 0, y: 16 },
+                  { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.15, pointerEvents: 'auto', overwrite: 'auto' }
+                );
+              }
+            }
           } else {
             col.classList.remove('is-active');
             col.classList.add('is-compressed');
-            if(bar) bar.style.transform = 'scaleY(0)';
+
+            if(isInitial){
+              gsap.set(col, { flexGrow: 0, flexShrink: 0, flexBasis: '56px' });
+              if(bar) gsap.set(bar, { scaleY: 0, transformOrigin: 'top' });
+              if(arr) gsap.set(arr, { rotate: 0, color: 'rgba(255,255,255,0.45)' });
+              if(body) gsap.set(body, { opacity: 0, pointerEvents: 'none' });
+            } else {
+              // Supah elastic compression on inactive mobile rows
+              gsap.to(col, {
+                flexGrow: 0,
+                flexShrink: 0,
+                flexBasis: '56px',
+                duration: 1.8,
+                ease: 'elastic.out(1, 0.6)',
+                overwrite: 'auto'
+              });
+              if(bar) gsap.to(bar, { scaleY: 0, duration: 0.4, ease: 'power2.inOut', transformOrigin: 'top', overwrite: 'auto' });
+              if(arr) gsap.to(arr, { rotate: 0, color: 'rgba(255,255,255,0.45)', duration: 0.5, overwrite: 'auto' });
+              if(body) gsap.to(body, { opacity: 0, duration: 0.25, pointerEvents: 'none', overwrite: 'auto' });
+            }
           }
         });
+        activeMobIdx = idx;
       }
 
       mobCols.forEach(function(col, idx){
@@ -1581,17 +1620,17 @@
         if(header){
           header.addEventListener('click', function(e){
             e.stopPropagation();
-            activateMobCol(idx);
+            activateMobCol(idx, false);
           });
         }
         col.addEventListener('click', function(e){
           if(col.classList.contains('is-compressed')){
-            activateMobCol(idx);
+            activateMobCol(idx, false);
           }
         });
       });
 
-      if(mobCols.length) activateMobCol(0);
+      if(mobCols.length) activateMobCol(0, true);
 
       function setSrvColsMobHeight(){
         var elMob = document.getElementById('srv-cols-mob');

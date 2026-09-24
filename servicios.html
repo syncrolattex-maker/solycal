@@ -814,8 +814,21 @@
             will-change: flex-basis, filter, box-shadow;
           }
           .srv-col-bg-img {
+            z-index: 1 !important;
             transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
             will-change: transform, opacity;
+          }
+          .srv-text-gradient, .srv-vert-gradient {
+            z-index: 2 !important;
+          }
+          .srv-col-label {
+            z-index: 20 !important;
+          }
+          .srv-col-content {
+            z-index: 30 !important;
+          }
+          .srv-col-bar {
+            z-index: 40 !important;
           }
           .srv-col.is-compressed {
             filter: brightness(0.65);
@@ -857,10 +870,10 @@
             transform: scale(1);
           }
           .srv-col-content h3 {
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.95);
+            text-shadow: 0 4px 24px rgba(0, 0, 0, 1);
           }
           .srv-col-content p, .srv-col-content ul {
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
           }
         </style>
 
@@ -875,13 +888,13 @@
             <!-- Background photo -->
             <img src="assets/img/Servicios/caldereria-industrial.jpeg"
                  alt="Calderería Industrial Solycal"
-                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                  loading="eager">
 
             <!-- Readability overlays: Deep dark on text side, transparent to see the machine/steel on right -->
             <!-- Degradado potente desde las letras hacia la imagen -->
-            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
-            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <!-- Collapsed label (Vertical spine / stacked tab) -->
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
@@ -893,7 +906,7 @@
             </div>
 
             <!-- Expanded content (wide canvas ~84%) -->
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -930,12 +943,12 @@
             <!-- Background photo -->
             <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
                  alt="Corte Plasma HD TrueHole Solycal"
-                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                  loading="eager">
 
             <!-- Degradado potente desde las letras hacia la imagen -->
-            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
-            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">02</span>
@@ -945,7 +958,7 @@
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -982,12 +995,12 @@
             <!-- Background photo -->
             <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
                  alt="Soldadura Técnica Homologada Solycal"
-                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                  loading="eager">
 
             <!-- Degradado potente desde las letras hacia la imagen -->
-            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
-            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">03</span>
@@ -997,7 +1010,7 @@
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -1034,12 +1047,12 @@
             <!-- Background photo -->
             <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
                  alt="Estructuras Metálicas CE Solycal"
-                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                  loading="eager">
 
             <!-- Degradado potente desde las letras hacia la imagen -->
-            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
-            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">04</span>
@@ -1049,7 +1062,7 @@
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -1086,12 +1099,12 @@
             <!-- Background photo -->
             <img src="assets/img/Servicios/montaje-instalacion.jpeg"
                  alt="Montaje e Instalación en Obra Solycal"
-                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                  loading="eager">
 
             <!-- Degradado potente desde las letras hacia la imagen -->
-            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[14]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
-            <div class="absolute inset-0 pointer-events-none z-[15]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
+            <div class="srv-text-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(90deg, #07080a 0%, #07080a 38%, rgba(7,8,10,0.96) 48%, rgba(7,8,10,0.75) 62%, rgba(7,8,10,0.30) 78%, transparent 100%);"></div>
+            <div class="srv-vert-gradient absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(180deg, rgba(7,8,10,0.75) 0%, transparent 22%, transparent 72%, rgba(7,8,10,0.92) 100%);"></div>
 
             <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">05</span>
@@ -1101,7 +1114,7 @@
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-[30]"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">

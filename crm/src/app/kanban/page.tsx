@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   Scale,
@@ -15,10 +15,12 @@ import {
   Sparkles,
   ArrowUpRight,
 } from "lucide-react";
+import ProjectModal from "@/components/ProjectModal";
+import LeadModal from "@/components/LeadModal";
 
 type ColumnId = "nuevo" | "tecnica" | "taller" | "facturado";
 
-interface MockProject {
+interface KanbanCard {
   id: string;
   ref: string;
   title: string;
@@ -30,112 +32,6 @@ interface MockProject {
   material: string;
   createdAt: string;
 }
-
-const INITIAL_PROJECTS: MockProject[] = [
-  // Columna: Nuevo
-  {
-    id: "prj-001",
-    ref: "SOL-2026-081",
-    title: "Tolva cónica de recepción 6m³",
-    client: "Celsa Group",
-    status: "nuevo",
-    steelKg: 4200,
-    estimatedHours: 95,
-    amount: 19800,
-    material: "Acero S275JR - Esp. 10mm",
-    createdAt: "21/09/2026",
-  },
-  {
-    id: "prj-002",
-    ref: "SOL-2026-082",
-    title: "Ciclón decantador de partículas",
-    client: "Fertiberia Sagunto",
-    status: "nuevo",
-    steelKg: 2100,
-    estimatedHours: 70,
-    amount: 14600,
-    material: "Inox AISI 304L - Esp. 6mm",
-    createdAt: "21/09/2026",
-  },
-
-  // Columna: Técnica
-  {
-    id: "prj-003",
-    ref: "SOL-2026-077",
-    title: "Virola cilíndrica Ø2.400mm L=6.000mm",
-    client: "ArcelorMittal Sagunto",
-    status: "tecnica",
-    steelKg: 3800,
-    estimatedHours: 80,
-    amount: 18200,
-    material: "Acero S355J2+N - Esp. 16mm",
-    createdAt: "19/09/2026",
-  },
-  {
-    id: "prj-004",
-    ref: "SOL-2026-078",
-    title: "Depósito vertical almacenamiento 12m³",
-    client: "Repsol Química",
-    status: "tecnica",
-    steelKg: 5400,
-    estimatedHours: 140,
-    amount: 32500,
-    material: "Inox AISI 316L - Radiografiado",
-    createdAt: "18/09/2026",
-  },
-
-  // Columna: Taller
-  {
-    id: "prj-005",
-    ref: "SOL-2026-072",
-    title: "Colector distribuidor vapor DN500",
-    client: "Iberdrola Generación",
-    status: "taller",
-    steelKg: 1950,
-    estimatedHours: 110,
-    amount: 16900,
-    material: "Acero P265GH - Tubo sin soldadura",
-    createdAt: "15/09/2026",
-  },
-  {
-    id: "prj-006",
-    ref: "SOL-2026-073",
-    title: "Bastidor mecano-soldado prensa 200T",
-    client: "Gestamp Automoción",
-    status: "taller",
-    steelKg: 7600,
-    estimatedHours: 190,
-    amount: 41800,
-    material: "Acero S355JR - Vigas HEB 400",
-    createdAt: "14/09/2026",
-  },
-
-  // Columna: Facturado
-  {
-    id: "prj-007",
-    ref: "SOL-2026-065",
-    title: "Pasarela técnica y tramex galvanizado",
-    client: "Tubos Reunidos S.A.",
-    status: "facturado",
-    steelKg: 3100,
-    estimatedHours: 65,
-    amount: 15400,
-    material: "Acero S275JR - UNE-EN 1090",
-    createdAt: "08/09/2026",
-  },
-  {
-    id: "prj-008",
-    ref: "SOL-2026-066",
-    title: "Chimenea autoportante Ø1.200mm H=18m",
-    client: "Torrecid S.A.",
-    status: "facturado",
-    steelKg: 6800,
-    estimatedHours: 160,
-    amount: 38900,
-    material: "Acero Corten A - Virola 8mm",
-    createdAt: "04/09/2026",
-  },
-];
 
 interface ColumnMeta {
   id: ColumnId;
@@ -187,133 +83,202 @@ const COLUMNS: ColumnMeta[] = [
 ];
 
 export default function KanbanPage() {
-  const [projects, setProjects] = useState<MockProject[]>(INITIAL_PROJECTS);
+  const [projects, setProjects] = useState<KanbanCard[]>([]);
+  const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
   const [activeMobileTab, setActiveMobileTab] = useState<ColumnId>("nuevo");
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
 
-  useEffect(() => {
-    const syncData = async () => {
-      try {
-        const [leadsRes, prjRes] = await Promise.all([
-          fetch("/api/leads"),
-          fetch("/api/projects"),
-        ]);
+  const lastMutationRef = useRef<number>(0);
 
-        let leadProjects: MockProject[] = [];
-        if (leadsRes.ok) {
-          const leads: Array<{
-            id: string;
-            client: string | null;
-            email: string;
-            phone: string;
-            message: string;
-            status: "nuevo" | "evaluacion" | "descartado";
-            createdAt: string;
-          }> = await leadsRes.json();
+  const showNotice = (text: string) => {
+    setNotice(text);
+    setTimeout(() => {
+      setNotice((prev) => (prev === text ? null : prev));
+    }, 4000);
+  };
 
-          leadProjects = leads
-            .filter((l) => l.status === "nuevo")
-            .map((l) => ({
-              id: l.id,
-              ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
-              title: l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message,
-              client: l.client || "SOLICITUD WEB",
-              status: "nuevo" as const,
-              steelKg: 0,
-              estimatedHours: 0,
-              amount: 0,
-              material: `Petición Web · ${l.email}`,
-              createdAt: new Date(l.createdAt).toLocaleDateString("es-ES"),
-            }));
-        }
+  const syncData = useCallback(async () => {
+    // Avoid overwriting freshly committed changes if in-flight
+    if (Date.now() - lastMutationRef.current < 2500) {
+      return;
+    }
 
-        let dbProjects: MockProject[] = [];
-        if (prjRes.ok) {
-          const projectsData: Array<{
-            id: string;
-            title: string;
-            client: string | null;
-            status: "oficina_tecnica" | "taller" | "facturado";
-            createdAt: string;
-            quotes?: Array<{ steelKg: number; estimatedHours: number; amount: number }>;
-          }> = await prjRes.json();
+interface RawLead {
+  id: string;
+  client?: string | null;
+  message?: string;
+  status: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
+}
 
-          dbProjects = projectsData.map((p) => {
-            const steelKg = p.quotes?.reduce((acc, q) => acc + q.steelKg, 0) || 0;
-            const estimatedHours = p.quotes?.reduce((acc, q) => acc + q.estimatedHours, 0) || 0;
-            const amount = p.quotes?.reduce((acc, q) => acc + q.amount, 0) || 0;
-            const statusCol: ColumnId =
-              p.status === "oficina_tecnica" ? "tecnica" : p.status === "taller" ? "taller" : "facturado";
+interface RawQuote {
+  steelKg?: number;
+  estimatedHours?: number;
+  amount?: number;
+}
 
-            return {
-              id: p.id,
-              ref: `PRJ-${p.id.slice(-4).toUpperCase()}`,
-              title: p.title,
-              client: p.client || "CLIENTE GENERAL",
-              status: statusCol,
-              steelKg,
-              estimatedHours,
-              amount,
-              material: "Proyecto Técnico Solycal",
-              createdAt: new Date(p.createdAt).toLocaleDateString("es-ES"),
-            };
-          });
-        }
+interface RawProject {
+  id: string;
+  title: string;
+  client?: string | null;
+  status: string;
+  createdAt: string;
+  quotes?: RawQuote[];
+}
 
-        setProjects((prev) => {
-          // Keep mock projects that aren't dynamic
-          const staticMocks = prev.filter(
-            (p) => !p.id.startsWith("lead-") && !p.id.startsWith("prj-") && !dbProjects.some((dp) => dp.id === p.id)
-          );
-          return [...leadProjects, ...dbProjects, ...staticMocks];
-        });
-      } catch {
-        // Silently ignore if offline
+    try {
+      const [leadsRes, prjRes] = await Promise.all([
+        fetch("/api/leads", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
+        fetch("/api/projects", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
+      ]);
+
+      let leadCards: KanbanCard[] = [];
+      if (leadsRes.ok) {
+        const leads: RawLead[] = await leadsRes.json();
+        leadCards = (leads || [])
+          .filter((l: RawLead) => l.status === "nuevo")
+          .map((l: RawLead) => ({
+            id: l.id,
+            ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
+            title: l.message && l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message || "Petición web",
+            client: l.client || "SOLICITUD WEB",
+            status: "nuevo" as const,
+            steelKg: 0,
+            estimatedHours: 0,
+            amount: 0,
+            material: `Petición Web · ${l.email || l.phone || ""}`,
+            createdAt: new Date(l.createdAt).toLocaleDateString("es-ES"),
+          }));
       }
-    };
 
-    syncData();
-    const interval = setInterval(syncData, 4000);
-    return () => clearInterval(interval);
+      let dbCards: KanbanCard[] = [];
+      if (prjRes.ok) {
+        const projectsData: RawProject[] = await prjRes.json();
+        dbCards = (projectsData || []).map((p: RawProject) => {
+          const steelKg = p.quotes?.reduce((acc: number, q: RawQuote) => acc + (q.steelKg || 0), 0) || 0;
+          const estimatedHours = p.quotes?.reduce((acc: number, q: RawQuote) => acc + (q.estimatedHours || 0), 0) || 0;
+          const amount = p.quotes?.reduce((acc: number, q: RawQuote) => acc + (q.amount || 0), 0) || 0;
+          const statusCol: ColumnId =
+            p.status === "oficina_tecnica" ? "tecnica" : p.status === "taller" ? "taller" : "facturado";
+
+          return {
+            id: p.id,
+            ref: `PRJ-${p.id.slice(-4).toUpperCase()}`,
+            title: p.title,
+            client: p.client || "CLIENTE GENERAL",
+            status: statusCol,
+            steelKg,
+            estimatedHours,
+            amount,
+            material: "Proyecto Técnico Solycal",
+            createdAt: new Date(p.createdAt).toLocaleDateString("es-ES"),
+          };
+        });
+      }
+
+      setProjects([...leadCards, ...dbCards]);
+    } catch {
+      // Silently ignore offline error
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    syncData();
+    const interval = setInterval(syncData, 6000);
+    return () => clearInterval(interval);
+  }, [syncData]);
+
   const moveProject = async (id: string, newStatus: ColumnId) => {
+    lastMutationRef.current = Date.now();
+
+    // 1. Moving a lead from "nuevo" forward to "tecnica" -> Convert to Project in DB
+    if (id.startsWith("lead-") && newStatus === "tecnica") {
+      const target = projects.find((p) => p.id === id);
+      if (!target) return;
+
+      // Optimistic update
+      setProjects((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: "tecnica" } : p))
+      );
+
+      try {
+        const res = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: target.title,
+            client: target.client,
+            status: "oficina_tecnica",
+            leadId: id,
+          }),
+        });
+
+        if (res.ok) {
+          const resJson = await res.json();
+          const prj = resJson.project;
+          setProjects((prev) =>
+            prev.map((p) =>
+              p.id === id
+                ? {
+                    ...p,
+                    id: prj.id,
+                    ref: `PRJ-${prj.id.slice(-4).toUpperCase()}`,
+                    status: "tecnica",
+                  }
+                : p
+            )
+          );
+          showNotice("Lead convertido a Proyecto en Oficina Técnica");
+        } else {
+          syncData();
+          showNotice("Error al convertir lead a proyecto");
+        }
+      } catch {
+        syncData();
+        showNotice("Error de conexión");
+      }
+      return;
+    }
+
+    // 2. Prevent moving project to "nuevo"
+    if (newStatus === "nuevo") {
+      showNotice("Un proyecto técnico no puede retroceder a petición web");
+      return;
+    }
+
+    // 3. Move project between tecnica, taller, facturado
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
     );
 
-    if (id.startsWith("lead-")) {
-      try {
-        await fetch("/api/leads", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id,
-            status: newStatus === "nuevo" ? "nuevo" : "evaluacion",
-          }),
-        });
-      } catch {
-        // Silently ignore
-      }
-    } else {
-      // Map to db project status
-      const dbStatus = newStatus === "facturado" ? "facturado" : newStatus === "taller" ? "taller" : "oficina_tecnica";
-      try {
-        await fetch("/api/projects", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id,
-            status: dbStatus,
-          }),
-        });
-      } catch {
-        // Silently ignore
-      }
-    }
+    const dbStatus =
+      newStatus === "facturado" ? "facturado" : newStatus === "taller" ? "taller" : "oficina_tecnica";
 
-    setNotice("Estado de proyecto actualizado");
-    setTimeout(() => setNotice(null), 3000);
+    try {
+      const res = await fetch("/api/projects", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          status: dbStatus,
+        }),
+      });
+      if (res.ok) {
+        showNotice("Estado de proyecto actualizado");
+      } else {
+        syncData();
+        showNotice("Error al actualizar estado");
+      }
+    } catch {
+      syncData();
+      showNotice("Error de conexión");
+    }
   };
 
   const getNextStatus = (current: ColumnId): ColumnId | null => {
@@ -326,8 +291,79 @@ export default function KanbanPage() {
   const getPrevStatus = (current: ColumnId): ColumnId | null => {
     if (current === "facturado") return "taller";
     if (current === "taller") return "tecnica";
-    if (current === "tecnica") return "nuevo";
     return null;
+  };
+
+  const handleCreateProject = async (data: {
+    title: string;
+    client?: string;
+    status: "oficina_tecnica" | "taller" | "facturado";
+    leadId?: string;
+  }) => {
+    lastMutationRef.current = Date.now();
+    const res = await fetch("/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Error al registrar proyecto");
+    }
+
+    const resJson = await res.json();
+    const prj = resJson.project;
+    const newCard: KanbanCard = {
+      id: prj.id,
+      ref: `PRJ-${prj.id.slice(-4).toUpperCase()}`,
+      title: prj.title,
+      client: prj.client || "CLIENTE GENERAL",
+      status: prj.status === "oficina_tecnica" ? "tecnica" : prj.status === "taller" ? "taller" : "facturado",
+      steelKg: 0,
+      estimatedHours: 0,
+      amount: 0,
+      material: "Proyecto Técnico Solycal",
+      createdAt: new Date().toLocaleDateString("es-ES"),
+    };
+    setProjects((prev) => [newCard, ...prev.filter((p) => p.id !== prj.id)]);
+    showNotice("Proyecto registrado");
+  };
+
+  const handleCreateLead = async (data: {
+    client: string;
+    email: string;
+    phone: string;
+    message: string;
+  }) => {
+    lastMutationRef.current = Date.now();
+    const res = await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Error al registrar petición");
+    }
+
+    const resJson = await res.json();
+    const l = resJson.lead;
+    const newCard: KanbanCard = {
+      id: l.id,
+      ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
+      title: l.message && l.message.length > 55 ? `${l.message.slice(0, 52)}...` : l.message,
+      client: l.client || "SOLICITUD WEB",
+      status: "nuevo",
+      steelKg: 0,
+      estimatedHours: 0,
+      amount: 0,
+      material: `Petición Web · ${l.email || l.phone}`,
+      createdAt: new Date().toLocaleDateString("es-ES"),
+    };
+    setProjects((prev) => [newCard, ...prev]);
+    showNotice("Petición web registrada");
   };
 
   // KPIs
@@ -367,25 +403,7 @@ export default function KanbanPage() {
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
           <button
-            onClick={() => {
-              const newId = `prj-${Date.now().toString().slice(-3)}`;
-              const newRef = `SOL-2026-${Math.floor(Math.random() * 90 + 10)}`;
-              const sample: MockProject = {
-                id: newId,
-                ref: newRef,
-                title: "Tolva de descarga 3.5m³ S275JR",
-                client: "Siderúrgica del Turia",
-                status: "nuevo",
-                steelKg: 2800,
-                estimatedHours: 60,
-                amount: 13500,
-                material: "Acero al carbono S275JR",
-                createdAt: "21/09/2026",
-              };
-              setProjects((prev) => [sample, ...prev]);
-              setNotice("Proyecto registrado");
-              setTimeout(() => setNotice(null), 3000);
-            }}
+            onClick={() => setProjectModalOpen(true)}
             className="bg-brand-yellow text-black hover:bg-brand-accent transition-colors rounded-full font-mono uppercase text-[11px] sm:text-xs font-semibold px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-1.5 sm:gap-2 shadow-sm whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -480,191 +498,207 @@ export default function KanbanPage() {
           })}
         </div>
 
-        {/* 4-Column Kanban Board */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 flex-1 items-start">
-          {COLUMNS.map((column) => {
-            const colProjects = projects.filter((p) => p.status === column.id);
-            const colSteelKg = colProjects.reduce((acc, p) => acc + p.steelKg, 0);
-            const isVisibleOnMobile = activeMobileTab === column.id;
+        {loading ? (
+          <div className="py-24 text-center">
+            <span className="font-mono text-xs uppercase tracking-widest text-brand-yellow animate-pulse">
+              Cargando tablero de producción...
+            </span>
+          </div>
+        ) : (
+          /* 4-Column Kanban Board */
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 flex-1 items-start">
+            {COLUMNS.map((column) => {
+              const colProjects = projects.filter((p) => p.status === column.id);
+              const colSteelKg = colProjects.reduce((acc, p) => acc + p.steelKg, 0);
+              const isVisibleOnMobile = activeMobileTab === column.id;
 
-            return (
-              <div
-                key={column.id}
-                className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden min-h-[400px] md:min-h-[600px] shadow-sm ${
-                  isVisibleOnMobile ? "flex" : "hidden md:flex"
-                }`}
-              >
-                {/* Column Top Bar */}
-                <div className={`p-4 border-b border-brand-border bg-brand-surface/40 flex items-center justify-between`}>
-                  <div className="flex items-center gap-2.5">
-                    {column.icon}
-                    <div>
-                      <h3 className="font-mono text-xs uppercase tracking-widest text-white font-bold">
-                        {column.label}
-                      </h3>
-                      <p className="font-mono text-[10px] text-brand-textMuted">
-                        {column.sublabel}
-                      </p>
+              return (
+                <div
+                  key={column.id}
+                  className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden min-h-[400px] md:min-h-[600px] shadow-sm ${
+                    isVisibleOnMobile ? "flex" : "hidden md:flex"
+                  }`}
+                >
+                  {/* Column Top Bar */}
+                  <div className={`p-4 border-b border-brand-border bg-brand-surface/40 flex items-center justify-between`}>
+                    <div className="flex items-center gap-2.5">
+                      {column.icon}
+                      <div>
+                        <h3 className="font-mono text-xs uppercase tracking-widest text-white font-bold">
+                          {column.label}
+                        </h3>
+                        <p className="font-mono text-[10px] text-brand-textMuted">
+                          {column.sublabel}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex flex-col items-end">
-                    <span className={`font-mono text-xs px-2 py-0.5 rounded-full border ${column.badgeStyle} font-bold`}>
-                      {colProjects.length}
-                    </span>
-                    <span className="font-mono text-[10px] text-brand-textMuted mt-1">
-                      {colSteelKg.toLocaleString("es-ES")} kg
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Stream */}
-                <div className="p-4 space-y-4 flex-1">
-                  {colProjects.length === 0 ? (
-                    <div className="h-44 rounded-xl border border-dashed border-brand-border flex items-center justify-center text-center p-4">
-                      <span className="font-mono text-xs uppercase tracking-widest text-brand-textMuted">
-                        Sin proyectos en {column.label}
+                    <div className="flex flex-col items-end">
+                      <span className={`font-mono text-xs px-2 py-0.5 rounded-full border ${column.badgeStyle} font-bold`}>
+                        {colProjects.length}
+                      </span>
+                      <span className="font-mono text-[10px] text-brand-textMuted mt-1">
+                        {colSteelKg.toLocaleString("es-ES")} kg
                       </span>
                     </div>
-                  ) : (
-                    colProjects.map((project) => {
-                      const nextStatus = getNextStatus(project.status);
-                      const prevStatus = getPrevStatus(project.status);
+                  </div>
 
-                      return (
-                        <div
-                          key={project.id}
-                          className="rounded-xl bg-brand-surface border border-brand-border p-4 hover:border-brand-yellow/40 transition-all group shadow-sm flex flex-col justify-between relative overflow-hidden"
-                        >
-                          {/* Accent line on left */}
+                  {/* Card Stream */}
+                  <div className="p-4 space-y-4 flex-1">
+                    {colProjects.length === 0 ? (
+                      <div className="h-44 rounded-xl border border-dashed border-brand-border flex items-center justify-center text-center p-4">
+                        <span className="font-mono text-xs uppercase tracking-widest text-brand-textMuted">
+                          Sin proyectos en {column.label}
+                        </span>
+                      </div>
+                    ) : (
+                      colProjects.map((project) => {
+                        const nextStatus = getNextStatus(project.status);
+                        const prevStatus = getPrevStatus(project.status);
+
+                        return (
                           <div
-                            className={`absolute left-0 top-0 bottom-0 w-1 ${column.accentBar}`}
-                          />
+                            key={project.id}
+                            className="rounded-xl bg-brand-surface border border-brand-border p-4 hover:border-brand-yellow/40 transition-all group shadow-sm flex flex-col justify-between relative overflow-hidden"
+                          >
+                            {/* Accent line on left */}
+                            <div
+                              className={`absolute left-0 top-0 bottom-0 w-1 ${column.accentBar}`}
+                            />
 
-                          <div>
-                            {/* Top space mono labels */}
-                            <div className="flex items-center justify-between gap-2 mb-2 pl-1">
-                              <span className="font-mono uppercase tracking-widest text-xs text-brand-textMuted truncate max-w-[170px]">
-                                {project.client}
-                              </span>
-                              <span className="font-mono text-[10px] text-brand-yellow bg-black/40 px-1.5 py-0.5 rounded border border-brand-border">
-                                {project.ref}
-                              </span>
-                            </div>
-
-                            {/* Card title with tracking-tight */}
-                            <h4 className="text-sm font-bold text-white tracking-tight leading-snug mb-2 pl-1 group-hover:text-brand-yellow transition-colors">
-                              {project.title}
-                            </h4>
-
-                            {/* Material & Specs */}
-                            <div className="mb-3 pl-1 font-mono text-[11px] text-brand-textMuted">
-                              {project.material}
-                            </div>
-
-                            {/* Technical Metrics Box */}
-                            <div className="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-lg bg-black/50 border border-brand-border mb-3 font-mono text-xs">
-                              <div>
-                                <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
-                                  <Scale className="w-2.5 h-2.5 text-brand-yellow" />
-                                  Acero
-                                </div>
-                                <div className="font-bold text-white text-[11px]">
-                                  {project.steelKg.toLocaleString("es-ES")} kg
-                                </div>
+                            <div>
+                              {/* Top space mono labels */}
+                              <div className="flex items-center justify-between gap-2 mb-2 pl-1">
+                                <span className="font-mono uppercase tracking-widest text-xs text-brand-textMuted truncate max-w-[170px]">
+                                  {project.client}
+                                </span>
+                                <span className="font-mono text-[10px] text-brand-yellow bg-black/40 px-1.5 py-0.5 rounded border border-brand-border">
+                                  {project.ref}
+                                </span>
                               </div>
 
-                              <div>
-                                <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
-                                  <Clock className="w-2.5 h-2.5 text-cyan-400" />
-                                  Horas
-                                </div>
-                                <div className="font-bold text-white text-[11px]">
-                                  {project.estimatedHours} h
-                                </div>
+                              {/* Card title with tracking-tight */}
+                              <h4 className="text-sm font-bold text-white tracking-tight leading-snug mb-2 pl-1 group-hover:text-brand-yellow transition-colors">
+                                {project.title}
+                              </h4>
+
+                              {/* Material & Specs */}
+                              <div className="mb-3 pl-1 font-mono text-[11px] text-brand-textMuted">
+                                {project.material}
                               </div>
 
-                              <div>
-                                <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
-                                  <Euro className="w-2.5 h-2.5 text-emerald-400" />
-                                  Coste
+                              {/* Technical Metrics Box */}
+                              <div className="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-lg bg-black/50 border border-brand-border mb-3 font-mono text-xs">
+                                <div>
+                                  <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
+                                    <Scale className="w-2.5 h-2.5 text-brand-yellow" />
+                                    Acero
+                                  </div>
+                                  <div className="font-bold text-white text-[11px]">
+                                    {project.steelKg > 0 ? `${project.steelKg.toLocaleString("es-ES")} kg` : "--"}
+                                  </div>
                                 </div>
-                                <div className="font-bold text-emerald-400 text-[11px]">
-                                  {project.amount.toLocaleString("es-ES")} €
+
+                                <div>
+                                  <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
+                                    <Clock className="w-2.5 h-2.5 text-cyan-400" />
+                                    Horas
+                                  </div>
+                                  <div className="font-bold text-white text-[11px]">
+                                    {project.estimatedHours > 0 ? `${project.estimatedHours} h` : "--"}
+                                  </div>
                                 </div>
+
+                                <div>
+                                  <div className="text-[10px] text-brand-textMuted uppercase flex items-center gap-1">
+                                    <Euro className="w-2.5 h-2.5 text-emerald-400" />
+                                    Coste
+                                  </div>
+                                  <div className="font-bold text-emerald-400 text-[11px]">
+                                    {project.amount > 0 ? `${project.amount.toLocaleString("es-ES")} €` : "--"}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action Footer */}
+                            <div className="pt-2 border-t border-brand-border/60 flex items-center justify-between pl-1">
+                              <span className="font-mono text-[10px] text-brand-textMuted">
+                                {project.createdAt}
+                              </span>
+
+                              <div className="flex items-center gap-1.5">
+                                {prevStatus && (
+                                  <button
+                                    onClick={() => moveProject(project.id, prevStatus)}
+                                    title="Retroceder fase"
+                                    className="p-1 rounded bg-brand-dark hover:bg-white/10 border border-brand-border text-brand-textMuted hover:text-white transition-all text-xs"
+                                  >
+                                    <ArrowLeft className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+
+                                {nextStatus && (
+                                  <button
+                                    onClick={() => moveProject(project.id, nextStatus)}
+                                    title="Avanzar fase"
+                                    className="px-2 py-1 rounded bg-brand-yellow/10 hover:bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow font-mono text-[10px] uppercase font-bold flex items-center gap-1 transition-all"
+                                  >
+                                    <span className="capitalize">{nextStatus}</span>
+                                    <ArrowRight className="w-3 h-3" />
+                                  </button>
+                                )}
                               </div>
                             </div>
                           </div>
+                        );
+                      })
+                    )}
+                  </div>
 
-                          {/* Action Footer */}
-                          <div className="pt-2 border-t border-brand-border/60 flex items-center justify-between pl-1">
-                            <span className="font-mono text-[10px] text-brand-textMuted">
-                              {project.createdAt}
-                            </span>
+                  {/* Column Footer */}
+                  {column.id === "nuevo" && (
+                    <div className="p-3 border-t border-brand-border bg-brand-surface/20">
+                      <button
+                        onClick={() => setLeadModalOpen(true)}
+                        className="w-full py-2.5 rounded-xl border border-dashed border-brand-border hover:border-brand-yellow/40 text-brand-textMuted hover:text-white font-mono uppercase text-[11px] flex items-center justify-center gap-2 transition-all"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-brand-yellow" />
+                        <span>Añadir Petición</span>
+                      </button>
+                    </div>
+                  )}
 
-                            <div className="flex items-center gap-1.5">
-                              {prevStatus && (
-                                <button
-                                  onClick={() => moveProject(project.id, prevStatus)}
-                                  title="Retroceder fase"
-                                  className="p-1 rounded bg-brand-dark hover:bg-white/10 border border-brand-border text-brand-textMuted hover:text-white transition-all text-xs"
-                                >
-                                  <ArrowLeft className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-
-                              {nextStatus && (
-                                <button
-                                  onClick={() => moveProject(project.id, nextStatus)}
-                                  title="Avanzar fase"
-                                  className="px-2 py-1 rounded bg-brand-yellow/10 hover:bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow font-mono text-[10px] uppercase font-bold flex items-center gap-1 transition-all"
-                                >
-                                  <span className="capitalize">{nextStatus}</span>
-                                  <ArrowRight className="w-3 h-3" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
+                  {column.id === "tecnica" && (
+                    <div className="p-3 border-t border-brand-border bg-brand-surface/20">
+                      <button
+                        onClick={() => setProjectModalOpen(true)}
+                        className="w-full py-2.5 rounded-xl border border-dashed border-brand-border hover:border-brand-yellow/40 text-brand-textMuted hover:text-white font-mono uppercase text-[11px] flex items-center justify-center gap-2 transition-all"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-brand-yellow" />
+                        <span>Nuevo Proyecto</span>
+                      </button>
+                    </div>
                   )}
                 </div>
-
-                {/* Column Footer */}
-                {column.id === "nuevo" && (
-                  <div className="p-3 border-t border-brand-border bg-brand-surface/20">
-                    <button
-                      onClick={() => {
-                        const newId = `prj-${Date.now().toString().slice(-3)}`;
-                        const sample: MockProject = {
-                          id: newId,
-                          ref: `SOL-2026-${Math.floor(Math.random() * 90 + 10)}`,
-                          title: "Depósito de purga DN400",
-                          client: "Iberdrola",
-                          status: "nuevo",
-                          steelKg: 1500,
-                          estimatedHours: 45,
-                          amount: 8900,
-                          material: "Acero al carbono P265GH",
-                          createdAt: "21/09/2026",
-                        };
-                        setProjects((prev) => [sample, ...prev]);
-                        setNotice("Proyecto registrado");
-                        setTimeout(() => setNotice(null), 3000);
-                      }}
-                      className="w-full py-2.5 rounded-xl border border-dashed border-brand-border hover:border-brand-yellow/40 text-brand-textMuted hover:text-white font-mono uppercase text-[11px] flex items-center justify-center gap-2 transition-all"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-brand-yellow" />
-                      <span>Añadir Petición</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </main>
+
+      {/* Modals */}
+      <ProjectModal
+        isOpen={projectModalOpen}
+        onClose={() => setProjectModalOpen(false)}
+        onSubmit={handleCreateProject}
+      />
+
+      <LeadModal
+        isOpen={leadModalOpen}
+        onClose={() => setLeadModalOpen(false)}
+        onSubmit={handleCreateLead}
+      />
     </div>
   );
 }

@@ -31,6 +31,7 @@ export default function Home() {
 
   // Technical Direct Notification (Neutral and direct, zero decorative text)
   const [notice, setNotice] = useState<{ text: string; type: "info" | "error" } | null>(null);
+  const lastMutationRef = React.useRef<number>(0);
 
   const showNotice = (text: string, type: "info" | "error" = "info") => {
     setNotice({ text, type });
@@ -40,10 +41,14 @@ export default function Home() {
   };
 
   const fetchData = useCallback(async () => {
+    // Prevent an in-flight background poll from overwriting optimistic or freshly committed user actions
+    if (Date.now() - lastMutationRef.current < 2500) {
+      return;
+    }
     try {
       const [prjRes, ldsRes] = await Promise.all([
-        fetch("/api/projects"),
-        fetch("/api/leads"),
+        fetch("/api/projects", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
+        fetch("/api/leads", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
       ]);
       if (prjRes.ok) {
         const prjData = await prjRes.json();
@@ -63,11 +68,12 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 4000);
+    const interval = setInterval(fetchData, 6000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
   const handleRefresh = () => {
+    lastMutationRef.current = 0;
     setRefreshing(true);
     fetchData();
   };
@@ -77,18 +83,29 @@ export default function Home() {
     id: string,
     newStatus: "oficina_tecnica" | "taller" | "facturado"
   ) => {
+    lastMutationRef.current = Date.now();
+    // Immediate optimistic local update
+    setProjects((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
+    );
+
     try {
       const res = await fetch("/api/projects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: newStatus }),
       });
-      if (!res.ok) throw new Error("Error al actualizar");
+      if (!res.ok) {
+        fetchData();
+        throw new Error("Error al actualizar");
+      }
       
-      // Update local state
-      setProjects((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
-      );
+      const resJson = await res.json();
+      if (resJson.project) {
+        setProjects((prev) =>
+          prev.map((p) => (p.id === id ? resJson.project : p))
+        );
+      }
       showNotice("Estado de proyecto actualizado");
     } catch {
       showNotice("Error al actualizar estado de proyecto", "error");
@@ -106,17 +123,21 @@ export default function Home() {
     id: string,
     status: "nuevo" | "evaluacion" | "descartado"
   ) => {
+    lastMutationRef.current = Date.now();
+    setLeads((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, status } : l))
+    );
     try {
       const res = await fetch("/api/leads", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status }),
       });
-      if (!res.ok) throw new Error("Error al actualizar");
+      if (!res.ok) {
+        fetchData();
+        throw new Error("Error al actualizar");
+      }
 
-      setLeads((prev) =>
-        prev.map((l) => (l.id === id ? { ...l, status } : l))
-      );
       showNotice("Estado de lead actualizado");
     } catch {
       showNotice("Error al modificar lead", "error");
@@ -130,6 +151,7 @@ export default function Home() {
     status: "oficina_tecnica" | "taller" | "facturado";
     leadId?: string;
   }) => {
+    lastMutationRef.current = Date.now();
     const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -142,7 +164,7 @@ export default function Home() {
     }
 
     const resJson = await res.json();
-    setProjects((prev) => [resJson.project, ...prev]);
+    setProjects((prev) => [resJson.project, ...prev.filter((p) => p.id !== resJson.project.id)]);
 
     if (data.leadId) {
       setLeads((prev) =>
@@ -164,6 +186,7 @@ export default function Home() {
     steelKg: number;
     estimatedHours: number;
   }) => {
+    lastMutationRef.current = Date.now();
     const res = await fetch("/api/quotes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -183,7 +206,7 @@ export default function Home() {
         if (p.id === data.projectId) {
           return {
             ...p,
-            quotes: [...p.quotes, newQuote],
+            quotes: [...p.quotes.filter((q) => q.id !== newQuote.id), newQuote],
           };
         }
         return p;

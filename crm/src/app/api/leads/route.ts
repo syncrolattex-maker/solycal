@@ -2,19 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { CreateLeadSchema, UpdateLeadStatusSchema } from "@/lib/validations";
 import { getLeads, createLead, updateLeadStatus } from "@/lib/db";
 
-// Helper for CORS headers so corporate web can send leads
-function corsHeaders() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
+// Helper for CORS and no-cache headers so corporate web can send leads
+function responseHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
   };
 }
 
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
-    headers: corsHeaders(),
+    headers: responseHeaders(),
   });
 }
 
@@ -23,12 +30,12 @@ export async function GET() {
     const leads = await getLeads();
     return NextResponse.json(leads, {
       status: 200,
-      headers: corsHeaders(),
+      headers: responseHeaders(),
     });
   } catch (error) {
     return NextResponse.json(
       { error: "Error al obtener leads", details: String(error) },
-      { status: 500, headers: corsHeaders() }
+      { status: 500, headers: responseHeaders() }
     );
   }
 }
@@ -44,19 +51,19 @@ export async function POST(req: NextRequest) {
           error: "Datos de lead no válidos",
           issues: parsed.error.format(),
         },
-        { status: 400, headers: corsHeaders() }
+        { status: 400, headers: responseHeaders() }
       );
     }
 
     const lead = await createLead(parsed.data);
     return NextResponse.json(
       { message: "Lead registrado", lead },
-      { status: 201, headers: corsHeaders() }
+      { status: 201, headers: responseHeaders() }
     );
   } catch (error) {
     return NextResponse.json(
       { error: "Error en el servidor", details: String(error) },
-      { status: 500, headers: corsHeaders() }
+      { status: 500, headers: responseHeaders() }
     );
   }
 }
@@ -72,7 +79,7 @@ export async function PATCH(req: NextRequest) {
           error: "Datos no válidos",
           issues: parsed.error.format(),
         },
-        { status: 400, headers: corsHeaders() }
+        { status: 400, headers: responseHeaders() }
       );
     }
 
@@ -80,18 +87,18 @@ export async function PATCH(req: NextRequest) {
     if (!lead) {
       return NextResponse.json(
         { error: "Lead no encontrado" },
-        { status: 404, headers: corsHeaders() }
+        { status: 404, headers: responseHeaders() }
       );
     }
 
     return NextResponse.json(
       { message: "Estado de lead actualizado", lead },
-      { status: 200, headers: corsHeaders() }
+      { status: 200, headers: responseHeaders() }
     );
   } catch (error) {
     return NextResponse.json(
       { error: "Error en el servidor", details: String(error) },
-      { status: 500, headers: corsHeaders() }
+      { status: 500, headers: responseHeaders() }
     );
   }
 }

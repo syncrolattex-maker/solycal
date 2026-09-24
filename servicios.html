@@ -804,7 +804,7 @@
       <div class="w-full">
 
         <!-- DESKTOP: horizontal expanding columns -->
-        <div class="hidden lg:flex gap-[1px]" id="srv-cols" style="height: 580px;">
+        <div class="hidden lg:flex gap-[1px]" id="srv-cols" style="height: calc(100vh - 80px); min-height: 600px;">
 
           <!-- COL 01 -->
           <div class="srv-col relative overflow-hidden cursor-pointer flex-shrink-0 border-r border-white/[0.06] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] bg-[#0a0c0e]"
@@ -1066,14 +1066,14 @@
       // open first by default
       if(cols.length) activateCol(0);
 
-      // Dynamic height: fill from top of columns to bottom of page (footer edge)
+      // Ajuste dinámico al alto total visible de la pantalla (viewport height)
       function setSrvColsHeight(){
         var el = document.getElementById('srv-cols');
         if(!el) return;
-        var rect = el.getBoundingClientRect();
-        var topAbs = rect.top + window.scrollY;
-        var pageH  = document.documentElement.scrollHeight;
-        el.style.height = (pageH - topAbs) + 'px';
+        var header = document.querySelector('header');
+        var headerH = header ? header.offsetHeight : 80;
+        var targetH = window.innerHeight - headerH;
+        el.style.height = Math.max(600, targetH) + 'px';
       }
       setSrvColsHeight();
       window.addEventListener('resize', setSrvColsHeight);

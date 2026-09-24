@@ -183,25 +183,33 @@ function getHead(title, description, canonicalPath = '') {
     }
     .video-background-wrapper {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100vw;
-      height: 100vh;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+      pointer-events: none !important;
       z-index: 0;
+      background-color: #07080a;
     }
-    .video-background-wrapper iframe {
+    .video-scaler {
       position: absolute;
       top: 50%;
       left: 50%;
       width: 100vw;
       height: 56.25vw; /* 16:9 aspect ratio */
       min-height: 100vh;
-      min-width: 177.77vh; /* 16:9 aspect ratio */
-      transform: translate(-50%, -50%) scale(1.35); pointer-events: none;
-      pointer-events: none;
+      min-width: 177.78vh; /* 16:9 aspect ratio */
+      transform: translate(-50%, -50%) scale(1.75) !important;
+      transform-origin: center center;
+      pointer-events: none !important;
+    }
+    .video-scaler iframe {
+      position: absolute;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+      border: 0 !important;
     }
     .btn-magnetic {
       position: relative;
@@ -996,8 +1004,8 @@ function getFooter(options = {}) {
               .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 })
               .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
               .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
-              .from('.hero-actions a', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video', { opacity: 0, scale: 1.12, duration: 1.6, ease: "power2.out" }, 0);
+              .from('.hero-actions a, .hero-actions button', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
+              .from('#bg-video-wrapper', { opacity: 0, duration: 1.4, ease: "power2.out" }, 0);
           }
         };
 
@@ -1290,10 +1298,10 @@ function getFooter(options = {}) {
           });
         }
 
-        // Efecto Parallax en el video de fondo
-        if (document.getElementById('bg-video')) {
-          gsap.to('#bg-video', {
-            yPercent: 18,
+        // Efecto Parallax en el video de fondo (sobre contenedor, preservando escala fija del video)
+        if (document.getElementById('bg-video-wrapper')) {
+          gsap.to('#bg-video-wrapper', {
+            yPercent: 10,
             ease: "none",
             scrollTrigger: {
               trigger: "body",
@@ -1815,21 +1823,31 @@ const indexHtml = `${getHead('SOLYCAL | Soldadura y Calderería Industrial Valen
 ${getHeader('inicio')}
 
 <!-- HERO SECTION EDITORIAL & BOLD WITH YOUTUBE BACKGROUND VIDEO -->
-<section id="hero-section" class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden">
+<section id="hero-section" class="min-h-[92vh] flex items-center relative pt-16 pb-24 border-b border-white/5 overflow-hidden cursor-pointer">
   <!-- YouTube Background Video (Responsive & Scaled) -->
-  <div class="video-background-wrapper">
-    <iframe 
-      id="bg-video"
-      class="opacity-90"
-      src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3&playsinline=1" 
-      title="SOLYCAL Video Corporativo"
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; playsinline" 
-      playsinline
-      webkit-playsinline
-      allowfullscreen>
-    </iframe>
+  <div class="video-background-wrapper" id="bg-video-wrapper">
+    <div class="video-scaler">
+      <iframe 
+        id="bg-video"
+        class="opacity-90"
+        src="https://www.youtube-nocookie.com/embed/3-nS9CuOS_I?autoplay=1&mute=1&loop=1&playlist=3-nS9CuOS_I&start=20&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&iv_load_policy=3&playsinline=1&disablekb=1&fs=0" 
+        title="SOLYCAL Video Corporativo"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; playsinline" 
+        playsinline
+        webkit-playsinline>
+      </iframe>
+    </div>
   </div>
+
+  <!-- Floating Cursor for Watch Video (Hero Section Desktop) -->
+  <div id="hero-cursor-play" class="fixed pointer-events-none z-[120] top-0 left-0 -translate-x-1/2 -translate-y-1/2 opacity-0 scale-50 will-change-transform hidden lg:flex items-center justify-center transition-[opacity,transform] duration-200">
+    <div class="w-24 h-24 rounded-full bg-brand-yellow text-black flex flex-col items-center justify-center gap-1 font-mono shadow-[0_0_35px_rgba(241,181,65,0.7)] select-none border border-brand-yellow/80">
+      <svg class="w-5 h-5 fill-black" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+      <span class="text-[10px] font-bold uppercase tracking-widest leading-none">Ver Vídeo</span>
+    </div>
+  </div>
+
   <!-- Dark & Industrial Overlays Full-Width - Calibrado para dar máxima visibilidad al vídeo de fondo manteniendo legibilidad -->
   <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#07080a]/75 via-[#07080a]/30 to-transparent"></div>
   <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/35"></div>
@@ -1865,7 +1883,8 @@ ${getHeader('inicio')}
             <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-yellow group-hover:scale-110 transition-transform"></i>
           </span>
         </a>
-        <button type="button" id="btn-hero-video-trigger" class="btn-magnetic px-8 py-4 rounded-full border border-white/25 bg-white/[0.04] text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2.5 cursor-pointer backdrop-blur-sm">
+        <!-- Botón Ver Vídeo visible en pantallas táctiles donde no hay cursor hover -->
+        <button type="button" id="btn-hero-video-trigger" class="lg:hidden btn-magnetic px-8 py-4 rounded-full border border-white/25 bg-white/[0.04] text-white font-mono text-xs uppercase tracking-wider hover:border-brand-yellow hover:text-brand-yellow hover:bg-brand-yellow/10 transition-all group inline-flex items-center gap-2.5 cursor-pointer backdrop-blur-sm">
           <span class="btn-magnetic-glow"></span>
           <span class="btn-magnetic-content flex items-center gap-2">
             <svg class="w-3.5 h-3.5 fill-white group-hover:fill-brand-yellow transition-colors" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -2208,6 +2227,71 @@ ${getHeader('inicio')}
       btnPlayHero.addEventListener('click', (e) => {
         e.stopPropagation();
         openModal();
+      });
+    }
+
+    // Floating Cursor Play Button (Desktop)
+    const heroSection = document.getElementById('hero-section');
+    const heroCursor = document.getElementById('hero-cursor-play');
+
+    if (heroSection && heroCursor) {
+      let isInsideHero = false;
+      let isOverInteractive = false;
+
+      const setCursorPos = (e) => {
+        gsap.to(heroCursor, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.18,
+          ease: "power2.out",
+          overwrite: "auto"
+        });
+      };
+
+      heroSection.addEventListener('mouseenter', (e) => {
+        isInsideHero = true;
+        setCursorPos(e);
+        if (!isOverInteractive) {
+          gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(1.7)" });
+        }
+      });
+
+      heroSection.addEventListener('mouseleave', () => {
+        isInsideHero = false;
+        gsap.to(heroCursor, { opacity: 0, scale: 0.3, duration: 0.2, ease: "power2.in" });
+      });
+
+      heroSection.addEventListener('mousemove', (e) => {
+        if (!isInsideHero) {
+          isInsideHero = true;
+          if (!isOverInteractive) {
+            gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(1.7)" });
+          }
+        }
+        setCursorPos(e);
+      });
+
+      // Clicking anywhere on hero section (outside interactive links/buttons) opens video modal
+      heroSection.addEventListener('click', (e) => {
+        if (e.target.closest('a, button, input, select, textarea, .btn-magnetic')) {
+          return;
+        }
+        openModal();
+      });
+
+      // Hide cursor badge when hovering over interactive elements
+      const interactiveElements = heroSection.querySelectorAll('a, button, .btn-magnetic');
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          isOverInteractive = true;
+          gsap.to(heroCursor, { opacity: 0, scale: 0.3, duration: 0.15 });
+        });
+        el.addEventListener('mouseleave', () => {
+          isOverInteractive = false;
+          if (isInsideHero) {
+            gsap.to(heroCursor, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.5)" });
+          }
+        });
       });
     }
 

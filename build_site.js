@@ -2473,15 +2473,29 @@ ${getHeader('servicios')}
                         background-color 0.5s ease;
             will-change: flex-basis, filter, box-shadow;
           }
+          .srv-col-bg-img {
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+            will-change: transform, opacity;
+          }
           .srv-col.is-compressed {
-            filter: brightness(0.55);
+            filter: brightness(0.65);
             box-shadow: -15px 0 35px -5px rgba(0, 0, 0, 0.95), inset 1px 0 0 rgba(255, 255, 255, 0.08);
             transform: scaleY(0.995);
+          }
+          .srv-col.is-compressed .srv-col-bg-img {
+            opacity: 0.25;
+            filter: grayscale(40%) contrast(110%);
+            transform: scale(1.08);
           }
           .srv-col.is-compressed:hover {
             filter: brightness(0.95);
             cursor: pointer;
             transform: scaleY(1);
+          }
+          .srv-col.is-compressed:hover .srv-col-bg-img {
+            opacity: 0.45;
+            filter: grayscale(0%);
+            transform: scale(1.04);
           }
           .srv-col.is-compressed:hover .srv-tab-num {
             color: #F1B541;
@@ -2497,6 +2511,11 @@ ${getHeader('servicios')}
             transform: scaleY(1);
             background-color: #080a0d;
           }
+          .srv-col.is-active .srv-col-bg-img {
+            opacity: 0.70;
+            filter: contrast(105%);
+            transform: scale(1);
+          }
         </style>
 
         <div class="hidden lg:flex gap-0 overflow-hidden relative border-y border-white/[0.08]" id="srv-cols" style="height: calc(100vh - 80px); min-height: 600px;">
@@ -2507,11 +2526,18 @@ ${getHeader('servicios')}
             <!-- Top yellow accent bar -->
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
 
-            <!-- Gradiente sutil para legibilidad cuando se inserte imagen de fondo -->
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/40 pointer-events-none z-[12]"></div>
+            <!-- Background photo -->
+            <img src="assets/img/Servicios/caldereria-industrial.jpeg"
+                 alt="Calderería Industrial Solycal"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 loading="eager">
+
+            <!-- Readability overlays: Deep dark on text side, transparent to see the machine/steel on right -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
 
             <!-- Collapsed label (Vertical spine / stacked tab) -->
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-10">
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">01</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Calderería Industrial</span>
@@ -2520,7 +2546,7 @@ ${getHeader('servicios')}
             </div>
 
             <!-- Expanded content (wide canvas ~84%) -->
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-20"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -2554,9 +2580,16 @@ ${getHeader('servicios')}
                data-idx="1" style="flex-basis: 20%;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/40 pointer-events-none z-[12]"></div>
+            <!-- Background photo -->
+            <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
+                 alt="Corte Plasma HD TrueHole Solycal"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 loading="eager">
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-10">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">02</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Corte Plasma HD</span>
@@ -2564,7 +2597,7 @@ ${getHeader('servicios')}
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-20"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -2598,9 +2631,16 @@ ${getHeader('servicios')}
                data-idx="2" style="flex-basis: 20%;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/40 pointer-events-none z-[12]"></div>
+            <!-- Background photo -->
+            <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
+                 alt="Soldadura Técnica Homologada Solycal"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 loading="eager">
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-10">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">03</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Soldadura TIG/MIG</span>
@@ -2608,7 +2648,7 @@ ${getHeader('servicios')}
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-20"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -2642,9 +2682,16 @@ ${getHeader('servicios')}
                data-idx="3" style="flex-basis: 20%;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/40 pointer-events-none z-[12]"></div>
+            <!-- Background photo -->
+            <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
+                 alt="Estructuras Metálicas CE Solycal"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 loading="eager">
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-10">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">04</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Estructuras CE</span>
@@ -2652,7 +2699,7 @@ ${getHeader('servicios')}
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-20"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">
@@ -2686,9 +2733,16 @@ ${getHeader('servicios')}
                data-idx="4" style="flex-basis: 20%;">
             <div class="srv-col-bar absolute top-0 left-0 right-0 h-[2px] bg-brand-yellow transform scale-x-0 origin-left transition-transform duration-500 z-30"></div>
 
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/40 pointer-events-none z-[12]"></div>
+            <!-- Background photo -->
+            <img src="assets/img/Servicios/montaje-instalacion.jpeg"
+                 alt="Montaje e Instalación en Obra Solycal"
+                 class="srv-col-bg-img absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[10]"
+                 loading="eager">
 
-            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-10">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07080a]/95 via-[#07080a]/80 to-[#07080a]/35 pointer-events-none z-[12]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-[#07080a]/60 pointer-events-none z-[13]"></div>
+
+            <div class="srv-col-label absolute inset-0 flex flex-col justify-between items-center py-10 px-2 transition-all duration-500 pointer-events-none select-none z-20">
               <span class="srv-tab-num font-mono text-xs font-bold text-brand-yellow/80 tracking-wider transition-colors">05</span>
               <div class="flex items-center justify-center flex-1 my-4">
                 <span class="font-display font-bold text-white/80 text-sm tracking-widest whitespace-nowrap uppercase" style="writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.16em;">Montaje en Obra</span>
@@ -2696,7 +2750,7 @@ ${getHeader('servicios')}
               <span class="srv-tab-dot w-1 h-5 rounded-full bg-white/20 transition-colors"></span>
             </div>
 
-            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-20"
+            <div class="srv-col-content absolute inset-0 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto z-25"
                  style="clip-path: inset(0 0 100% 0); transition: clip-path 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease; opacity: 0; pointer-events: none;">
               <div class="max-w-3xl w-full space-y-6 relative z-10">
                 <div class="flex items-center gap-3">

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Plus, RefreshCw, Radio } from "lucide-react";
 
+import Image from "next/image";
+
 interface HeaderProps {
   onNewProject: () => void;
   onRefresh: () => void;
@@ -36,9 +38,15 @@ export default function Header({
   return (
     <header className="h-16 px-4 sm:px-6 lg:px-8 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-30">
       <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
-        {/* Mobile Brand Icon */}
-        <div className="lg:hidden w-8 h-8 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow font-mono font-bold text-sm shrink-0">
-          S
+        {/* Mobile Brand Icon with official logo */}
+        <div className="lg:hidden w-8 h-8 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center p-1 shrink-0">
+          <Image
+            src="/logo-icon.png"
+            alt="SOLYCAL"
+            width={24}
+            height={24}
+            className="w-full h-full object-contain"
+          />
         </div>
 
         <div>

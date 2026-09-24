@@ -10,29 +10,37 @@ interface StatsCardsProps {
 }
 
 export default function StatsCards({ projects, leads }: StatsCardsProps) {
-  // Aggregate steel kilos, hours, amount from active projects
+  // Aggregate steel kilos, hours strictly from ACTIVE in-progress projects (oficina técnica y taller)
+  const activeProjectsList = projects.filter((p) => p.status !== "facturado");
+  const activeProjects = activeProjectsList.length;
+
   let totalSteelKg = 0;
   let totalHours = 0;
   let totalAmount = 0;
 
-  projects.forEach((prj) => {
+  activeProjectsList.forEach((prj) => {
     prj.quotes.forEach((q) => {
       totalSteelKg += q.steelKg;
       totalHours += q.estimatedHours;
+    });
+  });
+
+  // Total volume in portfolio
+  projects.forEach((prj) => {
+    prj.quotes.forEach((q) => {
       totalAmount += q.amount;
     });
   });
 
-  const activeProjects = projects.filter((p) => p.status !== "facturado").length;
   const newLeadsCount = leads.filter((l) => l.status === "nuevo").length;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-      {/* Kilos de Acero */}
+      {/* Kilos de Acero en Marcha */}
       <div className="p-3.5 sm:p-5 rounded-xl bg-brand-dark border border-brand-border hover:border-brand-yellow/30 transition-all">
         <div className="flex items-center justify-between">
           <span className="font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted">
-            ACERO EN PLANTA
+            ACERO EN MARCHA
           </span>
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow">
             <Scale className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -45,7 +53,7 @@ export default function StatsCards({ projects, leads }: StatsCardsProps) {
           <span className="font-mono text-[10px] sm:text-xs text-brand-yellow uppercase font-bold">KG</span>
         </div>
         <div className="mt-1 font-mono text-[10px] sm:text-[11px] text-brand-textMuted truncate">
-          En {activeProjects} proyectos de taller
+          En {activeProjects} proyectos en curso
         </div>
       </div>
 

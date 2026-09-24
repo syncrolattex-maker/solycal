@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Scale,
   Clock,
@@ -366,18 +367,26 @@ interface RawProject {
     showNotice("Petición web registrada");
   };
 
-  // KPIs
-  const totalSteelKg = projects.reduce((acc, p) => acc + p.steelKg, 0);
-  const totalHours = projects.reduce((acc, p) => acc + p.estimatedHours, 0);
+  // KPIs estrictos a tiempo real de proyectos en marcha (Oficina Técnica y Taller)
+  const activeProjects = projects.filter((p) => p.status === "tecnica" || p.status === "taller");
+  const totalSteelKg = activeProjects.reduce((acc, p) => acc + p.steelKg, 0);
+  const totalHours = activeProjects.reduce((acc, p) => acc + p.estimatedHours, 0);
   const totalAmount = projects.reduce((acc, p) => acc + p.amount, 0);
 
   return (
     <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-brand-yellow selection:text-black flex flex-col">
       {/* Top Navbar */}
-      <header className="h-16 px-4 sm:px-6 lg:px-10 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
+      <header className="h-16 px-4 sm:px-6 lg:px-8 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center font-mono font-bold text-brand-yellow text-sm sm:text-base">
-            S
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center p-1.5 shrink-0 shadow-sm">
+            <Image
+              src="/logo-icon.png"
+              alt="SOLYCAL"
+              width={28}
+              height={28}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
           <div>
             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -413,8 +422,8 @@ interface RawProject {
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-10 flex flex-col max-w-[1700px] w-full mx-auto">
+      {/* Main Container - Ancho adaptable a pantalla completa en Desktop */}
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col w-full">
         {/* Notice Banner */}
         {notice && (
           <div className="mb-4 sm:mb-6 px-4 py-3 rounded-xl bg-brand-dark border border-brand-yellow/40 text-brand-yellow font-mono text-xs uppercase tracking-wider flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-200">
@@ -426,9 +435,12 @@ interface RawProject {
         {/* Header Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <div className="p-3.5 sm:p-4 rounded-xl bg-brand-dark border border-brand-border">
-            <span className="block font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted mb-1 truncate">
-              ACERO EN CURSO
-            </span>
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-mono uppercase tracking-widest text-[10px] sm:text-xs text-brand-textMuted truncate">
+                ACERO EN CURSO
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
             <div className="flex items-baseline gap-1.5 font-mono">
               <span className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 {totalSteelKg.toLocaleString("es-ES")}

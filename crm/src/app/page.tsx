@@ -239,11 +239,13 @@ export default function Home() {
     showNotice("Lead registrado");
   };
 
-  // Total steel kg for sidebar
-  const totalSteelKg = projects.reduce(
-    (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
-    0
-  );
+  // Total steel kg for sidebar strictly from ACTIVE in-progress projects (oficina técnica y taller)
+  const totalSteelKg = projects
+    .filter((p) => p.status !== "facturado")
+    .reduce(
+      (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
+      0
+    );
 
   return (
     <div className="flex min-h-screen bg-brand-black text-white selection:bg-brand-yellow selection:text-black">

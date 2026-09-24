@@ -2,16 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   LayoutDashboard,
   Inbox,
-  HardHat,
   FileSpreadsheet,
-  Layers,
-  Flame,
-  ShieldCheck,
   Calculator,
   ArrowUpRight,
+  Scale,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -36,28 +34,34 @@ export default function Sidebar({
   return (
     <aside className="hidden lg:flex w-64 bg-brand-dark border-r border-brand-border flex-col justify-between h-screen sticky top-0 shrink-0 select-none">
       <div>
-        {/* Brand Header */}
-        <div className="p-6 border-b border-brand-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">
-                S
+        {/* Brand Header con logo oficial de la web */}
+        <div className="p-5 border-b border-brand-border">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center p-1.5 shrink-0 shadow-sm">
+              <Image
+                src="/logo-icon.png"
+                alt="SOLYCAL"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+                priority
+              />
+            </div>
+            <div className="min-w-0">
+              <div className="text-base font-bold tracking-tight text-white uppercase flex items-center gap-1.5">
+                <span>SOLYCAL</span>
+                <span className="text-brand-yellow text-xs font-mono font-normal">S.L.</span>
               </div>
-              <div>
-                <div className="text-base font-bold tracking-tight text-white uppercase">
-                  SOLYCAL <span className="text-brand-yellow text-xs font-mono font-normal">S.L.</span>
-                </div>
-                <div className="font-mono text-[10px] tracking-widest text-brand-textMuted uppercase">
-                  Calderería & Mecanizado
-                </div>
+              <div className="font-mono text-[9px] tracking-widest text-brand-textMuted uppercase truncate">
+                Calderería & Mecanizado
               </div>
             </div>
           </div>
 
-          <div className="mt-4 px-2.5 py-1.5 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-between">
+          <div className="mt-3.5 px-2.5 py-1.5 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-mono text-[11px] uppercase tracking-wider text-neutral-300">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-neutral-300">
                 Planta Operativa
               </span>
             </div>
@@ -154,42 +158,27 @@ export default function Sidebar({
             <span>Escandallos (Server Action)</span>
             <Calculator className="w-3.5 h-3.5 text-brand-yellow" />
           </Link>
-
-          <div className="pt-6 px-3 pb-2 font-mono text-[10px] uppercase tracking-widest text-brand-textMuted">
-            Capacidades Industriales
-          </div>
-
-          <div className="px-3 py-2 text-xs text-neutral-400 space-y-2 font-mono">
-            <div className="flex items-center gap-2 text-[11px]">
-              <Flame className="w-3.5 h-3.5 text-brand-yellow" />
-              <span>Corte Plasma HD 50mm</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px]">
-              <Layers className="w-3.5 h-3.5 text-brand-yellow" />
-              <span>Cilindrado hasta 25mm</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11px]">
-              <HardHat className="w-3.5 h-3.5 text-brand-yellow" />
-              <span>Soldadura TIG / MIG-MAG</span>
-            </div>
-          </div>
         </nav>
       </div>
 
-      {/* Production Quick Gauge */}
+      {/* Carga de Acero a Tiempo Real (Proyectos en marcha) */}
       <div className="p-4 border-t border-brand-border">
         <div className="p-3.5 rounded-xl bg-brand-surface border border-brand-border">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-brand-textMuted">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-brand-textMuted flex items-center gap-1.5">
+              <Scale className="w-3 h-3 text-brand-yellow" />
               Carga de Acero
             </span>
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="font-mono text-[9px] text-emerald-400 font-semibold uppercase">En Marcha</span>
+            </div>
           </div>
-          <div className="font-mono text-lg font-bold text-brand-yellow">
+          <div className="font-mono text-xl font-bold text-brand-yellow tracking-tight">
             {totalSteelKg.toLocaleString("es-ES")} <span className="text-xs text-neutral-400 font-normal">kg</span>
           </div>
           <div className="mt-1 font-mono text-[10px] text-brand-textMuted">
-            Material activo en planta
+            Total en proyectos activos
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import QuoteCalculator from "@/components/QuoteCalculator";
 import { LayoutDashboard, ArrowUpRight, ShieldCheck } from "lucide-react";
 
@@ -13,10 +14,17 @@ export default function QuotesPage() {
   return (
     <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-brand-yellow selection:text-black flex flex-col">
       {/* Top Industrial Navbar */}
-      <header className="h-16 px-6 lg:px-10 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center font-mono font-bold text-brand-yellow text-base">
-            S
+      <header className="h-16 px-4 sm:px-6 lg:px-8 bg-brand-dark border-b border-brand-border flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-surface border border-brand-border flex items-center justify-center p-1.5 shrink-0 shadow-sm">
+            <Image
+              src="/logo-icon.png"
+              alt="SOLYCAL"
+              width={28}
+              height={28}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -52,8 +60,8 @@ export default function QuotesPage() {
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="flex-1 p-6 lg:p-10 max-w-[1400px] w-full mx-auto space-y-8">
+      {/* Main Container adaptado a pantalla completa */}
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full space-y-8">
         {/* Header Breadcrumb & Status */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-brand-border">
           <div>

@@ -45,6 +45,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -74,6 +76,21 @@
   </script>
 
   <style>
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+    .lenis.lenis-scrolling iframe {
+      pointer-events: none;
+    }
     body {
       background-color: #07080a;
       color: #f1f5f9;
@@ -1006,6 +1023,10 @@
 
         // Prevent body scroll when menu is active
         document.body.style.overflow = isOpen ? 'hidden' : '';
+        if (window.lenis) {
+          if (isOpen) window.lenis.stop();
+          else window.lenis.start();
+        }
 
         // GSAP Stagger Entrance for Links with Joby snappy easing
         if (typeof gsap !== 'undefined') {
@@ -1034,6 +1055,30 @@
       // Registrar ScrollTrigger
       if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
+
+        // =========================================================================
+        // SMOOTH SCROLL CON LENIS (Sincronizado con GSAP ScrollTrigger)
+        // =========================================================================
+        if (typeof Lenis !== 'undefined') {
+          const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 1.0,
+            touchMultiplier: 1.2,
+            infinite: false,
+          });
+          window.lenis = lenis;
+
+          lenis.on('scroll', ScrollTrigger.update);
+
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+        }
 
         // =========================================================================
         // PRELOADER INDUSTRIAL: 'S' APARECE -> SE APARTA A LA IZQUIERDA ->

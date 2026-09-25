@@ -2486,40 +2486,73 @@ ${getHeader('servicios')}
   <!-- CONTENIDO FRONTAL DE LA PÁGINA (Z-INDEX SUPERIOR) -->
   <div class="relative z-10">
     
-    <!-- 01 HERO INTRODUCTORIO -->
-    <section class="py-24 border-b border-white/5 relative">
-      <div class="w-full px-6">
-        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 02 &bull; SERVICIOS INDUSTRIALES</span>
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
-          Capacidad integral de <span class="text-brand-yellow">fabricación y mecanizado.</span>
-        </h1>
-        <p class="text-neutral-300 max-w-2xl font-sans mt-6 text-base sm:text-lg leading-relaxed">
-          Abarcamos todo el ciclo: desde la interpretación y modelado 3D de planos hasta el corte, curvado, soldadura homologada y montaje en obra civil.
-        </p>
+    <!-- 01 HERO INTRODUCTORIO (FULLWIDTH & FULLSCREEN) -->
+    <section id="services-hero-section" class="w-screen h-screen min-h-[640px] flex items-center justify-center relative overflow-hidden bg-[#07080a] border-b border-white/5 select-none">
+      
+      <!-- Ambient background grid and subtle amber aura -->
+      <div class="absolute inset-0 dot-grid opacity-25 pointer-events-none"></div>
+      <div class="absolute top-1/2 left-1/3 -translate-y-1/2 w-[700px] h-[700px] bg-brand-yellow/[0.04] rounded-full blur-[150px] pointer-events-none"></div>
 
-        <!-- Indicadores técnicos integrados -->
-        <div class="mt-8 flex flex-wrap items-center gap-6 font-mono text-xs text-neutral-400">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>CORTE PLASMA HD TRUEHOLE</span>
+      <!-- Massive industrial watermark in background -->
+      <div class="absolute inset-0 flex items-center justify-end pr-8 sm:pr-16 pointer-events-none select-none overflow-hidden">
+        <span class="font-display font-extrabold text-[18vw] text-white/[0.025] leading-none tracking-tighter">
+          SOLYCAL
+        </span>
+      </div>
+
+      <!-- Hero Content Container -->
+      <div id="services-hero-content" class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-20 relative z-10 flex flex-col justify-center">
+        <div class="max-w-4xl space-y-6">
+          
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
+            <span class="font-mono text-xs sm:text-sm text-brand-yellow uppercase tracking-widest block">// 02 &bull; SERVICIOS INDUSTRIALES</span>
+            <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
+            <span class="font-mono text-xs text-neutral-400 hidden sm:inline">INGENIERÍA &bull; TALLER &bull; MONTAJE</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>CALDERERÍA PESADA HASTA 16 TN</span>
+
+          <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-white tracking-tight leading-[1.04]">
+            Capacidad integral de <span class="text-brand-yellow">fabricación y mecanizado.</span>
+          </h1>
+
+          <p class="text-lg sm:text-xl lg:text-2xl text-neutral-300 font-sans leading-relaxed max-w-3xl pt-2">
+            Abarcamos todo el ciclo: desde la interpretación y modelado 3D de planos hasta el corte, curvado, soldadura homologada y montaje en obra civil.
+          </p>
+
+          <!-- Indicadores técnicos integrados -->
+          <div class="pt-6 sm:pt-8 flex flex-wrap items-center gap-6 sm:gap-10 font-mono text-xs sm:text-sm text-neutral-400">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-yellow"></span>
+              <span class="tracking-wider">CORTE PLASMA HD TRUEHOLE</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-yellow"></span>
+              <span class="tracking-wider">CALDERERÍA PESADA HASTA 16 TN</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-yellow"></span>
+              <span class="tracking-wider">HOMOLOGACIONES EN 1090 / ISO 9001</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-            <span>HOMOLOGACIONES EN 1090 / ISO 9001</span>
-          </div>
+
         </div>
       </div>
+
+      <!-- Bottom Hint to Scroll into Horizontal Curtain Section -->
+      <div class="absolute bottom-6 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+        <div class="flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>
+          <span>5 DIVISIONES INDUSTRIALES</span>
+        </div>
+        <div class="flex items-center gap-2 text-neutral-400">
+          <span>DESLIZA HACIA ABAJO</span>
+          <span class="text-brand-yellow animate-bounce">&darr;</span>
+        </div>
+      </div>
+
     </section>
 
-
-
-
-
-    <!-- 02 FULLWIDTH HORIZONTAL SCROLL SERVICES SHOWCASE (FULL BACKGROUND IMAGES) -->
+    <!-- 02 FULLWIDTH HORIZONTAL SCROLL SERVICES SHOWCASE (CURTAIN WIPE UP OVER HERO) -->
     <style>
       .hscroll-section {
         overflow: hidden;
@@ -2527,6 +2560,8 @@ ${getHeader('servicios')}
         width: 100vw;
         max-width: 100%;
         background-color: #07080a;
+        z-index: 20;
+        box-shadow: 0 -35px 80px rgba(0, 0, 0, 0.98), 0 -1px 0 rgba(255, 255, 255, 0.15);
       }
       .hscroll-track {
         display: flex;
@@ -2548,6 +2583,10 @@ ${getHeader('servicios')}
         box-sizing: border-box;
       }
       @media (max-width: 1023px) {
+        #services-hero-section {
+          height: auto;
+          min-height: 85vh;
+        }
         .hscroll-section {
           overflow-x: auto;
           scroll-snap-type: x mandatory;
@@ -2566,31 +2605,27 @@ ${getHeader('servicios')}
       }
     </style>
 
-    <section class="hscroll-section p-0 relative border-t border-white/[0.08]" id="services-hscroll">
+    <section class="hscroll-section p-0 relative" id="services-hscroll">
       
       <!-- Horizontal Track with 5 Fullwidth Panels (Full-bleed Background Photo + Soft Dark Gradient to Left) -->
       <div class="hscroll-track">
 
         <!-- PANEL 01: Calderería Industrial -->
         <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="0">
-          <!-- Fullwidth Background Image -->
           <img src="assets/img/Servicios/caldereria-industrial.jpeg"
                alt="Calderería Industrial Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
                loading="eager">
 
-          <!-- Subtle Black Gradients: Deep on text side (left), smoothly fading to show machinery on right -->
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
 
-          <!-- Oversized Numeral Watermark -->
           <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             01
           </span>
 
-          <!-- Left Text Content -->
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
@@ -2629,7 +2664,6 @@ ${getHeader('servicios')}
             </div>
           </div>
 
-          <!-- Bottom Slide Indicator & Scroll Guide -->
           <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">01</span>
@@ -2935,16 +2969,46 @@ ${getHeader('servicios')}
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
       gsap.registerPlugin(ScrollTrigger);
 
+      var hero = document.querySelector('#services-hero-section');
+      var heroContent = document.querySelector('#services-hero-content');
       var section = document.querySelector('#services-hscroll');
       var track = document.querySelector('.hscroll-track');
       var progressLine = document.querySelector('#hscroll-progress');
 
-      if (!section || !track) return;
+      if (!hero || !section || !track) return;
 
       var mm = gsap.matchMedia();
       var desktopST = null;
 
       mm.add("(min-width: 1024px)", function() {
+        // 1. TRANSICIÓN DE CORTINA HACIA ARRIBA (Curtain Wipe Up):
+        // Hero se queda anclado mientras Section 02 sube como una cortina cubriéndolo
+        ScrollTrigger.create({
+          trigger: hero,
+          start: 'top top',
+          endTrigger: section,
+          end: 'top top',
+          pin: true,
+          pinSpacing: false,
+          anticipatePin: 1
+        });
+
+        // Parallax sutil y atenuación de profundidad del Hero a medida que sube la cortina
+        if (heroContent) {
+          gsap.to(heroContent, {
+            y: -90,
+            opacity: 0.25,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'top top',
+              scrub: true
+            }
+          });
+        }
+
+        // 2. SCROLL HORIZONTAL FLUIDO (Una vez la cortina cubre el 100% de la pantalla)
         var distance = function() {
           return track.scrollWidth - window.innerWidth;
         };
@@ -2957,7 +3021,7 @@ ${getHeader('servicios')}
             start: 'top top',
             end: function() { return '+=' + distance(); },
             pin: true,
-            scrub: 0.6,
+            scrub: 0.7,
             invalidateOnRefresh: true,
             onUpdate: function(self) {
               if (progressLine) {
@@ -2972,6 +3036,7 @@ ${getHeader('servicios')}
         return function() {
           desktopST = null;
           gsap.set(track, { clearProps: 'all' });
+          if (heroContent) gsap.set(heroContent, { clearProps: 'all' });
         };
       });
 

@@ -4040,8 +4040,8 @@ ${getHeader('contacto')}
   <!-- Fondo técnico tenue -->
   <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
 
-  <!-- CANVAS FULLWIDTH PARTICLE TEXT (EPHYRION OPENPROCESSING #394108) A NIVEL GLOBAL DE LA SECCIÓN -->
-  <div class="absolute inset-0 w-full h-full pointer-events-none z-[3] overflow-hidden" id="particle-text-fullwidth-wrap">
+  <!-- CANVAS FULLWIDTH PARTICLE TEXT (EPHYRION OPENPROCESSING #394108) - SÓLO ESCRITORIO (>= md) -->
+  <div class="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-[3] overflow-hidden" id="particle-text-fullwidth-wrap">
     <canvas id="particle-text-canvas" class="w-full h-full block"></canvas>
   </div>
 
@@ -4050,13 +4050,19 @@ ${getHeader('contacto')}
     <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
       <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
       
-      <!-- Placeholder tipográfico en el flujo del documento (mantiene espaciado y layout exacto) -->
-      <div id="particle-text-anchor" class="relative w-full select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
-        <h1 id="contact-hero-fallback" class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight invisible select-none">
+      <!-- VERSIÓN MÓVIL (< md): Titular estándar nativo, sin efectos, nítido y perfectamente integrado -->
+      <h1 class="block md:hidden text-4xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+        Hablemos de tu próximo proyecto.
+      </h1>
+
+      <!-- VERSIÓN ESCRITORIO (>= md): Contenedor con reserva de espacio exacta para efecto Particle Text -->
+      <div id="particle-text-anchor" class="hidden md:block relative w-full select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
+        <h1 id="contact-hero-fallback" class="text-5xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight invisible select-none">
           Hablemos de tu próximo proyecto.
         </h1>
       </div>
-      <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+
+      <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl pt-2">
         Envíanos planos, especificaciones o concerta una visita técnica a nuestra planta en Torrent (Valencia).
       </p>
 
@@ -4420,13 +4426,17 @@ ${getHeader('contacto')}
   })();
 </script>
 
-<!-- SCRIPT: FULLWIDTH PARTICLE TEXT ENGINE (EPHYRION OPENPROCESSING #394108) -->
+<!-- SCRIPT: FULLWIDTH PARTICLE TEXT ENGINE (EPHYRION OPENPROCESSING #394108) - SÓLO ESCRITORIO -->
 <script>
   (function() {
     const hero = document.getElementById('contacto-hero');
     const fallback = document.getElementById('contact-hero-fallback');
     const canvas = document.getElementById('particle-text-canvas');
     if (!hero || !canvas || !fallback) return;
+
+    function isDesktop() {
+      return window.innerWidth >= 768;
+    }
 
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -4459,7 +4469,7 @@ ${getHeader('contacto')}
           this.startX = sx;
           this.startY = sy;
         } else {
-          // Dispersión inicial sin límites a lo ancho y alto del hero (fullwidth)
+          // Dispersión inicial a lo ancho de toda la pantalla (fullwidth)
           this.startX = Math.random() * (canvasW || window.innerWidth);
           this.startY = Math.random() * (canvasH || 700) * 0.9;
         }
@@ -4492,7 +4502,7 @@ ${getHeader('contacto')}
           this.currentY = this.endY;
         }
 
-        // Repulsión elástica interactiva en toda la pantalla (radio 65px)
+        // Repulsión elástica interactiva (radio 65px)
         if (mInside) {
           const px = this.currentX + this.ox;
           const py = this.currentY + this.oy;
@@ -4524,6 +4534,16 @@ ${getHeader('contacto')}
     }
 
     function build() {
+      if (!isDesktop()) {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = [];
+        return;
+      }
+
       const heroRect = hero.getBoundingClientRect();
       canvasW = hero.clientWidth;
       canvasH = hero.clientHeight;
@@ -4535,20 +4555,17 @@ ${getHeader('contacto')}
       canvas.style.height = canvasH + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Calcular la posición exacta del placeholder en el layout general
+      // Medir la posición exacta y tipografía del placeholder en el layout general
       const fallbackRect = fallback.getBoundingClientRect();
       const textTargetX = fallbackRect.left - heroRect.left;
       const textTargetY = fallbackRect.top - heroRect.top;
-      const maxTextWidth = Math.max(260, fallbackRect.width || (canvasW < 640 ? canvasW - 48 : 720));
+      const maxTextWidth = Math.max(300, fallbackRect.width || 720);
 
-      const isMobile = canvasW < 640;
-      let fontSize = 68;
-      if (canvasW < 380) fontSize = 34;
-      else if (canvasW < 480) fontSize = 40;
-      else if (canvasW < 768) fontSize = 52;
-      else if (canvasW < 1024) fontSize = 62;
+      const computed = window.getComputedStyle(fallback);
+      const fontSize = parseFloat(computed.fontSize) || (canvasW < 1024 ? 48 : 68);
+      const lineHeight = parseFloat(computed.lineHeight) || Math.round(fontSize * 1.15);
 
-      // Canvas offscreen para rasterizar el texto con la tipografía Syne
+      // Canvas offscreen para rasterizar el texto con la tipografía exacta Syne
       const off = document.createElement('canvas');
       const offCtx = off.getContext('2d');
       const font = '800 ' + fontSize + 'px "Syne", "Plus Jakarta Sans", sans-serif';
@@ -4570,7 +4587,6 @@ ${getHeader('contacto')}
       }
       lines.push(currentLine);
 
-      const lineHeight = Math.round(fontSize * 1.15);
       const offTextHeight = lines.length * lineHeight + 20;
       const offTextWidth = Math.round(maxTextWidth + 20);
 
@@ -4584,7 +4600,7 @@ ${getHeader('contacto')}
       offCtx.textBaseline = 'top';
       offCtx.textAlign = 'left';
 
-      let y = 8;
+      let y = 0;
       for (let i = 0; i < lines.length; i++) {
         offCtx.fillStyle = '#FFFFFF';
         offCtx.fillText(lines[i], 0, y);
@@ -4593,7 +4609,7 @@ ${getHeader('contacto')}
 
       const imgData = offCtx.getImageData(0, 0, off.width, off.height);
       const data = imgData.data;
-      const step = isMobile ? (dpr > 1 ? 5 : 4) : (dpr > 1 ? 4 : 3);
+      const step = (dpr > 1 ? 4 : 3);
       const newParticles = [];
 
       for (let py = 0; py < off.height; py += step) {
@@ -4615,7 +4631,7 @@ ${getHeader('contacto')}
     }
 
     function render(now) {
-      if (!isVisible) {
+      if (!isVisible || !isDesktop()) {
         animationId = null;
         return;
       }
@@ -4646,6 +4662,7 @@ ${getHeader('contacto')}
     }
 
     hero.addEventListener('mousemove', function(e) {
+      if (!isDesktop()) return;
       const p = getHeroCoords(e);
       mouseX = p.x;
       mouseY = p.y;
@@ -4659,32 +4676,24 @@ ${getHeader('contacto')}
     });
 
     function resetFromPoint(x, y) {
+      if (!isDesktop()) return;
       ctx.clearRect(0, 0, canvasW, canvasH);
       for (let i = 0; i < particles.length; i++) {
         particles[i].reset(x, y);
       }
     }
 
-    // Clic o toque a nivel global del hero para dispersar y reiniciar las partículas a pantalla completa
+    // Clic a nivel global del hero para dispersar y reiniciar las partículas a pantalla completa
     hero.addEventListener('click', function(e) {
+      if (!isDesktop()) return;
       if (e.target.closest('input, textarea, select, button, a, label, #main-header')) return;
       const p = getHeroCoords(e);
       resetFromPoint(p.x, p.y);
     });
 
-    hero.addEventListener('touchstart', function(e) {
-      if (e.target.closest('input, textarea, select, button, a, label, #main-header')) return;
-      if (e.touches.length > 0) {
-        const rect = hero.getBoundingClientRect();
-        const tx = e.touches[0].clientX - rect.left;
-        const ty = e.touches[0].clientY - rect.top;
-        resetFromPoint(tx, ty);
-      }
-    }, { passive: true });
-
     const observer = new IntersectionObserver(function(entries) {
       isVisible = entries[0].isIntersecting;
-      if (isVisible && !animationId) {
+      if (isVisible && isDesktop() && !animationId) {
         lastTime = performance.now();
         animationId = requestAnimationFrame(render);
       }
@@ -4693,15 +4702,19 @@ ${getHeader('contacto')}
 
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function() {
-        build();
-        lastTime = performance.now();
-        animationId = requestAnimationFrame(render);
+        if (isDesktop()) {
+          build();
+          lastTime = performance.now();
+          animationId = requestAnimationFrame(render);
+        }
       });
     } else {
       setTimeout(function() {
-        build();
-        lastTime = performance.now();
-        animationId = requestAnimationFrame(render);
+        if (isDesktop()) {
+          build();
+          lastTime = performance.now();
+          animationId = requestAnimationFrame(render);
+        }
       }, 150);
     }
 
@@ -4709,7 +4722,20 @@ ${getHeader('contacto')}
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(function() {
-        build();
+        if (isDesktop()) {
+          build();
+          if (!animationId) {
+            lastTime = performance.now();
+            animationId = requestAnimationFrame(render);
+          }
+        } else {
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles = [];
+        }
       }, 200);
     });
   })();

@@ -4047,22 +4047,23 @@ ${getHeader('contacto')}
 
   <!-- 01 CABECERA FRONTAL: HABLEMOS DE TU PRÓXIMO PROYECTO -->
   <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
-    <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
-      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
+    <div class="max-w-2xl lg:max-w-3xl">
+      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4 sm:mb-6">// 06 CONTACTO &amp; COTIZACIÓN</span>
       
       <!-- VERSIÓN MÓVIL (< md): Titular estándar nativo, sin efectos, nítido y perfectamente integrado -->
-      <h1 class="block md:hidden text-4xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+      <h1 class="block md:hidden text-4xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight mb-6">
         Hablemos de tu próximo proyecto.
       </h1>
 
-      <!-- VERSIÓN ESCRITORIO (>= md): Contenedor con reserva de espacio exacta para efecto Particle Text -->
-      <div id="particle-text-anchor" class="hidden md:block relative w-full select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
-        <h1 id="contact-hero-fallback" class="text-5xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight invisible select-none">
+      <!-- VERSIÓN ESCRITORIO (>= md): Contenedor dedicado con reserva de espacio para efecto Particle Text -->
+      <div id="particle-text-anchor" class="hidden md:block relative w-full min-h-[170px] lg:min-h-[200px] mb-8 select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
+        <h1 id="contact-hero-fallback" class="text-5xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight select-none opacity-0 pointer-events-none">
           Hablemos de tu próximo proyecto.
         </h1>
       </div>
 
-      <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl pt-2">
+      <!-- Párrafo descriptivo: colocado estrictamente debajo del contenedor del título -->
+      <p id="contact-hero-desc" class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl mb-8">
         Envíanos planos, especificaciones o concerta una visita técnica a nuestra planta en Torrent (Valencia).
       </p>
 
@@ -4544,6 +4545,9 @@ ${getHeader('contacto')}
         return;
       }
 
+      const anchor = document.getElementById('particle-text-anchor');
+      if (!anchor) return;
+
       const heroRect = hero.getBoundingClientRect();
       canvasW = hero.clientWidth;
       canvasH = hero.clientHeight;
@@ -4555,15 +4559,15 @@ ${getHeader('contacto')}
       canvas.style.height = canvasH + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Medir la posición exacta y tipografía del placeholder en el layout general
-      const fallbackRect = fallback.getBoundingClientRect();
-      const textTargetX = fallbackRect.left - heroRect.left;
-      const textTargetY = fallbackRect.top - heroRect.top;
-      const maxTextWidth = Math.max(300, fallbackRect.width || 720);
+      // Medir la posición exacta del contenedor anchor en el hero
+      const anchorRect = anchor.getBoundingClientRect();
+      const textTargetX = anchorRect.left - heroRect.left;
+      const textTargetY = anchorRect.top - heroRect.top;
+      const maxTextWidth = Math.min(anchor.clientWidth || 720, Math.max(320, canvasW - textTargetX - 32));
 
       const computed = window.getComputedStyle(fallback);
       const fontSize = parseFloat(computed.fontSize) || (canvasW < 1024 ? 48 : 68);
-      const lineHeight = parseFloat(computed.lineHeight) || Math.round(fontSize * 1.15);
+      const lineHeight = Math.round(fontSize * 1.18);
 
       // Canvas offscreen para rasterizar el texto con la tipografía exacta Syne
       const off = document.createElement('canvas');
@@ -4587,7 +4591,16 @@ ${getHeader('contacto')}
       }
       lines.push(currentLine);
 
-      const offTextHeight = lines.length * lineHeight + 20;
+      // Altura total requerida por las líneas de texto
+      const totalTextHeight = lines.length * lineHeight;
+      
+      // Sincronizar dinámicamente la altura del contenedor en el DOM
+      // para asegurar que el párrafo y los elementos inferiores queden holgadamente por debajo
+      const requiredAnchorHeight = Math.max(160, Math.ceil(totalTextHeight + 16));
+      anchor.style.height = requiredAnchorHeight + 'px';
+      anchor.style.minHeight = requiredAnchorHeight + 'px';
+
+      const offTextHeight = Math.round(totalTextHeight + 20);
       const offTextWidth = Math.round(maxTextWidth + 20);
 
       off.width = Math.round(offTextWidth * dpr);
@@ -4735,6 +4748,11 @@ ${getHeader('contacto')}
           }
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           particles = [];
+          const anchor = document.getElementById('particle-text-anchor');
+          if (anchor) {
+            anchor.style.height = '';
+            anchor.style.minHeight = '';
+          }
         }
       }, 200);
     });

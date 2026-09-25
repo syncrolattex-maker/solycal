@@ -107,21 +107,15 @@
       opacity: 1;
       transform: translateY(0);
     }
-    /* EFECTO TEXT SCRAMBLE DECODE EN TÍTULOS GRANDES */
-    .scramble-word {
+    /* EFECTO TEXT DECODE EN TÍTULOS GRANDES */
+    .decode-word {
       display: inline-block;
       white-space: nowrap;
     }
-    .scramble-char {
+    .decode-char {
       display: inline-block;
       min-width: 0.25em;
-      will-change: opacity, color;
-      transition: color 0.15s ease, opacity 0.15s ease;
-    }
-    .scramble-char.is-decoding {
-      color: #F1B541;
-      text-shadow: 0 0 10px rgba(241, 181, 65, 0.6);
-      opacity: 0.95;
+      will-change: opacity, transform, filter;
     }
     .line-indicator {
       display: inline-block;
@@ -1180,14 +1174,13 @@
         }
 
         // =========================================================================
-        // EFECTO TEXT SCRAMBLE DECODE EN TÍTULOS GRANDES A MEDIDA QUE APARECEN
+        // EFECTO TEXT DECODE EN TÍTULOS GRANDES A MEDIDA QUE APARECEN
         // =========================================================================
-        const SCRAMBLE_CHARS = "01_/*#@%&=+<>{}[]XYZ0123456789";
-        const headingsToScramble = document.querySelectorAll('h1, h2');
+        const headingsToDecode = document.querySelectorAll('h1, h2');
 
-        headingsToScramble.forEach(heading => {
-          if (heading.closest('#joby-nav-overlay') || heading.dataset.scrambleReady) return;
-          heading.dataset.scrambleReady = "true";
+        headingsToDecode.forEach(heading => {
+          if (heading.closest('#joby-nav-overlay') || heading.dataset.decodeReady) return;
+          heading.dataset.decodeReady = "true";
 
           const originalText = heading.textContent.trim();
           if (!originalText || originalText.length < 3) return;
@@ -1207,15 +1200,14 @@
                   fragment.appendChild(document.createTextNode(part));
                 } else {
                   const wordSpan = document.createElement('span');
-                  wordSpan.className = 'scramble-word';
+                  wordSpan.className = 'decode-word';
                   wordSpan.setAttribute('aria-hidden', 'true');
 
                   for (let i = 0; i < part.length; i++) {
                     const char = part[i];
                     const charSpan = document.createElement('span');
-                    charSpan.className = 'scramble-char';
+                    charSpan.className = 'decode-char';
                     charSpan.textContent = char;
-                    charSpan.dataset.targetChar = char;
                     wordSpan.appendChild(charSpan);
                   }
                   fragment.appendChild(wordSpan);
@@ -1243,67 +1235,44 @@
           heading.innerHTML = '';
           heading.appendChild(newFragment);
 
-          const charNodes = heading.querySelectorAll('.scramble-char');
+          const charNodes = heading.querySelectorAll('.decode-char');
           if (charNodes.length === 0) return;
 
-          // Función para ejecutar el efecto Text Scramble Decode
-          const runScrambleDecode = () => {
-            if (heading.dataset.scrambled === "true") return;
-            heading.dataset.scrambled = "true";
+          // Estado inicial: transparente y ligeramente desplazado para decodificarse limpiamente
+          gsap.set(charNodes, {
+            opacity: 0,
+            y: 8,
+            filter: "blur(4px)"
+          });
 
-            charNodes.forEach((node, idx) => {
-              const targetChar = node.dataset.targetChar;
-              // Si es un signo o puntuación común dejamos intacto o animamos poco
-              if (/^[.,;:?!/\\-]$/.test(targetChar)) {
-                gsap.to(node, { opacity: 1, duration: 0.3, delay: idx * 0.015 });
-                return;
-              }
+          // Función para ejecutar el efecto Text Decode limpio
+          const runTextDecode = () => {
+            if (heading.dataset.decoded === "true") return;
+            heading.dataset.decoded = "true";
 
-              const delay = idx * 0.022;
-              const scrambleDuration = 0.45;
-              const totalDuration = delay + scrambleDuration;
-
-              // Empezar invisible
-              gsap.set(node, { opacity: 0 });
-
-              // Timeline de decode para este carácter
-              const tl = gsap.timeline({ delay: delay });
-              tl.to(node, {
-                opacity: 1,
-                duration: 0.08,
-                onStart: () => {
-                  node.classList.add('is-decoding');
-                }
-              });
-
-              // Intervalo de caracteres aleatorios durante el tiempo de descifrado
-              let intervalId = null;
-              tl.add(() => {
-                intervalId = setInterval(() => {
-                  node.textContent = SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-                }, 40);
-              });
-
-              // Parar el scramble y fijar el carácter definitivo
-              tl.to({}, { duration: scrambleDuration });
-              tl.add(() => {
-                if (intervalId) clearInterval(intervalId);
-                node.textContent = targetChar;
-                node.classList.remove('is-decoding');
-              });
+            gsap.to(charNodes, {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.35,
+              stagger: {
+                each: 0.02,
+                from: "start"
+              },
+              ease: "power2.out"
             });
           };
 
           // Si es el hero-title, lanzarlo en la entrada inicial con ligero delay
           if (heading.classList.contains('hero-title')) {
-            setTimeout(runScrambleDecode, hasLoadedBefore ? 350 : 2600);
+            setTimeout(runTextDecode, hasLoadedBefore ? 350 : 2550);
           } else {
             // Disparar en scroll a medida que vayan apareciendo
             ScrollTrigger.create({
               trigger: heading,
               start: "top 88%",
               once: true,
-              onEnter: () => runScrambleDecode()
+              onEnter: () => runTextDecode()
             });
           }
         });

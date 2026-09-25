@@ -1014,7 +1014,7 @@ function getFooter(options = {}) {
     }
 
     // GSAP ANIMATIONS
-    window.addEventListener('DOMContentLoaded', () => {
+    function initApp() {
       // Registrar ScrollTrigger
       if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
@@ -1055,23 +1055,54 @@ function getFooter(options = {}) {
         const curtainTop = document.querySelector('.loader-curtain-top');
         const curtainBottom = document.querySelector('.loader-curtain-bottom');
 
-        // Función para lanzar la web con sincronización suave
+        // Función para lanzar la web con sincronización suave y garantía de visibilidad
         const playHeroEntrance = (delay = 0) => {
           if (document.querySelector('.hero-title')) {
-            const heroTl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: delay });
+            const heroTl = gsap.timeline({
+              defaults: { ease: "power3.out" },
+              delay: delay,
+              onComplete: () => {
+                gsap.set('.hero-tag, .hero-title, .hero-desc, .hero-actions a, .hero-actions button, #bg-video-wrapper', { clearProps: 'all' });
+              }
+            });
             heroTl
-              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 })
-              .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
-              .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
-              .from('.hero-actions a, .hero-actions button', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video-wrapper', { opacity: 0, duration: 1.4, ease: "power2.out" }, 0);
+              .fromTo('.hero-tag', { opacity: 0, x: -25 }, { opacity: 1, x: 0, duration: 0.7 })
+              .fromTo('.hero-title', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, "-=0.5")
+              .fromTo('.hero-desc', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.6")
+              .fromTo('.hero-actions a, .hero-actions button', { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.7 }, "-=0.5")
+              .fromTo('#bg-video-wrapper', { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power2.out" }, 0);
           }
         };
 
-        const hasLoadedBefore = sessionStorage.getItem('solycal_preloader_seen');
+        // Failsafe de seguridad para garantizar visibilidad inmediata de los titulares del hero
+        setTimeout(() => {
+          const heroElements = document.querySelectorAll('.hero-tag, .hero-title, .hero-desc, .hero-actions a, .hero-actions button');
+          heroElements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+          });
+        }, 1200);
+
+        let hasLoadedBefore = false;
+        try {
+          hasLoadedBefore = !!sessionStorage.getItem('solycal_preloader_seen');
+        } catch (e) {
+          hasLoadedBefore = true;
+        }
+
+        // Failsafe de seguridad para retirar el loader pase lo que pase
+        setTimeout(() => {
+          if (solycalLoader && !solycalLoader.classList.contains('loader-hidden')) {
+            solycalLoader.classList.add('loader-hidden');
+            solycalLoader.style.display = 'none';
+            document.body.style.overflow = '';
+          }
+        }, 2200);
 
         if (solycalLoader && !hasLoadedBefore) {
-          sessionStorage.setItem('solycal_preloader_seen', 'true');
+          try {
+            sessionStorage.setItem('solycal_preloader_seen', 'true');
+          } catch (e) {}
           document.body.style.overflow = 'hidden';
 
           // 1. Estado Inicial:
@@ -1211,7 +1242,7 @@ function getFooter(options = {}) {
           if (!webglCanvas) {
             webglCanvas = document.createElement('canvas');
             webglCanvas.id = 'webgl';
-            webglCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:38;';
+            webglCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:35;background:transparent;';
             document.body.appendChild(webglCanvas);
           }
 
@@ -1229,6 +1260,7 @@ function getFooter(options = {}) {
             antialias: false,
             powerPreference: 'high-performance'
           });
+          renderer.setClearColor(0x000000, 0);
           renderer.setSize(width, height);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
@@ -1368,9 +1400,6 @@ function getFooter(options = {}) {
           const items = [];
 
           function setupItem(el) {
-            // Ocultar titular HTML original mientras dura la espera y animación WebGL
-            el.style.opacity = '0';
-
             const item = {
               el: el,
               triggered: false,
@@ -1402,6 +1431,9 @@ function getFooter(options = {}) {
               item.el.style.opacity = '1';
               return;
             }
+
+            // Ocultar titular HTML original SOLO cuando la textura WebGL está lista para animar
+            item.el.style.opacity = '0';
 
             const { canvas, width: w, height: h } = renderData;
             const texture = new THREE.CanvasTexture(canvas);
@@ -2100,8 +2132,13 @@ function getFooter(options = {}) {
 
           requestAnimationFrame(renderBitPatterns);
         }
-      }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
 
   </script>
 </body>
@@ -2144,7 +2181,7 @@ ${getHeader('inicio')}
   <div class="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-t from-[#07080a] via-transparent to-[#07080a]/35"></div>
   <div class="absolute inset-0 z-[1] pointer-events-none dot-grid opacity-15"></div>
 
-  <div class="w-full px-6 relative z-10">
+  <div class="w-full px-6 relative z-40">
     
     <!-- Headline con jerarquía equilibrada (más protagonismo al fondo) -->
     <div class="max-w-4xl space-y-4">
@@ -2726,7 +2763,7 @@ ${getHeader('servicios')}
             <span class="font-mono text-xs text-neutral-400 hidden sm:inline">INGENIERÍA &bull; TALLER &bull; MONTAJE</span>
           </div>
 
-          <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-white tracking-tight leading-[1.04]">
+          <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-white tracking-tight leading-[1.04]">
             Capacidad integral de <span class="text-brand-yellow">fabricación y mecanizado.</span>
           </h1>
 
@@ -3272,7 +3309,7 @@ ${getHeader('instalaciones')}
 <div class="py-20 border-b border-white/5 bg-[#090b0e] dot-grid">
   <div class="w-full px-6">
     <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">03 // PLANTA DE PRODUCCIÓN</span>
-    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
+    <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
       5.000 m² de infraestructura segregada en Torrent.
     </h1>
     <p class="text-neutral-400 max-w-2xl font-sans mt-6 text-base leading-relaxed">
@@ -3517,7 +3554,7 @@ ${getHeader('calidad', true)}
         </div>
 
         <!-- Main Title -->
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.06] max-w-5xl">
+        <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.06] max-w-5xl">
           Rigor técnico avalado por <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-amber-200 to-brand-accent">Lloyd's Register.</span>
         </h1>
 
@@ -3979,7 +4016,7 @@ ${getHeader('equipo')}
 <div class="py-20 border-b border-white/5 bg-[#090b0e] dot-grid">
   <div class="w-full px-6">
     <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">05 // EQUIPO HUMANO</span>
-    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
+    <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
       Especialización, experiencia y cooperación técnica.
     </h1>
     <p class="text-neutral-400 max-w-2xl font-sans mt-6 text-base leading-relaxed">
@@ -4058,7 +4095,7 @@ ${getHeader('contacto')}
   <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
     <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
       <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
-      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+      <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
         Hablemos de tu próximo proyecto.
       </h1>
       <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">

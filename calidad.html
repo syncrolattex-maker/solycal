@@ -817,7 +817,7 @@
         </div>
 
         <!-- Main Title -->
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.06] max-w-5xl">
+        <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white tracking-tight leading-[1.06] max-w-5xl">
           Rigor técnico avalado por <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-amber-200 to-brand-accent">Lloyd's Register.</span>
         </h1>
 
@@ -1457,7 +1457,7 @@
     }
 
     // GSAP ANIMATIONS
-    window.addEventListener('DOMContentLoaded', () => {
+    function initApp() {
       // Registrar ScrollTrigger
       if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
@@ -1498,23 +1498,54 @@
         const curtainTop = document.querySelector('.loader-curtain-top');
         const curtainBottom = document.querySelector('.loader-curtain-bottom');
 
-        // Función para lanzar la web con sincronización suave
+        // Función para lanzar la web con sincronización suave y garantía de visibilidad
         const playHeroEntrance = (delay = 0) => {
           if (document.querySelector('.hero-title')) {
-            const heroTl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: delay });
+            const heroTl = gsap.timeline({
+              defaults: { ease: "power3.out" },
+              delay: delay,
+              onComplete: () => {
+                gsap.set('.hero-tag, .hero-title, .hero-desc, .hero-actions a, .hero-actions button, #bg-video-wrapper', { clearProps: 'all' });
+              }
+            });
             heroTl
-              .from('.hero-tag', { opacity: 0, x: -25, duration: 0.7 })
-              .from('.hero-title', { opacity: 0, y: 35, duration: 1, ease: "power4.out" }, "-=0.5")
-              .from('.hero-desc', { opacity: 0, y: 25, duration: 0.9 }, "-=0.6")
-              .from('.hero-actions a, .hero-actions button', { opacity: 0, y: 20, stagger: 0.12, duration: 0.7 }, "-=0.5")
-              .from('#bg-video-wrapper', { opacity: 0, duration: 1.4, ease: "power2.out" }, 0);
+              .fromTo('.hero-tag', { opacity: 0, x: -25 }, { opacity: 1, x: 0, duration: 0.7 })
+              .fromTo('.hero-title', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, "-=0.5")
+              .fromTo('.hero-desc', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.6")
+              .fromTo('.hero-actions a, .hero-actions button', { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.12, duration: 0.7 }, "-=0.5")
+              .fromTo('#bg-video-wrapper', { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power2.out" }, 0);
           }
         };
 
-        const hasLoadedBefore = sessionStorage.getItem('solycal_preloader_seen');
+        // Failsafe de seguridad para garantizar visibilidad inmediata de los titulares del hero
+        setTimeout(() => {
+          const heroElements = document.querySelectorAll('.hero-tag, .hero-title, .hero-desc, .hero-actions a, .hero-actions button');
+          heroElements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+          });
+        }, 1200);
+
+        let hasLoadedBefore = false;
+        try {
+          hasLoadedBefore = !!sessionStorage.getItem('solycal_preloader_seen');
+        } catch (e) {
+          hasLoadedBefore = true;
+        }
+
+        // Failsafe de seguridad para retirar el loader pase lo que pase
+        setTimeout(() => {
+          if (solycalLoader && !solycalLoader.classList.contains('loader-hidden')) {
+            solycalLoader.classList.add('loader-hidden');
+            solycalLoader.style.display = 'none';
+            document.body.style.overflow = '';
+          }
+        }, 2200);
 
         if (solycalLoader && !hasLoadedBefore) {
-          sessionStorage.setItem('solycal_preloader_seen', 'true');
+          try {
+            sessionStorage.setItem('solycal_preloader_seen', 'true');
+          } catch (e) {}
           document.body.style.overflow = 'hidden';
 
           // 1. Estado Inicial:
@@ -1654,7 +1685,7 @@
           if (!webglCanvas) {
             webglCanvas = document.createElement('canvas');
             webglCanvas.id = 'webgl';
-            webglCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:38;';
+            webglCanvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:35;background:transparent;';
             document.body.appendChild(webglCanvas);
           }
 
@@ -1672,6 +1703,7 @@
             antialias: false,
             powerPreference: 'high-performance'
           });
+          renderer.setClearColor(0x000000, 0);
           renderer.setSize(width, height);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
@@ -1811,9 +1843,6 @@
           const items = [];
 
           function setupItem(el) {
-            // Ocultar titular HTML original mientras dura la espera y animación WebGL
-            el.style.opacity = '0';
-
             const item = {
               el: el,
               triggered: false,
@@ -1845,6 +1874,9 @@
               item.el.style.opacity = '1';
               return;
             }
+
+            // Ocultar titular HTML original SOLO cuando la textura WebGL está lista para animar
+            item.el.style.opacity = '0';
 
             const { canvas, width: w, height: h } = renderData;
             const texture = new THREE.CanvasTexture(canvas);
@@ -2543,8 +2575,13 @@
 
           requestAnimationFrame(renderBitPatterns);
         }
-      }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
 
   </script>
 </body>

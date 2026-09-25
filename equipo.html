@@ -1292,7 +1292,7 @@
 
           // 2. SELECCIÓN EXCLUSIVA DE ELEMENTOS: h1:not(.hero-title) y h2
           const targetElements = Array.from(document.querySelectorAll('h1:not(.hero-title), h2')).filter(el => {
-            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && el.textContent.trim().length > 0;
+            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && el.textContent.trim().length > 0;
           });
 
           if (targetElements.length === 0) return;

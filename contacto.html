@@ -817,9 +817,9 @@
         Hablemos de tu próximo proyecto.
       </h1>
 
-      <!-- VERSIÓN ESCRITORIO (>= md): Contenedor dedicado con reserva de espacio para efecto Particle Text -->
+      <!-- VERSIÓN ESCRITORIO (>= md): Contenedor dedicado para efecto Particle Text (en escritorio NO se muestra título normal, solo partículas) -->
       <div id="particle-text-anchor" class="hidden md:block relative w-full min-h-[170px] lg:min-h-[200px] mb-8 select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
-        <h1 id="contact-hero-fallback" class="text-5xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight select-none opacity-0 pointer-events-none">
+        <h1 id="contact-hero-fallback" class="sr-only">
           Hablemos de tu próximo proyecto.
         </h1>
       </div>
@@ -1193,9 +1193,9 @@
 <script>
   (function() {
     const hero = document.getElementById('contacto-hero');
-    const fallback = document.getElementById('contact-hero-fallback');
+    const anchor = document.getElementById('particle-text-anchor');
     const canvas = document.getElementById('particle-text-canvas');
-    if (!hero || !canvas || !fallback) return;
+    if (!hero || !canvas || !anchor) return;
 
     function isDesktop() {
       return window.innerWidth >= 768;
@@ -1327,8 +1327,7 @@
       const textTargetY = anchorRect.top - heroRect.top;
       const maxTextWidth = Math.min(anchor.clientWidth || 720, Math.max(320, canvasW - textTargetX - 32));
 
-      const computed = window.getComputedStyle(fallback);
-      const fontSize = parseFloat(computed.fontSize) || (canvasW < 1024 ? 48 : 68);
+      const fontSize = canvasW < 1024 ? 50 : 66;
       const lineHeight = Math.round(fontSize * 1.18);
 
       // Canvas offscreen para rasterizar el texto con la tipografía exacta Syne
@@ -1968,7 +1967,7 @@
 
           // 2. SELECCIÓN EXCLUSIVA DE ELEMENTOS: h1:not(.hero-title) y h2
           const targetElements = Array.from(document.querySelectorAll('h1:not(.hero-title), h2')).filter(el => {
-            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && el.textContent.trim().length > 0;
+            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && el.textContent.trim().length > 0;
           });
 
           if (targetElements.length === 0) return;

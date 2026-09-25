@@ -659,7 +659,7 @@ function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-cente
 }
 
 function getHeader(activeSlug, isTransparent = false) {
-  const isHeaderTransparent = isTransparent || activeSlug === 'calidad';
+  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto';
   const links = [
     { num: '01', title: 'Inicio', href: 'index.html', slug: 'inicio' },
     { num: '02', title: 'Servicios', href: 'servicios.html', slug: 'servicios' },
@@ -716,7 +716,7 @@ function getHeader(activeSlug, isTransparent = false) {
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
-  <header class="sticky top-0 z-[140] ${isHeaderTransparent ? 'bg-transparent border-b border-white/5' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
+  <header id="main-header" class="sticky top-0 z-[140] ${isHeaderTransparent ? 'bg-transparent border-b border-white/5' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
     <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
@@ -4024,7 +4024,7 @@ ${getFooter()}
 
 // 6. GENERATE CONTACTO.HTML (Contact Page)
 const contactoHtml = `${getHead('Contacto y Presupuestos de Calderería | SOLYCAL Torrent', 'Contacta con la oficina técnica de Solycal en Torrent (Valencia). Teléfono: +34 96 150 40 38 - info@solycal.es. Envía tus planos para valoración inmediata.', 'contacto.html')}
-${getHeader('contacto')}
+${getHeader('contacto', true)}
 
 <!-- SECCIÓN CONTINUA Y UNIFICADA DE CONTACTO (SIN CORTE ENTRE CABECERA Y FORMULARIO) -->
 <section id="contacto-hero" class="relative pt-24 sm:pt-32 pb-24 sm:pb-32 bg-[#07080a] overflow-hidden">

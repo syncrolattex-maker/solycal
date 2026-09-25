@@ -806,9 +806,13 @@
   <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
     <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
       <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
-      <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
-        Hablemos de tu próximo proyecto.
-      </h1>
+      <!-- CABECERA FRONTAL CON EFECTO PARTICLE TEXT (EPHYRION OPENPROCESSING #394108) -->
+      <div id="particle-text-wrapper" class="relative w-full pointer-events-auto select-none min-h-[90px] sm:min-h-[140px] lg:min-h-[160px]">
+        <h1 id="contact-hero-fallback" class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+          Hablemos de tu próximo proyecto.
+        </h1>
+        <canvas id="particle-text-canvas" class="hidden block cursor-pointer transition-opacity duration-300" title="Haz clic o pasa el ratón para interactuar con las partículas"></canvas>
+      </div>
       <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
         Envíanos planos, especificaciones o concerta una visita técnica a nuestra planta en Torrent (Valencia).
       </p>
@@ -1170,6 +1174,297 @@
     }
 
     loop();
+  })();
+</script>
+
+<!-- SCRIPT: PARTICLE TEXT ENGINE (EPHYRION OPENPROCESSING #394108) -->
+<script>
+  (function() {
+    const wrap = document.getElementById('particle-text-wrapper');
+    const fallback = document.getElementById('contact-hero-fallback');
+    const canvas = document.getElementById('particle-text-canvas');
+    if (!wrap || !canvas || !fallback) return;
+
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId = null;
+    let isVisible = true;
+    let lastTime = performance.now();
+    let mouseX = -9999;
+    let mouseY = -9999;
+    let mouseInside = false;
+
+    class Particle {
+      constructor(endX, endY, startX, startY, isAccent, w, h) {
+        this.endX = endX;
+        this.endY = endY;
+        this.w = w;
+        this.h = h;
+        this.size = isAccent ? 2.2 : 1.6;
+        this.color = isAccent ? '#F1B541' : (Math.random() < 0.2 ? '#FDE68A' : '#FFFFFF');
+        this.duration = 0.8 + Math.random() * 1.5;
+        this.ox = 0;
+        this.oy = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.reset(startX, startY);
+      }
+
+      reset(sx, sy) {
+        this.f = 0;
+        this.startX = sx;
+        this.startY = sy;
+        const angle = Math.random() * Math.PI * 2;
+        const spread = Math.max(this.w, this.h);
+        const dist = 60 + Math.random() * spread * 0.9;
+        this.anchorX = sx + Math.cos(angle) * dist;
+        this.anchorY = sy + Math.sin(angle) * dist;
+        this.currentX = sx;
+        this.currentY = sy;
+      }
+
+      update(delta, mx, my, mInside) {
+        if (this.f < 1) {
+          this.f += delta / this.duration;
+          if (this.f >= 1) this.f = 1;
+
+          // Interpolación cuadrática suavizada de Ephyrion: 1 - (1 - f)^2
+          const fi = 1 - Math.pow(1 - this.f, 2);
+
+          // Curva Bézier cuadrática: start -> anchor -> end
+          const x1 = this.startX + (this.anchorX - this.startX) * fi;
+          const y1 = this.startY + (this.anchorY - this.startY) * fi;
+          const x2 = this.anchorX + (this.endX - this.anchorX) * fi;
+          const y2 = this.anchorY + (this.endY - this.anchorY) * fi;
+          this.currentX = x1 + (x2 - x1) * fi;
+          this.currentY = y1 + (y2 - y1) * fi;
+        } else {
+          this.currentX = this.endX;
+          this.currentY = this.endY;
+        }
+
+        // Repulsión elástica interactiva al pasar el cursor
+        if (mInside) {
+          const px = this.currentX + this.ox;
+          const py = this.currentY + this.oy;
+          const dx = px - mx;
+          const dy = py - my;
+          const dSq = dx * dx + dy * dy;
+          const hoverRadius = 55;
+          if (dSq < hoverRadius * hoverRadius && dSq > 0.1) {
+            const d = Math.sqrt(dSq);
+            const force = (1 - d / hoverRadius) * 14;
+            this.vx += (dx / d) * force;
+            this.vy += (dy / d) * force;
+          }
+        }
+
+        // Muelle elástico de retorno a la letra
+        this.vx += -this.ox * 0.15;
+        this.vy += -this.oy * 0.15;
+        this.vx *= 0.82;
+        this.vy *= 0.82;
+        this.ox += this.vx;
+        this.oy += this.vy;
+      }
+
+      draw(c) {
+        c.fillStyle = this.color;
+        c.fillRect(this.currentX + this.ox, this.currentY + this.oy, this.size, this.size);
+      }
+    }
+
+    function build() {
+      const containerWidth = wrap.clientWidth || 700;
+      const isMobile = containerWidth < 640;
+
+      let fontSize = 68;
+      if (containerWidth < 380) fontSize = 34;
+      else if (containerWidth < 480) fontSize = 40;
+      else if (containerWidth < 768) fontSize = 52;
+      else if (containerWidth < 1024) fontSize = 62;
+
+      const off = document.createElement('canvas');
+      const offCtx = off.getContext('2d');
+      const font = '800 ' + fontSize + 'px "Syne", "Plus Jakarta Sans", sans-serif';
+      offCtx.font = font;
+
+      const words = ["Hablemos", "de", "tu", "próximo", "proyecto."];
+      const lines = [];
+      let currentLine = words[0];
+      const maxTextWidth = containerWidth - 10;
+
+      for (let i = 1; i < words.length; i++) {
+        const test = currentLine + " " + words[i];
+        if (offCtx.measureText(test).width < maxTextWidth) {
+          currentLine = test;
+        } else {
+          lines.push(currentLine);
+          currentLine = words[i];
+        }
+      }
+      lines.push(currentLine);
+
+      const lineHeight = Math.round(fontSize * 1.15);
+      const totalHeight = lines.length * lineHeight + 16;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(containerWidth * dpr);
+      canvas.height = Math.round(totalHeight * dpr);
+      canvas.style.width = containerWidth + 'px';
+      canvas.style.height = totalHeight + 'px';
+
+      off.width = canvas.width;
+      off.height = canvas.height;
+      offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      offCtx.fillStyle = '#000000';
+      offCtx.fillRect(0, 0, containerWidth, totalHeight);
+      offCtx.font = font;
+      offCtx.textBaseline = 'top';
+      offCtx.textAlign = 'left';
+
+      let y = 8;
+      for (let i = 0; i < lines.length; i++) {
+        offCtx.fillStyle = '#FFFFFF';
+        offCtx.fillText(lines[i], 0, y);
+        y += lineHeight;
+      }
+
+      const imgData = offCtx.getImageData(0, 0, off.width, off.height);
+      const data = imgData.data;
+      const step = isMobile ? (dpr > 1 ? 5 : 4) : (dpr > 1 ? 4 : 3);
+      const newParticles = [];
+      const centerX = containerWidth / 2;
+      const centerY = totalHeight / 2;
+
+      for (let py = 0; py < off.height; py += step) {
+        for (let px = 0; px < off.width; px += step) {
+          const idx = (py * off.width + px) * 4;
+          const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+
+          if (brightness > 85) {
+            const targetX = px / dpr;
+            const targetY = py / dpr;
+            const isAccent = (Math.random() < 0.12);
+            newParticles.push(new Particle(targetX, targetY, centerX, centerY, isAccent, containerWidth, totalHeight));
+          }
+        }
+      }
+
+      particles = newParticles;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      ctx.fillStyle = '#07080a';
+      ctx.fillRect(0, 0, containerWidth, totalHeight);
+
+      fallback.classList.add('sr-only');
+      fallback.classList.remove('hero-title');
+      canvas.classList.remove('hidden');
+    }
+
+    function render(now) {
+      if (!isVisible) {
+        animationId = null;
+        return;
+      }
+
+      const delta = Math.min((now - lastTime) * 0.001, 0.06);
+      lastTime = now;
+
+      const w = parseFloat(canvas.style.width) || canvas.width;
+      const h = parseFloat(canvas.style.height) || canvas.height;
+
+      // Efecto estelas de luz (Trails de Ephyrion)
+      ctx.fillStyle = 'rgba(7, 8, 10, 0.24)';
+      ctx.fillRect(0, 0, w, h);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update(delta, mouseX, mouseY, mouseInside);
+        particles[i].draw(ctx);
+      }
+
+      animationId = requestAnimationFrame(render);
+    }
+
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener('mousemove', function(e) {
+      const p = getCoords(e);
+      mouseX = p.x;
+      mouseY = p.y;
+      mouseInside = true;
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+      mouseInside = false;
+      mouseX = -9999;
+      mouseY = -9999;
+    });
+
+    // Clic o toque para dispersar y reiniciar la llegada hacia el cursor
+    canvas.addEventListener('click', function(e) {
+      const p = getCoords(e);
+      const w = parseFloat(canvas.style.width) || canvas.width;
+      const h = parseFloat(canvas.style.height) || canvas.height;
+      ctx.fillStyle = '#07080a';
+      ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].reset(p.x, p.y);
+      }
+    });
+
+    canvas.addEventListener('touchstart', function(e) {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        const tx = e.touches[0].clientX - rect.left;
+        const ty = e.touches[0].clientY - rect.top;
+        const w = parseFloat(canvas.style.width) || canvas.width;
+        const h = parseFloat(canvas.style.height) || canvas.height;
+        ctx.fillStyle = '#07080a';
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < particles.length; i++) {
+          particles[i].reset(tx, ty);
+        }
+      }
+    }, { passive: true });
+
+    const observer = new IntersectionObserver(function(entries) {
+      isVisible = entries[0].isIntersecting;
+      if (isVisible && !animationId) {
+        lastTime = performance.now();
+        animationId = requestAnimationFrame(render);
+      }
+    }, { threshold: 0.05 });
+    observer.observe(wrap);
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function() {
+        build();
+        lastTime = performance.now();
+        animationId = requestAnimationFrame(render);
+      });
+    } else {
+      setTimeout(function() {
+        build();
+        lastTime = performance.now();
+        animationId = requestAnimationFrame(render);
+      }, 150);
+    }
+
+    let resizeTimeout = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        build();
+      }, 200);
+    });
   })();
 </script>
 

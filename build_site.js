@@ -2519,7 +2519,7 @@ ${getHeader('servicios')}
 
 
 
-    <!-- 02 FULLWIDTH HORIZONTAL SCROLL SERVICES (GSAP VAULT PATTERN) -->
+    <!-- 02 FULLWIDTH HORIZONTAL SCROLL SERVICES SHOWCASE (FULL BACKGROUND IMAGES) -->
     <style>
       .hscroll-section {
         overflow: hidden;
@@ -2544,7 +2544,6 @@ ${getHeader('servicios')}
         overflow: hidden;
         display: flex;
         align-items: center;
-        justify-content: center;
         background-color: #07080a;
         box-sizing: border-box;
       }
@@ -2553,6 +2552,7 @@ ${getHeader('servicios')}
           overflow-x: auto;
           scroll-snap-type: x mandatory;
           -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
         }
         .hscroll-track {
           height: auto;
@@ -2568,84 +2568,73 @@ ${getHeader('servicios')}
 
     <section class="hscroll-section p-0 relative border-t border-white/[0.08]" id="services-hscroll">
       
-      <!-- Horizontal Track of 5 Fullwidth Panels (100vw each) -->
+      <!-- Horizontal Track with 5 Fullwidth Panels (Full-bleed Background Photo + Soft Dark Gradient to Left) -->
       <div class="hscroll-track">
 
         <!-- PANEL 01: Calderería Industrial -->
         <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="0">
-          <!-- Massive numeral watermark -->
-          <span class="absolute right-6 sm:right-16 bottom-6 sm:bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.03] select-none pointer-events-none leading-none z-0">
+          <!-- Fullwidth Background Image -->
+          <img src="assets/img/Servicios/caldereria-industrial.jpeg"
+               alt="Calderería Industrial Solycal"
+               class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               loading="eager">
+
+          <!-- Subtle Black Gradients: Deep on text side (left), smoothly fading to show machinery on right -->
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
+
+          <!-- Oversized Numeral Watermark -->
+          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             01
           </span>
 
-          <div class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-24 pb-16 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 h-full max-h-[860px]">
-            <!-- Text & Technical details -->
-            <div class="w-full lg:w-[52%] flex flex-col justify-center space-y-5">
+          <!-- Left Text Content -->
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
+            <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 01 &bull; TRANSFORMACIÓN DE CHAPA</span>
                 <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
                 <span class="font-mono text-xs text-neutral-400 hidden sm:inline">DIVISIÓN PESADA</span>
               </div>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white tracking-tight leading-[1.08]">
+              <h2 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.06]">
                 Calderería Industrial<br><span class="text-neutral-400 font-light">Pesada &amp; Ligera</span>
               </h2>
-              <p class="text-sm sm:text-base lg:text-lg text-neutral-300 font-sans leading-relaxed max-w-xl">
+              <p class="text-base sm:text-lg text-neutral-200 font-sans leading-relaxed max-w-xl">
                 Tolvas de alimentación, silos de almacenamiento, ciclones, depósitos bajo presión y conductos de aspiración en Torrent (Valencia). Conformado integral de chapa desde ingeniería 3D hasta pieza acabada.
               </p>
-              <div class="pt-2 border-t border-white/[0.08] space-y-2.5">
-                <span class="font-mono text-[10px] sm:text-[11px] text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
-                <ul class="font-mono text-xs sm:text-sm text-brand-textMuted space-y-2">
-                  <li class="flex items-start gap-2.5">
+              <div class="pt-3 border-t border-white/[0.1] space-y-2.5">
+                <span class="font-mono text-xs text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
+                <ul class="font-mono text-xs sm:text-sm text-neutral-300 space-y-2">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Curvado de chapa en cilindros hasta 2.000 &times; 12 mm</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Plegado CNC con máquina Ermaksan de 4 metros</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Materiales: Acero al carbono, inoxidable y aleaciones especiales</span>
                   </li>
                 </ul>
               </div>
-              <div class="pt-4 flex flex-wrap items-center gap-4 sm:gap-6">
-                <a href="contacto.html" class="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-accent text-black font-mono uppercase text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-[0_0_25px_rgba(241,181,65,0.35)]">
-                  <span>Solicitar Presupuesto</span>
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-                <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
-                  <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-                  <span>Torrent &bull; Valencia &bull; Hasta 20 Tn</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Visual Showcase -->
-            <div class="w-full lg:w-[48%] h-56 sm:h-72 lg:h-[460px] xl:h-[520px] relative rounded-2xl overflow-hidden border border-white/[0.1] shadow-2xl group shrink-0 bg-[#090b0e]">
-              <img src="assets/img/Servicios/caldereria-industrial.jpeg"
-                   alt="Calderería Industrial Solycal"
-                   class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
-                   loading="eager">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-black/20 pointer-events-none"></div>
-              <div class="absolute top-4 right-4 bg-[#07080a]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                <span class="font-mono text-[11px] text-white uppercase tracking-widest font-bold">CAPACIDAD 20 TN</span>
-              </div>
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between font-mono text-[10px] text-white/60 tracking-wider">
-                <span>SOLYCAL VALENCIA // TORRENT</span>
-                <span class="text-brand-yellow font-bold">01 / 05</span>
+              <div class="pt-4 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Torrent &bull; Valencia &bull; Capacidad hasta 20 Tn</span>
               </div>
             </div>
           </div>
 
-          <!-- Bottom guide inside panel -->
-          <div class="absolute bottom-4 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+          <!-- Bottom Slide Indicator & Scroll Guide -->
+          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">01</span>
               <span>/ 05</span>
-              <span class="mx-2 text-neutral-700 hidden sm:inline">|</span>
+              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
               <span class="hidden sm:inline">CALDERERÍA INDUSTRIAL</span>
             </div>
             <div class="flex items-center gap-2">
@@ -2657,75 +2646,63 @@ ${getHeader('servicios')}
 
         <!-- PANEL 02: Corte Plasma HD -->
         <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="1">
-          <span class="absolute right-6 sm:right-16 bottom-6 sm:bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.03] select-none pointer-events-none leading-none z-0">
+          <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
+               alt="Corte Plasma HD Solycal"
+               class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               loading="eager">
+
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
+
+          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             02
           </span>
 
-          <div class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-24 pb-16 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 h-full max-h-[860px]">
-            <div class="w-full lg:w-[52%] flex flex-col justify-center space-y-5">
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
+            <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 02 &bull; TECNOLOGÍA HYPERTHERM</span>
                 <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
                 <span class="font-mono text-xs text-neutral-400 hidden sm:inline">CORTE ALTA DEFINICIÓN</span>
               </div>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white tracking-tight leading-[1.08]">
+              <h2 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.06]">
                 Corte Plasma HD<br><span class="text-neutral-400 font-light">Tecnología TrueHole</span>
               </h2>
-              <p class="text-sm sm:text-base lg:text-lg text-neutral-300 font-sans leading-relaxed max-w-xl">
+              <p class="text-base sm:text-lg text-neutral-200 font-sans leading-relaxed max-w-xl">
                 Pórtico CNC de 9.000 &times; 2.500 mm equipado con fuente Hypertherm HPR260XD y tecnología de taladro perfecto TrueHole para orificios sin conicidad directos para roscado o tornillería.
               </p>
-              <div class="pt-2 border-t border-white/[0.08] space-y-2.5">
-                <span class="font-mono text-[10px] sm:text-[11px] text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
-                <ul class="font-mono text-xs sm:text-sm text-brand-textMuted space-y-2">
-                  <li class="flex items-start gap-2.5">
+              <div class="pt-3 border-t border-white/[0.1] space-y-2.5">
+                <span class="font-mono text-xs text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
+                <ul class="font-mono text-xs sm:text-sm text-neutral-300 space-y-2">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Espesor máximo de corte: 50 mm en acero al carbono</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Corte en acero inoxidable hasta 15 mm y aluminio hasta 25 mm</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Software de nesting automatizado para máxima optimización de material</span>
                   </li>
                 </ul>
               </div>
-              <div class="pt-4 flex flex-wrap items-center gap-4 sm:gap-6">
-                <a href="contacto.html" class="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-accent text-black font-mono uppercase text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-[0_0_25px_rgba(241,181,65,0.35)]">
-                  <span>Solicitar Presupuesto</span>
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-                <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
-                  <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-                  <span>Tolerancia &plusmn;0,3 mm &bull; Mesa 9.000 &times; 2.500 mm</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-full lg:w-[48%] h-56 sm:h-72 lg:h-[460px] xl:h-[520px] relative rounded-2xl overflow-hidden border border-white/[0.1] shadow-2xl group shrink-0 bg-[#090b0e]">
-              <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
-                   alt="Corte Plasma HD Solycal"
-                   class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
-                   loading="eager">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-black/20 pointer-events-none"></div>
-              <div class="absolute top-4 right-4 bg-[#07080a]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                <span class="font-mono text-[11px] text-white uppercase tracking-widest font-bold">MESA 9.000 &times; 2.500 MM</span>
-              </div>
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between font-mono text-[10px] text-white/60 tracking-wider">
-                <span>HYPERTHERM HPR260XD // CNC</span>
-                <span class="text-brand-yellow font-bold">02 / 05</span>
+              <div class="pt-4 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Tolerancia &plusmn;0,3 mm &bull; Mesa 9.000 &times; 2.500 mm &bull; Hasta 50 mm</span>
               </div>
             </div>
           </div>
 
-          <div class="absolute bottom-4 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">02</span>
               <span>/ 05</span>
-              <span class="mx-2 text-neutral-700 hidden sm:inline">|</span>
+              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
               <span class="hidden sm:inline">CORTE PLASMA HD</span>
             </div>
             <div class="flex items-center gap-2">
@@ -2737,75 +2714,63 @@ ${getHeader('servicios')}
 
         <!-- PANEL 03: Soldadura Técnica -->
         <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="2">
-          <span class="absolute right-6 sm:right-16 bottom-6 sm:bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.03] select-none pointer-events-none leading-none z-0">
+          <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
+               alt="Soldadura Técnica Solycal"
+               class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               loading="eager">
+
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
+
+          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             03
           </span>
 
-          <div class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-24 pb-16 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 h-full max-h-[860px]">
-            <div class="w-full lg:w-[52%] flex flex-col justify-center space-y-5">
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
+            <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 03 &bull; HOMOLOGACIONES OFICIALES</span>
                 <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
                 <span class="font-mono text-xs text-neutral-400 hidden sm:inline">CALIDAD CERTIFICADA</span>
               </div>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white tracking-tight leading-[1.08]">
+              <h2 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.06]">
                 Soldadura Técnica<br><span class="text-neutral-400 font-light">Homologada TIG / MIG</span>
               </h2>
-              <p class="text-sm sm:text-base lg:text-lg text-neutral-300 font-sans leading-relaxed max-w-xl">
+              <p class="text-base sm:text-lg text-neutral-200 font-sans leading-relaxed max-w-xl">
                 Equipo de soldadores homologados bajo normativas europeas para uniones de alta exigencia estructural, estanqueidad de recipientes a presión y componentes ferroviarios.
               </p>
-              <div class="pt-2 border-t border-white/[0.08] space-y-2.5">
-                <span class="font-mono text-[10px] sm:text-[11px] text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
-                <ul class="font-mono text-xs sm:text-sm text-brand-textMuted space-y-2">
-                  <li class="flex items-start gap-2.5">
+              <div class="pt-3 border-t border-white/[0.1] space-y-2.5">
+                <span class="font-mono text-xs text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
+                <ul class="font-mono text-xs sm:text-sm text-neutral-300 space-y-2">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Procedimientos TIG (GTAW), MIG-MAG (GMAW) y Arco Sumergido (SAW)</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Especialistas en acero inoxidable sanitario, dúplex y aleaciones de aluminio</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Control de calidad con ensayos no destructivos (END), líquidos penetrantes y ultrasonidos</span>
                   </li>
                 </ul>
               </div>
-              <div class="pt-4 flex flex-wrap items-center gap-4 sm:gap-6">
-                <a href="contacto.html" class="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-accent text-black font-mono uppercase text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-[0_0_25px_rgba(241,181,65,0.35)]">
-                  <span>Solicitar Presupuesto</span>
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-                <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
-                  <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-                  <span>EN ISO 15614 &bull; EN 15085-2 &bull; Homologación Oficial</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-full lg:w-[48%] h-56 sm:h-72 lg:h-[460px] xl:h-[520px] relative rounded-2xl overflow-hidden border border-white/[0.1] shadow-2xl group shrink-0 bg-[#090b0e]">
-              <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
-                   alt="Soldadura Técnica Solycal"
-                   class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
-                   loading="eager">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-black/20 pointer-events-none"></div>
-              <div class="absolute top-4 right-4 bg-[#07080a]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                <span class="font-mono text-[11px] text-white uppercase tracking-widest font-bold">EN 15085 / ISO 15614</span>
-              </div>
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between font-mono text-[10px] text-white/60 tracking-wider">
-                <span>PROCEDIMIENTOS WPS / WPQR</span>
-                <span class="text-brand-yellow font-bold">03 / 05</span>
+              <div class="pt-4 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">EN ISO 15614 &bull; EN 15085-2 &bull; Homologación Oficial</span>
               </div>
             </div>
           </div>
 
-          <div class="absolute bottom-4 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">03</span>
               <span>/ 05</span>
-              <span class="mx-2 text-neutral-700 hidden sm:inline">|</span>
+              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
               <span class="hidden sm:inline">SOLDADURA TÉCNICA HOMOLOGADA</span>
             </div>
             <div class="flex items-center gap-2">
@@ -2817,75 +2782,63 @@ ${getHeader('servicios')}
 
         <!-- PANEL 04: Estructuras Metálicas -->
         <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="3">
-          <span class="absolute right-6 sm:right-16 bottom-6 sm:bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.03] select-none pointer-events-none leading-none z-0">
+          <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
+               alt="Estructuras Metálicas Solycal"
+               class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               loading="eager">
+
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
+
+          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             04
           </span>
 
-          <div class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-24 pb-16 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 h-full max-h-[860px]">
-            <div class="w-full lg:w-[52%] flex flex-col justify-center space-y-5">
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
+            <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 04 &bull; MARCADO CE EN 1090-1</span>
                 <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
                 <span class="font-mono text-xs text-neutral-400 hidden sm:inline">CLASES EXC2 Y EXC3</span>
               </div>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white tracking-tight leading-[1.08]">
+              <h2 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.06]">
                 Estructuras Metálicas<br><span class="text-neutral-400 font-light">&amp; Pasarelas Industriales</span>
               </h2>
-              <p class="text-sm sm:text-base lg:text-lg text-neutral-300 font-sans leading-relaxed max-w-xl">
+              <p class="text-base sm:text-lg text-neutral-200 font-sans leading-relaxed max-w-xl">
                 Fabricación de estructuras portantes, pasarelas de acceso, bancadas de maquinaria pesada y líneas de vida conforme al marcado CE obligatorio EN 1090-1.
               </p>
-              <div class="pt-2 border-t border-white/[0.08] space-y-2.5">
-                <span class="font-mono text-[10px] sm:text-[11px] text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
-                <ul class="font-mono text-xs sm:text-sm text-brand-textMuted space-y-2">
-                  <li class="flex items-start gap-2.5">
+              <div class="pt-3 border-t border-white/[0.1] space-y-2.5">
+                <span class="font-mono text-xs text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
+                <ul class="font-mono text-xs sm:text-sm text-neutral-300 space-y-2">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Control de producción en fábrica certificado clases EXC2 y EXC3</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Montaje directo en obra civil con medios de elevación y personal especializado</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Tratamientos superficiales: galvanizado en caliente, granallado SA 2.5 y pintura C5</span>
                   </li>
                 </ul>
               </div>
-              <div class="pt-4 flex flex-wrap items-center gap-4 sm:gap-6">
-                <a href="contacto.html" class="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-accent text-black font-mono uppercase text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-[0_0_25px_rgba(241,181,65,0.35)]">
-                  <span>Solicitar Presupuesto</span>
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-                <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
-                  <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-                  <span>Marcado CE EN 1090-1 &bull; EXC2 / EXC3</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-full lg:w-[48%] h-56 sm:h-72 lg:h-[460px] xl:h-[520px] relative rounded-2xl overflow-hidden border border-white/[0.1] shadow-2xl group shrink-0 bg-[#090b0e]">
-              <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
-                   alt="Estructuras Metálicas Solycal"
-                   class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
-                   loading="eager">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-black/20 pointer-events-none"></div>
-              <div class="absolute top-4 right-4 bg-[#07080a]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                <span class="font-mono text-[11px] text-white uppercase tracking-widest font-bold">MARCADO CE EXC2/EXC3</span>
-              </div>
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between font-mono text-[10px] text-white/60 tracking-wider">
-                <span>ESTRUCTURAS PORTANTES // EN 1090</span>
-                <span class="text-brand-yellow font-bold">04 / 05</span>
+              <div class="pt-4 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Marcado CE EN 1090-1 &bull; Clases EXC2 y EXC3</span>
               </div>
             </div>
           </div>
 
-          <div class="absolute bottom-4 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">04</span>
               <span>/ 05</span>
-              <span class="mx-2 text-neutral-700 hidden sm:inline">|</span>
+              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
               <span class="hidden sm:inline">ESTRUCTURAS METÁLICAS CE</span>
             </div>
             <div class="flex items-center gap-2">
@@ -2897,75 +2850,63 @@ ${getHeader('servicios')}
 
         <!-- PANEL 05: Montaje en Obra -->
         <div class="hscroll-panel" data-panel-idx="4">
-          <span class="absolute right-6 sm:right-16 bottom-6 sm:bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.03] select-none pointer-events-none leading-none z-0">
+          <img src="assets/img/Servicios/montaje-instalacion.jpeg"
+               alt="Montaje en Obra Solycal"
+               class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               loading="eager">
+
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+          <div class="absolute inset-0 pointer-events-none z-[2]"
+               style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
+
+          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
             05
           </span>
 
-          <div class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 pt-24 pb-16 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14 h-full max-h-[860px]">
-            <div class="w-full lg:w-[52%] flex flex-col justify-center space-y-5">
+          <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
+            <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
               <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 05 &bull; INSTALACIÓN EN PLANTA</span>
                 <span class="text-neutral-600 font-mono text-xs hidden sm:inline">|</span>
                 <span class="font-mono text-xs text-neutral-400 hidden sm:inline">EJECUCIÓN DIRECTA</span>
               </div>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white tracking-tight leading-[1.08]">
+              <h2 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.06]">
                 Montaje e Instalación<br><span class="text-neutral-400 font-light">en Obra Civil</span>
               </h2>
-              <p class="text-sm sm:text-base lg:text-lg text-neutral-300 font-sans leading-relaxed max-w-xl">
+              <p class="text-base sm:text-lg text-neutral-200 font-sans leading-relaxed max-w-xl">
                 Servicio integral de instalación en fábrica o planta química con personal propio homologado. Coordinamos transporte especial, izado con medios auxiliares y replanteo geométrico milimétrico.
               </p>
-              <div class="pt-2 border-t border-white/[0.08] space-y-2.5">
-                <span class="font-mono text-[10px] sm:text-[11px] text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
-                <ul class="font-mono text-xs sm:text-sm text-brand-textMuted space-y-2">
-                  <li class="flex items-start gap-2.5">
+              <div class="pt-3 border-t border-white/[0.1] space-y-2.5">
+                <span class="font-mono text-xs text-neutral-400 uppercase tracking-widest block font-semibold">ESPECIFICACIONES INDUSTRIALES:</span>
+                <ul class="font-mono text-xs sm:text-sm text-neutral-300 space-y-2">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Transporte especial y custodia de grandes virolas y piezas sobredimensionadas</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Coordinación directa de seguridad, maniobras de izado y enlace con obra civil</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
+                  <li class="flex items-start gap-3">
                     <span class="w-1.5 h-1.5 bg-brand-yellow rounded-full shrink-0 mt-[6px]"></span>
                     <span>Pruebas de presión, estanqueidad hidrostática y ensayos de funcionamiento en campo</span>
                   </li>
                 </ul>
               </div>
-              <div class="pt-4 flex flex-wrap items-center gap-4 sm:gap-6">
-                <a href="contacto.html" class="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-accent text-black font-mono uppercase text-xs sm:text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 shadow-[0_0_25px_rgba(241,181,65,0.35)]">
-                  <span>Solicitar Presupuesto</span>
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-                </a>
-                <div class="flex items-center gap-2 font-mono text-xs text-neutral-400">
-                  <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
-                  <span>Montaje en Obra Civil &bull; Cobertura Nacional</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-full lg:w-[48%] h-56 sm:h-72 lg:h-[460px] xl:h-[520px] relative rounded-2xl overflow-hidden border border-white/[0.1] shadow-2xl group shrink-0 bg-[#090b0e]">
-              <img src="assets/img/Servicios/montaje-instalacion.jpeg"
-                   alt="Montaje en Obra Solycal"
-                   class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
-                   loading="eager">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#07080a]/90 via-transparent to-black/20 pointer-events-none"></div>
-              <div class="absolute top-4 right-4 bg-[#07080a]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-lg flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-                <span class="font-mono text-[11px] text-white uppercase tracking-widest font-bold">COBERTURA NACIONAL</span>
-              </div>
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between font-mono text-[10px] text-white/60 tracking-wider">
-                <span>PERSONAL PROPIO HOMOLOGADO</span>
-                <span class="text-brand-yellow font-bold">05 / 05</span>
+              <div class="pt-4 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Montaje en Obra Civil &bull; Cobertura Nacional</span>
               </div>
             </div>
           </div>
 
-          <div class="absolute bottom-4 left-6 sm:left-12 lg:left-16 right-6 sm:right-12 lg:right-16 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-500 uppercase tracking-widest">
+          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
             <div class="flex items-center gap-2">
               <span class="text-brand-yellow font-bold">05</span>
               <span>/ 05</span>
-              <span class="mx-2 text-neutral-700 hidden sm:inline">|</span>
+              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
               <span class="hidden sm:inline">MONTAJE E INSTALACIÓN EN OBRA</span>
             </div>
             <div class="flex items-center gap-2">
@@ -2996,12 +2937,12 @@ ${getHeader('servicios')}
 
       var section = document.querySelector('#services-hscroll');
       var track = document.querySelector('.hscroll-track');
-      var panels = gsap.utils.toArray('.hscroll-panel');
       var progressLine = document.querySelector('#hscroll-progress');
 
-      if (!section || !track || !panels.length) return;
+      if (!section || !track) return;
 
       var mm = gsap.matchMedia();
+      var desktopST = null;
 
       mm.add("(min-width: 1024px)", function() {
         var distance = function() {
@@ -3016,8 +2957,7 @@ ${getHeader('servicios')}
             start: 'top top',
             end: function() { return '+=' + distance(); },
             pin: true,
-            scrub: 1,
-            snap: 1 / (panels.length - 1),
+            scrub: 0.6,
             invalidateOnRefresh: true,
             onUpdate: function(self) {
               if (progressLine) {
@@ -3027,7 +2967,10 @@ ${getHeader('servicios')}
           }
         });
 
+        desktopST = tween.scrollTrigger;
+
         return function() {
+          desktopST = null;
           gsap.set(track, { clearProps: 'all' });
         };
       });
@@ -3045,6 +2988,15 @@ ${getHeader('servicios')}
           section.removeEventListener('scroll', onMobileScroll);
         };
       });
+
+      // Smooth horizontal trackpad gesture integration
+      window.addEventListener('wheel', function(e) {
+        if (window.innerWidth >= 1024 && desktopST && desktopST.isActive) {
+          if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            window.scrollBy({ top: e.deltaX * 0.75 });
+          }
+        }
+      }, { passive: true });
     }
 
     if (document.readyState === 'loading') {

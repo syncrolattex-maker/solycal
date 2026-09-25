@@ -2783,13 +2783,15 @@ ${getHeader('servicios')}
         flex-wrap: nowrap;
         width: max-content;
         height: 100vh;
+        height: 100dvh;
         will-change: transform;
       }
       .hscroll-panel {
         flex: 0 0 100vw;
         width: 100vw;
         height: 100vh;
-        min-height: 580px;
+        height: 100dvh;
+        min-height: 540px;
         position: relative;
         overflow: hidden;
         display: flex;
@@ -2811,26 +2813,16 @@ ${getHeader('servicios')}
       }
       @media (max-width: 1023px) {
         #services-hero-section {
-          height: auto;
-          min-height: 75dvh;
+          height: 100vh;
+          height: 100dvh;
+          min-height: 540px;
         }
         .hscroll-section {
-          overflow-x: auto;
-          overflow-y: hidden;
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          scroll-behavior: smooth;
-        }
-        .hscroll-track {
-          height: 100dvh;
-          min-height: 540px;
+          overflow: hidden;
         }
         .hscroll-panel {
-          scroll-snap-align: start;
-          scroll-snap-stop: always;
-          height: 100dvh;
-          min-height: 540px;
           align-items: flex-end;
+          touch-action: pan-y;
         }
       }
     </style>
@@ -3142,87 +3134,109 @@ ${getHeader('servicios')}
 
       if (!hero || !section || !track) return;
 
-      var mm = gsap.matchMedia();
-      var desktopST = null;
+      var activeST = null;
 
-      mm.add("(min-width: 1024px)", function() {
-        // 1. TRANSICIÓN DE CORTINA HACIA ARRIBA (Curtain Wipe Up):
-        // Hero se queda anclado mientras Section 02 sube como una cortina cubriéndolo
-        ScrollTrigger.create({
-          trigger: hero,
-          start: 'top top',
-          endTrigger: section,
-          end: 'top top',
-          pin: true,
-          pinSpacing: false,
-          anticipatePin: 1
-        });
+      // 1. TRANSICIÓN DE CORTINA HACIA ARRIBA (Curtain Wipe Up):
+      // Hero se ancla en pantalla mientras la Sección de Servicios sube cubriéndola
+      ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        endTrigger: section,
+        end: 'top top',
+        pin: true,
+        pinSpacing: false,
+        anticipatePin: 1
+      });
 
-        // Parallax sutil y atenuación de profundidad del Hero a medida que sube la cortina
-        if (heroContent) {
-          gsap.to(heroContent, {
-            y: -90,
-            opacity: 0.15,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'top top',
-              scrub: 1
-            }
-          });
-        }
-
-        // 2. SCROLL HORIZONTAL FLUIDO (Una vez la cortina cubre el 100% de la pantalla)
-        var distance = function() {
-          return track.scrollWidth - window.innerWidth;
-        };
-
-        var tween = gsap.to(track, {
-          x: function() { return -distance(); },
+      // Parallax sutil y atenuación de profundidad del Hero al subir la cortina
+      if (heroContent) {
+        gsap.to(heroContent, {
+          y: -70,
+          opacity: 0.15,
           ease: 'none',
           scrollTrigger: {
             trigger: section,
-            start: 'top top',
-            end: function() { return '+=' + distance(); },
-            pin: true,
-            scrub: 1.2,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: function(self) {
-              if (progressLine) {
-                progressLine.style.width = (self.progress * 100) + '%';
-              }
-            }
+            start: 'top bottom',
+            end: 'top top',
+            scrub: 1
           }
         });
+      }
 
-        desktopST = tween.scrollTrigger;
+      // 2. SCROLL HORIZONTAL FLUIDO (UNIVERSAL PARA MÓVIL Y ESCRITORIO):
+      function getScrollDistance() {
+        var isMobile = window.innerWidth < 1024;
+        var trackDistance = track.scrollWidth - window.innerWidth;
+        if (isMobile) {
+          // En móvil proporciona recorrido suficiente para una lectura cómoda de cada panel
+          return Math.max(trackDistance, window.innerHeight * 2.8);
+        }
+        return trackDistance;
+      }
 
-        return function() {
-          desktopST = null;
-          gsap.set(track, { clearProps: 'all' });
-          if (heroContent) gsap.set(heroContent, { clearProps: 'all' });
-        };
-      });
-
-      mm.add("(max-width: 1023px)", function() {
-        function onMobileScroll() {
-          if (progressLine) {
-            var maxScroll = section.scrollWidth - section.clientWidth;
-            var progress = maxScroll > 0 ? section.scrollLeft / maxScroll : 0;
-            progressLine.style.width = (progress * 100) + '%';
+      var tween = gsap.to(track, {
+        x: function() {
+          return -(track.scrollWidth - window.innerWidth);
+        },
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: function() {
+            return '+=' + getScrollDistance();
+          },
+          pin: true,
+          scrub: window.innerWidth < 1024 ? 0.8 : 1.2,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: function(self) {
+            if (progressLine) {
+              progressLine.style.width = (self.progress * 100) + '%';
+            }
           }
         }
-        section.addEventListener('scroll', onMobileScroll, { passive: true });
-        return function() {
-          section.removeEventListener('scroll', onMobileScroll);
-        };
       });
 
-      // Smooth horizontal trackpad gesture integration
+      activeST = tween.scrollTrigger;
+
+      // 3. SOPORTE DE GESTOS TÁCTILES EN MÓVIL (HORIZONTAL SWIPE GESTURE)
+      var touchStartX = 0;
+      var touchStartY = 0;
+      var touchStartTime = 0;
+
+      section.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchStartTime = Date.now();
+        }
+      }, { passive: true });
+
+      section.addEventListener('touchend', function(e) {
+        if (e.changedTouches.length === 1 && activeST) {
+          var diffX = e.changedTouches[0].clientX - touchStartX;
+          var diffY = e.changedTouches[0].clientY - touchStartY;
+          var elapsed = Date.now() - touchStartTime;
+
+          // Si el usuario hace un deslizamiento horizontal decidido (swipe left/right)
+          if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.2 && elapsed < 450) {
+            var totalDist = activeST.end - activeST.start;
+            var currentIdx = Math.round(activeST.progress * 4);
+            var targetIdx = diffX < 0 ? Math.min(4, currentIdx + 1) : Math.max(0, currentIdx - 1);
+            var targetScroll = activeST.start + (targetIdx / 4) * totalDist;
+
+            if (window.lenis) {
+              window.lenis.scrollTo(targetScroll, { duration: 0.6, easing: function(t) { return t * (2 - t); } });
+            } else {
+              window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+            }
+          }
+        }
+      }, { passive: true });
+
+      // Integración para trackpads de escritorio con desplazamiento lateral
       window.addEventListener('wheel', function(e) {
-        if (window.innerWidth >= 1024 && desktopST && desktopST.isActive) {
+        if (window.innerWidth >= 1024 && activeST && activeST.isActive) {
           if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
             if (window.lenis) {
               window.lenis.scrollTo(window.lenis.scroll + e.deltaX * 1.2, { immediate: false, duration: 0.4 });
@@ -3232,6 +3246,14 @@ ${getHeader('servicios')}
           }
         }
       }, { passive: true });
+
+      // Actualizar medidas al terminar de cargar o redimensionar
+      window.addEventListener('load', function() {
+        ScrollTrigger.refresh();
+      });
+      window.addEventListener('resize', function() {
+        ScrollTrigger.refresh();
+      });
     }
 
     if (document.readyState === 'loading') {

@@ -107,15 +107,20 @@
       opacity: 1;
       transform: translateY(0);
     }
-    /* EFECTO TEXT DECODE EN TÍTULOS GRANDES */
-    .decode-word {
+    /* EFECTO TEXT SCRAMBLE EN TÍTULOS GRANDES */
+    .scramble-word {
       display: inline-block;
       white-space: nowrap;
     }
-    .decode-char {
+    .scramble-char {
       display: inline-block;
-      min-width: 0.25em;
-      will-change: opacity, transform, filter;
+      will-change: opacity, color;
+      transition: color 0.1s ease;
+    }
+    .scramble-char.is-scrambling {
+      color: #F1B541;
+      opacity: 0.95;
+      text-shadow: 0 0 10px rgba(241, 181, 65, 0.5);
     }
     .line-indicator {
       display: inline-block;
@@ -1191,19 +1196,22 @@
         }
 
         // =========================================================================
-        // EFECTO TEXT DECODE EN TÍTULOS GRANDES A MEDIDA QUE APARECEN
+        // EFECTO TEXT SCRAMBLE EN TÍTULOS GRANDES A MEDIDA QUE APARECEN
         // =========================================================================
-        const headingsToDecode = document.querySelectorAll('h1, h2');
+        const SCRAMBLE_CHARS = '!/\\_<>[]{}—=+*^?#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const headingsToScramble = document.querySelectorAll('h1, h2');
 
-        headingsToDecode.forEach(heading => {
-          if (heading.closest('#joby-nav-overlay') || heading.dataset.decodeReady) return;
-          heading.dataset.decodeReady = "true";
+        headingsToScramble.forEach(heading => {
+          if (heading.closest('#joby-nav-overlay') || heading.dataset.scrambleReady) return;
+          heading.dataset.scrambleReady = "true";
 
           const originalText = heading.textContent.trim();
           if (!originalText || originalText.length < 3) return;
           heading.setAttribute('aria-label', originalText);
 
           // Procesa recursivamente para conservar estructuras hijas (span, br, clases de color)
+          const charData = [];
+
           function processNode(node) {
             if (node.nodeType === Node.TEXT_NODE) {
               const text = node.textContent;
@@ -1214,17 +1222,25 @@
               parts.forEach(part => {
                 if (!part) return;
                 if (/^\s+$/.test(part)) {
-                  fragment.appendChild(document.createTextNode(part));
+                  // Espacio blanco regular
+                  const spaceNode = document.createTextNode(part);
+                  fragment.appendChild(spaceNode);
                 } else {
                   const wordSpan = document.createElement('span');
-                  wordSpan.className = 'decode-word';
-                  wordSpan.setAttribute('aria-hidden', 'true');
+                  wordSpan.className = 'scramble-word';
 
                   for (let i = 0; i < part.length; i++) {
                     const char = part[i];
                     const charSpan = document.createElement('span');
-                    charSpan.className = 'decode-char';
+                    charSpan.className = 'scramble-char';
                     charSpan.textContent = char;
+                    charSpan.style.opacity = '0'; // Oculto hasta que le llegue la ola de scramble
+
+                    charData.push({
+                      span: charSpan,
+                      targetChar: char
+                    });
+
                     wordSpan.appendChild(charSpan);
                   }
                   fragment.appendChild(wordSpan);
@@ -1252,44 +1268,72 @@
           heading.innerHTML = '';
           heading.appendChild(newFragment);
 
-          const charNodes = heading.querySelectorAll('.decode-char');
-          if (charNodes.length === 0) return;
+          if (charData.length === 0) return;
 
-          // Estado inicial: transparente y ligeramente desplazado para decodificarse limpiamente
-          gsap.set(charNodes, {
-            opacity: 0,
-            y: 8,
-            filter: "blur(4px)"
-          });
+          // Función para ejecutar la animación de Scramble Text
+          const runScrambleText = () => {
+            if (heading.dataset.scrambled === "true") return;
+            heading.dataset.scrambled = "true";
 
-          // Función para ejecutar el efecto Text Decode limpio
-          const runTextDecode = () => {
-            if (heading.dataset.decoded === "true") return;
-            heading.dataset.decoded = "true";
+            // Medir y fijar ancho exacto de cada carácter para evitar vibraciones horizontales
+            charData.forEach(item => {
+              const rect = item.span.getBoundingClientRect();
+              if (rect.width > 0) {
+                item.span.style.width = rect.width + 'px';
+                item.span.style.textAlign = 'center';
+              }
+            });
 
-            gsap.to(charNodes, {
-              opacity: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.35,
-              stagger: {
-                each: 0.02,
-                from: "start"
-              },
-              ease: "power2.out"
+            const total = charData.length;
+            const staggerStep = 24; // Milisegundos entre letras
+            const scrambleDuration = 380; // Tiempo que cada letra permuta caracteres
+
+            charData.forEach((item, index) => {
+              const startDelay = index * staggerStep;
+              const isPunctuation = /^[.,;:?!/\\-]$/.test(item.targetChar);
+              const glyphPool = isPunctuation ? '!/|\\-' : SCRAMBLE_CHARS;
+              const duration = isPunctuation ? 180 : scrambleDuration;
+
+              setTimeout(() => {
+                item.span.style.opacity = '1';
+                item.span.classList.add('is-scrambling');
+
+                // Ciclo rápido de caracteres aleatorios
+                const interval = setInterval(() => {
+                  item.span.textContent = glyphPool[Math.floor(Math.random() * glyphPool.length)];
+                }, 45);
+
+                // Bloqueo y resolución del carácter definitivo
+                setTimeout(() => {
+                  clearInterval(interval);
+                  item.span.textContent = item.targetChar;
+                  item.span.classList.remove('is-scrambling');
+
+                  // Limpieza de anchos fijos al terminar todo el título para mantener adaptabilidad
+                  if (index === total - 1) {
+                    setTimeout(() => {
+                      charData.forEach(d => {
+                        d.span.style.width = '';
+                        d.span.style.textAlign = '';
+                      });
+                    }, 200);
+                  }
+                }, duration);
+
+              }, startDelay);
             });
           };
 
-          // Si es el hero-title, lanzarlo en la entrada inicial con ligero delay
+          // Si es el hero-title, lanzarlo en la entrada inicial con suave sincronización
           if (heading.classList.contains('hero-title')) {
-            setTimeout(runTextDecode, hasLoadedBefore ? 350 : 2550);
+            setTimeout(runScrambleText, hasLoadedBefore ? 350 : 2550);
           } else {
             // Disparar en scroll a medida que vayan apareciendo
             ScrollTrigger.create({
               trigger: heading,
               start: "top 88%",
               once: true,
-              onEnter: () => runTextDecode()
+              onEnter: () => runScrambleText()
             });
           }
         });

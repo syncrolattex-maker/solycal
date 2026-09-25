@@ -2132,6 +2132,7 @@ function getFooter(options = {}) {
 
           requestAnimationFrame(renderBitPatterns);
         }
+      }
     }
 
     if (document.readyState === 'loading') {

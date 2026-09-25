@@ -3440,9 +3440,8 @@ void main() {
         p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);
     }
 
-    vec4 C_mod = C - 1.0; 
-    vec4 background = p.x * C_mod * 2.0; 
-    vec4 result = background + S * S;
+    // Fondo 100% negro puro: se elimina el degradado azul/cian superior derecho
+    vec4 result = S * S;
     vec4 O = vec4(
         customTanh(result.r),
         customTanh(result.g),

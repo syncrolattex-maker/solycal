@@ -162,16 +162,21 @@ function getHead(title, description, canonicalPath = '') {
       opacity: 1;
       transform: translateY(0);
     }
-    /* EFECTO SCRUBBED RANDOM REVEAL (MadeWithGSAP Tutorial 090) */
-    .reveal-word {
+    /* EFECTO TEXT SCRAMBLE DECODE EN TÍTULOS GRANDES */
+    .scramble-word {
       display: inline-block;
       white-space: nowrap;
     }
-    .reveal-char {
+    .scramble-char {
       display: inline-block;
-      opacity: 0;
-      will-change: opacity, transform;
-      transition: opacity 0.15s ease;
+      min-width: 0.25em;
+      will-change: opacity, color;
+      transition: color 0.15s ease, opacity 0.15s ease;
+    }
+    .scramble-char.is-decoding {
+      color: #F1B541;
+      text-shadow: 0 0 10px rgba(241, 181, 65, 0.6);
+      opacity: 0.95;
     }
     .line-indicator {
       display: inline-block;
@@ -1148,28 +1153,27 @@ function getFooter(options = {}) {
             }, "-=0.25");
         }
 
-        // EFECTO SCRUBBED RANDOM REVEAL FIEL A MADEWITHGSAP TUTORIAL 090:
-        // Divide el texto conservando etiquetas hijas y clases (como text-brand-yellow)
-        // Cada carácter se anima de forma 100% nítida e independiente con orden aleatorio ('from: "random"')
-        // sincronizado con el scroll (scrub). Sin desenfoques ni saltos de maquetación.
-        const headingsToReveal = document.querySelectorAll('h1:not(.hero-title), h2');
+        // =========================================================================
+        // EFECTO TEXT SCRAMBLE DECODE EN TÍTULOS GRANDES A MEDIDA QUE APARECEN
+        // =========================================================================
+        const SCRAMBLE_CHARS = "01_/*#@%&=+<>{}[]XYZ0123456789";
+        const headingsToScramble = document.querySelectorAll('h1, h2');
 
-        headingsToReveal.forEach(heading => {
-          if (heading.closest('#joby-nav-overlay') || heading.dataset.splitReady) return;
-          heading.dataset.splitReady = "true";
+        headingsToScramble.forEach(heading => {
+          if (heading.closest('#joby-nav-overlay') || heading.dataset.scrambleReady) return;
+          heading.dataset.scrambleReady = "true";
 
           const originalText = heading.textContent.trim();
           if (!originalText || originalText.length < 3) return;
           heading.setAttribute('aria-label', originalText);
 
-          // Función recursiva para envolver caracteres manteniendo etiquetas span/br/clases intactas
+          // Procesa recursivamente para conservar estructuras hijas (span, br, clases de color)
           function processNode(node) {
             if (node.nodeType === Node.TEXT_NODE) {
               const text = node.textContent;
               if (!text) return document.createTextNode('');
-              
+
               const fragment = document.createDocumentFragment();
-              // Dividir respetando espacios y saltos
               const parts = text.split(/(\\s+)/);
               parts.forEach(part => {
                 if (!part) return;
@@ -1177,13 +1181,15 @@ function getFooter(options = {}) {
                   fragment.appendChild(document.createTextNode(part));
                 } else {
                   const wordSpan = document.createElement('span');
-                  wordSpan.className = 'reveal-word';
+                  wordSpan.className = 'scramble-word';
                   wordSpan.setAttribute('aria-hidden', 'true');
-                  
+
                   for (let i = 0; i < part.length; i++) {
+                    const char = part[i];
                     const charSpan = document.createElement('span');
-                    charSpan.className = 'reveal-char';
-                    charSpan.textContent = part[i];
+                    charSpan.className = 'scramble-char';
+                    charSpan.textContent = char;
+                    charSpan.dataset.targetChar = char;
                     wordSpan.appendChild(charSpan);
                   }
                   fragment.appendChild(wordSpan);
@@ -1211,28 +1217,69 @@ function getFooter(options = {}) {
           heading.innerHTML = '';
           heading.appendChild(newFragment);
 
-          const chars = heading.querySelectorAll('.reveal-char');
-          if (chars.length === 0) return;
+          const charNodes = heading.querySelectorAll('.scramble-char');
+          if (charNodes.length === 0) return;
 
-          // Estado inicial idéntico al inicio del Tutorial 090: caracteres ocultos/invisibles
-          gsap.set(chars, { opacity: 0 });
+          // Función para ejecutar el efecto Text Scramble Decode
+          const runScrambleDecode = () => {
+            if (heading.dataset.scrambled === "true") return;
+            heading.dataset.scrambled = "true";
 
-          // Animación sincronizada con el scroll (Scrubbed Random Reveal)
-          gsap.to(chars, {
-            opacity: 1,
-            ease: "none",
-            stagger: {
-              amount: 0.8,
-              from: "random" // Efecto clave 090: aparecen caracteres sueltos aleatoriamente
-            },
-            scrollTrigger: {
+            charNodes.forEach((node, idx) => {
+              const targetChar = node.dataset.targetChar;
+              // Si es un signo o puntuación común dejamos intacto o animamos poco
+              if (/^[.,;:?!/\\\\-]$/.test(targetChar)) {
+                gsap.to(node, { opacity: 1, duration: 0.3, delay: idx * 0.015 });
+                return;
+              }
+
+              const delay = idx * 0.022;
+              const scrambleDuration = 0.45;
+              const totalDuration = delay + scrambleDuration;
+
+              // Empezar invisible
+              gsap.set(node, { opacity: 0 });
+
+              // Timeline de decode para este carácter
+              const tl = gsap.timeline({ delay: delay });
+              tl.to(node, {
+                opacity: 1,
+                duration: 0.08,
+                onStart: () => {
+                  node.classList.add('is-decoding');
+                }
+              });
+
+              // Intervalo de caracteres aleatorios durante el tiempo de descifrado
+              let intervalId = null;
+              tl.add(() => {
+                intervalId = setInterval(() => {
+                  node.textContent = SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+                }, 40);
+              });
+
+              // Parar el scramble y fijar el carácter definitivo
+              tl.to({}, { duration: scrambleDuration });
+              tl.add(() => {
+                if (intervalId) clearInterval(intervalId);
+                node.textContent = targetChar;
+                node.classList.remove('is-decoding');
+              });
+            });
+          };
+
+          // Si es el hero-title, lanzarlo en la entrada inicial con ligero delay
+          if (heading.classList.contains('hero-title')) {
+            setTimeout(runScrambleDecode, hasLoadedBefore ? 350 : 2600);
+          } else {
+            // Disparar en scroll a medida que vayan apareciendo
+            ScrollTrigger.create({
               trigger: heading,
               start: "top 88%",
-              end: "bottom 65%",
-              scrub: 0.5,
-              toggleActions: "play reverse play reverse"
-            }
-          });
+              once: true,
+              onEnter: () => runScrambleDecode()
+            });
+          }
         });
 
         // GSAP ScrollTrigger para secciones y tarjetas editoriales

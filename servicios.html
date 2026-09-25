@@ -791,12 +791,12 @@
   
   <!-- Canvas Interactivo Bit Patterns fijo/absoluto abarcando toda la página excepto el footer -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="bit-patterns-wrap" style="clip-path: inset(0 0 0 0);">
-    <canvas id="bit-patterns-canvas" class="w-full h-full block opacity-60 hover:opacity-85 transition-opacity duration-700"></canvas>
+    <canvas id="bit-patterns-canvas" class="w-full h-full block opacity-30 hover:opacity-45 transition-opacity duration-700"></canvas>
   </div>
 
   <!-- Máscara de profundidad y contraste corporativo sobre el canvas para legibilidad óptima de textos y tarjetas -->
-  <div class="fixed inset-0 bg-gradient-to-b from-[#07080a]/75 via-[#07080a]/35 to-[#07080a]/80 pointer-events-none z-[1]"></div>
-  <div class="fixed inset-0 dot-grid opacity-20 pointer-events-none z-[1]"></div>
+  <div class="fixed inset-0 bg-gradient-to-b from-[#07080a]/80 via-[#07080a]/40 to-[#07080a]/85 pointer-events-none z-[1]"></div>
+  <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
 
   <!-- CONTENIDO FRONTAL DE LA PÁGINA (Z-INDEX SUPERIOR) -->
   <div class="relative z-10">
@@ -806,13 +806,6 @@
       
       <!-- Ambient background subtle amber aura -->
       <div class="absolute top-1/2 left-1/3 -translate-y-1/2 w-[700px] h-[700px] bg-brand-yellow/[0.04] rounded-full blur-[150px] pointer-events-none"></div>
-
-      <!-- Massive industrial watermark in background -->
-      <div class="absolute inset-0 flex items-center justify-end pr-8 sm:pr-16 pointer-events-none select-none overflow-hidden">
-        <span class="font-display font-extrabold text-[18vw] text-white/[0.025] leading-none tracking-tighter">
-          SOLYCAL
-        </span>
-      </div>
 
       <!-- Hero Content Container -->
       <div id="services-hero-content" class="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 py-20 relative z-10 flex flex-col justify-center">
@@ -925,20 +918,17 @@
       <div class="hscroll-track">
 
         <!-- PANEL 01: Calderería Industrial -->
-        <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="0">
+        <div class="hscroll-panel" data-panel-idx="0">
           <img src="assets/img/Servicios/caldereria-industrial.jpeg"
                alt="Calderería Industrial Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               style="-webkit-mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%);"
                loading="eager">
 
           <div class="absolute inset-0 pointer-events-none z-[2]"
-               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.92) 42%, rgba(7,8,10,0.45) 58%, transparent 72%, transparent 80%, rgba(7,8,10,0.50) 90%, rgba(7,8,10,0.95) 97%, #07080a 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
-
-          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
-            01
-          </span>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
@@ -977,36 +967,20 @@
               </div>
             </div>
           </div>
-
-          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            <div class="flex items-center gap-2">
-              <span class="text-brand-yellow font-bold">01</span>
-              <span>/ 05</span>
-              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
-              <span class="hidden sm:inline">CALDERERÍA INDUSTRIAL</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="hidden sm:inline">DESPLAZA PARA CONTINUAR</span>
-              <span class="text-brand-yellow">&rarr;</span>
-            </div>
-          </div>
         </div>
 
         <!-- PANEL 02: Corte Plasma HD -->
-        <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="1">
+        <div class="hscroll-panel" data-panel-idx="1">
           <img src="assets/img/Servicios/corte-plasma-hd.jpeg"
                alt="Corte Plasma HD Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               style="-webkit-mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%);"
                loading="eager">
 
           <div class="absolute inset-0 pointer-events-none z-[2]"
-               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.92) 42%, rgba(7,8,10,0.45) 58%, transparent 72%, transparent 80%, rgba(7,8,10,0.50) 90%, rgba(7,8,10,0.95) 97%, #07080a 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
-
-          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
-            02
-          </span>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
@@ -1045,36 +1019,20 @@
               </div>
             </div>
           </div>
-
-          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            <div class="flex items-center gap-2">
-              <span class="text-brand-yellow font-bold">02</span>
-              <span>/ 05</span>
-              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
-              <span class="hidden sm:inline">CORTE PLASMA HD</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="hidden sm:inline">DESPLAZA PARA CONTINUAR</span>
-              <span class="text-brand-yellow">&rarr;</span>
-            </div>
-          </div>
         </div>
 
         <!-- PANEL 03: Soldadura Técnica -->
-        <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="2">
+        <div class="hscroll-panel" data-panel-idx="2">
           <img src="assets/img/Servicios/soldadura-tecnica.jpeg"
                alt="Soldadura Técnica Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               style="-webkit-mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%);"
                loading="eager">
 
           <div class="absolute inset-0 pointer-events-none z-[2]"
-               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.92) 42%, rgba(7,8,10,0.45) 58%, transparent 72%, transparent 80%, rgba(7,8,10,0.50) 90%, rgba(7,8,10,0.95) 97%, #07080a 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
-
-          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
-            03
-          </span>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
@@ -1113,36 +1071,20 @@
               </div>
             </div>
           </div>
-
-          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            <div class="flex items-center gap-2">
-              <span class="text-brand-yellow font-bold">03</span>
-              <span>/ 05</span>
-              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
-              <span class="hidden sm:inline">SOLDADURA TÉCNICA HOMOLOGADA</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="hidden sm:inline">DESPLAZA PARA CONTINUAR</span>
-              <span class="text-brand-yellow">&rarr;</span>
-            </div>
-          </div>
         </div>
 
         <!-- PANEL 04: Estructuras Metálicas -->
-        <div class="hscroll-panel border-r border-white/[0.08]" data-panel-idx="3">
+        <div class="hscroll-panel" data-panel-idx="3">
           <img src="assets/img/Servicios/estructuras-metalicas.jpeg"
                alt="Estructuras Metálicas Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               style="-webkit-mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%);"
                loading="eager">
 
           <div class="absolute inset-0 pointer-events-none z-[2]"
-               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.92) 42%, rgba(7,8,10,0.45) 58%, transparent 72%, transparent 80%, rgba(7,8,10,0.50) 90%, rgba(7,8,10,0.95) 97%, #07080a 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
-
-          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
-            04
-          </span>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
@@ -1181,19 +1123,6 @@
               </div>
             </div>
           </div>
-
-          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            <div class="flex items-center gap-2">
-              <span class="text-brand-yellow font-bold">04</span>
-              <span>/ 05</span>
-              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
-              <span class="hidden sm:inline">ESTRUCTURAS METÁLICAS CE</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="hidden sm:inline">DESPLAZA PARA CONTINUAR</span>
-              <span class="text-brand-yellow">&rarr;</span>
-            </div>
-          </div>
         </div>
 
         <!-- PANEL 05: Montaje en Obra -->
@@ -1201,16 +1130,13 @@
           <img src="assets/img/Servicios/montaje-instalacion.jpeg"
                alt="Montaje en Obra Solycal"
                class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-[1]"
+               style="-webkit-mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, black 14%, black 82%, transparent 100%);"
                loading="eager">
 
           <div class="absolute inset-0 pointer-events-none z-[2]"
-               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.96) 42%, rgba(7,8,10,0.80) 58%, rgba(7,8,10,0.40) 74%, transparent 100%);"></div>
+               style="background: linear-gradient(90deg, #07080a 0%, #07080a 28%, rgba(7,8,10,0.92) 42%, rgba(7,8,10,0.45) 58%, transparent 72%, transparent 80%, rgba(7,8,10,0.50) 90%, rgba(7,8,10,0.95) 97%, #07080a 100%);"></div>
           <div class="absolute inset-0 pointer-events-none z-[2]"
                style="background: linear-gradient(180deg, rgba(7,8,10,0.7) 0%, transparent 18%, transparent 78%, rgba(7,8,10,0.9) 100%);"></div>
-
-          <span class="absolute right-8 sm:right-16 lg:right-24 bottom-12 font-display font-extrabold text-[120px] sm:text-[180px] lg:text-[240px] text-white/[0.06] select-none pointer-events-none leading-none z-[3]">
-            05
-          </span>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-20 h-full flex flex-col justify-center">
             <div class="max-w-2xl space-y-6 pt-16 sm:pt-20">
@@ -1247,19 +1173,6 @@
                 <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
                 <span class="font-mono text-xs sm:text-sm text-neutral-300 uppercase tracking-wider bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Montaje en Obra Civil &bull; Cobertura Nacional</span>
               </div>
-            </div>
-          </div>
-
-          <div class="absolute bottom-5 left-6 sm:left-12 lg:left-20 right-6 sm:right-12 lg:right-20 flex items-center justify-between pointer-events-none z-20 font-mono text-xs text-neutral-400 uppercase tracking-widest">
-            <div class="flex items-center gap-2">
-              <span class="text-brand-yellow font-bold">05</span>
-              <span>/ 05</span>
-              <span class="mx-2 text-neutral-600 hidden sm:inline">|</span>
-              <span class="hidden sm:inline">MONTAJE E INSTALACIÓN EN OBRA</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="hidden sm:inline">FIN DE SECCIÓN</span>
-              <span class="text-brand-yellow">&darr;</span>
             </div>
           </div>
         </div>
@@ -2380,13 +2293,11 @@
           let falloff = 220;
           let steps = 14;
           
-          // Colores Corporativos Solycal:
-          // color1: Amarillo técnico / Oro industrial (#F1B541)
-          // color2: Blanco metálico / Acero (#FFFFFF)
-          const color1 = '#F1B541';
-          const color2 = '#FFFFFF';
-          const dotColor1 = '#F1B541';
-          const dotColor2 = '#E5E7EB';
+          // Números en blanco sutil y tenue (sin amarillo para no interferir con el título)
+          const color1 = 'rgba(255, 255, 255, 0.40)';
+          const color2 = 'rgba(255, 255, 255, 0.22)';
+          const dotColor1 = 'rgba(255, 255, 255, 0.30)';
+          const dotColor2 = 'rgba(255, 255, 255, 0.15)';
 
           let width = 0;
           let height = 0;

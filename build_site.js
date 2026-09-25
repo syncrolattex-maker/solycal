@@ -3402,142 +3402,54 @@ ${getHeader('instalaciones')}
 ${getFooter()}
 `;
 
-// --- MADE FOR AWARD COMPONENT 0024: THREE.JS WEBGL AURORA GRADIENT SHADER ---
-const auroraVertexShader = `void main() { gl_Position = vec4(position, 1.0); }`;
+// --- STARSHIP FLIGHT 7 DEBRIS SHADER (Adapted from Xor / Noel - OpenProcessing #2666434) ---
+const starshipVertexShader = `void main() { gl_Position = vec4(position, 1.0); }`;
 
-const auroraFragmentShader = `precision highp float;
+const starshipFragmentShader = `precision highp float;
 
-uniform float uTime;
-uniform vec2  uRes;
-uniform vec2  uMouse;
-uniform vec2  uMouseUV;
-uniform float uReveal;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform sampler2D iChannel0;
+uniform vec2 iMouse;
 
-uniform float uHorizon;
-uniform float uIntensity;
-uniform float uSpreadMax;
-uniform float uCoreGlow;
-uniform float uFlowSpeed;
-uniform float uWaveAmount;
-uniform float uBreath;
-uniform float uColorfulness;
-uniform vec3  uColWhite;
-uniform vec3  uColOrange;
-uniform vec3  uColRed;
-uniform vec3  uColCyan;
-uniform vec3  uColMagenta;
-uniform vec3  uColGold;
-uniform float uParallax;
-uniform float uMouseGlow;
-uniform float uMouseGlowSize;
-uniform float uMouseBend;
-
-float hash(vec2 p) {
-  p = fract(p * vec2(234.34, 435.345));
-  p += dot(p, p + 34.23);
-  return fract(p.x * p.y);
-}
-
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
-    mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
-    u.y
-  );
-}
-
-float fbm(vec2 p) {
-  float v = 0.0;
-  float a = 0.5;
-  for (int i = 0; i < 4; i++) {
-    v += a * noise(p);
-    p = p * 2.03 + vec2(17.3, 9.1);
-    a *= 0.5;
-  }
-  return v;
+// Custom tanh function for GLSL ES 1.00 with numerical clamp safeguard
+float customTanh(float x) {
+  float cx = clamp(x, -20.0, 20.0);
+  float e2x = exp(2.0 * cx);
+  return (e2x - 1.0) / (e2x + 1.0);
 }
 
 void main() {
-  vec2 uv = gl_FragCoord.xy / uRes;
-  float aspect = uRes.x / uRes.y;
+    vec2 r = iResolution.xy;
+    vec2 p = (gl_FragCoord.xy + gl_FragCoord.xy - r) / r.y * mat2(3.0, 4.0, 4.0, -3.0) / 50.0;
+    
+    // Parallax interactivo sutil con el cursor
+    p += (iMouse.xy / max(r.xy, vec2(1.0)) - 0.5) * 0.04;
 
-  uv += uMouse * vec2(-0.03, -0.02) * uParallax;
+    vec4 S = vec4(0.0);
+    vec4 C = vec4(1.0, 2.0, 3.0, 0.0);
+    vec4 W;
+    float t = iTime; 
+    float T = 0.1 * t + p.y;
 
-  float x = uv.x;
-  float d = uv.y - uHorizon;
+    for (int i = 0; i < 30; i++) {
+        float fi = float(i);
+        S += (cos(W = sin(fi) * C) + 1.0)
+        * exp(sin(fi + fi * T))
+        / length(max(p, p / vec2(2.0, (texture2D(iChannel0, p / exp(W.x) + vec2(fi / 20.0, mod(t, 32.0) / 32.0)).r + 0.5) * 40.0))) / 1e4;
+        p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);
+    }
 
-  float n1 = fbm(vec2(x * 3.0 - uTime * 0.06, uv.y * 2.0 + uTime * 0.045));
-  float n2 = fbm(vec2(x * 7.0 + uTime * 0.05, uv.y * 5.0 - uTime * 0.06));
-
-  float grow = smoothstep(0.06, 0.72, x + (n1 - 0.5) * 0.12);
-  grow = pow(grow, 1.7);
-
-  float spread = mix(0.014, uSpreadMax, pow(smoothstep(0.18, 1.05, x), 2.1));
-
-  float dd = d + (n1 - 0.5) * uWaveAmount * smoothstep(0.25, 0.9, x);
-
-  vec2 mq = (uv - uMouseUV) * vec2(aspect, 1.0) / max(uMouseGlowSize, 0.01);
-  float mGauss = exp(-dot(mq, mq));
-  dd -= mGauss * (uMouseUV.y - uHorizon) * uMouseBend;
-
-  float band = exp(-abs(dd) / spread);
-  float coreGlow = exp(-abs(d) / 0.028) * grow * uCoreGlow;
-  float halo = exp(-abs(dd) / (spread * 2.6)) * 0.35;
-
-  float light = (band + halo) * grow + coreGlow;
-
-  float flow = fbm(vec2(x * 4.5 + n1, abs(dd) * 3.5 - uTime * uFlowSpeed));
-  light *= 0.72 + 0.55 * flow;
-
-  light *= 1.0 - uBreath + uBreath * sin(uTime * 0.5 + x * 2.0);
-  light += mGauss * uMouseGlow * (0.7 + 0.3 * sin(uTime * 0.8));
-  light *= uIntensity;
-
-  float colorAmt = smoothstep(0.25, 0.85, x) * uColorfulness;
-  float up = smoothstep(0.0, 0.45, dd);
-  float dn = smoothstep(0.0, -0.4, dd);
-
-  vec3 col = uColWhite;
-  col = mix(col, uColGold, smoothstep(0.06, 0.16, abs(dd)) * smoothstep(0.35, 0.0, abs(dd)) * colorAmt * 0.85);
-  col = mix(col, uColOrange, clamp(up * (1.2 + n2 * 0.6) * colorAmt, 0.0, 1.0));
-  col = mix(col, uColRed, clamp((up * 2.4 - 0.9) * colorAmt, 0.0, 1.0));
-  col = mix(col, uColMagenta, clamp((n2 - 0.55) * 2.2, 0.0, 1.0) * (up + dn) * colorAmt * 0.65);
-  col = mix(col, uColCyan, smoothstep(0.72, 1.0, x + (n2 - 0.5) * 0.08) * 0.75);
-  col = mix(col, mix(uColWhite, uColGold, 0.45), dn * 0.45);
-
-  vec3 color = col * light;
-
-  vec2 ep = (uv - vec2(0.86, 0.0)) * vec2(1.2 * aspect * 0.6, 2.0);
-  float ember = exp(-dot(ep, ep)) * smoothstep(0.0, -0.12, d);
-  color += uColRed * ember * (0.55 + 0.1 * sin(uTime * 0.7));
-
-  vec2 lp = (uv - vec2(0.02, 0.0)) * vec2(2.2, 2.6);
-  color += mix(uColRed, uColOrange, 0.5) * exp(-dot(lp, lp)) * smoothstep(0.0, -0.12, d) * 0.22;
-
-  float sheen = smoothstep(0.0, -0.5, d) * 0.06 * grow;
-  color += vec3(0.95, 0.72, 0.28) * sheen;
-
-  vec2 sp = uv * vec2(aspect, 1.0) * 90.0;
-  vec2 cell = floor(sp);
-  vec2 fp = fract(sp) - 0.5;
-  float star = step(0.997, hash(cell)) * smoothstep(0.16, 0.0, length(fp));
-  float twinkle = 0.5 + 0.5 * sin(uTime * 1.5 + hash(cell + 7.0) * 50.0);
-  float darkness = 1.0 - clamp(light * 3.0, 0.0, 1.0);
-  color += vec3(1.0, 0.94, 0.80) * star * twinkle * darkness * smoothstep(0.75, 0.35, x) * smoothstep(0.35, 0.6, uv.y) * 0.45;
-
-  float vig = smoothstep(0.0, 0.35, uv.y) * 0.15 + 0.85;
-  vig *= 1.0 - 0.45 * pow(1.0 - uv.y, 3.0);
-  vig *= 1.0 - 0.35 * pow(uv.y, 4.0);
-  vig *= 1.0 - 0.30 * pow(clamp(1.0 - x * 1.4, 0.0, 1.0), 2.0);
-  vig *= 1.0 - 0.5 * pow(x, 5.0) * pow(uv.y, 5.0);
-  color *= vig;
-
-  color = 1.0 - exp(-color * 1.5);
-
-  gl_FragColor = vec4(color * uReveal, 1.0);
+    vec4 C_mod = C - 1.0; 
+    vec4 background = p.x * C_mod * 2.0; 
+    vec4 result = background + S * S;
+    vec4 O = vec4(
+        customTanh(result.r),
+        customTanh(result.g),
+        customTanh(result.b),
+        1.0
+    );
+    gl_FragColor = O;
 }`;
 
 // 4. GENERATE CALIDAD.HTML (Quality and Certification Page with Aurora Shader Background)
@@ -3547,9 +3459,9 @@ ${getHeader('calidad', true)}
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE CALIDAD CON THREE.JS SHADER AURORA HERO (Made for Award Component 0024) -->
 <div id="calidad-page-container" class="relative min-h-screen overflow-hidden">
   
-  <!-- Canvas WebGL Aurora Fijo de fondo interactivo -->
-  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="aurora-wrap">
-    <canvas id="aurora-canvas" class="w-full h-full block"></canvas>
+  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (OpenProcessing #2666434) -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
+    <canvas id="debris-canvas" class="w-full h-full block"></canvas>
   </div>
 
   <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
@@ -3915,66 +3827,100 @@ ${getHeader('calidad', true)}
   (function() {
     if (typeof THREE === 'undefined') return;
 
-    const canvas = document.getElementById('aurora-canvas');
+    const canvas = document.getElementById('debris-canvas');
     if (!canvas) return;
 
-    const config = {
-      horizon: 0.46,
-      intensity: 1.45,
-      spreadMax: 0.88,
-      coreGlow: 1.35,
-      flowSpeed: 0.42,
-      waveAmount: 0.24,
-      breath: 0.05,
-      colorfulness: 1.0,
-      colWhite: '#FFFDF5',    // Núcleo incandescente arco eléctrico / plasma blanco cálido
-      colOrange: '#F1B541',   // Amarillo corporativo Solycal principal
-      colRed: '#B45309',      // Ámbar forja profunda / acero fundido
-      colCyan: '#FDE68A',     // Destello dorado titanio / luz de soldadura
-      colMagenta: '#E5A52A',  // Acento secundario corporativo Solycal
-      colGold: '#F59E0B',     // Filamentos dorados cálidos
-      parallax: 1.4,
-      mouseGlow: 0.38,
-      mouseGlowSize: 0.22,
-      mouseBend: 0.45
-    };
+    // Generador procedural de textura de ruido Perlin para iChannel0 (256x256)
+    function createPerlinNoiseTexture() {
+      const size = 256;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      const imgData = ctx.createImageData(size, size);
+      const data = imgData.data;
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+      const p = new Uint8Array(256);
+      for (let i = 0; i < 256; i++) p[i] = i;
+      for (let i = 255; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = p[i]; p[i] = p[j]; p[j] = tmp;
+      }
+      const perm = new Uint8Array(512);
+      for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+
+      function grad(hash, x, y) {
+        const h = hash & 3;
+        const u = h < 2 ? x : y;
+        const v = h < 2 ? y : x;
+        return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+      }
+      function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      function lerp(a, b, t) { return a + t * (b - a); }
+      function perlin2D(x, y) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        const xf = x - Math.floor(x);
+        const yf = y - Math.floor(y);
+        const u = fade(xf);
+        const v = fade(yf);
+        const aa = perm[perm[X] + Y];
+        const ab = perm[perm[X] + Y + 1];
+        const ba = perm[perm[X + 1] + Y];
+        const bb = perm[perm[X + 1] + Y + 1];
+        const x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u);
+        const x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u);
+        return lerp(x1, x2, v);
+      }
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          let n = 0;
+          let amp = 1;
+          let freq = 0.035;
+          for (let o = 0; o < 3; o++) {
+            n += perlin2D(x * freq, y * freq) * amp;
+            freq *= 2;
+            amp *= 0.5;
+          }
+          const val = Math.floor(Math.min(255, Math.max(0, (n * 0.5 + 0.5) * 255)));
+          const idx = (y * size + x) * 4;
+          data[idx] = val;
+          data[idx + 1] = val;
+          data[idx + 2] = val;
+          data[idx + 3] = 255;
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.minFilter = THREE.LinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      return tex;
+    }
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    renderer.setPixelRatio(dpr);
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+    const noiseTexture = createPerlinNoiseTexture();
+
     const uniforms = {
-      uTime: { value: 0 },
-      uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      uMouse: { value: new THREE.Vector2(0, 0) },
-      uMouseUV: { value: new THREE.Vector2(0.63, 0.37) },
-      uReveal: { value: 1 },
-      uHorizon: { value: config.horizon },
-      uIntensity: { value: config.intensity },
-      uSpreadMax: { value: config.spreadMax },
-      uCoreGlow: { value: config.coreGlow },
-      uFlowSpeed: { value: config.flowSpeed },
-      uWaveAmount: { value: config.waveAmount },
-      uBreath: { value: config.breath },
-      uColorfulness: { value: config.colorfulness },
-      uColWhite: { value: new THREE.Color(config.colWhite) },
-      uColOrange: { value: new THREE.Color(config.colOrange) },
-      uColRed: { value: new THREE.Color(config.colRed) },
-      uColCyan: { value: new THREE.Color(config.colCyan) },
-      uColMagenta: { value: new THREE.Color(config.colMagenta) },
-      uColGold: { value: new THREE.Color(config.colGold) },
-      uParallax: { value: config.parallax },
-      uMouseGlow: { value: config.mouseGlow },
-      uMouseGlowSize: { value: config.mouseGlowSize },
-      uMouseBend: { value: config.mouseBend }
+      iTime: { value: 0 },
+      iResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+      iChannel0: { value: noiseTexture },
+      iMouse: { value: new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5) }
     };
 
     const material = new THREE.ShaderMaterial({
       uniforms: uniforms,
-      vertexShader: ${JSON.stringify(auroraVertexShader)},
-      fragmentShader: ${JSON.stringify(auroraFragmentShader)},
+      vertexShader: ${JSON.stringify(starshipVertexShader)},
+      fragmentShader: ${JSON.stringify(starshipFragmentShader)},
       depthWrite: false,
       depthTest: false
     });
@@ -3985,40 +3931,25 @@ ${getHeader('calidad', true)}
     function onResize() {
       const w = window.innerWidth;
       const h = window.innerHeight;
+      const currentDpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      renderer.setPixelRatio(currentDpr);
       renderer.setSize(w, h, false);
-      uniforms.uRes.value.set(w * renderer.getPixelRatio(), h * renderer.getPixelRatio());
-      const isPortrait = h > w;
-      uniforms.uHorizon.value = isPortrait ? 0.5 : config.horizon;
-      uniforms.uIntensity.value = config.intensity * (isPortrait ? 1.25 : 1);
-      uniforms.uSpreadMax.value = config.spreadMax * (isPortrait ? 1.25 : 1);
+      uniforms.iResolution.value.set(w * currentDpr, h * currentDpr);
     }
     onResize();
     window.addEventListener('resize', onResize);
 
-    const targetMouse = new THREE.Vector2(0, 0);
-    const targetMouseUV = new THREE.Vector2(0.63, 0.37);
-
+    const targetMouse = new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5);
     window.addEventListener('pointermove', function(e) {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const nx = e.clientX / w;
-      const ny = e.clientY / h;
-      targetMouse.set(nx - 0.5, -(ny - 0.5));
-      targetMouseUV.set(nx, 1 - ny);
-    });
-
-    window.addEventListener('pointerleave', function() {
-      targetMouse.set(0, 0);
-      targetMouseUV.set(0.63, config.horizon);
+      targetMouse.set(e.clientX, window.innerHeight - e.clientY);
     });
 
     let startTime = performance.now();
     function renderLoop() {
       requestAnimationFrame(renderLoop);
       const elapsed = (performance.now() - startTime) * 0.001;
-      uniforms.uTime.value = elapsed;
-      uniforms.uMouse.value.lerp(targetMouse, 0.04);
-      uniforms.uMouseUV.value.lerp(targetMouseUV, 0.06);
+      uniforms.iTime.value = elapsed;
+      uniforms.iMouse.value.lerp(targetMouse, 0.05);
       renderer.render(scene, camera);
     }
     requestAnimationFrame(renderLoop);

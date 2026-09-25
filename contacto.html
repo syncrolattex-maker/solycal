@@ -802,16 +802,21 @@
   <!-- Fondo técnico tenue -->
   <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
 
+  <!-- CANVAS FULLWIDTH PARTICLE TEXT (EPHYRION OPENPROCESSING #394108) A NIVEL GLOBAL DE LA SECCIÓN -->
+  <div class="absolute inset-0 w-full h-full pointer-events-none z-[3] overflow-hidden" id="particle-text-fullwidth-wrap">
+    <canvas id="particle-text-canvas" class="w-full h-full block"></canvas>
+  </div>
+
   <!-- 01 CABECERA FRONTAL: HABLEMOS DE TU PRÓXIMO PROYECTO -->
   <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
     <div class="max-w-2xl lg:max-w-3xl space-y-6 reveal">
       <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">// 06 CONTACTO &amp; COTIZACIÓN</span>
-      <!-- CABECERA FRONTAL CON EFECTO PARTICLE TEXT (EPHYRION OPENPROCESSING #394108) -->
-      <div id="particle-text-wrapper" class="relative w-full pointer-events-auto select-none min-h-[90px] sm:min-h-[140px] lg:min-h-[160px]">
-        <h1 id="contact-hero-fallback" class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+      
+      <!-- Placeholder tipográfico en el flujo del documento (mantiene espaciado y layout exacto) -->
+      <div id="particle-text-anchor" class="relative w-full select-none cursor-pointer" title="Haz clic o pasa el ratón para interactuar con las partículas a ancho completo">
+        <h1 id="contact-hero-fallback" class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight invisible select-none">
           Hablemos de tu próximo proyecto.
         </h1>
-        <canvas id="particle-text-canvas" class="hidden block cursor-pointer transition-opacity duration-300" title="Haz clic o pasa el ratón para interactuar con las partículas"></canvas>
       </div>
       <p class="text-neutral-300 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
         Envíanos planos, especificaciones o concerta una visita técnica a nuestra planta en Torrent (Valencia).
@@ -1177,13 +1182,13 @@
   })();
 </script>
 
-<!-- SCRIPT: PARTICLE TEXT ENGINE (EPHYRION OPENPROCESSING #394108) -->
+<!-- SCRIPT: FULLWIDTH PARTICLE TEXT ENGINE (EPHYRION OPENPROCESSING #394108) -->
 <script>
   (function() {
-    const wrap = document.getElementById('particle-text-wrapper');
+    const hero = document.getElementById('contacto-hero');
     const fallback = document.getElementById('contact-hero-fallback');
     const canvas = document.getElementById('particle-text-canvas');
-    if (!wrap || !canvas || !fallback) return;
+    if (!hero || !canvas || !fallback) return;
 
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -1193,34 +1198,40 @@
     let mouseX = -9999;
     let mouseY = -9999;
     let mouseInside = false;
+    let canvasW = 0;
+    let canvasH = 0;
 
     class Particle {
-      constructor(endX, endY, startX, startY, isAccent, w, h) {
+      constructor(endX, endY, isAccent) {
         this.endX = endX;
         this.endY = endY;
-        this.w = w;
-        this.h = h;
         this.size = isAccent ? 2.2 : 1.6;
         this.color = isAccent ? '#F1B541' : (Math.random() < 0.2 ? '#FDE68A' : '#FFFFFF');
-        this.duration = 0.8 + Math.random() * 1.5;
         this.ox = 0;
         this.oy = 0;
         this.vx = 0;
         this.vy = 0;
-        this.reset(startX, startY);
+        this.reset();
       }
 
       reset(sx, sy) {
         this.f = 0;
-        this.startX = sx;
-        this.startY = sy;
+        this.duration = 0.85 + Math.random() * 1.55;
+        if (typeof sx === 'number' && typeof sy === 'number') {
+          this.startX = sx;
+          this.startY = sy;
+        } else {
+          // Dispersión inicial sin límites a lo ancho y alto del hero (fullwidth)
+          this.startX = Math.random() * (canvasW || window.innerWidth);
+          this.startY = Math.random() * (canvasH || 700) * 0.9;
+        }
         const angle = Math.random() * Math.PI * 2;
-        const spread = Math.max(this.w, this.h);
-        const dist = 60 + Math.random() * spread * 0.9;
-        this.anchorX = sx + Math.cos(angle) * dist;
-        this.anchorY = sy + Math.sin(angle) * dist;
-        this.currentX = sx;
-        this.currentY = sy;
+        const spread = Math.max(canvasW || window.innerWidth, canvasH || 700);
+        const dist = 120 + Math.random() * spread * 0.75;
+        this.anchorX = this.startX + Math.cos(angle) * dist;
+        this.anchorY = this.startY + Math.sin(angle) * dist;
+        this.currentX = this.startX;
+        this.currentY = this.startY;
       }
 
       update(delta, mx, my, mInside) {
@@ -1243,25 +1254,25 @@
           this.currentY = this.endY;
         }
 
-        // Repulsión elástica interactiva al pasar el cursor
+        // Repulsión elástica interactiva en toda la pantalla (radio 65px)
         if (mInside) {
           const px = this.currentX + this.ox;
           const py = this.currentY + this.oy;
           const dx = px - mx;
           const dy = py - my;
           const dSq = dx * dx + dy * dy;
-          const hoverRadius = 55;
+          const hoverRadius = 65;
           if (dSq < hoverRadius * hoverRadius && dSq > 0.1) {
             const d = Math.sqrt(dSq);
-            const force = (1 - d / hoverRadius) * 14;
+            const force = (1 - d / hoverRadius) * 16;
             this.vx += (dx / d) * force;
             this.vy += (dy / d) * force;
           }
         }
 
-        // Muelle elástico de retorno a la letra
-        this.vx += -this.ox * 0.15;
-        this.vy += -this.oy * 0.15;
+        // Muelle elástico de retorno a su posición en la letra
+        this.vx += -this.ox * 0.14;
+        this.vy += -this.oy * 0.14;
         this.vx *= 0.82;
         this.vy *= 0.82;
         this.ox += this.vx;
@@ -1275,24 +1286,40 @@
     }
 
     function build() {
-      const containerWidth = wrap.clientWidth || 700;
-      const isMobile = containerWidth < 640;
+      const heroRect = hero.getBoundingClientRect();
+      canvasW = hero.clientWidth;
+      canvasH = hero.clientHeight;
 
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(canvasW * dpr);
+      canvas.height = Math.round(canvasH * dpr);
+      canvas.style.width = canvasW + 'px';
+      canvas.style.height = canvasH + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Calcular la posición exacta del placeholder en el layout general
+      const fallbackRect = fallback.getBoundingClientRect();
+      const textTargetX = fallbackRect.left - heroRect.left;
+      const textTargetY = fallbackRect.top - heroRect.top;
+      const maxTextWidth = Math.max(260, fallbackRect.width || (canvasW < 640 ? canvasW - 48 : 720));
+
+      const isMobile = canvasW < 640;
       let fontSize = 68;
-      if (containerWidth < 380) fontSize = 34;
-      else if (containerWidth < 480) fontSize = 40;
-      else if (containerWidth < 768) fontSize = 52;
-      else if (containerWidth < 1024) fontSize = 62;
+      if (canvasW < 380) fontSize = 34;
+      else if (canvasW < 480) fontSize = 40;
+      else if (canvasW < 768) fontSize = 52;
+      else if (canvasW < 1024) fontSize = 62;
 
+      // Canvas offscreen para rasterizar el texto con la tipografía Syne
       const off = document.createElement('canvas');
       const offCtx = off.getContext('2d');
       const font = '800 ' + fontSize + 'px "Syne", "Plus Jakarta Sans", sans-serif';
       offCtx.font = font;
 
+      // Word wrapping del texto: "Hablemos de tu próximo proyecto."
       const words = ["Hablemos", "de", "tu", "próximo", "proyecto."];
       const lines = [];
       let currentLine = words[0];
-      const maxTextWidth = containerWidth - 10;
 
       for (let i = 1; i < words.length; i++) {
         const test = currentLine + " " + words[i];
@@ -1306,20 +1333,15 @@
       lines.push(currentLine);
 
       const lineHeight = Math.round(fontSize * 1.15);
-      const totalHeight = lines.length * lineHeight + 16;
+      const offTextHeight = lines.length * lineHeight + 20;
+      const offTextWidth = Math.round(maxTextWidth + 20);
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(containerWidth * dpr);
-      canvas.height = Math.round(totalHeight * dpr);
-      canvas.style.width = containerWidth + 'px';
-      canvas.style.height = totalHeight + 'px';
-
-      off.width = canvas.width;
-      off.height = canvas.height;
+      off.width = Math.round(offTextWidth * dpr);
+      off.height = Math.round(offTextHeight * dpr);
       offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       offCtx.fillStyle = '#000000';
-      offCtx.fillRect(0, 0, containerWidth, totalHeight);
+      offCtx.fillRect(0, 0, offTextWidth, offTextHeight);
       offCtx.font = font;
       offCtx.textBaseline = 'top';
       offCtx.textAlign = 'left';
@@ -1335,8 +1357,6 @@
       const data = imgData.data;
       const step = isMobile ? (dpr > 1 ? 5 : 4) : (dpr > 1 ? 4 : 3);
       const newParticles = [];
-      const centerX = containerWidth / 2;
-      const centerY = totalHeight / 2;
 
       for (let py = 0; py < off.height; py += step) {
         for (let px = 0; px < off.width; px += step) {
@@ -1344,23 +1364,16 @@
           const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
 
           if (brightness > 85) {
-            const targetX = px / dpr;
-            const targetY = py / dpr;
+            const targetX = textTargetX + px / dpr;
+            const targetY = textTargetY + py / dpr;
             const isAccent = (Math.random() < 0.12);
-            newParticles.push(new Particle(targetX, targetY, centerX, centerY, isAccent, containerWidth, totalHeight));
+            newParticles.push(new Particle(targetX, targetY, isAccent));
           }
         }
       }
 
       particles = newParticles;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      ctx.fillStyle = '#07080a';
-      ctx.fillRect(0, 0, containerWidth, totalHeight);
-
-      fallback.classList.add('sr-only');
-      fallback.classList.remove('hero-title');
-      canvas.classList.remove('hidden');
+      ctx.clearRect(0, 0, canvasW, canvasH);
     }
 
     function render(now) {
@@ -1372,12 +1385,11 @@
       const delta = Math.min((now - lastTime) * 0.001, 0.06);
       lastTime = now;
 
-      const w = parseFloat(canvas.style.width) || canvas.width;
-      const h = parseFloat(canvas.style.height) || canvas.height;
-
-      // Efecto estelas de luz (Trails de Ephyrion)
-      ctx.fillStyle = 'rgba(7, 8, 10, 0.24)';
-      ctx.fillRect(0, 0, w, h);
+      // Estelas alfa transparentes para que el fondo se vea con naturalidad a pantalla completa (Trails de Ephyrion)
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+      ctx.globalCompositeOperation = 'source-over';
 
       for (let i = 0; i < particles.length; i++) {
         particles[i].update(delta, mouseX, mouseY, mouseInside);
@@ -1387,51 +1399,48 @@
       animationId = requestAnimationFrame(render);
     }
 
-    function getCoords(e) {
-      const rect = canvas.getBoundingClientRect();
+    function getHeroCoords(e) {
+      const rect = hero.getBoundingClientRect();
       return {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
       };
     }
 
-    canvas.addEventListener('mousemove', function(e) {
-      const p = getCoords(e);
+    hero.addEventListener('mousemove', function(e) {
+      const p = getHeroCoords(e);
       mouseX = p.x;
       mouseY = p.y;
       mouseInside = true;
     });
 
-    canvas.addEventListener('mouseleave', function() {
+    hero.addEventListener('mouseleave', function() {
       mouseInside = false;
       mouseX = -9999;
       mouseY = -9999;
     });
 
-    // Clic o toque para dispersar y reiniciar la llegada hacia el cursor
-    canvas.addEventListener('click', function(e) {
-      const p = getCoords(e);
-      const w = parseFloat(canvas.style.width) || canvas.width;
-      const h = parseFloat(canvas.style.height) || canvas.height;
-      ctx.fillStyle = '#07080a';
-      ctx.fillRect(0, 0, w, h);
+    function resetFromPoint(x, y) {
+      ctx.clearRect(0, 0, canvasW, canvasH);
       for (let i = 0; i < particles.length; i++) {
-        particles[i].reset(p.x, p.y);
+        particles[i].reset(x, y);
       }
+    }
+
+    // Clic o toque a nivel global del hero para dispersar y reiniciar las partículas a pantalla completa
+    hero.addEventListener('click', function(e) {
+      if (e.target.closest('input, textarea, select, button, a, label, #main-header')) return;
+      const p = getHeroCoords(e);
+      resetFromPoint(p.x, p.y);
     });
 
-    canvas.addEventListener('touchstart', function(e) {
+    hero.addEventListener('touchstart', function(e) {
+      if (e.target.closest('input, textarea, select, button, a, label, #main-header')) return;
       if (e.touches.length > 0) {
-        const rect = canvas.getBoundingClientRect();
+        const rect = hero.getBoundingClientRect();
         const tx = e.touches[0].clientX - rect.left;
         const ty = e.touches[0].clientY - rect.top;
-        const w = parseFloat(canvas.style.width) || canvas.width;
-        const h = parseFloat(canvas.style.height) || canvas.height;
-        ctx.fillStyle = '#07080a';
-        ctx.fillRect(0, 0, w, h);
-        for (let i = 0; i < particles.length; i++) {
-          particles[i].reset(tx, ty);
-        }
+        resetFromPoint(tx, ty);
       }
     }, { passive: true });
 
@@ -1442,7 +1451,7 @@
         animationId = requestAnimationFrame(render);
       }
     }, { threshold: 0.05 });
-    observer.observe(wrap);
+    observer.observe(hero);
 
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function() {

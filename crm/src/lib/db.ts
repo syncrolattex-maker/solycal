@@ -34,7 +34,9 @@ export interface ProjectRecord {
   quotes: QuoteRecord[];
 }
 
-let memoryStore: { leads: LeadRecord[]; projects: ProjectRecord[] } | null = null;
+const globalForStore = globalThis as unknown as {
+  crmStore?: { leads: LeadRecord[]; projects: ProjectRecord[] };
+};
 
 function getStoreFilePath(): string {
   // If running in Vercel or serverless read-only container
@@ -250,8 +252,8 @@ interface StoredProject {
 }
 
 function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
-  if (memoryStore) {
-    return memoryStore;
+  if (globalForStore.crmStore) {
+    return globalForStore.crmStore;
   }
 
   try {
@@ -259,7 +261,7 @@ function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, "utf-8");
       const data = JSON.parse(content);
-      memoryStore = {
+      const loadedStore = {
         leads: (data.leads || []).map((l: StoredLead) => ({
           ...l,
           createdAt: new Date(l.createdAt),
@@ -276,26 +278,43 @@ function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
           })),
         })),
       };
-      return memoryStore;
+      globalForStore.crmStore = loadedStore;
+      return loadedStore;
     }
   } catch (error) {
     console.error("Error reading CRM persistent store:", error);
   }
 
   const initial = getInitialData();
-  memoryStore = initial;
+  globalForStore.crmStore = initial;
   saveStore(initial);
-  return memoryStore;
+  return initial;
 }
 
 function saveStore(store: { leads: LeadRecord[]; projects: ProjectRecord[] }): void {
-  memoryStore = store;
+  globalForStore.crmStore = store;
   try {
     const filePath = getStoreFilePath();
     fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
   } catch (error) {
     console.error("Error saving CRM persistent store to disk (persisted in-memory):", error);
   }
+}
+
+function findProjectInStore(
+  store: { leads: LeadRecord[]; projects: ProjectRecord[] },
+  id: string
+): ProjectRecord | undefined {
+  const clean = id.trim();
+  const lower = clean.toLowerCase();
+  const stripPrefix = clean.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+
+  return store.projects.find((p) => {
+    if (p.id === clean) return true;
+    if (p.id.toLowerCase() === lower) return true;
+    const pStrip = p.id.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+    return pStrip === stripPrefix;
+  });
 }
 
 // Data access with Prisma primary (if configured), falling back to persistent disk store
@@ -438,22 +457,45 @@ export async function updateProjectStatus(
   id: string,
   status: "oficina_tecnica" | "taller" | "facturado"
 ): Promise<ProjectRecord | null> {
+  const cleanId = id.trim();
+
   if (isPrismaConfigured()) {
     try {
       const project = await prisma.project.update({
-        where: { id },
+        where: { id: cleanId },
         data: { status },
         include: { quotes: true },
       });
       return project as ProjectRecord;
     } catch (err) {
-      console.warn("Prisma updateProjectStatus failed, using disk store:", err);
+      console.warn("Prisma updateProjectStatus failed, using store:", err);
     }
   }
 
-  const store = loadStore();
-  const target = store.projects.find((p) => p.id === id);
-  if (!target) return null;
+  let store = loadStore();
+  let target = findProjectInStore(store, cleanId);
+
+  if (!target) {
+    // If not found in current memory cache, force reload from disk
+    globalForStore.crmStore = undefined;
+    store = loadStore();
+    target = findProjectInStore(store, cleanId);
+  }
+
+  if (!target) {
+    // If still not found, check initial seeded data to recover baseline project
+    const initial = getInitialData();
+    const initialMatch = findProjectInStore(initial, cleanId);
+    if (initialMatch) {
+      initialMatch.status = status;
+      initialMatch.updatedAt = new Date();
+      store.projects.push(initialMatch);
+      saveStore(store);
+      return initialMatch;
+    }
+    return null;
+  }
+
   target.status = status;
   target.updatedAt = new Date();
   saveStore(store);
@@ -492,7 +534,7 @@ export async function createQuote(data: {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  const project = store.projects.find((p) => p.id === data.projectId);
+  const project = findProjectInStore(store, data.projectId);
   if (project) {
     project.quotes.push(newQuote);
     project.updatedAt = new Date();

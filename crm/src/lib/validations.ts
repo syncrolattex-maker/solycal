@@ -15,7 +15,9 @@ export const UpdateLeadStatusSchema = z.object({
   status: LeadStatusEnum,
 });
 
-export const ProjectStatusEnum = z.enum(["oficina_tecnica", "taller", "facturado"]);
+export const ProjectStatusEnum = z
+  .enum(["oficina_tecnica", "taller", "facturado", "tecnica"])
+  .transform((val) => (val === "tecnica" ? "oficina_tecnica" : val));
 
 export const CreateProjectSchema = z.object({
   title: z.string().trim().min(1, "El título del proyecto es obligatorio"),
@@ -25,7 +27,7 @@ export const CreateProjectSchema = z.object({
 });
 
 export const UpdateProjectStatusSchema = z.object({
-  id: z.string(),
+  id: z.coerce.string().trim().min(1, "ID de proyecto obligatorio"),
   status: ProjectStatusEnum,
 });
 

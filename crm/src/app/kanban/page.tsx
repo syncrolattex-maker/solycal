@@ -253,6 +253,8 @@ interface RawProject {
       return;
     }
 
+    const prevProjects = projects;
+
     // 3. Move project between tecnica, taller, facturado
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
@@ -270,13 +272,20 @@ interface RawProject {
           status: dbStatus,
         }),
       });
+
+      const resJson = await res.json().catch(() => ({}));
+
       if (res.ok) {
         showNotice("Estado de proyecto actualizado");
       } else {
+        setProjects(prevProjects);
+        lastMutationRef.current = 0;
         syncData();
-        showNotice("Error al actualizar estado");
+        showNotice(resJson.error || resJson.details || "Error al actualizar estado");
       }
     } catch {
+      setProjects(prevProjects);
+      lastMutationRef.current = 0;
       syncData();
       showNotice("Error de conexión");
     }

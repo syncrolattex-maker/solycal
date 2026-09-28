@@ -84,6 +84,8 @@ export default function Home() {
     newStatus: "oficina_tecnica" | "taller" | "facturado"
   ) => {
     lastMutationRef.current = Date.now();
+    const prevProjects = projects;
+
     // Immediate optimistic local update
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
@@ -95,20 +97,30 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: newStatus }),
       });
+
+      const resJson = await res.json().catch(() => ({}));
+
       if (!res.ok) {
+        setProjects(prevProjects);
+        lastMutationRef.current = 0;
         fetchData();
-        throw new Error("Error al actualizar");
+        const errorMsg = resJson.error || resJson.details || "Error al actualizar estado de proyecto";
+        showNotice(errorMsg, "error");
+        return;
       }
       
-      const resJson = await res.json();
       if (resJson.project) {
         setProjects((prev) =>
           prev.map((p) => (p.id === id ? resJson.project : p))
         );
       }
       showNotice("Estado de proyecto actualizado");
-    } catch {
-      showNotice("Error al actualizar estado de proyecto", "error");
+    } catch (err: unknown) {
+      setProjects(prevProjects);
+      lastMutationRef.current = 0;
+      fetchData();
+      const msg = err instanceof Error ? err.message : "Error al actualizar estado de proyecto";
+      showNotice(msg, "error");
     }
   };
 

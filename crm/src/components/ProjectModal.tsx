@@ -51,14 +51,15 @@ export default function ProjectModal({
     setError(null);
     try {
       await onSubmit({
-        title,
-        client: client || undefined,
+        title: title.trim(),
+        client: client.trim() || undefined,
         status,
         leadId: fromLead ? fromLead.id : undefined,
       });
       onClose();
-    } catch (err) {
-      setError(String(err));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
     } finally {
       setLoading(false);
     }

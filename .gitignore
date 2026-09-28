@@ -2,6 +2,7 @@
 node_modules/
 crm/node_modules/
 crm/.next/
+crm/data/
 crm/.env
 .env
 .env*.local

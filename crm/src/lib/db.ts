@@ -1,4 +1,5 @@
 import fs from "fs";
+import os from "os";
 import path from "path";
 import prisma from "./prisma";
 
@@ -33,19 +34,35 @@ export interface ProjectRecord {
   quotes: QuoteRecord[];
 }
 
+let memoryStore: { leads: LeadRecord[]; projects: ProjectRecord[] } | null = null;
+
 function getStoreFilePath(): string {
-  const root = fs.existsSync(path.join(process.cwd(), "crm"))
-    ? path.join(process.cwd(), "crm")
-    : process.cwd();
-  const dataDir = path.join(root, "data");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  // If running in Vercel or serverless read-only container
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return path.join(os.tmpdir(), "crm-store.json");
   }
-  return path.join(dataDir, "crm-store.json");
+
+  try {
+    const root = fs.existsSync(path.join(process.cwd(), "crm"))
+      ? path.join(process.cwd(), "crm")
+      : process.cwd();
+    const dataDir = path.join(root, "data");
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    return path.join(dataDir, "crm-store.json");
+  } catch (err) {
+    console.warn("Falling back to tmpdir for CRM store:", err);
+    return path.join(os.tmpdir(), "crm-store.json");
+  }
 }
 
 function isPrismaConfigured(): boolean {
-  return Boolean(process.env.DATABASE_URL && process.env.DATABASE_URL.trim().length > 0);
+  return Boolean(
+    process.env.DATABASE_URL &&
+    process.env.DATABASE_URL.trim().length > 0 &&
+    !process.env.DATABASE_URL.includes("[YOUR-PASSWORD]")
+  );
 }
 
 function getInitialData(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
@@ -233,12 +250,16 @@ interface StoredProject {
 }
 
 function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
-  const filePath = getStoreFilePath();
+  if (memoryStore) {
+    return memoryStore;
+  }
+
   try {
+    const filePath = getStoreFilePath();
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, "utf-8");
       const data = JSON.parse(content);
-      return {
+      memoryStore = {
         leads: (data.leads || []).map((l: StoredLead) => ({
           ...l,
           createdAt: new Date(l.createdAt),
@@ -255,29 +276,25 @@ function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
           })),
         })),
       };
+      return memoryStore;
     }
   } catch (error) {
     console.error("Error reading CRM persistent store:", error);
   }
 
   const initial = getInitialData();
+  memoryStore = initial;
   saveStore(initial);
-  return initial;
+  return memoryStore;
 }
 
 function saveStore(store: { leads: LeadRecord[]; projects: ProjectRecord[] }): void {
-  const filePath = getStoreFilePath();
+  memoryStore = store;
   try {
-    const tempFile = `${filePath}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempFile, JSON.stringify(store, null, 2), "utf-8");
-    fs.renameSync(tempFile, filePath);
+    const filePath = getStoreFilePath();
+    fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
   } catch (error) {
-    console.error("Error saving CRM persistent store via rename, writing directly:", error);
-    try {
-      fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
-    } catch (fallbackError) {
-      console.error("Fallback write failed:", fallbackError);
-    }
+    console.error("Error saving CRM persistent store to disk (persisted in-memory):", error);
   }
 }
 

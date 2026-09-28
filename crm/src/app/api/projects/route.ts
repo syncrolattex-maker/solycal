@@ -33,33 +33,50 @@ export async function POST(req: NextRequest) {
     const parsed = CreateProjectSchema.safeParse(body);
 
     if (!parsed.success) {
+      const errorMsg = parsed.error.issues.map((i) => i.message).join(", ");
       return NextResponse.json(
         {
-          error: "Datos de proyecto no válidos",
+          error: errorMsg || "Datos de proyecto no válidos",
           issues: parsed.error.format(),
         },
         { status: 400, headers: noCacheHeaders }
       );
     }
 
+    const clientValue =
+      parsed.data.client && parsed.data.client.trim().length > 0
+        ? parsed.data.client.trim()
+        : null;
+
     const project = await createProject({
-      title: parsed.data.title,
-      client: parsed.data.client,
+      title: parsed.data.title.trim(),
+      client: clientValue,
       status: parsed.data.status,
     });
 
     // If converted from a lead, mark the lead as "evaluacion"
     if (parsed.data.leadId) {
-      await updateLeadStatus(parsed.data.leadId, "evaluacion");
+      try {
+        await updateLeadStatus(parsed.data.leadId, "evaluacion");
+      } catch (leadErr) {
+        console.warn("Could not update lead status:", leadErr);
+      }
     }
 
     return NextResponse.json(
-      { message: "Lead convertido a Proyecto", project },
+      {
+        message: parsed.data.leadId ? "Lead convertido a Proyecto" : "Proyecto registrado",
+        project,
+      },
       { status: 201, headers: noCacheHeaders }
     );
   } catch (error) {
+    console.error("POST /api/projects error:", error);
     return NextResponse.json(
-      { error: "Error en el servidor", details: String(error) },
+      {
+        error: "Error en el servidor",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500, headers: noCacheHeaders }
     );
   }
@@ -93,8 +110,12 @@ export async function PATCH(req: NextRequest) {
       { status: 200, headers: noCacheHeaders }
     );
   } catch (error) {
+    console.error("PATCH /api/projects error:", error);
     return NextResponse.json(
-      { error: "Error en el servidor", details: String(error) },
+      {
+        error: "Error en el servidor",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500, headers: noCacheHeaders }
     );
   }

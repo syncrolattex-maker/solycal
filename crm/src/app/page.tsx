@@ -158,12 +158,12 @@ export default function Home() {
       body: JSON.stringify(data),
     });
 
+    const resJson = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Error al registrar proyecto");
+      throw new Error(resJson.details || resJson.error || "Error al registrar proyecto");
     }
 
-    const resJson = await res.json();
     setProjects((prev) => [resJson.project, ...prev.filter((p) => p.id !== resJson.project.id)]);
 
     if (data.leadId) {

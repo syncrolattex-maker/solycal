@@ -214,7 +214,7 @@ interface RawProject {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             title: target.title,
-            client: target.client,
+            client: target.client || undefined,
             status: "oficina_tecnica",
             leadId: id,
           }),
@@ -308,12 +308,12 @@ interface RawProject {
       body: JSON.stringify(data),
     });
 
+    const resJson = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Error al registrar proyecto");
+      throw new Error(resJson.details || resJson.error || "Error al registrar proyecto");
     }
 
-    const resJson = await res.json();
     const prj = resJson.project;
     const newCard: KanbanCard = {
       id: prj.id,

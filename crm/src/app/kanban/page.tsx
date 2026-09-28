@@ -90,8 +90,11 @@ export default function KanbanPage() {
   const [activeMobileTab, setActiveMobileTab] = useState<ColumnId>("nuevo");
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<ColumnId | null>(null);
 
   const lastMutationRef = useRef<number>(0);
+  const recentMutationsRef = useRef<Map<string, { status: ColumnId; timestamp: number }>>(new Map());
 
   const showNotice = (text: string) => {
     setNotice(text);
@@ -101,11 +104,6 @@ export default function KanbanPage() {
   };
 
   const syncData = useCallback(async () => {
-    // Avoid overwriting freshly committed changes if in-flight
-    if (Date.now() - lastMutationRef.current < 2500) {
-      return;
-    }
-
 interface RawLead {
   id: string;
   client?: string | null;
@@ -181,7 +179,36 @@ interface RawProject {
         });
       }
 
-      setProjects([...leadCards, ...dbCards]);
+      const incomingCards = [...leadCards, ...dbCards];
+      const now = Date.now();
+
+      setProjects((currentProjects) => {
+        // Protect local status mutations for 30 seconds against polling rollback
+        const merged = incomingCards.map((serverCard) => {
+          const localMut = recentMutationsRef.current.get(serverCard.id);
+          if (localMut && now - localMut.timestamp < 30000) {
+            return { ...serverCard, status: localMut.status };
+          }
+          return serverCard;
+        });
+
+        // Keep local cards not yet indexed on server
+        for (const cur of currentProjects) {
+          if (!merged.some((m) => m.id === cur.id)) {
+            const localMut = recentMutationsRef.current.get(cur.id);
+            if (localMut && now - localMut.timestamp < 30000) {
+              merged.unshift(cur);
+            }
+          }
+        }
+
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(merged));
+          } catch {}
+        }
+        return merged;
+      });
     } catch {
       // Silently ignore offline error
     } finally {
@@ -190,23 +217,46 @@ interface RawProject {
   }, []);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("solycal_kanban_cards_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProjects(parsed);
+            setLoading(false);
+          }
+        }
+      } catch {}
+    }
     syncData();
     const interval = setInterval(syncData, 6000);
     return () => clearInterval(interval);
   }, [syncData]);
 
   const moveProject = async (id: string, newStatus: ColumnId) => {
-    lastMutationRef.current = Date.now();
+    const now = Date.now();
+    lastMutationRef.current = now;
+    recentMutationsRef.current.set(id, { status: newStatus, timestamp: now });
 
-    // 1. Moving a lead from "nuevo" forward to "tecnica" -> Convert to Project in DB
-    if (id.startsWith("lead-") && newStatus === "tecnica") {
+    // 1. Moving a lead from "nuevo" forward to "tecnica", "taller", or "facturado" -> Convert to Project in DB
+    if (id.startsWith("lead-") && newStatus !== "nuevo") {
       const target = projects.find((p) => p.id === id);
       if (!target) return;
 
+      const targetDbStatus =
+        newStatus === "facturado" ? "facturado" : newStatus === "taller" ? "taller" : "oficina_tecnica";
+
       // Optimistic update
-      setProjects((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "tecnica" } : p))
-      );
+      setProjects((prev) => {
+        const next = prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p));
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(next));
+          } catch {}
+        }
+        return next;
+      });
 
       try {
         const res = await fetch("/api/projects", {
@@ -215,7 +265,7 @@ interface RawProject {
           body: JSON.stringify({
             title: target.title,
             client: target.client || undefined,
-            status: "oficina_tecnica",
+            status: targetDbStatus,
             leadId: id,
           }),
         });
@@ -223,24 +273,33 @@ interface RawProject {
         if (res.ok) {
           const resJson = await res.json();
           const prj = resJson.project;
-          setProjects((prev) =>
-            prev.map((p) =>
+          recentMutationsRef.current.set(prj.id, { status: newStatus, timestamp: Date.now() });
+          setProjects((prev) => {
+            const next = prev.map((p) =>
               p.id === id
                 ? {
                     ...p,
                     id: prj.id,
                     ref: `PRJ-${prj.id.slice(-4).toUpperCase()}`,
-                    status: "tecnica",
+                    status: newStatus,
                   }
                 : p
-            )
-          );
-          showNotice("Lead convertido a Proyecto en Oficina Técnica");
+            );
+            if (typeof window !== "undefined") {
+              try {
+                localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(next));
+              } catch {}
+            }
+            return next;
+          });
+          showNotice("Lead convertido a Proyecto Industrial");
         } else {
+          recentMutationsRef.current.delete(id);
           syncData();
           showNotice("Error al convertir lead a proyecto");
         }
       } catch {
+        recentMutationsRef.current.delete(id);
         syncData();
         showNotice("Error de conexión");
       }
@@ -256,9 +315,15 @@ interface RawProject {
     const prevProjects = projects;
 
     // 3. Move project between tecnica, taller, facturado
-    setProjects((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
-    );
+    setProjects((prev) => {
+      const next = prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p));
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
 
     const dbStatus =
       newStatus === "facturado" ? "facturado" : newStatus === "taller" ? "taller" : "oficina_tecnica";
@@ -278,14 +343,19 @@ interface RawProject {
       if (res.ok) {
         showNotice("Estado de proyecto actualizado");
       } else {
+        recentMutationsRef.current.delete(id);
         setProjects(prevProjects);
-        lastMutationRef.current = 0;
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(prevProjects));
+          } catch {}
+        }
         syncData();
         showNotice(resJson.error || resJson.details || "Error al actualizar estado");
       }
     } catch {
+      recentMutationsRef.current.delete(id);
       setProjects(prevProjects);
-      lastMutationRef.current = 0;
       syncData();
       showNotice("Error de conexión");
     }
@@ -336,7 +406,20 @@ interface RawProject {
       material: "Proyecto Técnico Solycal",
       createdAt: new Date().toLocaleDateString("es-ES"),
     };
-    setProjects((prev) => [newCard, ...prev.filter((p) => p.id !== prj.id)]);
+    recentMutationsRef.current.set(prj.id, {
+      status: newCard.status,
+      timestamp: Date.now(),
+    });
+
+    setProjects((prev) => {
+      const next = [newCard, ...prev.filter((p) => p.id !== prj.id)];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_kanban_cards_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
     showNotice("Proyecto registrado");
   };
 
@@ -532,11 +615,36 @@ interface RawProject {
               const colProjects = projects.filter((p) => p.status === column.id);
               const colSteelKg = colProjects.reduce((acc, p) => acc + p.steelKg, 0);
               const isVisibleOnMobile = activeMobileTab === column.id;
+              const isOverThisCol = dragOverCol === column.id;
 
               return (
                 <div
                   key={column.id}
-                  className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden min-h-[400px] md:min-h-[600px] shadow-sm ${
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    if (dragOverCol !== column.id) {
+                      setDragOverCol(column.id);
+                    }
+                  }}
+                  onDragLeave={(e) => {
+                    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                    setDragOverCol(null);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const id = e.dataTransfer.getData("text/plain") || draggingId;
+                    setDragOverCol(null);
+                    setDraggingId(null);
+                    if (id) {
+                      moveProject(id, column.id);
+                    }
+                  }}
+                  className={`flex flex-col rounded-2xl bg-brand-dark border transition-all duration-200 overflow-hidden min-h-[400px] md:min-h-[600px] shadow-sm ${
+                    isOverThisCol
+                      ? "border-brand-yellow ring-2 ring-brand-yellow/40 bg-brand-surface/60"
+                      : "border-brand-border"
+                  } ${
                     isVisibleOnMobile ? "flex" : "hidden md:flex"
                   }`}
                 >
@@ -580,7 +688,21 @@ interface RawProject {
                         return (
                           <div
                             key={project.id}
-                            className="rounded-xl bg-brand-surface border border-brand-border p-4 hover:border-brand-yellow/40 transition-all group shadow-sm flex flex-col justify-between relative overflow-hidden"
+                            draggable={true}
+                            onDragStart={(e) => {
+                              e.dataTransfer.setData("text/plain", project.id);
+                              e.dataTransfer.effectAllowed = "move";
+                              setDraggingId(project.id);
+                            }}
+                            onDragEnd={() => {
+                              setDraggingId(null);
+                              setDragOverCol(null);
+                            }}
+                            className={`rounded-xl bg-brand-surface border p-4 transition-all duration-150 group shadow-sm flex flex-col justify-between relative overflow-hidden cursor-grab active:cursor-grabbing select-none ${
+                              draggingId === project.id
+                                ? "opacity-40 border-brand-yellow scale-[0.98] ring-2 ring-brand-yellow/40"
+                                : "border-brand-border hover:border-brand-yellow/40 hover:shadow-md"
+                            }`}
                           >
                             {/* Accent line on left */}
                             <div

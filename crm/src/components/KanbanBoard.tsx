@@ -60,6 +60,8 @@ export default function KanbanBoard({
   onNewProject,
 }: KanbanBoardProps) {
   const [activeMobileCol, setActiveMobileCol] = React.useState<"oficina_tecnica" | "taller" | "facturado">("oficina_tecnica");
+  const [draggingId, setDraggingId] = React.useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = React.useState<string | null>(null);
 
   return (
     <div className="space-y-4">
@@ -95,11 +97,36 @@ export default function KanbanBoard({
             0
           );
           const isMobileVisible = activeMobileCol === col.id;
+          const isOverThisCol = dragOverCol === col.id;
 
           return (
             <div
               key={col.id}
-              className={`flex flex-col rounded-2xl bg-brand-dark border border-brand-border overflow-hidden ${
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                if (dragOverCol !== col.id) {
+                  setDragOverCol(col.id);
+                }
+              }}
+              onDragLeave={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                setDragOverCol(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData("text/plain") || draggingId;
+                setDragOverCol(null);
+                setDraggingId(null);
+                if (id) {
+                  onStatusChange(id, col.id);
+                }
+              }}
+              className={`flex flex-col rounded-2xl bg-brand-dark border transition-all duration-200 overflow-hidden ${
+                isOverThisCol
+                  ? "border-brand-yellow ring-2 ring-brand-yellow/40 bg-brand-surface/60"
+                  : "border-brand-border"
+              } ${
                 isMobileVisible ? "flex" : "hidden lg:flex"
               }`}
             >
@@ -140,7 +167,21 @@ export default function KanbanBoard({
                   return (
                     <div
                       key={project.id}
-                      className="rounded-xl bg-brand-surface border border-brand-border p-4 hover:border-brand-yellow/40 transition-all group shadow-sm"
+                      draggable={true}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("text/plain", project.id);
+                        e.dataTransfer.effectAllowed = "move";
+                        setDraggingId(project.id);
+                      }}
+                      onDragEnd={() => {
+                        setDraggingId(null);
+                        setDragOverCol(null);
+                      }}
+                      className={`rounded-xl bg-brand-surface border p-4 transition-all duration-150 group shadow-sm cursor-grab active:cursor-grabbing select-none ${
+                        draggingId === project.id
+                          ? "opacity-40 border-brand-yellow scale-[0.98] ring-2 ring-brand-yellow/40"
+                          : "border-brand-border hover:border-brand-yellow/40 hover:shadow-md"
+                      }`}
                     >
                       {/* Top Label */}
                       <div className="flex items-center justify-between mb-2">

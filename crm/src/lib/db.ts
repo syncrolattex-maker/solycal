@@ -317,6 +317,13 @@ function findProjectInStore(
   });
 }
 
+function toTimestamp(val: unknown): number {
+  if (!val) return 0;
+  if (val instanceof Date) return val.getTime();
+  const d = new Date(val as string);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+
 // Data access with Prisma primary (if configured), falling back to persistent disk store
 export async function getLeads(): Promise<LeadRecord[]> {
   if (isPrismaConfigured()) {
@@ -330,7 +337,7 @@ export async function getLeads(): Promise<LeadRecord[]> {
     }
   }
   const store = loadStore();
-  return store.leads.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  return store.leads.sort((a, b) => toTimestamp(b.createdAt) - toTimestamp(a.createdAt));
 }
 
 export async function createLead(data: {
@@ -413,7 +420,7 @@ export async function getProjects(): Promise<ProjectRecord[]> {
   }
 
   const store = loadStore();
-  return store.projects.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  return store.projects.sort((a, b) => toTimestamp(b.updatedAt) - toTimestamp(a.updatedAt));
 }
 
 export async function createProject(data: {

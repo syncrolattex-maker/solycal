@@ -40,20 +40,49 @@ export default function Home() {
     }, 4000);
   };
 
+  // Track recent local status mutations to prevent background polling from reverting them
+  const recentMutationsRef = React.useRef<Map<string, { status: "oficina_tecnica" | "taller" | "facturado"; timestamp: number }>>(new Map());
+
   const fetchData = useCallback(async () => {
-    // Prevent an in-flight background poll from overwriting optimistic or freshly committed user actions
-    if (Date.now() - lastMutationRef.current < 2500) {
-      return;
-    }
     try {
       const [prjRes, ldsRes] = await Promise.all([
         fetch("/api/projects", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
         fetch("/api/leads", { cache: "no-store", headers: { "Pragma": "no-cache" } }),
       ]);
+
       if (prjRes.ok) {
-        const prjData = await prjRes.json();
-        setProjects(prjData);
+        const prjData: ProjectRecord[] = await prjRes.json();
+        const now = Date.now();
+
+        setProjects((currentProjects) => {
+          // Reconcile server data with any active local mutations (protected for 30 seconds)
+          const merged = prjData.map((serverPrj) => {
+            const localMutation = recentMutationsRef.current.get(serverPrj.id);
+            if (localMutation && now - localMutation.timestamp < 30000) {
+              return { ...serverPrj, status: localMutation.status };
+            }
+            return serverPrj;
+          });
+
+          // Ensure any newly added local project not yet returned by server stays visible
+          for (const cur of currentProjects) {
+            if (!merged.some((m) => m.id === cur.id)) {
+              const localMutation = recentMutationsRef.current.get(cur.id);
+              if (localMutation && now - localMutation.timestamp < 30000) {
+                merged.unshift(cur);
+              }
+            }
+          }
+
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(merged));
+            } catch {}
+          }
+          return merged;
+        });
       }
+
       if (ldsRes.ok) {
         const ldsData = await ldsRes.json();
         setLeads(ldsData);
@@ -67,29 +96,51 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("solycal_crm_projects_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProjects(parsed);
+            setLoading(false);
+          }
+        }
+      } catch {}
+    }
     fetchData();
     const interval = setInterval(fetchData, 6000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
   const handleRefresh = () => {
-    lastMutationRef.current = 0;
+    recentMutationsRef.current.clear();
     setRefreshing(true);
     fetchData();
   };
 
-  // Status change handler for Kanban
+  // Status change handler for Kanban (Click and Drag&Drop)
   const handleProjectStatusChange = async (
     id: string,
     newStatus: "oficina_tecnica" | "taller" | "facturado"
   ) => {
-    lastMutationRef.current = Date.now();
+    const now = Date.now();
+    lastMutationRef.current = now;
+    recentMutationsRef.current.set(id, { status: newStatus, timestamp: now });
     const prevProjects = projects;
 
-    // Immediate optimistic local update
-    setProjects((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p))
-    );
+    // Immediate optimistic local update + local storage anchor
+    setProjects((prev) => {
+      const next = prev.map((p) =>
+        p.id === id ? { ...p, status: newStatus, updatedAt: new Date() } : p
+      );
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
 
     try {
       const res = await fetch("/api/projects", {
@@ -101,8 +152,13 @@ export default function Home() {
       const resJson = await res.json().catch(() => ({}));
 
       if (!res.ok) {
+        recentMutationsRef.current.delete(id);
         setProjects(prevProjects);
-        lastMutationRef.current = 0;
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(prevProjects));
+          } catch {}
+        }
         fetchData();
         const errorMsg = resJson.error || resJson.details || "Error al actualizar estado de proyecto";
         showNotice(errorMsg, "error");
@@ -110,14 +166,20 @@ export default function Home() {
       }
       
       if (resJson.project) {
-        setProjects((prev) =>
-          prev.map((p) => (p.id === id ? resJson.project : p))
-        );
+        setProjects((prev) => {
+          const next = prev.map((p) => (p.id === id ? resJson.project : p));
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(next));
+            } catch {}
+          }
+          return next;
+        });
       }
       showNotice("Estado de proyecto actualizado");
     } catch (err: unknown) {
+      recentMutationsRef.current.delete(id);
       setProjects(prevProjects);
-      lastMutationRef.current = 0;
       fetchData();
       const msg = err instanceof Error ? err.message : "Error al actualizar estado de proyecto";
       showNotice(msg, "error");
@@ -176,7 +238,20 @@ export default function Home() {
       throw new Error(resJson.details || resJson.error || "Error al registrar proyecto");
     }
 
-    setProjects((prev) => [resJson.project, ...prev.filter((p) => p.id !== resJson.project.id)]);
+    recentMutationsRef.current.set(resJson.project.id, {
+      status: resJson.project.status,
+      timestamp: Date.now(),
+    });
+
+    setProjects((prev) => {
+      const next = [resJson.project, ...prev.filter((p) => p.id !== resJson.project.id)];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
 
     if (data.leadId) {
       setLeads((prev) =>

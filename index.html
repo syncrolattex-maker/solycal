@@ -126,20 +126,43 @@
       opacity: 1;
       transform: translateY(0);
     }
-    /* EFECTO TEXT SCRAMBLE EN TÍTULOS GRANDES */
-    .scramble-word {
+    /* =========================================================================
+       CODROPS LINE TEXT HOVER ANIMATIONS (VARIATION 4)
+       Efecto de decodificación y scramble de caracteres para botones y textos clicables
+       ========================================================================= */
+    .line-v4-word {
       display: inline-block;
       white-space: nowrap;
     }
-    .scramble-char {
+    .line-v4-char {
       display: inline-block;
-      will-change: opacity, color;
-      transition: color 0.1s ease;
+      position: relative;
+      will-change: transform, opacity;
+      pointer-events: none;
+      font-kerning: none;
     }
-    .scramble-char.is-scrambling {
-      color: #F1B541;
-      opacity: 0.95;
-      text-shadow: 0 0 10px rgba(241, 181, 65, 0.5);
+    /* Sutil realce de fondo V4 para enlaces y textos clicables planos */
+    .hover-effect--bg-south {
+      position: relative;
+      --anim: 0;
+    }
+    .hover-effect--bg-south::after {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      left: -6px;
+      right: -6px;
+      top: -3px;
+      bottom: -3px;
+      border-radius: 4px;
+      background-color: rgba(241, 181, 65, 0.12);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      transform-origin: 50% 100%;
+      transform: scaleY(var(--anim, 0));
+      opacity: var(--anim, 0);
+      pointer-events: none;
+      transition: opacity 0.25s ease;
     }
     .line-indicator {
       display: inline-block;
@@ -2253,6 +2276,182 @@
             }
           });
         });
+
+        // =========================================================================
+        // CODROPS LINE TEXT HOVER ANIMATIONS - VARIATIONS V4 (TEXT DECODER / SCRAMBLE)
+        // Aplicado a todos los botones y textos interactivos clicables
+        // =========================================================================
+        function initLineTextHoverV4() {
+          if (typeof gsap === 'undefined') return;
+
+          const lettersAndSymbols = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', '0', '1', '2', '3', '4', '5', '8', '9',
+            '!', '@', '#', '$', '%', '^', '&', '*', '-', '_', '+', '=', ';', ':', '<', '>', '/', '~'
+          ];
+
+          const targetSelectors = [
+            'button',
+            '.btn-magnetic',
+            '.btn-action',
+            'a.rounded-full',
+            'a.rounded-xl',
+            'a[href*="contacto"]',
+            'a[href*="servicios"]',
+            'a[href*="instalaciones"]',
+            'a[href*="calidad"]',
+            'a[href*="equipo"]',
+            'a[href^="tel:"]',
+            'a[href^="mailto:"]',
+            '#main-header a',
+            '.joby-nav-link',
+            'footer a',
+            '.hover-effect',
+            '.line-hover-effect'
+          ].join(', ');
+
+          const candidates = document.querySelectorAll(targetSelectors);
+
+          candidates.forEach(el => {
+            if (el.dataset.v4Init === 'true') return;
+            if (el.closest('#solycal-loader') || el.closest('#joby-toggle-wrap') || el.closest('#joby-close-btn')) return;
+
+            // Ignorar enlaces envolventes de bloques grandes (ej. tarjetas completas con múltiples párrafos)
+            if (el.children.length > 3 && el.clientHeight > 180) return;
+
+            // Buscar nodos de texto que no pertenezcan a iconos SVGs, iconos <i> de Lucide, scripts ni estilos
+            const walker = document.createTreeWalker(
+              el,
+              NodeFilter.SHOW_TEXT,
+              {
+                acceptNode(node) {
+                  if (!node.textContent || !node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+                  const parent = node.parentElement;
+                  if (!parent) return NodeFilter.FILTER_REJECT;
+                  if (parent.closest('svg, i, [data-lucide], script, style, .line-v4-char')) return NodeFilter.FILTER_REJECT;
+                  return NodeFilter.FILTER_ACCEPT;
+                }
+              }
+            );
+
+            const textNodes = [];
+            while (walker.nextNode()) {
+              textNodes.push(walker.currentNode);
+            }
+
+            if (textNodes.length === 0) return;
+
+            const totalText = textNodes.map(n => n.textContent.trim()).join(' ');
+            // Filtrar textos vacíos o excesivamente largos tipo artículos
+            if (totalText.length === 0 || totalText.length > 65) return;
+
+            el.dataset.v4Init = 'true';
+
+            // Añadir clase de fondo expandible V4 solo a textos planos sin fondo propio
+            const hasSolidBg = el.classList.contains('btn-magnetic') || 
+                               el.classList.contains('rounded-full') || 
+                               el.classList.contains('rounded-xl') || 
+                               el.tagName === 'BUTTON';
+            if (!hasSolidBg) {
+              el.classList.add('hover-effect--bg-south');
+            }
+
+            const charSpans = [];
+            const originalChars = [];
+
+            textNodes.forEach(node => {
+              const text = node.textContent;
+              const frag = document.createDocumentFragment();
+              const tokens = text.split(/(s+)/);
+
+              tokens.forEach(tok => {
+                if (/^s+$/.test(tok)) {
+                  frag.appendChild(document.createTextNode(tok));
+                  return;
+                }
+
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'line-v4-word';
+
+                const chars = Array.from(tok);
+                chars.forEach(c => {
+                  const charSpan = document.createElement('span');
+                  charSpan.className = 'line-v4-char';
+                  charSpan.textContent = c;
+                  wordSpan.appendChild(charSpan);
+
+                  charSpans.push(charSpan);
+                  originalChars.push(c);
+                });
+
+                frag.appendChild(wordSpan);
+              });
+
+              node.parentNode.replaceChild(frag, node);
+            });
+
+            if (charSpans.length === 0) return;
+
+            // Animación Codrops V4
+            function animateText() {
+              // Resetear caracteres inmediatamente antes de la ola
+              charSpans.forEach((char, idx) => {
+                gsap.killTweensOf(char);
+                char.textContent = originalChars[idx];
+                char.style.opacity = '1';
+              });
+
+              // Ola de scrambling y decodificación de izquierda a derecha
+              charSpans.forEach((char, position) => {
+                const initialHTML = originalChars[position];
+
+                gsap.fromTo(char, {
+                  opacity: 0.45
+                }, {
+                  duration: 0.03,
+                  repeat: 2,
+                  repeatRefresh: true,
+                  repeatDelay: 0.04,
+                  delay: (position + 1) * 0.032,
+                  innerHTML: () => lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)],
+                  opacity: 1,
+                  onComplete: () => {
+                    gsap.set(char, { innerHTML: initialHTML, opacity: 1, delay: 0.06 });
+                  }
+                });
+              });
+
+              if (!hasSolidBg) {
+                gsap.to(el, {
+                  '--anim': 1,
+                  duration: 0.6,
+                  ease: 'expo.out'
+                });
+              }
+            }
+
+            function animateBack() {
+              if (!hasSolidBg) {
+                gsap.to(el, {
+                  '--anim': 0,
+                  duration: 0.4,
+                  ease: 'power3.out'
+                });
+              }
+            }
+
+            el.addEventListener('mouseenter', animateText);
+            el.addEventListener('mouseleave', animateBack);
+          });
+        }
+
+        // Ejecutar inicialización de efectos de texto V4
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(initLineTextHoverV4);
+        } else {
+          setTimeout(initLineTextHoverV4, 120);
+        }
 
         // INITIALIZE INDUSTRIAL MATRIX GRID SEPARATOR (Inspirado en Jhey Tompkins)
         const matrixGrid = document.getElementById('footer-matrix-grid');

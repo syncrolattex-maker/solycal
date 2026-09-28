@@ -130,9 +130,20 @@
        CODROPS LINE TEXT HOVER ANIMATIONS (VARIATION 4)
        Efecto de decodificación y scramble de caracteres para botones y textos clicables
        ========================================================================= */
+    .line-v4-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      vertical-align: baseline;
+      flex-wrap: wrap;
+    }
     .line-v4-word {
       display: inline-block;
       white-space: nowrap;
+    }
+    .line-v4-space {
+      display: inline-block;
+      width: 0.32em;
+      pointer-events: none;
     }
     .line-v4-char {
       display: inline-block;
@@ -2520,19 +2531,24 @@
 
             textNodes.forEach(node => {
               const text = node.textContent;
-              const frag = document.createDocumentFragment();
-              const tokens = text.split(/(s+)/);
+              if (!text.trim()) return;
 
-              tokens.forEach(tok => {
-                if (/^s+$/.test(tok)) {
-                  frag.appendChild(document.createTextNode(tok));
-                  return;
-                }
+              const wrapper = document.createElement('span');
+              wrapper.className = 'line-v4-wrap';
 
+              if (/^s/.test(text)) {
+                const leadSpace = document.createElement('span');
+                leadSpace.className = 'line-v4-space';
+                leadSpace.innerHTML = '&nbsp;';
+                wrapper.appendChild(leadSpace);
+              }
+
+              const words = text.trim().split(/s+/);
+              words.forEach((w, wIdx) => {
                 const wordSpan = document.createElement('span');
                 wordSpan.className = 'line-v4-word';
 
-                const chars = Array.from(tok);
+                const chars = Array.from(w);
                 chars.forEach(c => {
                   const charSpan = document.createElement('span');
                   charSpan.className = 'line-v4-char';
@@ -2543,10 +2559,25 @@
                   originalChars.push(c);
                 });
 
-                frag.appendChild(wordSpan);
+                wrapper.appendChild(wordSpan);
+
+                // Insertar espacio visible no colapsable garantizado entre palabras
+                if (wIdx < words.length - 1) {
+                  const spaceSpan = document.createElement('span');
+                  spaceSpan.className = 'line-v4-space';
+                  spaceSpan.innerHTML = '&nbsp;';
+                  wrapper.appendChild(spaceSpan);
+                }
               });
 
-              node.parentNode.replaceChild(frag, node);
+              if (/s$/.test(text)) {
+                const trailSpace = document.createElement('span');
+                trailSpace.className = 'line-v4-space';
+                trailSpace.innerHTML = '&nbsp;';
+                wrapper.appendChild(trailSpace);
+              }
+
+              node.parentNode.replaceChild(wrapper, node);
             });
 
             if (charSpans.length === 0) return;

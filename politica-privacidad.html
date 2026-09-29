@@ -49,8 +49,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-  <!-- SplitType for On-Scroll Blur Typography (Codrops Effect #3) -->
-  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -94,16 +92,6 @@
     }
     .lenis.lenis-scrolling iframe {
       pointer-events: none;
-    }
-    /* Scroll Blur Typography - Codrops Effect #3 */
-    .scroll-blur-text .word {
-      display: inline-block;
-      white-space: nowrap;
-    }
-    .scroll-blur-text .char {
-      display: inline-block;
-      transform-origin: 50% 50%;
-      will-change: transform, filter;
     }
     body {
       background-color: #07080a;
@@ -686,6 +674,13 @@
         </a>
       </div>
     
+      <div class="joby-nav-item">
+        <a href="media.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">07</span>
+          <span class="joby-nav-title">Media</span>
+        </a>
+      </div>
+    
           </div>
 
           <!-- Secondary Information (Contacto y Redes Sociales Oficiales) -->
@@ -785,11 +780,11 @@
     </div>
   </div>
 
-<section class="py-20 border-b border-white/5 bg-[#07080a]" id="legal-content-section">
+<section class="py-20 border-b border-white/5 bg-[#07080a]">
   <div class="w-full px-6 sm:px-12 lg:px-16 xl:px-20 max-w-5xl mx-auto">
     
     <div class="mb-12 border-b border-white/10 pb-8">
-      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3 legal-tag">// PROTECCIÓN DE DATOS DE CARÁCTER PERSONAL</span>
+      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3">// PROTECCIÓN DE DATOS DE CARÁCTER PERSONAL</span>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight">Política de Privacidad</h1>
       <p class="font-mono text-xs text-neutral-400 mt-3">Conforme al Reglamento (UE) 2016/679 (RGPD) y Ley Orgánica 3/2018 (LOPDGDD)</p>
     </div>
@@ -800,33 +795,33 @@
 
       <!-- Tabla Informativa RGPD -->
       <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10 space-y-4">
-        <h4 class="text-lg font-display font-bold text-white uppercase tracking-wide">Información Básica sobre Protección de Datos</h4>
+        <h2 class="text-lg font-display font-bold text-white uppercase tracking-wide">Información Básica sobre Protección de Datos</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
           <div class="p-3 bg-black/40 rounded-xl border border-white/5">
-            <p class="text-brand-yellow font-bold mb-1">RESPONSABLE:</p>
-            <p class="text-neutral-300">SOLDADURA Y CALDERERÍA VALENCIANA, S.L.<br>C/ Hort de Soriano, 17A. Pol. Ind. Masía del Juez, 46900 Torrent (Valencia)</p>
+            <span class="text-brand-yellow block font-bold mb-1">RESPONSABLE:</span>
+            <span class="text-neutral-300">SOLDADURA Y CALDERERÍA VALENCIANA, S.L.<br>C/ Hort de Soriano, 17A. Pol. Ind. Masía del Juez, 46900 Torrent (Valencia)</span>
           </div>
           <div class="p-3 bg-black/40 rounded-xl border border-white/5">
-            <p class="text-brand-yellow font-bold mb-1">FINALIDAD:</p>
-            <p class="text-neutral-300">Atender su solicitud de presupuesto, estudio técnico u otro tipo de petición de fabricación de calderería realizada a través de nuestra web.</p>
+            <span class="text-brand-yellow block font-bold mb-1">FINALIDAD:</span>
+            <span class="text-neutral-300">Atender su solicitud de presupuesto, estudio técnico u otro tipo de petición de fabricación de calderería realizada a través de nuestra web.</span>
           </div>
           <div class="p-3 bg-black/40 rounded-xl border border-white/5">
-            <p class="text-brand-yellow font-bold mb-1">LEGITIMACIÓN:</p>
-            <p class="text-neutral-300">Consentimiento expreso e informado del interesado al remitir el formulario.</p>
+            <span class="text-brand-yellow block font-bold mb-1">LEGITIMACIÓN:</span>
+            <span class="text-neutral-300">Consentimiento expreso e informado del interesado al remitir el formulario.</span>
           </div>
           <div class="p-3 bg-black/40 rounded-xl border border-white/5">
-            <p class="text-brand-yellow font-bold mb-1">DESTINATARIOS:</p>
-            <p class="text-neutral-300">Los datos que nos facilite no serán cedidos a terceros, salvo obligación legal expresa.</p>
+            <span class="text-brand-yellow block font-bold mb-1">DESTINATARIOS:</span>
+            <span class="text-neutral-300">Los datos que nos facilite no serán cedidos a terceros, salvo obligación legal expresa.</span>
           </div>
           <div class="p-3 bg-black/40 rounded-xl border border-white/5 md:col-span-2">
-            <p class="text-brand-yellow font-bold mb-1">DERECHOS:</p>
-            <p class="text-neutral-300">Acceso, rectificación, supresión, limitación del tratamiento, portabilidad y oposición dirigiéndose por escrito a info@solycal.es.</p>
+            <span class="text-brand-yellow block font-bold mb-1">DERECHOS:</span>
+            <span class="text-neutral-300">Acceso, rectificación, supresión, limitación del tratamiento, portabilidad y oposición dirigiéndose por escrito a info@solycal.es.</span>
           </div>
         </div>
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">¿Qué datos tratamos?</h4>
+        <h2 class="text-xl font-display font-bold text-white">¿Qué datos tratamos?</h2>
         <p>Tratamos exclusivamente los datos que usted nos facilita de forma directa al completar el formulario de contacto o presupuesto:</p>
         <ul class="list-disc pl-6 space-y-1 text-neutral-300">
           <li><strong>Datos identificativos y de contacto:</strong> Nombre y apellidos, correo electrónico corporativo, número de teléfono.</li>
@@ -835,12 +830,12 @@
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">Plazo de Conservación de los Datos</h4>
+        <h2 class="text-xl font-display font-bold text-white">Plazo de Conservación de los Datos</h2>
         <p>Los datos se conservarán durante el tiempo necesario para la elaboración de la propuesta técnica y mientras se mantenga la relación comercial, o durante los periodos en que se pueda derivar una responsabilidad mercantil o fiscal de acuerdo con la legislación vigente.</p>
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">Ejercicio de Derechos</h4>
+        <h2 class="text-xl font-display font-bold text-white">Ejercicio de Derechos</h2>
         <p>Cualquier persona tiene derecho a obtener confirmación sobre si en SOLDADURA Y CALDERERÍA VALENCIANA, S.L. estamos tratando datos personales que les conciernan o no. Las personas interesadas tienen derecho a:</p>
         <ul class="list-disc pl-6 space-y-1 text-neutral-300">
           <li>Acceder a sus datos personales.</li>
@@ -927,6 +922,7 @@
             <li><a href="calidad.html" class="hover:text-brand-yellow transition-colors">04. Calidad y Certificaciones</a></li>
             <li><a href="equipo.html" class="hover:text-brand-yellow transition-colors">05. Equipo Técnico</a></li>
             <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">06. Contacto Directo</a></li>
+            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">07. Galería Técnica / Media</a></li>
           </ul>
         </div>
 
@@ -1302,7 +1298,7 @@
 
           // 2. SELECCIÓN EXCLUSIVA DE ELEMENTOS: h1:not(.hero-title) y h2
           const targetElements = Array.from(document.querySelectorAll('h1:not(.hero-title), h2')).filter(el => {
-            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && !el.closest('#legal-content-section') && el.textContent.trim().length > 0;
+            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && el.textContent.trim().length > 0;
           });
 
           if (targetElements.length === 0) return;
@@ -2188,103 +2184,6 @@
           requestAnimationFrame(renderBitPatterns);
         }
       }
-
-      // =========================================================================
-      // ON-SCROLL BLUR REVEAL TYPOGRAPHY (Codrops Effect #3)
-      // https://tympanus.net/Development/ScrollBlurTypography/
-      // =========================================================================
-      function initScrollBlurTypography() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-        const legalSection = document.getElementById('legal-content-section');
-        if (!legalSection) return;
-
-        const textElements = legalSection.querySelectorAll(
-          'h4, h5, h6'
-        );
-
-        if (!textElements || textElements.length === 0) return;
-
-        textElements.forEach((el) => {
-          if (!el.textContent.trim()) return;
-
-          el.classList.add('scroll-blur-text');
-
-          let chars = [];
-          if (typeof SplitType !== 'undefined') {
-            try {
-              const splitter = new SplitType(el, { types: 'words, chars', tagName: 'span' });
-              chars = splitter.chars || [];
-            } catch (e) {
-              console.warn('SplitType error on element:', e);
-            }
-          }
-
-          // Fallback nativo si SplitType no estuviera disponible
-          if (!chars || chars.length === 0) {
-            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-            const textNodes = [];
-            let node;
-            while ((node = walker.nextNode())) {
-              if (node.nodeValue.trim()) textNodes.push(node);
-            }
-
-            textNodes.forEach((tNode) => {
-              const words = tNode.nodeValue.split(/(\s+)/);
-              const fragment = document.createDocumentFragment();
-              words.forEach((word) => {
-                if (/^\s+$/.test(word)) {
-                  fragment.appendChild(document.createTextNode(word));
-                } else {
-                  const wordSpan = document.createElement('span');
-                  wordSpan.className = 'word';
-                  word.split('').forEach((c) => {
-                    const charSpan = document.createElement('span');
-                    charSpan.className = 'char';
-                    charSpan.textContent = c;
-                    chars.push(charSpan);
-                    wordSpan.appendChild(charSpan);
-                  });
-                  fragment.appendChild(wordSpan);
-                }
-              });
-              tNode.replaceWith(fragment);
-            });
-          }
-
-          if (!chars || chars.length === 0) return;
-
-          // Parámetros exactos de Codrops Efecto #3 (ScrollBlurTypography)
-          gsap.fromTo(
-            chars,
-            {
-              scaleY: 0.1,
-              scaleX: 1.8,
-              filter: 'blur(10px) brightness(50%)',
-              willChange: 'filter, transform'
-            },
-            {
-              ease: 'none',
-              scaleY: 1,
-              scaleX: 1,
-              filter: 'blur(0px) brightness(100%)',
-              stagger: 0.05,
-              scrollTrigger: {
-                trigger: el,
-                start: 'top bottom-=15%',
-                end: 'bottom center+=15%',
-                scrub: true
-              }
-            }
-          );
-        });
-
-        // Recalcular offsets tras la división del texto
-        ScrollTrigger.refresh();
-      }
-
-      initScrollBlurTypography();
     }
 
     if (document.readyState === 'loading') {

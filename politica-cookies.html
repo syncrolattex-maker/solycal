@@ -49,8 +49,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-  <!-- SplitType for On-Scroll Blur Typography (Codrops Effect #3) -->
-  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -94,16 +92,6 @@
     }
     .lenis.lenis-scrolling iframe {
       pointer-events: none;
-    }
-    /* Scroll Blur Typography - Codrops Effect #3 */
-    .scroll-blur-text .word {
-      display: inline-block;
-      white-space: nowrap;
-    }
-    .scroll-blur-text .char {
-      display: inline-block;
-      transform-origin: 50% 50%;
-      will-change: transform, filter;
     }
     body {
       background-color: #07080a;
@@ -686,6 +674,13 @@
         </a>
       </div>
     
+      <div class="joby-nav-item">
+        <a href="media.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">07</span>
+          <span class="joby-nav-title">Media</span>
+        </a>
+      </div>
+    
           </div>
 
           <!-- Secondary Information (Contacto y Redes Sociales Oficiales) -->
@@ -785,11 +780,11 @@
     </div>
   </div>
 
-<section class="py-20 border-b border-white/5 bg-[#07080a]" id="legal-content-section">
+<section class="py-20 border-b border-white/5 bg-[#07080a]">
   <div class="w-full px-6 sm:px-12 lg:px-16 xl:px-20 max-w-5xl mx-auto">
     
     <div class="mb-12 border-b border-white/10 pb-8">
-      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3 legal-tag">// USO DE COOKIES Y TECNOLOGÍAS SIMILARES</span>
+      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3">// USO DE COOKIES Y TECNOLOGÍAS SIMILARES</span>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight">Política de Cookies</h1>
       <p class="font-mono text-xs text-neutral-400 mt-3">Cumplimiento del Real Decreto-ley 13/2012 y directrices de la AEPD</p>
     </div>
@@ -802,7 +797,7 @@
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">¿Qué son las Cookies?</h4>
+        <h2 class="text-xl font-display font-bold text-white">¿Qué son las Cookies?</h2>
         <p>Las Cookies son pequeños archivos que el sitio web o la aplicación que utilizas instala en tu navegador o en tu dispositivo (ordenador, smartphone o tablet) durante tu recorrido por las páginas, y sirven para almacenar información de tu visita.</p>
         <p>SOLYCAL S.L. utiliza Cookies para:</p>
         <ul class="list-disc pl-6 space-y-1 text-neutral-300">
@@ -813,16 +808,16 @@
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">Tipos de Cookies Utilizadas en este Sitio Web</h4>
+        <h2 class="text-xl font-display font-bold text-white">Tipos de Cookies Utilizadas en este Sitio Web</h2>
         
         <div class="space-y-4">
           <div class="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-            <h5 class="text-base font-display font-bold text-white mb-2">1. Cookies Técnicas y de Rendimiento (Estrictamente Necesarias)</h5>
+            <h3 class="text-base font-display font-bold text-white mb-2">1. Cookies Técnicas y de Rendimiento (Estrictamente Necesarias)</h3>
             <p class="text-xs text-neutral-300 mb-2">Permiten la navegación del usuario a través del sitio web y la utilización de las diferentes opciones o servicios que en él existen (por ejemplo, controlar el tráfico, reproducción del vídeo corporativo de cabecera y envío de formularios).</p>
           </div>
 
           <div class="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-            <h5 class="text-base font-display font-bold text-white mb-2">2. Cookies Analíticas (Google Analytics)</h5>
+            <h3 class="text-base font-display font-bold text-white mb-2">2. Cookies Analíticas (Google Analytics)</h3>
             <p class="text-xs text-neutral-300 mb-2">Se utilizan con fines exclusivamente estadísticos para medir la actividad del sitio web y elaborar informes de tráfico anonimizados, permitiéndonos mejorar el catálogo y la descripción de servicios.</p>
             <p class="font-mono text-xs text-neutral-500">Más información: <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener noreferrer" class="text-brand-yellow hover:underline">Google Privacy & Terms</a></p>
           </div>
@@ -830,7 +825,7 @@
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">¿Cómo Configurar o Desactivar las Cookies?</h4>
+        <h2 class="text-xl font-display font-bold text-white">¿Cómo Configurar o Desactivar las Cookies?</h2>
         <p>Al navegar en nuestro sitio web el usuario puede aceptar o configurar la instalación de cookies. En cualquier momento puede revocar su consentimiento, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las opciones del navegador instalado en su ordenador:</p>
         
         <ul class="space-y-2 font-mono text-xs text-neutral-300">
@@ -842,7 +837,7 @@
       </div>
 
       <div class="space-y-4">
-        <h4 class="text-xl font-display font-bold text-white">Actualizaciones de la Política de Cookies</h4>
+        <h2 class="text-xl font-display font-bold text-white">Actualizaciones de la Política de Cookies</h2>
         <p>SOLYCAL S.L. puede modificar esta Política de Cookies en función de nuevas exigencias legislativas, reglamentarias, o con la finalidad de adaptar dicha política a las instrucciones dictadas por la Agencia Española de Protección de Datos (AEPD). Le recomendamos revisar periódicamente esta página.</p>
       </div>
 
@@ -922,6 +917,7 @@
             <li><a href="calidad.html" class="hover:text-brand-yellow transition-colors">04. Calidad y Certificaciones</a></li>
             <li><a href="equipo.html" class="hover:text-brand-yellow transition-colors">05. Equipo Técnico</a></li>
             <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">06. Contacto Directo</a></li>
+            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">07. Galería Técnica / Media</a></li>
           </ul>
         </div>
 
@@ -1297,7 +1293,7 @@
 
           // 2. SELECCIÓN EXCLUSIVA DE ELEMENTOS: h1:not(.hero-title) y h2
           const targetElements = Array.from(document.querySelectorAll('h1:not(.hero-title), h2')).filter(el => {
-            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && !el.closest('#legal-content-section') && el.textContent.trim().length > 0;
+            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && el.textContent.trim().length > 0;
           });
 
           if (targetElements.length === 0) return;
@@ -2183,103 +2179,6 @@
           requestAnimationFrame(renderBitPatterns);
         }
       }
-
-      // =========================================================================
-      // ON-SCROLL BLUR REVEAL TYPOGRAPHY (Codrops Effect #3)
-      // https://tympanus.net/Development/ScrollBlurTypography/
-      // =========================================================================
-      function initScrollBlurTypography() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-        const legalSection = document.getElementById('legal-content-section');
-        if (!legalSection) return;
-
-        const textElements = legalSection.querySelectorAll(
-          'h4, h5, h6'
-        );
-
-        if (!textElements || textElements.length === 0) return;
-
-        textElements.forEach((el) => {
-          if (!el.textContent.trim()) return;
-
-          el.classList.add('scroll-blur-text');
-
-          let chars = [];
-          if (typeof SplitType !== 'undefined') {
-            try {
-              const splitter = new SplitType(el, { types: 'words, chars', tagName: 'span' });
-              chars = splitter.chars || [];
-            } catch (e) {
-              console.warn('SplitType error on element:', e);
-            }
-          }
-
-          // Fallback nativo si SplitType no estuviera disponible
-          if (!chars || chars.length === 0) {
-            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-            const textNodes = [];
-            let node;
-            while ((node = walker.nextNode())) {
-              if (node.nodeValue.trim()) textNodes.push(node);
-            }
-
-            textNodes.forEach((tNode) => {
-              const words = tNode.nodeValue.split(/(\s+)/);
-              const fragment = document.createDocumentFragment();
-              words.forEach((word) => {
-                if (/^\s+$/.test(word)) {
-                  fragment.appendChild(document.createTextNode(word));
-                } else {
-                  const wordSpan = document.createElement('span');
-                  wordSpan.className = 'word';
-                  word.split('').forEach((c) => {
-                    const charSpan = document.createElement('span');
-                    charSpan.className = 'char';
-                    charSpan.textContent = c;
-                    chars.push(charSpan);
-                    wordSpan.appendChild(charSpan);
-                  });
-                  fragment.appendChild(wordSpan);
-                }
-              });
-              tNode.replaceWith(fragment);
-            });
-          }
-
-          if (!chars || chars.length === 0) return;
-
-          // Parámetros exactos de Codrops Efecto #3 (ScrollBlurTypography)
-          gsap.fromTo(
-            chars,
-            {
-              scaleY: 0.1,
-              scaleX: 1.8,
-              filter: 'blur(10px) brightness(50%)',
-              willChange: 'filter, transform'
-            },
-            {
-              ease: 'none',
-              scaleY: 1,
-              scaleX: 1,
-              filter: 'blur(0px) brightness(100%)',
-              stagger: 0.05,
-              scrollTrigger: {
-                trigger: el,
-                start: 'top bottom-=15%',
-                end: 'bottom center+=15%',
-                scrub: true
-              }
-            }
-          );
-        });
-
-        // Recalcular offsets tras la división del texto
-        ScrollTrigger.refresh();
-      }
-
-      initScrollBlurTypography();
     }
 
     if (document.readyState === 'loading') {

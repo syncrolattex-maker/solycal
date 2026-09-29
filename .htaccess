@@ -8,12 +8,13 @@
   RewriteCond %{HTTP_HOST} ^www\.solycal\.es [NC]
   RewriteRule ^(.*)$ https://solycal.es/$1 [L,R=301]
 
-  # Mapeo de URLs antiguas hacia nuevas
+  # Mapeo de URLs limpias hacia páginas HTML
   RewriteRule ^servicios/?$ /servicios.html [R=301,L]
   RewriteRule ^instalaciones/?$ /instalaciones.html [R=301,L]
   RewriteRule ^calidad/?$ /calidad.html [R=301,L]
   RewriteRule ^equipo/?$ /equipo.html [R=301,L]
   RewriteRule ^contacto/?$ /contacto.html [R=301,L]
+  RewriteRule ^media/?$ /media.html [R=301,L]
   RewriteRule ^aviso-legal/?$ /aviso-legal.html [R=301,L]
   RewriteRule ^politica-de-privacidad/?$ /politica-privacidad.html [R=301,L]
   RewriteRule ^politica-de-cookies/?$ /politica-cookies.html [R=301,L]

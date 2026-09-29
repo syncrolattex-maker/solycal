@@ -15,7 +15,7 @@ export default function QuotesSection({
 }: QuotesSectionProps) {
   // Flatten quotes with project details
   const quoteRows = projects.flatMap((project) =>
-    project.quotes.map((quote) => ({
+    (project.quotes || []).map((quote) => ({
       quote,
       project,
     }))

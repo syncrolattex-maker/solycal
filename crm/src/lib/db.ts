@@ -505,6 +505,9 @@ export async function updateProjectStatus(
 
   target.status = status;
   target.updatedAt = new Date();
+  if (!target.quotes) {
+    target.quotes = [];
+  }
   saveStore(store);
   return target;
 }
@@ -515,11 +518,13 @@ export async function createQuote(data: {
   steelKg: number;
   estimatedHours: number;
 }): Promise<QuoteRecord> {
+  const cleanProjectId = data.projectId.trim();
+
   if (isPrismaConfigured()) {
     try {
       const quote = await prisma.quote.create({
         data: {
-          projectId: data.projectId,
+          projectId: cleanProjectId,
           amount: data.amount,
           steelKg: data.steelKg,
           estimatedHours: data.estimatedHours,
@@ -531,21 +536,44 @@ export async function createQuote(data: {
     }
   }
 
-  const store = loadStore();
+  let store = loadStore();
   const newQuote: QuoteRecord = {
     id: `qt-${Date.now().toString(36)}`,
-    projectId: data.projectId,
+    projectId: cleanProjectId,
     amount: data.amount,
     steelKg: data.steelKg,
     estimatedHours: data.estimatedHours,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  const project = findProjectInStore(store, data.projectId);
+
+  let project = findProjectInStore(store, cleanProjectId);
+
+  if (!project) {
+    // If not found in memory store, force reload from disk
+    globalForStore.crmStore = undefined;
+    store = loadStore();
+    project = findProjectInStore(store, cleanProjectId);
+  }
+
+  if (!project) {
+    // Check initial seed data to recover baseline project if needed
+    const initial = getInitialData();
+    const initialMatch = findProjectInStore(initial, cleanProjectId);
+    if (initialMatch) {
+      project = initialMatch;
+      store.projects.push(project);
+    }
+  }
+
   if (project) {
-    project.quotes.push(newQuote);
+    if (!project.quotes) {
+      project.quotes = [];
+    }
+    project.quotes = [...project.quotes.filter((q) => q.id !== newQuote.id), newQuote];
     project.updatedAt = new Date();
   }
+
   saveStore(store);
   return newQuote;
 }

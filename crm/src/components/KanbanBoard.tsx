@@ -93,7 +93,7 @@ export default function KanbanBoard({
         {COLUMNS.map((col) => {
           const colProjects = projects.filter((p) => p.status === col.id);
           const colSteelKg = colProjects.reduce(
-            (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
+            (acc, p) => acc + (p.quotes || []).reduce((qAcc, q) => qAcc + q.steelKg, 0),
             0
           );
           const isMobileVisible = activeMobileCol === col.id;
@@ -160,9 +160,10 @@ export default function KanbanBoard({
                 </div>
               ) : (
                 colProjects.map((project) => {
-                  const totalKg = project.quotes.reduce((a, b) => a + b.steelKg, 0);
-                  const totalHrs = project.quotes.reduce((a, b) => a + b.estimatedHours, 0);
-                  const totalEur = project.quotes.reduce((a, b) => a + b.amount, 0);
+                  const quotes = project.quotes || [];
+                  const totalKg = quotes.reduce((a, b) => a + b.steelKg, 0);
+                  const totalHrs = quotes.reduce((a, b) => a + b.estimatedHours, 0);
+                  const totalEur = quotes.reduce((a, b) => a + b.amount, 0);
 
                   return (
                     <div
@@ -238,7 +239,7 @@ export default function KanbanBoard({
                           className="font-mono uppercase text-[10px] text-brand-yellow hover:text-white transition-colors flex items-center gap-1 font-semibold"
                         >
                           <Plus className="w-3 h-3" />
-                          <span>{project.quotes.length > 0 ? "Añadir Coste" : "Cotizar"}</span>
+                          <span>{(project.quotes || []).length > 0 ? "Añadir Coste" : "Cotizar"}</span>
                         </button>
 
                         <div className="flex items-center gap-1.5">

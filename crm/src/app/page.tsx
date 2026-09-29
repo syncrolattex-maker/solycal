@@ -58,10 +58,23 @@ export default function Home() {
           // Reconcile server data with any active local mutations (protected for 30 seconds)
           const merged = prjData.map((serverPrj) => {
             const localMutation = recentMutationsRef.current.get(serverPrj.id);
+            const currentPrj = currentProjects.find(
+              (c) =>
+                c.id === serverPrj.id ||
+                c.id.replace(/^(prj-|web-|#)/i, "").toLowerCase() ===
+                  serverPrj.id.replace(/^(prj-|web-|#)/i, "").toLowerCase()
+            );
+
+            // Defensive merge of quotes: retain existing client quotes if server has fewer or none
+            const quotes =
+              currentPrj?.quotes && currentPrj.quotes.length > (serverPrj.quotes?.length || 0)
+                ? currentPrj.quotes
+                : serverPrj.quotes || [];
+
             if (localMutation && now - localMutation.timestamp < 30000) {
-              return { ...serverPrj, status: localMutation.status };
+              return { ...serverPrj, status: localMutation.status, quotes };
             }
-            return serverPrj;
+            return { ...serverPrj, quotes };
           });
 
           // Ensure any newly added local project not yet returned by server stays visible
@@ -167,7 +180,22 @@ export default function Home() {
       
       if (resJson.project) {
         setProjects((prev) => {
-          const next = prev.map((p) => (p.id === id ? resJson.project : p));
+          const next = prev.map((p) => {
+            if (p.id === id) {
+              const returnedProject: ProjectRecord = resJson.project;
+              const quotes =
+                p.quotes && p.quotes.length > (returnedProject.quotes?.length || 0)
+                  ? p.quotes
+                  : returnedProject.quotes && returnedProject.quotes.length > 0
+                  ? returnedProject.quotes
+                  : p.quotes || [];
+              return {
+                ...returnedProject,
+                quotes,
+              };
+            }
+            return p;
+          });
           if (typeof window !== "undefined") {
             try {
               localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(next));
@@ -288,17 +316,29 @@ export default function Home() {
     const resJson = await res.json();
     const newQuote = resJson.quote;
 
-    setProjects((prev) =>
-      prev.map((p) => {
-        if (p.id === data.projectId) {
+    setProjects((prev) => {
+      const next = prev.map((p) => {
+        const matches =
+          p.id === data.projectId ||
+          p.id.replace(/^(prj-|web-|#)/i, "").toLowerCase() ===
+            data.projectId.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+        if (matches) {
+          const existingQuotes = p.quotes || [];
           return {
             ...p,
-            quotes: [...p.quotes.filter((q) => q.id !== newQuote.id), newQuote],
+            quotes: [...existingQuotes.filter((q) => q.id !== newQuote.id), newQuote],
           };
         }
         return p;
-      })
-    );
+      });
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_crm_projects_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
 
     showNotice("Presupuesto actualizado");
   };
@@ -330,7 +370,7 @@ export default function Home() {
   const totalSteelKg = projects
     .filter((p) => p.status !== "facturado")
     .reduce(
-      (acc, p) => acc + p.quotes.reduce((qAcc, q) => qAcc + q.steelKg, 0),
+      (acc, p) => acc + (p.quotes || []).reduce((qAcc, q) => qAcc + (q.steelKg || 0), 0),
       0
     );
 

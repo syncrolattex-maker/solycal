@@ -186,10 +186,16 @@ interface RawProject {
         // Protect local status mutations for 30 seconds against polling rollback
         const merged = incomingCards.map((serverCard) => {
           const localMut = recentMutationsRef.current.get(serverCard.id);
+          const currentCard = currentProjects.find((c) => c.id === serverCard.id);
+
+          const steelKg = serverCard.steelKg > 0 ? serverCard.steelKg : (currentCard?.steelKg || 0);
+          const estimatedHours = serverCard.estimatedHours > 0 ? serverCard.estimatedHours : (currentCard?.estimatedHours || 0);
+          const amount = serverCard.amount > 0 ? serverCard.amount : (currentCard?.amount || 0);
+
           if (localMut && now - localMut.timestamp < 30000) {
-            return { ...serverCard, status: localMut.status };
+            return { ...serverCard, status: localMut.status, steelKg, estimatedHours, amount };
           }
-          return serverCard;
+          return { ...serverCard, steelKg, estimatedHours, amount };
         });
 
         // Keep local cards not yet indexed on server

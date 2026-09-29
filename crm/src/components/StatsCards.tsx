@@ -19,7 +19,7 @@ export default function StatsCards({ projects, leads }: StatsCardsProps) {
   let totalAmount = 0;
 
   activeProjectsList.forEach((prj) => {
-    prj.quotes.forEach((q) => {
+    (prj.quotes || []).forEach((q) => {
       totalSteelKg += q.steelKg;
       totalHours += q.estimatedHours;
     });
@@ -27,7 +27,7 @@ export default function StatsCards({ projects, leads }: StatsCardsProps) {
 
   // Total volume in portfolio
   projects.forEach((prj) => {
-    prj.quotes.forEach((q) => {
+    (prj.quotes || []).forEach((q) => {
       totalAmount += q.amount;
     });
   });

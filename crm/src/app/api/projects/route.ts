@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
       title: parsed.data.title.trim(),
       client: clientValue,
       status: parsed.data.status,
+      leadId: parsed.data.leadId || null,
     });
 
     // If converted from a lead, mark the lead as "evaluacion"

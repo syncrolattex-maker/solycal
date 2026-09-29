@@ -436,10 +436,15 @@ export default function Home() {
 
     setProjects((prev) => {
       const next = prev.map((p) => {
+        const targetId = newQuote.projectId || data.projectId;
         const matches =
           p.id === data.projectId ||
-          p.id.replace(/^(prj-|web-|#)/i, "").toLowerCase() ===
-            data.projectId.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+          p.id === targetId ||
+          p.leadId === data.projectId ||
+          p.id.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase() ===
+            data.projectId.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase() ||
+          p.id.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase() ===
+            targetId.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase();
         if (matches) {
           const existingQuotes = p.quotes || [];
           return {

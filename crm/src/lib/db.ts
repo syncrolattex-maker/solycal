@@ -29,6 +29,7 @@ export interface ProjectRecord {
   title: string;
   client: string | null;
   status: "oficina_tecnica" | "taller" | "facturado";
+  leadId?: string | null;
   createdAt: Date;
   updatedAt: Date;
   quotes: QuoteRecord[];
@@ -247,6 +248,7 @@ interface StoredProject {
   title: string;
   client: string | null;
   status: "oficina_tecnica" | "taller" | "facturado";
+  leadId?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
   quotes: StoredQuote[];
@@ -271,6 +273,7 @@ function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
         })),
         projects: (data.projects || []).map((p: StoredProject) => ({
           ...p,
+          leadId: p.leadId || null,
           createdAt: new Date(p.createdAt),
           updatedAt: new Date(p.updatedAt),
           quotes: (p.quotes || []).map((q: StoredQuote) => ({
@@ -330,14 +333,40 @@ function findProjectInStore(
 ): ProjectRecord | undefined {
   const clean = id.trim();
   const lower = clean.toLowerCase();
-  const stripPrefix = clean.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+  const stripPrefix = clean.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase();
 
-  return store.projects.find((p) => {
+  // 1. Direct match by project id
+  const directMatch = store.projects.find((p) => {
     if (p.id === clean) return true;
     if (p.id.toLowerCase() === lower) return true;
-    const pStrip = p.id.replace(/^(prj-|web-|#)/i, "").toLowerCase();
+    const pStrip = p.id.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase();
     return pStrip === stripPrefix;
   });
+  if (directMatch) return directMatch;
+
+  // 2. Match by leadId if converted from a lead
+  const byLeadId = store.projects.find((p) => {
+    if (!p.leadId) return false;
+    if (p.leadId === clean) return true;
+    if (p.leadId.toLowerCase() === lower) return true;
+    const pLeadStrip = p.leadId.replace(/^(prj-|web-|lead-|#)/i, "").toLowerCase();
+    return pLeadStrip === stripPrefix;
+  });
+  if (byLeadId) return byLeadId;
+
+  // 3. If id corresponds to a lead (or lead id was passed), find project associated with that lead's client or title
+  if (clean.toLowerCase().startsWith("lead-") || clean.startsWith("1") || clean.startsWith("2") || clean.startsWith("3")) {
+    const leadMatch = findLeadInStore(store, clean);
+    if (leadMatch) {
+      const byClient = store.projects.find((p) => {
+        if (!p.client || !leadMatch.client) return false;
+        return p.client.trim().toLowerCase() === leadMatch.client.trim().toLowerCase();
+      });
+      if (byClient) return byClient;
+    }
+  }
+
+  return undefined;
 }
 
 function toTimestamp(val: unknown): number {
@@ -474,6 +503,7 @@ export async function createProject(data: {
   title: string;
   client?: string | null;
   status?: "oficina_tecnica" | "taller" | "facturado";
+  leadId?: string | null;
 }): Promise<ProjectRecord> {
   const status = data.status || "oficina_tecnica";
   if (isPrismaConfigured()) {
@@ -498,6 +528,7 @@ export async function createProject(data: {
     title: data.title,
     client: data.client || null,
     status,
+    leadId: data.leadId || null,
     createdAt: new Date(),
     updatedAt: new Date(),
     quotes: [],
@@ -615,9 +646,32 @@ export async function createQuote(data: {
     }
   }
 
+  // Final fallback: if cleanProjectId was a lead ID (e.g., "lead-1") and no project was created yet,
+  // or if project was converted in client before DB sync, resolve lead and auto-create/attach project
+  if (!project) {
+    const leadMatch = findLeadInStore(store, cleanProjectId);
+    if (leadMatch) {
+      project = {
+        id: `prj-${Date.now().toString(36)}`,
+        title: leadMatch.message.length > 50 ? `${leadMatch.message.slice(0, 47)}...` : leadMatch.message,
+        client: leadMatch.client || "CLIENTE GENERAL",
+        status: "oficina_tecnica",
+        leadId: leadMatch.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        quotes: [],
+      };
+      store.projects.unshift(project);
+      leadMatch.status = "evaluacion";
+      leadMatch.updatedAt = new Date();
+    }
+  }
+
   if (!project) {
     return null;
   }
+
+  newQuote.projectId = project.id;
 
   if (!project.quotes) {
     project.quotes = [];

@@ -14,6 +14,7 @@ import QuoteModal from "@/components/QuoteModal";
 import LeadModal from "@/components/LeadModal";
 import { ProjectRecord, LeadRecord } from "@/lib/db";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import { broadcastSync, subscribeToSync } from "@/lib/syncChannel";
 
 export default function Home() {
   const [currentTab, setCurrentTab] = useState<MobileTab>("kanban");
@@ -157,8 +158,35 @@ export default function Home() {
       } catch {}
     }
     fetchData();
-    const interval = setInterval(fetchData, 6000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchData, 4000);
+
+    // Cross-tab real-time sync subscription (BroadcastChannel, storage event, visibility/focus)
+    const unsubscribe = subscribeToSync(() => {
+      if (typeof window !== "undefined") {
+        try {
+          const cachedProjects = localStorage.getItem("solycal_crm_projects_cache");
+          if (cachedProjects) {
+            const parsed = JSON.parse(cachedProjects);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setProjects(parsed);
+            }
+          }
+          const cachedLeads = localStorage.getItem("solycal_crm_leads_cache");
+          if (cachedLeads) {
+            const parsed = JSON.parse(cachedLeads);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setLeads(parsed);
+            }
+          }
+        } catch {}
+      }
+      fetchData();
+    });
+
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, [fetchData]);
 
   const handleRefresh = () => {
@@ -240,6 +268,7 @@ export default function Home() {
           return next;
         });
       }
+      broadcastSync({ type: "PROJECTS_UPDATED" });
       showNotice("Estado de proyecto actualizado");
     } catch (err: unknown) {
       recentMutationsRef.current.delete(id);
@@ -297,6 +326,7 @@ export default function Home() {
         return;
       }
 
+      broadcastSync({ type: "LEADS_UPDATED" });
       showNotice("Estado de lead actualizado");
     } catch {
       recentLeadMutationsRef.current.delete(id);
@@ -347,6 +377,8 @@ export default function Home() {
       return next;
     });
 
+    broadcastSync({ type: "PROJECTS_UPDATED" });
+
     if (data.leadId) {
       recentLeadMutationsRef.current.set(data.leadId, {
         status: "evaluacion",
@@ -372,6 +404,7 @@ export default function Home() {
         body: JSON.stringify({ id: data.leadId, status: "evaluacion" }),
       }).catch(() => {});
 
+      broadcastSync({ type: "LEADS_UPDATED" });
       showNotice("Lead convertido a Proyecto");
     } else {
       showNotice("Proyecto registrado");
@@ -425,6 +458,7 @@ export default function Home() {
       return next;
     });
 
+    broadcastSync({ type: "PROJECTS_UPDATED" });
     showNotice("Presupuesto actualizado");
   };
 

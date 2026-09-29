@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import ProjectModal from "@/components/ProjectModal";
 import LeadModal from "@/components/LeadModal";
+import { broadcastSync, subscribeToSync } from "@/lib/syncChannel";
 
 type ColumnId = "nuevo" | "tecnica" | "taller" | "facturado";
 
@@ -236,8 +237,17 @@ interface RawProject {
       } catch {}
     }
     syncData();
-    const interval = setInterval(syncData, 6000);
-    return () => clearInterval(interval);
+    const interval = setInterval(syncData, 4000);
+
+    // Multi-tab real-time sync
+    const unsubscribe = subscribeToSync(() => {
+      syncData();
+    });
+
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, [syncData]);
 
   const moveProject = async (id: string, newStatus: ColumnId) => {
@@ -305,6 +315,8 @@ interface RawProject {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id, status: "evaluacion" }),
           }).catch(() => {});
+          broadcastSync({ type: "PROJECTS_UPDATED" });
+          broadcastSync({ type: "LEADS_UPDATED" });
           showNotice("Lead convertido a Proyecto Industrial");
         } else {
           recentMutationsRef.current.delete(id);
@@ -354,6 +366,7 @@ interface RawProject {
       const resJson = await res.json().catch(() => ({}));
 
       if (res.ok) {
+        broadcastSync({ type: "PROJECTS_UPDATED" });
         showNotice("Estado de proyecto actualizado");
       } else {
         recentMutationsRef.current.delete(id);
@@ -433,6 +446,7 @@ interface RawProject {
       }
       return next;
     });
+    broadcastSync({ type: "PROJECTS_UPDATED" });
     showNotice("Proyecto registrado");
   };
 
@@ -469,6 +483,7 @@ interface RawProject {
       createdAt: new Date().toLocaleDateString("es-ES"),
     };
     setProjects((prev) => [newCard, ...prev]);
+    broadcastSync({ type: "LEADS_UPDATED" });
     showNotice("Petición web registrada");
   };
 

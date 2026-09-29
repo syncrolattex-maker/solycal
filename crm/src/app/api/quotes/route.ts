@@ -34,6 +34,13 @@ export async function POST(req: NextRequest) {
       estimatedHours: parsed.data.estimatedHours,
     });
 
+    if (!quote) {
+      return NextResponse.json(
+        { error: "Proyecto no encontrado para cotizar" },
+        { status: 404, headers: noCacheHeaders }
+      );
+    }
+
     return NextResponse.json(
       { message: "Presupuesto actualizado", quote },
       { status: 201, headers: noCacheHeaders }

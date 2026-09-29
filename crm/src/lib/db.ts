@@ -565,7 +565,7 @@ export async function createQuote(data: {
   amount: number;
   steelKg: number;
   estimatedHours: number;
-}): Promise<QuoteRecord> {
+}): Promise<QuoteRecord | null> {
   const cleanProjectId = data.projectId.trim();
 
   if (isPrismaConfigured()) {
@@ -615,13 +615,15 @@ export async function createQuote(data: {
     }
   }
 
-  if (project) {
-    if (!project.quotes) {
-      project.quotes = [];
-    }
-    project.quotes = [...project.quotes.filter((q) => q.id !== newQuote.id), newQuote];
-    project.updatedAt = new Date();
+  if (!project) {
+    return null;
   }
+
+  if (!project.quotes) {
+    project.quotes = [];
+  }
+  project.quotes = [...project.quotes.filter((q) => q.id !== newQuote.id), newQuote];
+  project.updatedAt = new Date();
 
   saveStore(store);
   return newQuote;

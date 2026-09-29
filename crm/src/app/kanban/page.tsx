@@ -139,7 +139,7 @@ interface RawProject {
       if (leadsRes.ok) {
         const leads: RawLead[] = await leadsRes.json();
         leadCards = (leads || [])
-          .filter((l: RawLead) => l.status === "nuevo")
+          .filter((l: RawLead) => l.status === "nuevo" && !recentMutationsRef.current.has(l.id))
           .map((l: RawLead) => ({
             id: l.id,
             ref: `WEB-${l.id.slice(-4).toUpperCase()}`,
@@ -280,6 +280,7 @@ interface RawProject {
           const resJson = await res.json();
           const prj = resJson.project;
           recentMutationsRef.current.set(prj.id, { status: newStatus, timestamp: Date.now() });
+          recentMutationsRef.current.delete(id);
           setProjects((prev) => {
             const next = prev.map((p) =>
               p.id === id
@@ -298,6 +299,12 @@ interface RawProject {
             }
             return next;
           });
+          // Also trigger secondary background PATCH to ensure lead status is saved
+          fetch("/api/leads", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, status: "evaluacion" }),
+          }).catch(() => {});
           showNotice("Lead convertido a Proyecto Industrial");
         } else {
           recentMutationsRef.current.delete(id);

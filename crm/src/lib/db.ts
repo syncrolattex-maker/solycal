@@ -36,6 +36,7 @@ export interface ProjectRecord {
 
 const globalForStore = globalThis as unknown as {
   crmStore?: { leads: LeadRecord[]; projects: ProjectRecord[] };
+  lastLoadedMtime?: number;
 };
 
 function getStoreFilePath(): string {
@@ -252,13 +253,14 @@ interface StoredProject {
 }
 
 function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
-  if (globalForStore.crmStore) {
-    return globalForStore.crmStore;
-  }
-
+  const filePath = getStoreFilePath();
   try {
-    const filePath = getStoreFilePath();
     if (fs.existsSync(filePath)) {
+      const stat = fs.statSync(filePath);
+      if (globalForStore.crmStore && globalForStore.lastLoadedMtime === stat.mtimeMs) {
+        return globalForStore.crmStore;
+      }
+
       const content = fs.readFileSync(filePath, "utf-8");
       const data = JSON.parse(content);
       const loadedStore = {
@@ -279,6 +281,7 @@ function loadStore(): { leads: LeadRecord[]; projects: ProjectRecord[] } {
         })),
       };
       globalForStore.crmStore = loadedStore;
+      globalForStore.lastLoadedMtime = stat.mtimeMs;
       return loadedStore;
     }
   } catch (error) {
@@ -296,9 +299,29 @@ function saveStore(store: { leads: LeadRecord[]; projects: ProjectRecord[] }): v
   try {
     const filePath = getStoreFilePath();
     fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
+    try {
+      const stat = fs.statSync(filePath);
+      globalForStore.lastLoadedMtime = stat.mtimeMs;
+    } catch {}
   } catch (error) {
     console.error("Error saving CRM persistent store to disk (persisted in-memory):", error);
   }
+}
+
+function findLeadInStore(
+  store: { leads: LeadRecord[]; projects: ProjectRecord[] },
+  id: string
+): LeadRecord | undefined {
+  const clean = id.trim();
+  const lower = clean.toLowerCase();
+  const stripPrefix = clean.replace(/^(lead-|web-|#)/i, "").toLowerCase();
+
+  return store.leads.find((l) => {
+    if (l.id === clean) return true;
+    if (l.id.toLowerCase() === lower) return true;
+    const lStrip = l.id.replace(/^(lead-|web-|#)/i, "").toLowerCase();
+    return lStrip === stripPrefix;
+  });
 }
 
 function findProjectInStore(
@@ -385,10 +408,12 @@ export async function updateLeadStatus(
   id: string,
   status: "nuevo" | "evaluacion" | "descartado"
 ): Promise<LeadRecord | null> {
+  const cleanId = id.trim();
+
   if (isPrismaConfigured()) {
     try {
       const lead = await prisma.lead.update({
-        where: { id },
+        where: { id: cleanId },
         data: { status },
       });
       return lead as LeadRecord;
@@ -397,9 +422,31 @@ export async function updateLeadStatus(
     }
   }
 
-  const store = loadStore();
-  const target = store.leads.find((l) => l.id === id);
-  if (!target) return null;
+  let store = loadStore();
+  let target = findLeadInStore(store, cleanId);
+
+  if (!target) {
+    // If not found in current memory cache, force reload from disk
+    globalForStore.crmStore = undefined;
+    globalForStore.lastLoadedMtime = undefined;
+    store = loadStore();
+    target = findLeadInStore(store, cleanId);
+  }
+
+  if (!target) {
+    // If still not found, check initial seeded data to recover baseline lead
+    const initial = getInitialData();
+    const initialMatch = findLeadInStore(initial, cleanId);
+    if (initialMatch) {
+      initialMatch.status = status;
+      initialMatch.updatedAt = new Date();
+      store.leads.push(initialMatch);
+      saveStore(store);
+      return initialMatch;
+    }
+    return null;
+  }
+
   target.status = status;
   target.updatedAt = new Date();
   saveStore(store);
@@ -485,6 +532,7 @@ export async function updateProjectStatus(
   if (!target) {
     // If not found in current memory cache, force reload from disk
     globalForStore.crmStore = undefined;
+    globalForStore.lastLoadedMtime = undefined;
     store = loadStore();
     target = findProjectInStore(store, cleanId);
   }
@@ -552,6 +600,7 @@ export async function createQuote(data: {
   if (!project) {
     // If not found in memory store, force reload from disk
     globalForStore.crmStore = undefined;
+    globalForStore.lastLoadedMtime = undefined;
     store = loadStore();
     project = findProjectInStore(store, cleanProjectId);
   }

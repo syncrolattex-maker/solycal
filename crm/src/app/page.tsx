@@ -42,6 +42,7 @@ export default function Home() {
 
   // Track recent local status mutations to prevent background polling from reverting them
   const recentMutationsRef = React.useRef<Map<string, { status: "oficina_tecnica" | "taller" | "facturado"; timestamp: number }>>(new Map());
+  const recentLeadMutationsRef = React.useRef<Map<string, { status: "nuevo" | "evaluacion" | "descartado"; timestamp: number }>>(new Map());
 
   const fetchData = useCallback(async () => {
     try {
@@ -97,8 +98,35 @@ export default function Home() {
       }
 
       if (ldsRes.ok) {
-        const ldsData = await ldsRes.json();
-        setLeads(ldsData);
+        const ldsData: LeadRecord[] = await ldsRes.json();
+        const now = Date.now();
+
+        setLeads((currentLeads) => {
+          const merged = ldsData.map((serverLead) => {
+            const localMutation = recentLeadMutationsRef.current.get(serverLead.id);
+            if (localMutation && now - localMutation.timestamp < 30000) {
+              return { ...serverLead, status: localMutation.status };
+            }
+            return serverLead;
+          });
+
+          // Ensure any local lead not yet returned stays visible
+          for (const cur of currentLeads) {
+            if (!merged.some((m) => m.id === cur.id)) {
+              const localMutation = recentLeadMutationsRef.current.get(cur.id);
+              if (localMutation && now - localMutation.timestamp < 30000) {
+                merged.unshift(cur);
+              }
+            }
+          }
+
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("solycal_crm_leads_cache", JSON.stringify(merged));
+            } catch {}
+          }
+          return merged;
+        });
       }
     } catch {
       showNotice("Error al conectar con el servidor", "error");
@@ -111,12 +139,19 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const cached = localStorage.getItem("solycal_crm_projects_cache");
-        if (cached) {
-          const parsed = JSON.parse(cached);
+        const cachedProjects = localStorage.getItem("solycal_crm_projects_cache");
+        if (cachedProjects) {
+          const parsed = JSON.parse(cachedProjects);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setProjects(parsed);
             setLoading(false);
+          }
+        }
+        const cachedLeads = localStorage.getItem("solycal_crm_leads_cache");
+        if (cachedLeads) {
+          const parsed = JSON.parse(cachedLeads);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setLeads(parsed);
           }
         }
       } catch {}
@@ -128,6 +163,7 @@ export default function Home() {
 
   const handleRefresh = () => {
     recentMutationsRef.current.clear();
+    recentLeadMutationsRef.current.clear();
     setRefreshing(true);
     fetchData();
   };
@@ -225,23 +261,52 @@ export default function Home() {
     id: string,
     status: "nuevo" | "evaluacion" | "descartado"
   ) => {
-    lastMutationRef.current = Date.now();
-    setLeads((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, status } : l))
-    );
+    const now = Date.now();
+    lastMutationRef.current = now;
+    recentLeadMutationsRef.current.set(id, { status, timestamp: now });
+    const prevLeads = leads;
+
+    setLeads((prev) => {
+      const next = prev.map((l) => (l.id === id ? { ...l, status, updatedAt: new Date() } : l));
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_crm_leads_cache", JSON.stringify(next));
+        } catch {}
+      }
+      return next;
+    });
+
     try {
       const res = await fetch("/api/leads", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status }),
       });
+      const resJson = await res.json().catch(() => ({}));
       if (!res.ok) {
+        recentLeadMutationsRef.current.delete(id);
+        setLeads(prevLeads);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_crm_leads_cache", JSON.stringify(prevLeads));
+          } catch {}
+        }
         fetchData();
-        throw new Error("Error al actualizar");
+        const errorMsg = resJson.error || resJson.details || "Error al actualizar estado de lead";
+        showNotice(errorMsg, "error");
+        return;
       }
 
       showNotice("Estado de lead actualizado");
     } catch {
+      recentLeadMutationsRef.current.delete(id);
+      setLeads(prevLeads);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("solycal_crm_leads_cache", JSON.stringify(prevLeads));
+        } catch {}
+      }
+      fetchData();
       showNotice("Error al modificar lead", "error");
     }
   };
@@ -253,7 +318,8 @@ export default function Home() {
     status: "oficina_tecnica" | "taller" | "facturado";
     leadId?: string;
   }) => {
-    lastMutationRef.current = Date.now();
+    const now = Date.now();
+    lastMutationRef.current = now;
     const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -282,11 +348,30 @@ export default function Home() {
     });
 
     if (data.leadId) {
-      setLeads((prev) =>
-        prev.map((l) =>
-          l.id === data.leadId ? { ...l, status: "evaluacion" as const } : l
-        )
-      );
+      recentLeadMutationsRef.current.set(data.leadId, {
+        status: "evaluacion",
+        timestamp: now,
+      });
+
+      setLeads((prev) => {
+        const next = prev.map((l) =>
+          l.id === data.leadId ? { ...l, status: "evaluacion" as const, updatedAt: new Date() } : l
+        );
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("solycal_crm_leads_cache", JSON.stringify(next));
+          } catch {}
+        }
+        return next;
+      });
+
+      // Fire secondary background PATCH to guarantee persistence
+      fetch("/api/leads", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: data.leadId, status: "evaluacion" }),
+      }).catch(() => {});
+
       showNotice("Lead convertido a Proyecto");
     } else {
       showNotice("Proyecto registrado");

@@ -11,7 +11,7 @@ export const CreateLeadSchema = z.object({
 });
 
 export const UpdateLeadStatusSchema = z.object({
-  id: z.string(),
+  id: z.coerce.string().trim().min(1, "ID de lead obligatorio"),
   status: LeadStatusEnum,
 });
 

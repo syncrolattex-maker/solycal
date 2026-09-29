@@ -800,7 +800,7 @@
 
       <!-- Tabla Informativa RGPD -->
       <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10 space-y-4">
-        <h2 class="text-lg font-display font-bold text-white uppercase tracking-wide">Información Básica sobre Protección de Datos</h2>
+        <h4 class="text-lg font-display font-bold text-white uppercase tracking-wide">Información Básica sobre Protección de Datos</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
           <div class="p-3 bg-black/40 rounded-xl border border-white/5">
             <p class="text-brand-yellow font-bold mb-1">RESPONSABLE:</p>
@@ -826,7 +826,7 @@
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">¿Qué datos tratamos?</h2>
+        <h4 class="text-xl font-display font-bold text-white">¿Qué datos tratamos?</h4>
         <p>Tratamos exclusivamente los datos que usted nos facilita de forma directa al completar el formulario de contacto o presupuesto:</p>
         <ul class="list-disc pl-6 space-y-1 text-neutral-300">
           <li><strong>Datos identificativos y de contacto:</strong> Nombre y apellidos, correo electrónico corporativo, número de teléfono.</li>
@@ -835,12 +835,12 @@
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">Plazo de Conservación de los Datos</h2>
+        <h4 class="text-xl font-display font-bold text-white">Plazo de Conservación de los Datos</h4>
         <p>Los datos se conservarán durante el tiempo necesario para la elaboración de la propuesta técnica y mientras se mantenga la relación comercial, o durante los periodos en que se pueda derivar una responsabilidad mercantil o fiscal de acuerdo con la legislación vigente.</p>
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">Ejercicio de Derechos</h2>
+        <h4 class="text-xl font-display font-bold text-white">Ejercicio de Derechos</h4>
         <p>Cualquier persona tiene derecho a obtener confirmación sobre si en SOLDADURA Y CALDERERÍA VALENCIANA, S.L. estamos tratando datos personales que les conciernan o no. Las personas interesadas tienen derecho a:</p>
         <ul class="list-disc pl-6 space-y-1 text-neutral-300">
           <li>Acceder a sus datos personales.</li>
@@ -2201,7 +2201,7 @@
         if (!legalSection) return;
 
         const textElements = legalSection.querySelectorAll(
-          'h1, h2, h3, p, li, .legal-tag'
+          'h4, h5, h6'
         );
 
         if (!textElements || textElements.length === 0) return;

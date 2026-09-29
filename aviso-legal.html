@@ -797,7 +797,7 @@
     <div class="prose prose-invert max-w-none space-y-8 font-sans text-neutral-300 text-sm sm:text-base leading-relaxed">
       
       <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
-        <h2 class="text-lg font-display font-bold text-white uppercase tracking-wide">1. Datos Identificativos del Titular</h2>
+        <h4 class="text-lg font-display font-bold text-white uppercase tracking-wide">1. Datos Identificativos del Titular</h4>
         <p>En cumplimiento de lo dispuesto en el artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa a los usuarios de los datos relativos al titular de este sitio web:</p>
         <ul class="space-y-1.5 font-mono text-xs text-neutral-300">
           <li>&bull; <strong class="text-white">Denominación social:</strong> SOLDADURA Y CALDERERÍA VALENCIANA, S.L. (SOLYCAL)</li>
@@ -810,22 +810,22 @@
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">2. Objeto y Ámbito de Aplicación</h2>
+        <h4 class="text-xl font-display font-bold text-white">2. Objeto y Ámbito de Aplicación</h4>
         <p>El presente Aviso Legal regula las condiciones de acceso, navegación y uso del sitio web <span class="font-mono text-brand-yellow">www.solycal.es</span>, así como las responsabilidades derivadas de la utilización de sus contenidos (textos, gráficos, planos, diseños, códigos, software, fotografías, música, vídeos, sonidos, bases de datos e imágenes).</p>
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">3. Propiedad Intelectual e Industrial</h2>
+        <h4 class="text-xl font-display font-bold text-white">3. Propiedad Intelectual e Industrial</h4>
         <p>Todos los derechos de propiedad intelectual e industrial sobre el sitio web y sus contenidos pertenecen a SOLDADURA Y CALDERERÍA VALENCIANA, S.L. o a terceros autorizados. Quedan reservados todos los derechos de reproducción, distribución, comunicación pública y transformación, total o parcial, con fines comerciales, sin previa autorización escrita de la dirección de SOLYCAL S.L.</p>
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">4. Exclusión de Responsabilidad</h2>
+        <h4 class="text-xl font-display font-bold text-white">4. Exclusión de Responsabilidad</h4>
         <p>SOLYCAL S.L. adopta medidas tecnológicas avanzadas para evitar fallos o caídas del servicio, pero no garantiza la ausencia absoluta de virus u otros elementos lesivos en el software de terceros que pudieran causar daños en los sistemas informáticos del usuario.</p>
       </div>
 
       <div class="space-y-4">
-        <h2 class="text-xl font-display font-bold text-white">5. Legislación Aplicable y Jurisdicción</h2>
+        <h4 class="text-xl font-display font-bold text-white">5. Legislación Aplicable y Jurisdicción</h4>
         <p>Para la resolución de cualquier controversia o cuestión litigiosa relativa a este sitio web o las actividades en él desarrolladas, será de aplicación la legislación española vigente, siendo competentes los Juzgados y Tribunales de Torrent / Valencia.</p>
       </div>
 
@@ -2179,7 +2179,7 @@
         if (!legalSection) return;
 
         const textElements = legalSection.querySelectorAll(
-          'h1, h2, h3, p, li, .legal-tag'
+          'h4, h5, h6'
         );
 
         if (!textElements || textElements.length === 0) return;

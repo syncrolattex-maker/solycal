@@ -644,7 +644,7 @@ function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-cente
 }
 
 function getHeader(activeSlug, isTransparent = false) {
-  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto';
+  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto' || activeSlug === 'media';
   const links = [
     { num: '01', title: 'Inicio', href: 'index.html', slug: 'inicio' },
     { num: '02', title: 'Servicios', href: 'servicios.html', slug: 'servicios' },
@@ -4749,527 +4749,188 @@ ${getHeader('contacto', true)}
 ${getFooter()}
 `;
 
-// 6B. GENERATE MEDIA.HTML (Technical Portfolio & Filip Zrnzevic Draggable Gallery)
-const mediaHtml = `${getHead('Biblioteca de Trabajos y Galería Técnica | SOLYCAL', 'Explora los proyectos reales y capacidades de Solycal en calderería pesada, corte plasma HD, soldaduras homologadas y estructuras en nuestra galería interactiva draggable.', 'media.html')}
-${getHeader('media')}
+// 6B. GENERATE MEDIA.HTML (Pure Fullwidth Image-Only Draggable Gallery - Filip Zrnzevic Style)
+const mediaHtml = `${getHead('Galería de Imágenes | SOLYCAL', 'Galería de imágenes a pantalla completa de proyectos y trabajos de Solycal en calderería pesada, corte plasma HD y estructuras metálicas.', 'media.html')}
+${getHeader('media', true)}
 
-<!-- HERO & CONTROL HUD -->
-<section class="relative pt-12 pb-6 border-b border-white/5 bg-[#07080a] z-20">
-  <div class="w-full px-6">
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-white/10">
-      <div>
-        <div class="flex items-center gap-3 mb-3">
-          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// 07 MEDIA &amp; BIBLIOTECA TÉCNICA</span>
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20">GSAP INTERACTIVE CANVAS</span>
-        </div>
-        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight leading-none">
-          Catálogo visual de <span class="text-brand-yellow">ingeniería y taller.</span>
-        </h1>
-        <p class="text-xs sm:text-sm text-neutral-400 font-sans mt-3 max-w-2xl leading-relaxed">
-          Explora nuestros proyectos ejecutados de calderería, oxicorte plasma de alta definición, estructuras metálicas EN 1090 y calderería pesada mediante arrastre libre con inercia o vista en cuadrícula.
-        </p>
-      </div>
+<style>
+  html, body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    background-color: #07080a;
+  }
+  #main-header {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: transparent !important;
+    border-bottom: none !important;
+    pointer-events: none;
+  }
+  #main-header a, #main-header button, #main-header div {
+    pointer-events: auto;
+  }
+  .gallery-card {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    cursor: grab;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .gallery-card:active {
+    cursor: grabbing;
+  }
+  .gallery-card:hover {
+    box-shadow: 0 35px 65px -15px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(241, 181, 65, 0.65), 0 0 35px rgba(241, 181, 65, 0.2);
+  }
+  .gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .gallery-card:hover img {
+    transform: scale(1.06);
+  }
+  #gallery-stage {
+    cursor: grab;
+    touch-action: none;
+  }
+  #gallery-stage:active {
+    cursor: grabbing;
+  }
+</style>
 
-      <!-- Quick Action Controls & View Switcher -->
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- View Toggle (Canvas vs Grid) -->
-        <div class="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/10 font-mono text-xs">
-          <button id="view-mode-canvas" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-yellow text-black font-semibold transition-all" title="Vista Canvas Draggable Libre">
-            <i data-lucide="move" class="w-3.5 h-3.5"></i>
-            <span>Lienzo Libre</span>
-          </button>
-          <button id="view-mode-grid" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-neutral-400 hover:text-white transition-all" title="Vista Cuadrícula Técnica">
-            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-            <span>Cuadrícula</span>
-          </button>
-        </div>
-
-        <!-- Recenter View Button -->
-        <button id="btn-recenter-canvas" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-brand-yellow text-neutral-300 hover:text-white font-mono text-xs transition-all" title="Centrar lienzo interactivo">
-          <i data-lucide="crosshair" class="w-3.5 h-3.5 text-brand-yellow"></i>
-          <span>Centrar</span>
-        </button>
-
-        <!-- CTA Direct Contact -->
-        <a href="contacto.html" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-yellow text-black font-mono text-xs font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.2)]">
-          <span>Cotizar Pieza</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-        </a>
-      </div>
-    </div>
-
-    <!-- Category Filters Filter Bar -->
-    <div class="flex items-center justify-between gap-4 pt-4 overflow-x-auto no-scrollbar">
-      <div class="flex items-center gap-2" id="gallery-filters">
-        <button data-filter="all" class="filter-btn active px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-brand-yellow text-black">
-          Todos (12)
-        </button>
-        <button data-filter="caldereria" class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-white/[0.03] text-neutral-400 hover:text-white border border-white/5 hover:border-white/20">
-          Calderería Pesada
-        </button>
-        <button data-filter="plasma" class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-white/[0.03] text-neutral-400 hover:text-white border border-white/5 hover:border-white/20">
-          Corte Plasma HD
-        </button>
-        <button data-filter="estructuras" class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-white/[0.03] text-neutral-400 hover:text-white border border-white/5 hover:border-white/20">
-          Estructuras Metálicas
-        </button>
-        <button data-filter="soldadura" class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-white/[0.03] text-neutral-400 hover:text-white border border-white/5 hover:border-white/20">
-          Soldadura Homologada
-        </button>
-        <button data-filter="mecanizado" class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all bg-white/[0.03] text-neutral-400 hover:text-white border border-white/5 hover:border-white/20">
-          Mecanizado & Plegado
-        </button>
-      </div>
-
-      <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] text-neutral-500 flex-shrink-0">
-        <i data-lucide="hand" class="w-3.5 h-3.5 text-brand-yellow animate-pulse"></i>
-        <span>Arrastra para navegar el espacio</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MAIN GALLERY WORKSPACE -->
-<section id="gallery-viewport" class="relative w-full h-[76vh] min-h-[600px] overflow-hidden bg-[#050608] select-none cursor-grab active:cursor-grabbing border-b border-white/5">
+<!-- FULLSCREEN VIEWPORT CANVAS (FILIP ZRNZEVIC [gsap] ❍ DRAGGABLE IMAGE GALLERY) -->
+<main id="gallery-viewport" class="fixed inset-0 w-screen h-screen overflow-hidden bg-[#07080a] select-none z-0">
   
-  <!-- Subtle Industrial Grid Background -->
-  <div class="absolute inset-0 pointer-events-none opacity-20 dot-grid"></div>
-  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(5,6,8,0.85)_100%)]"></div>
+  <!-- Subtle Industrial Ambient Backdrop Grid -->
+  <div class="absolute inset-0 pointer-events-none opacity-25 dot-grid"></div>
+  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,rgba(7,8,10,0.85)_100%)]"></div>
 
-  <!-- FLOATING MINIMAP / RADAR INDICATOR -->
-  <div class="absolute bottom-6 right-6 z-30 pointer-events-none hidden md:flex items-center gap-3 px-3 py-2 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 font-mono text-[10px] text-neutral-400">
-    <div class="w-12 h-8 rounded border border-white/20 relative overflow-hidden bg-white/[0.02]">
-      <div id="minimap-reticle" class="absolute w-4 h-3 rounded-sm border border-brand-yellow bg-brand-yellow/20" style="top: 25%; left: 30%;"></div>
-    </div>
-    <div class="leading-tight">
-      <span class="text-white block font-bold">CANVAS 2D</span>
-      <span id="canvas-coords">X: 0 | Y: 0</span>
-    </div>
-  </div>
-
-  <!-- FLOATING INTERACTION HINT -->
-  <div id="drag-hint" class="absolute top-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none px-4 py-2 rounded-full bg-black/75 backdrop-blur-md border border-brand-yellow/30 font-mono text-xs text-brand-yellow flex items-center gap-2 transition-opacity duration-700 shadow-[0_0_20px_rgba(241,181,65,0.15)]">
-    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 animate-bounce"></i>
-    <span>HAZ CLIC Y ARRASTRA LIBREMENTE EL LIENZO</span>
-  </div>
-
-  <!-- DRAGGABLE 2D CANVAS CONTAINER (FILIP ZRNZEVIC MOMENTUM STAGE) -->
-  <div id="gallery-stage" class="absolute left-0 top-0 will-change-transform" style="width: 3400px; height: 2400px;">
+  <!-- EXPANSIVE 2D DRAGGABLE STAGE (Images Only - No Text Blocks) -->
+  <div id="gallery-stage" class="absolute left-0 top-0 will-change-transform" style="width: 3600px; height: 2600px;">
     
-    <!-- ITEM 1: Depósito de Gran Volumen -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 450px; top: 320px; width: 440px;"
-         data-category="caldereria"
-         data-title="Depósito Cilíndrico de Almacenamiento 16 Tn"
-         data-tag="CALDERERÍA INDUSTRIAL"
-         data-client="Industria Química del Levante"
-         data-specs="Acero al carbono S275JR | Espesor: 14 mm | Diámetro: 3.400 mm | Longitud: 14 m | Peso: 16.200 kg"
-         data-image="assets/instalaciones.jpg"
-         data-desc="Fabricación integral de virola continua en chapa de 14 mm curvada con cilindro de 4 rodillos, soldadura automática por arco sumergido y control no destructivo por ultrasonidos e inspección radiográfica 100%. Salida en transporte especial con escolta.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/instalaciones.jpg" alt="Depósito Cilíndrico de Calderería 16 Tn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // CALDERERÍA PESADA
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          16.200 KG
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Depósito Cilíndrico 16 Tn</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2481</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">S275JR &bull; Ø 3.400 mm &bull; Transporte Especial</p>
-      </div>
+    <!-- CARD 1: Depósito Cilíndrico de Gran Envergadura -->
+    <div class="gallery-card" style="left: 320px; top: 240px; width: 480px; height: 320px;" data-full="assets/instalaciones.jpg">
+      <img src="assets/instalaciones.jpg" alt="Calderería pesada Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 2: Corte Plasma Hypertherm HD -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 980px; top: 220px; width: 420px;"
-         data-category="plasma"
-         data-title="Mesa de Corte Plasma HD Hypertherm HPR260XD"
-         data-tag="CORTE PLASMA HD"
-         data-client="Oficina Técnica de Prototipos"
-         data-specs="Tolerancia ISO 9013 Rango 2 | Espesor de corte hasta 50 mm | Agujeros de precisión TrueHole | Acero S355J2 + Inox 316L"
-         data-image="assets/img/Servicios/corte-plasma-hd.jpeg"
-         data-desc="Célula automatizada de corte por plasma térmico de alta definición con control CNC. Ejecución de geometrías intrincadas con sangría cero y conicidad mínima garantizada por la tecnología patentada Hypertherm TrueHole.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/img/Servicios/corte-plasma-hd.jpeg" alt="Corte Plasma Hypertherm HD" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // PLASMA HD TRUEHOLE
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          50 MM ESPESOR
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Corte Plasma HD TrueHole</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2490</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Hypertherm 260A &bull; Agujeros tornillería 1:1</p>
-      </div>
+    <!-- CARD 2: Mesa de Corte Plasma HD Hypertherm -->
+    <div class="gallery-card" style="left: 880px; top: 160px; width: 440px; height: 290px;" data-full="assets/img/Servicios/corte-plasma-hd.jpeg">
+      <img src="assets/img/Servicios/corte-plasma-hd.jpeg" alt="Corte Plasma HD Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 3: Calderería de Gran Diámetro y Soldadura -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1480px; top: 380px; width: 440px;"
-         data-category="caldereria"
-         data-title="Virola de Tubería Forzada e Intercambiador"
-         data-tag="CALDERERÍA PESADA"
-         data-client="Sector Energético & Portuario"
-         data-specs="Acero antidesgaste Hardox 450 + S355 | Diámetro: 2.800 mm | Soldadura TIG + SAW | 100% Líquidos Penetrantes"
-         data-image="assets/img/Servicios/caldereria-industrial.jpeg"
-         data-desc="Ensamblaje y soldadura perimetral bajo atmósfera controlada para cuerpo de tubería de alta resistencia. Equipos montados sobre viradores motorizados de 20 toneladas con supervisión por inspectores Nivel II VT/PT.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/img/Servicios/caldereria-industrial.jpeg" alt="Virola de Calderería Pesada" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // CALDERERÍA PESADA
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          HARDOX 450
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Cuerpo Intercambiador Hardox</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2503</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Viradores 20 Tn &bull; Soldadura SAW</p>
-      </div>
+    <!-- CARD 3: Calderería Pesada & Soldadura Arco Sumergido -->
+    <div class="gallery-card" style="left: 1400px; top: 280px; width: 500px; height: 330px;" data-full="assets/img/Servicios/caldereria-industrial.jpeg">
+      <img src="assets/img/Servicios/caldereria-industrial.jpeg" alt="Calderería industrial Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 4: Estructuras Metálicas Naves y Pasarelas -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1990px; top: 250px; width: 440px;"
-         data-category="estructuras"
-         data-title="Estructuras Modulares Industriales Marcado CE"
-         data-tag="ESTRUCTURAS EN-1090"
-         data-client="Planta Logística Ribera Alta"
-         data-specs="Norma UNE-EN 1090-2 Clase EXC3 | Perfilería HEB 400 e IPE 360 | Granallado Sa 2.5 + Imprimación Epoxi 120 µm"
-         data-image="assets/img/Servicios/estructuras-metalicas.jpeg"
-         data-desc="Fabricación en taller central de pórticos de celosía y pasarelas técnicas para planta logística. Trazabilidad completa 3.1 de perfiles laminados en caliente y uniones atornilladas de alta resistencia 8.8 / 10.9.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/img/Servicios/estructuras-metalicas.jpeg" alt="Fabricación Estructuras Metálicas Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // MARCADO CE EXC3
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          UNE-EN 1090-2
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Estructura Modular EXC3</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2475</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">HEB 400 &bull; Pintura C4 Industrial &bull; CE</p>
-      </div>
+    <!-- CARD 4: Estructuras Metálicas Marcado CE EN 1090 -->
+    <div class="gallery-card" style="left: 1980px; top: 180px; width: 460px; height: 300px;" data-full="assets/img/Servicios/estructuras-metalicas.jpeg">
+      <img src="assets/img/Servicios/estructuras-metalicas.jpeg" alt="Estructuras metálicas Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 5: Soldadura Técnica TIG Inox -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 480px; top: 820px; width: 420px;"
-         data-category="soldadura"
-         data-title="Soldadura TIG Purga con Argón AISI 316L"
-         data-tag="SOLDADURA HOMOLOGADA"
-         data-client="Sector Farmacéutico & Alimentario"
-         data-specs="Acero Inoxidable Austenítico AISI 316L | Gas de respaldo: Argón 99.999% | Certificación soldador ISO 9606-1"
-         data-image="assets/img/Servicios/soldadura-tecnica.jpeg"
-         data-desc="Cordones de soldadura TIG sanitaria con penetración total sin resalte interior, eliminando cualquier porosidad susceptible de contaminación biológica. Pasivado químico por inmersión tras ejecución.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/img/Servicios/soldadura-tecnica.jpeg" alt="Soldadura Técnica TIG Inoxidable" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // TIG SANITARIO 316L
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          ISO 9606-1
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Tubería Sanitaria AISI 316L</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2512</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Purga Argón &bull; Rugosidad Ra &lt; 0.4 µm</p>
-      </div>
+    <!-- CARD 5: Oxicorte Chispas & Biselado 3D -->
+    <div class="gallery-card" style="left: 2520px; top: 260px; width: 480px; height: 320px;" data-full="assets/header.jpg">
+      <img src="assets/header.jpg" alt="Oxicorte y biselado Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 6: Mecanizado CNC de Precisión -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1010px; top: 760px; width: 440px;"
-         data-category="mecanizado"
-         data-title="Mecanizado de Impulsor de Turbina 5 Ejes"
-         data-tag="MECANIZADO INDUSTRIAL"
-         data-client="Sector Hidráulico y Bombas"
-         data-specs="Aleación de Aluminio Aeronáutico 7075-T6 | Tolerancia: +/- 0.01 mm | Acabado superficial N5"
-         data-image="assets/mecanizado.jpg"
-         data-desc="Fresado multieje de álabes curvos para rodete de impulsión de alta velocidad. Mecanizado en un solo atado para garantizar concentricidad absoluta y equilibrado dinámico clase G 1.0 según ISO 1940.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/mecanizado.jpg" alt="Mecanizado CNC de Precisión Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // CNC 5 EJES
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          ± 0.01 MM
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Rodete Turbina Fresado 5X</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2462</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Aluminio 7075-T6 &bull; Equilibrado G 1.0</p>
-      </div>
+    <!-- CARD 6: Soldadura Técnica TIG Inoxidable -->
+    <div class="gallery-card" style="left: 400px; top: 720px; width: 460px; height: 300px;" data-full="assets/img/Servicios/soldadura-tecnica.jpeg">
+      <img src="assets/img/Servicios/soldadura-tecnica.jpeg" alt="Soldadura TIG Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 7: Oxicorte y Corte Láser de Chapa Gruesa -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1540px; top: 880px; width: 430px;"
-         data-category="plasma"
-         data-title="Corte Térmico de Placa Base 40 mm con Biseles"
-         data-tag="CORTE CNC & BISELADO"
-         data-client="Estructuras de Obra Civil"
-         data-specs="Acero al carbono S355K2+N | Espesor: 40 mm | Bisel tipo K para soldadura a tope"
-         data-image="assets/header.jpg"
-         data-desc="Corte térmico asistido por oxígeno con cabezal orientable 3D para la realización simultánea del corte perimetral y el biselado de preparación de soldadura, reduciendo tiempos de mecanizado posterior a cero.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/header.jpg" alt="Oxicorte y Corte Térmico Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // BISELADO CNC 3D
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          40 MM S355
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Placa Base Bisel Tipo K</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2488</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">S355K2+N &bull; Biselado automatizado</p>
-      </div>
+    <!-- CARD 7: Mecanizado CNC de Turbina 5 Ejes -->
+    <div class="gallery-card" style="left: 940px; top: 620px; width: 500px; height: 330px;" data-full="assets/mecanizado.jpg">
+      <img src="assets/mecanizado.jpg" alt="Mecanizado CNC Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 8: Montaje e Instalación en Obra -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 2060px; top: 790px; width: 440px;"
-         data-category="estructuras"
-         data-title="Anclaje de Pilares Pesados con Gato Hidráulico"
-         data-tag="MONTAJE EN PLANTA"
-         data-client="Planta Cementara Buñol"
-         data-specs="Pernos de anclaje M36 clase 10.9 | Nivelación milimétrica con mortero de resina epoxi sin retracción"
-         data-image="assets/img/Servicios/montaje-instalacion.jpeg"
-         data-desc="Montaje en obra de apoyos fijos y deslizantes para silos industriales. Nivelación milimétrica con sistemas de control topográfico láser y apriete controlado mediante llaves dinamométricas homologadas.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/img/Servicios/montaje-instalacion.jpeg" alt="Montaje e Instalación Industrial" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // MONTAJE PESADO
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          PERNOS M36
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Apoyos Estructurales Silos</h3>
-          <span class="font-mono text-xs text-neutral-400">#P-2495</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Par de apriete verificado &bull; Ensayos NDT</p>
-      </div>
+    <!-- CARD 8: Montaje e Instalación en Obra -->
+    <div class="gallery-card" style="left: 1520px; top: 760px; width: 480px; height: 320px;" data-full="assets/img/Servicios/montaje-instalacion.jpeg">
+      <img src="assets/img/Servicios/montaje-instalacion.jpeg" alt="Montaje industrial Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 9: Plegadora CNC Ermaksan 4 Metros -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 720px; top: 1360px; width: 440px;"
-         data-category="mecanizado"
-         data-title="Plegadora Sincronizada CNC Ermaksan Power-Bend Pro"
-         data-tag="PLEGADO CNC ALTA POTENCIA"
-         data-client="Fabricación Taller Solycal"
-         data-specs="Longitud útil: 4.100 mm | Fuerza de prensado: 320 Tn | Compensación de bombeo hidráulico CNC"
-         data-image="assets/power2.png"
-         data-desc="Plegado de perfiles especiales, conos truncados y cajones de gran envergadura. Control numérico gráfico 3D que calcula automáticamente la secuencia de doblado y la deducción de chapa según el radio interior.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/power2.png" alt="Plegadora CNC Ermaksan Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // PLEGADO 320 TN
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          4 METROS ÚTILES
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Ermaksan Power-Bend 320Tn</h3>
-          <span class="font-mono text-xs text-neutral-400">#MAQ-04</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Plegado de conos y cajones pesados</p>
-      </div>
+    <!-- CARD 9: Plegadora Sincronizada CNC Ermaksan 320 Tn -->
+    <div class="gallery-card" style="left: 2080px; top: 660px; width: 470px; height: 310px; background: #0c0e12;" data-full="assets/power2.png">
+      <img src="assets/power2.png" alt="Plegadora CNC Ermaksan" class="object-contain p-2" loading="eager">
     </div>
 
-    <!-- ITEM 10: Generador Plasma Hypertherm HPR260XD -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1250px; top: 1420px; width: 420px;"
-         data-category="plasma"
-         data-title="Fuente de Plasma Hypertherm HyPerformance 260A"
-         data-tag="EQUIPO DE CORTE"
-         data-client="Célula de Oxicorte y Plasma"
-         data-specs="Capacidad de perforación en producción: 38 mm en acero suave | Acero inoxidable: 32 mm | Calidad de corte clase ISO 2"
-         data-image="assets/plasma-machine.png"
-         data-desc="Generador industrial de plasma con mezcla automática de gases de proceso (Oxígeno, Nitrógeno, Aire, H35). Velocidad de corte hasta 4 veces superior al oxicorte tradicional con acabado listo para soldar.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/plasma-machine.png" alt="Generador Plasma Hypertherm Solycal" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // HYPERTHERM HPR260
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          260 AMPERIOS
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Generador Plasma HPR260XD</h3>
-          <span class="font-mono text-xs text-neutral-400">#MAQ-02</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Gases automáticos &bull; Perforación 38 mm</p>
-      </div>
+    <!-- CARD 10: Control Metrológico de Garganta de Soldadura -->
+    <div class="gallery-card" style="left: 2630px; top: 740px; width: 450px; height: 300px;" data-full="assets/visual1.jpeg">
+      <img src="assets/visual1.jpeg" alt="Control de calidad visual Solycal" loading="eager">
     </div>
 
-    <!-- ITEM 11: Control Metrológico de Garganta de Soldadura -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 1770px; top: 1350px; width: 440px;"
-         data-category="caldereria"
-         data-title="Inspección Dimensional de Soldadura y Garganta 'a'"
-         data-tag="CONTROL DE CALIDAD NDT"
-         data-client="Inspección LRQA y Auditoría Externa"
-         data-specs="Calibre digital de ángulo 60°/80°/90° | Verificación norma UNE-EN ISO 5817 Nivel B | Ensayos no destructivos VT/PT"
-         data-image="assets/visual1.jpeg"
-         data-desc="Auditoría metrológica de espesor de garganta, ángulo de bisel y alineación de bordes según requisitos estrictos de la norma UNE-EN ISO 5817 Nivel B para recipientes sometidos a presión y estructuras de alta fatiga.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/visual1.jpeg" alt="Control de Calidad Dimensional Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // CONTROL DE CALIDAD
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          ISO 5817 NIVEL B
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Metrología y Ensayo Visual VT</h3>
-          <span class="font-mono text-xs text-neutral-400">#CAL-08</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Calibre digital &bull; Certificado 3.1 &bull; NDT</p>
-      </div>
+    <!-- CARD 11: Generador Plasma Hypertherm HPR260XD -->
+    <div class="gallery-card" style="left: 640px; top: 1220px; width: 440px; height: 310px; background: #0c0e12;" data-full="assets/plasma-machine.png">
+      <img src="assets/plasma-machine.png" alt="Equipo Plasma Hypertherm" class="object-contain p-3" loading="eager">
     </div>
 
-    <!-- ITEM 12: Equipamiento de Protección y Homologación WPQR -->
-    <div class="gallery-item absolute p-3 rounded-2xl bg-[#0e1014]/90 backdrop-blur-md border border-white/10 hover:border-brand-yellow transition-[border-color,box-shadow] duration-300 shadow-2xl cursor-pointer group"
-         style="left: 2280px; top: 1400px; width: 420px;"
-         data-category="soldadura"
-         data-title="Procedimientos de Soldadura Calificados WPQR/WPS"
-         data-tag="HOMOLOGACIÓN OFICIAL"
-         data-client="Entidad Certificadora LRQA"
-         data-specs="Procedimientos WPQR avalados según UNE-EN ISO 15614-1 | Soldadores homologados según UNE-EN ISO 9606-1"
-         data-image="assets/weld.jpg"
-         data-desc="Toda soldadura ejecutada en la planta de Solycal cuenta con especificación de procedimiento de soldeo (WPS) respaldada por registro de cualificación (WPQR) y ensayos mecánicos de tracción y doblado.">
-      <div class="relative aspect-[16/10] overflow-hidden rounded-xl bg-black/50">
-        <img src="assets/weld.jpg" alt="Equipos y Homologación Soldadura Solycal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-95 group-hover:brightness-105">
-        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/10 font-mono text-[10px] text-brand-yellow tracking-wider uppercase font-semibold">
-          // WPS / WPQR CERTIFICADO
-        </div>
-        <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded bg-black/80 font-mono text-[10px] text-neutral-300">
-          ISO 15614-1
-        </div>
-      </div>
-      <div class="pt-3 px-1">
-        <div class="flex items-baseline justify-between mb-1">
-          <h3 class="font-display font-bold text-white text-base tracking-tight group-hover:text-brand-yellow transition-colors">Cualificación de Procedimientos</h3>
-          <span class="font-mono text-xs text-neutral-400">#DOC-19</span>
-        </div>
-        <p class="font-mono text-[11px] text-neutral-400 truncate">Soldadura TIG / MIG-MAG / Electrodo</p>
-      </div>
+    <!-- CARD 12: Procedimientos de Soldadura Homologada WPS/WPQR -->
+    <div class="gallery-card" style="left: 1160px; top: 1140px; width: 460px; height: 300px; background: #0c0e12;" data-full="assets/weld.jpg">
+      <img src="assets/weld.jpg" alt="Homologación soldadura Solycal" class="object-cover" loading="eager">
+    </div>
+
+    <!-- CARD 13: Panorámica Instalaciones y Puente Grúa 16 Tn -->
+    <div class="gallery-card" style="left: 1700px; top: 1240px; width: 520px; height: 340px;" data-full="assets/instalaciones.jpg">
+      <img src="assets/instalaciones.jpg" alt="Instalaciones y planta Torrent" loading="eager">
+    </div>
+
+    <!-- CARD 14: Detalle Oxicorte y Corte Láser -->
+    <div class="gallery-card" style="left: 2300px; top: 1160px; width: 470px; height: 310px;" data-full="assets/header.jpg">
+      <img src="assets/header.jpg" alt="Corte térmico placa gruesa" loading="eager">
+    </div>
+
+    <!-- CARD 15: Fabricación Celosía Estructuras -->
+    <div class="gallery-card" style="left: 2850px; top: 1220px; width: 480px; height: 320px;" data-full="assets/img/Servicios/estructuras-metalicas.jpeg">
+      <img src="assets/img/Servicios/estructuras-metalicas.jpeg" alt="Estructuras pórticos taller" loading="eager">
+    </div>
+
+    <!-- CARD 16: Calderería de Envergadura -->
+    <div class="gallery-card" style="left: 480px; top: 1720px; width: 500px; height: 330px;" data-full="assets/img/Servicios/caldereria-industrial.jpeg">
+      <img src="assets/img/Servicios/caldereria-industrial.jpeg" alt="Cuerpo tubular calderería" loading="eager">
+    </div>
+
+    <!-- CARD 17: Corte Plasma HD Célula CNC -->
+    <div class="gallery-card" style="left: 1060px; top: 1640px; width: 460px; height: 310px;" data-full="assets/img/Servicios/corte-plasma-hd.jpeg">
+      <img src="assets/img/Servicios/corte-plasma-hd.jpeg" alt="Plasma mesa CNC" loading="eager">
+    </div>
+
+    <!-- CARD 18: Mecanizado y Rodete Turbina -->
+    <div class="gallery-card" style="left: 1600px; top: 1740px; width: 480px; height: 320px;" data-full="assets/mecanizado.jpg">
+      <img src="assets/mecanizado.jpg" alt="Fresado de precisión CNC" loading="eager">
+    </div>
+
+    <!-- CARD 19: Soldadura TIG Argón Sanitaria -->
+    <div class="gallery-card" style="left: 2160px; top: 1660px; width: 470px; height: 310px;" data-full="assets/img/Servicios/soldadura-tecnica.jpeg">
+      <img src="assets/img/Servicios/soldadura-tecnica.jpeg" alt="TIG sanitario inoxidable" loading="eager">
+    </div>
+
+    <!-- CARD 20: Montaje en Obra de Apoyos -->
+    <div class="gallery-card" style="left: 2710px; top: 1720px; width: 480px; height: 320px;" data-full="assets/img/Servicios/montaje-instalacion.jpeg">
+      <img src="assets/img/Servicios/montaje-instalacion.jpeg" alt="Montadores especialistas Solycal" loading="eager">
     </div>
 
   </div>
-</section>
+</main>
 
-<!-- ALTERNATIVE STRUCTURED GRID VIEW (ACTIVATED BY TOGGLE OR ON MOBILE) -->
-<section id="gallery-grid-view" class="hidden py-16 bg-[#07080a] border-b border-white/5">
-  <div class="w-full px-6">
-    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
-      <div class="flex items-center gap-3">
-        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// VISTA TÉCNICA ESTRUCTURADA</span>
-        <span class="text-xs text-neutral-500 font-mono">12 TRABAJOS REGISTRADOS</span>
-      </div>
-      <p class="font-mono text-xs text-neutral-400">Pulsa cualquier trabajo para ver la ficha técnica completa</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="grid-cards-container">
-      <!-- Cards dynamically mirrored here via JS -->
-    </div>
-  </div>
-</section>
-
-<!-- TECHNICAL INSPECTION MODAL / LIGHTBOX -->
-<div id="tech-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 md:p-10 bg-black/90 backdrop-blur-xl opacity-0 transition-opacity duration-300" aria-modal="true" role="dialog">
-  <div class="relative w-full max-w-5xl rounded-3xl bg-[#0c0e12] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col lg:flex-row max-h-[90vh]">
-    
-    <!-- Close Modal Button -->
-    <button id="modal-close-btn" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/70 border border-white/15 text-white hover:text-brand-yellow hover:border-brand-yellow flex items-center justify-center transition-all" aria-label="Cerrar ficha técnica">
-      <i data-lucide="x" class="w-5 h-5"></i>
-    </button>
-
-    <!-- Modal Left: Full-res Visual Display -->
-    <div class="lg:w-3/5 bg-black/70 relative flex items-center justify-center p-4 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
-      <img id="modal-img" src="" alt="Ficha técnica de trabajo" class="max-w-full max-h-[60vh] lg:max-h-[80vh] object-contain rounded-xl shadow-2xl">
-      <div class="absolute bottom-4 left-4 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-md border border-white/10 font-mono text-xs text-brand-yellow flex items-center gap-2">
-        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-        <span id="modal-tag-badge">FICHA TÉCNICA VERIFICADA</span>
-      </div>
-    </div>
-
-    <!-- Modal Right: Engineering Specifications & CTA -->
-    <div class="lg:w-2/5 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
-      <div class="space-y-6">
-        <div>
-          <span id="modal-client" class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-2">// SOLYCAL TALLER CENTRAL</span>
-          <h2 id="modal-title" class="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight leading-snug">
-            Título del Proyecto
-          </h2>
-        </div>
-
-        <!-- Technical Specs Box -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 font-mono text-xs">
-          <p class="text-neutral-400 uppercase tracking-wider text-[10px] font-bold text-brand-yellow">// ESPECIFICACIONES TÉCNICAS</p>
-          <p id="modal-specs" class="text-neutral-200 leading-relaxed break-words"></p>
-        </div>
-
-        <!-- Description -->
-        <div>
-          <p class="font-mono text-[10px] text-neutral-400 uppercase tracking-widest mb-2">// MEMORIA DE EJECUCIÓN</p>
-          <p id="modal-desc" class="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed"></p>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="pt-6 mt-6 border-t border-white/10 space-y-3">
-        <a id="modal-cta-quote" href="contacto.html" class="flex items-center justify-between w-full p-4 rounded-xl bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_25px_rgba(241,181,65,0.25)]">
-          <span>Cotizar Proyecto Similar</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
-        <button id="modal-close-cta" class="w-full py-2.5 rounded-xl border border-white/10 text-neutral-400 hover:text-white font-mono text-xs transition-colors">
-          Cerrar e inspeccionar otros trabajos
-        </button>
-      </div>
-
-    </div>
-
-  </div>
+<!-- FULLSCREEN LIGHTBOX (PURE IMAGE VIEW) -->
+<div id="image-lightbox" class="fixed inset-0 z-[250] hidden items-center justify-center bg-black/95 backdrop-blur-2xl opacity-0 transition-opacity duration-300 select-none cursor-zoom-out">
+  <img id="lightbox-img" src="" alt="Ampliación" class="max-w-[92vw] max-h-[92vh] object-contain rounded-2xl shadow-[0_0_90px_rgba(0,0,0,0.9)] transition-transform duration-300">
+  <button id="lightbox-close" class="absolute top-6 right-6 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-brand-yellow hover:text-black text-white flex items-center justify-center transition-all cursor-pointer">
+    <i data-lucide="x" class="w-6 h-6"></i>
+  </button>
 </div>
 
-<!-- SCRIPTS: GSAP DRAGGABLE & FILIP ZRNZEVIC MOMENTUM GALLERY LOGIC -->
+<!-- GSAP DRAGGABLE ENGINE (FILIP ZRNZEVIC MOMENTUM & VELOCITY TILT) -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof lucide !== 'undefined') {
@@ -5278,96 +4939,69 @@ ${getHeader('media')}
 
     const stage = document.getElementById('gallery-stage');
     const viewport = document.getElementById('gallery-viewport');
-    const items = Array.from(document.querySelectorAll('.gallery-item'));
-    const coordsEl = document.getElementById('canvas-coords');
-    const minimapReticle = document.getElementById('minimap-reticle');
-    const hint = document.getElementById('drag-hint');
+    const cards = Array.from(document.querySelectorAll('.gallery-card'));
+    const lightbox = document.getElementById('image-lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
 
-    const viewCanvasBtn = document.getElementById('view-mode-canvas');
-    const viewGridBtn = document.getElementById('view-mode-grid');
-    const recenterBtn = document.getElementById('btn-recenter-canvas');
-    const gridView = document.getElementById('gallery-grid-view');
-    const gridContainer = document.getElementById('grid-cards-container');
+    const stageWidth = 3600;
+    const stageHeight = 2600;
 
-    const filterBtns = document.querySelectorAll('.filter-btn');
-
-    // Populate Grid View with cloned items
-    items.forEach((item, index) => {
-      const card = document.createElement('div');
-      card.className = 'p-4 rounded-2xl bg-[#0e1014] border border-white/10 hover:border-brand-yellow transition-all duration-300 cursor-pointer group';
-      card.setAttribute('data-category', item.getAttribute('data-category'));
-      card.innerHTML = item.innerHTML;
-      card.addEventListener('click', () => openModalWithItem(item));
-      gridContainer.appendChild(card);
-    });
-
-    // Initial positioning: Center the canvas in viewport
-    function centerCanvas(animate = false) {
+    // Center stage initially
+    function centerStage(animate = false) {
       if (!viewport || !stage) return;
-      const vpW = viewport.clientWidth;
-      const vpH = viewport.clientHeight;
-      const stageW = 3400;
-      const stageH = 2400;
-      const targetX = Math.round((vpW - stageW) / 2);
-      const targetY = Math.round((vpH - stageH) / 2);
+      const vpW = window.innerWidth;
+      const vpH = window.innerHeight;
+      const targetX = Math.round((vpW - stageWidth) / 2);
+      const targetY = Math.round((vpH - stageHeight) / 2);
 
       if (animate && typeof gsap !== 'undefined') {
         gsap.to(stage, {
           x: targetX,
           y: targetY,
           duration: 1.2,
-          ease: 'power3.out',
-          onUpdate: updateMinimap
+          ease: 'power3.out'
         });
       } else if (typeof gsap !== 'undefined') {
         gsap.set(stage, { x: targetX, y: targetY });
-        updateMinimap();
       }
     }
 
-    centerCanvas(false);
+    centerStage(false);
 
-    // GSAP Draggable Setup with Momentum & Dynamic Tilt (Filip Zrnzevic Style)
-    let draggableInstance = null;
     let isDragging = false;
     let dragDistance = 0;
+    let draggableInstance = null;
 
     if (typeof Draggable !== 'undefined') {
       gsap.registerPlugin(Draggable);
 
       draggableInstance = Draggable.create(stage, {
         type: 'x,y',
-        edgeResistance: 0.75,
+        edgeResistance: 0.8,
         bounds: {
-          minX: -(3400 - (viewport ? viewport.clientWidth : 1200) + 150),
-          maxX: 150,
-          minY: -(2400 - (viewport ? viewport.clientHeight : 700) + 150),
-          maxY: 150
+          minX: -(stageWidth - window.innerWidth + 200),
+          maxX: 200,
+          minY: -(stageHeight - window.innerHeight + 200),
+          maxY: 200
         },
         cursor: 'grab',
         activeCursor: 'grabbing',
         onPressInit: function() {
           dragDistance = 0;
         },
-        onPress: function() {
-          if (hint) {
-            hint.style.opacity = '0';
-            setTimeout(() => { if (hint) hint.style.display = 'none'; }, 700);
-          }
-        },
         onDragStart: function() {
           isDragging = true;
         },
         onDrag: function() {
           dragDistance += Math.abs(this.deltaX) + Math.abs(this.deltaY);
-          updateMinimap();
 
-          // Dynamic Tilt based on drag velocity (Filip Zrnzevic signature effect)
-          const tiltX = Math.max(-8, Math.min(8, this.deltaY * 0.4));
-          const tiltY = Math.max(-8, Math.min(8, -this.deltaX * 0.4));
-          const skewX = Math.max(-4, Math.min(4, this.deltaX * 0.15));
+          // Dynamic Tilt based on drag velocity (Filip Zrnzevic signature momentum effect)
+          const tiltX = Math.max(-9, Math.min(9, this.deltaY * 0.45));
+          const tiltY = Math.max(-9, Math.min(9, -this.deltaX * 0.45));
+          const skewX = Math.max(-4, Math.min(4, this.deltaX * 0.18));
 
-          gsap.to(items, {
+          gsap.to(cards, {
             rotationX: tiltX,
             rotationY: tiltY,
             skewX: skewX,
@@ -5378,184 +5012,72 @@ ${getHeader('media')}
         },
         onDragEnd: function() {
           setTimeout(() => { isDragging = false; }, 80);
-          updateMinimap();
 
           // Return tilt to natural state with smooth spring decay
-          gsap.to(items, {
+          gsap.to(cards, {
             rotationX: 0,
             rotationY: 0,
             skewX: 0,
-            duration: 0.8,
+            duration: 0.85,
             ease: 'power3.out'
           });
         }
       })[0];
     }
 
-    function updateMinimap() {
-      if (!stage) return;
-      const currentX = gsap.getProperty(stage, 'x') || 0;
-      const currentY = gsap.getProperty(stage, 'y') || 0;
-
-      if (coordsEl) {
-        coordsEl.textContent = 'X: ' + Math.round(-currentX) + ' | Y: ' + Math.round(-currentY);
-      }
-
-      if (minimapReticle && viewport) {
-        const vpW = viewport.clientWidth;
-        const vpH = viewport.clientHeight;
-        const stageW = 3400;
-        const stageH = 2400;
-
-        const pctX = Math.max(0, Math.min(1, -currentX / (stageW - vpW || 1)));
-        const pctY = Math.max(0, Math.min(1, -currentY / (stageH - vpH || 1)));
-
-        minimapReticle.style.left = (pctX * 65) + '%';
-        minimapReticle.style.top = (pctY * 65) + '%';
-      }
-    }
-
-    // Modal / Lightbox Logic
-    const modal = document.getElementById('tech-modal');
-    const modalImg = document.getElementById('modal-img');
-    const modalTitle = document.getElementById('modal-title');
-    const modalClient = document.getElementById('modal-client');
-    const modalSpecs = document.getElementById('modal-specs');
-    const modalDesc = document.getElementById('modal-desc');
-    const modalTagBadge = document.getElementById('modal-tag-badge');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    const modalCloseCta = document.getElementById('modal-close-cta');
-
-    function openModalWithItem(item) {
-      if (dragDistance > 12) return; // Prevent opening when user is dragging
-
-      modalImg.src = item.getAttribute('data-image') || '';
-      modalTitle.textContent = item.getAttribute('data-title') || '';
-      modalClient.textContent = '// ' + (item.getAttribute('data-client') || 'SOLYCAL TALLER');
-      modalSpecs.textContent = item.getAttribute('data-specs') || '';
-      modalDesc.textContent = item.getAttribute('data-desc') || '';
-      modalTagBadge.textContent = item.getAttribute('data-tag') || 'FICHA TÉCNICA';
-
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+    // Lightbox Pure Image on Click (Without triggering on drag)
+    function openLightbox(src) {
+      if (dragDistance > 12) return;
+      lightboxImg.src = src;
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
       setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        modal.classList.add('opacity-100');
+        lightbox.classList.remove('opacity-0');
+        lightbox.classList.add('opacity-100');
       }, 10);
-      document.body.style.overflow = 'hidden';
     }
 
-    function closeModal() {
-      modal.classList.remove('opacity-100');
-      modal.classList.add('opacity-0');
+    function closeLightbox() {
+      lightbox.classList.remove('opacity-100');
+      lightbox.classList.add('opacity-0');
       setTimeout(() => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
+        lightbox.classList.remove('flex');
+        lightbox.classList.add('hidden');
       }, 300);
     }
 
-    items.forEach(item => {
-      item.addEventListener('click', () => openModalWithItem(item));
+    cards.forEach(card => {
+      card.addEventListener('click', function(e) {
+        const fullSrc = this.getAttribute('data-full');
+        if (fullSrc) openLightbox(fullSrc);
+      });
     });
 
-    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-    if (modalCloseCta) modalCloseCta.addEventListener('click', closeModal);
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
+    if (lightbox) {
+      lightbox.addEventListener('click', closeLightbox);
     }
-
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', closeLightbox);
+    }
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-        closeModal();
+      if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
+        closeLightbox();
       }
     });
 
-    // Recenter Button
-    if (recenterBtn) {
-      recenterBtn.addEventListener('click', () => centerCanvas(true));
-    }
-
-    // View Mode Toggle (Canvas vs Grid)
-    if (viewCanvasBtn && viewGridBtn) {
-      viewCanvasBtn.addEventListener('click', () => {
-        viewCanvasBtn.classList.add('bg-brand-yellow', 'text-black', 'font-semibold');
-        viewCanvasBtn.classList.remove('text-neutral-400');
-        viewGridBtn.classList.remove('bg-brand-yellow', 'text-black', 'font-semibold');
-        viewGridBtn.classList.add('text-neutral-400');
-
-        viewport.classList.remove('hidden');
-        gridView.classList.add('hidden');
-        centerCanvas(true);
-      });
-
-      viewGridBtn.addEventListener('click', () => {
-        viewGridBtn.classList.add('bg-brand-yellow', 'text-black', 'font-semibold');
-        viewGridBtn.classList.remove('text-neutral-400');
-        viewCanvasBtn.classList.remove('bg-brand-yellow', 'text-black', 'font-semibold');
-        viewCanvasBtn.classList.add('text-neutral-400');
-
-        viewport.classList.add('hidden');
-        gridView.classList.remove('hidden');
-      });
-    }
-
-    // Category Filtering
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        filterBtns.forEach(b => {
-          b.classList.remove('active', 'bg-brand-yellow', 'text-black');
-          b.classList.add('bg-white/[0.03]', 'text-neutral-400');
-        });
-        this.classList.add('active', 'bg-brand-yellow', 'text-black');
-        this.classList.remove('bg-white/[0.03]', 'text-neutral-400');
-
-        const cat = this.getAttribute('data-filter');
-
-        // Filter Draggable Stage Items with smooth opacity & scale
-        items.forEach(it => {
-          const itCat = it.getAttribute('data-category');
-          const match = cat === 'all' || itCat === cat;
-          gsap.to(it, {
-            opacity: match ? 1 : 0.15,
-            scale: match ? 1 : 0.88,
-            duration: 0.45,
-            pointerEvents: match ? 'auto' : 'none',
-            ease: 'power2.out'
-          });
-        });
-
-        // Filter Grid View items
-        const gridItems = Array.from(gridContainer.children);
-        gridItems.forEach(it => {
-          const itCat = it.getAttribute('data-category');
-          if (cat === 'all' || itCat === cat) {
-            it.style.display = 'block';
-          } else {
-            it.style.display = 'none';
-          }
-        });
-      });
-    });
-
-    // Window Resize Adjustments
     window.addEventListener('resize', () => {
       if (draggableInstance) {
         draggableInstance.applyBounds({
-          minX: -(3400 - viewport.clientWidth + 150),
-          maxX: 150,
-          minY: -(2400 - viewport.clientHeight + 150),
-          maxY: 150
+          minX: -(stageWidth - window.innerWidth + 200),
+          maxX: 200,
+          minY: -(stageHeight - window.innerHeight + 200),
+          maxY: 200
         });
       }
     });
 
   });
 </script>
-
-${getFooter()}
 `;
 
 // 7. GENERATE AVISO-LEGAL.HTML

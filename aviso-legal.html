@@ -49,6 +49,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <!-- SplitType for On-Scroll Blur Typography (Codrops Effect #3) -->
+  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -92,6 +94,16 @@
     }
     .lenis.lenis-scrolling iframe {
       pointer-events: none;
+    }
+    /* Scroll Blur Typography - Codrops Effect #3 */
+    .scroll-blur-text .word {
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .scroll-blur-text .char {
+      display: inline-block;
+      transform-origin: 50% 50%;
+      will-change: transform, filter;
     }
     body {
       background-color: #07080a;
@@ -773,11 +785,11 @@
     </div>
   </div>
 
-<section class="py-20 border-b border-white/5 bg-[#07080a]">
+<section class="py-20 border-b border-white/5 bg-[#07080a]" id="legal-content-section">
   <div class="w-full px-6 sm:px-12 lg:px-16 xl:px-20 max-w-5xl mx-auto">
     
     <div class="mb-12 border-b border-white/10 pb-8">
-      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3">// INFORMACIÓN LEGAL Y REGULATORIA</span>
+      <span class="font-mono text-xs uppercase tracking-widest text-brand-yellow font-bold block mb-3 legal-tag">// INFORMACIÓN LEGAL Y REGULATORIA</span>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight">Aviso Legal</h1>
       <p class="font-mono text-xs text-neutral-400 mt-3">Última actualización conforme a la Ley 34/2002 (LSSI-CE)</p>
     </div>
@@ -1268,7 +1280,7 @@
 
           // 2. SELECCIÓN EXCLUSIVA DE ELEMENTOS: h1:not(.hero-title) y h2
           const targetElements = Array.from(document.querySelectorAll('h1:not(.hero-title), h2')).filter(el => {
-            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && el.textContent.trim().length > 0;
+            return !el.closest('#joby-nav-overlay') && !el.closest('#solycal-loader') && !el.closest('#contacto-hero') && !el.closest('#particle-text-anchor') && !el.closest('#legal-content-section') && el.textContent.trim().length > 0;
           });
 
           if (targetElements.length === 0) return;
@@ -2154,6 +2166,103 @@
           requestAnimationFrame(renderBitPatterns);
         }
       }
+
+      // =========================================================================
+      // ON-SCROLL BLUR REVEAL TYPOGRAPHY (Codrops Effect #3)
+      // https://tympanus.net/Development/ScrollBlurTypography/
+      // =========================================================================
+      function initScrollBlurTypography() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const legalSection = document.getElementById('legal-content-section');
+        if (!legalSection) return;
+
+        const textElements = legalSection.querySelectorAll(
+          'h1, h2, h3, p, li, .legal-tag'
+        );
+
+        if (!textElements || textElements.length === 0) return;
+
+        textElements.forEach((el) => {
+          if (!el.textContent.trim()) return;
+
+          el.classList.add('scroll-blur-text');
+
+          let chars = [];
+          if (typeof SplitType !== 'undefined') {
+            try {
+              const splitter = new SplitType(el, { types: 'words, chars', tagName: 'span' });
+              chars = splitter.chars || [];
+            } catch (e) {
+              console.warn('SplitType error on element:', e);
+            }
+          }
+
+          // Fallback nativo si SplitType no estuviera disponible
+          if (!chars || chars.length === 0) {
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+            const textNodes = [];
+            let node;
+            while ((node = walker.nextNode())) {
+              if (node.nodeValue.trim()) textNodes.push(node);
+            }
+
+            textNodes.forEach((tNode) => {
+              const words = tNode.nodeValue.split(/(\s+)/);
+              const fragment = document.createDocumentFragment();
+              words.forEach((word) => {
+                if (/^\s+$/.test(word)) {
+                  fragment.appendChild(document.createTextNode(word));
+                } else {
+                  const wordSpan = document.createElement('span');
+                  wordSpan.className = 'word';
+                  word.split('').forEach((c) => {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.textContent = c;
+                    chars.push(charSpan);
+                    wordSpan.appendChild(charSpan);
+                  });
+                  fragment.appendChild(wordSpan);
+                }
+              });
+              tNode.replaceWith(fragment);
+            });
+          }
+
+          if (!chars || chars.length === 0) return;
+
+          // Parámetros exactos de Codrops Efecto #3 (ScrollBlurTypography)
+          gsap.fromTo(
+            chars,
+            {
+              scaleY: 0.1,
+              scaleX: 1.8,
+              filter: 'blur(10px) brightness(50%)',
+              willChange: 'filter, transform'
+            },
+            {
+              ease: 'none',
+              scaleY: 1,
+              scaleX: 1,
+              filter: 'blur(0px) brightness(100%)',
+              stagger: 0.05,
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom-=15%',
+                end: 'bottom center+=15%',
+                scrub: true
+              }
+            }
+          );
+        });
+
+        // Recalcular offsets tras la división del texto
+        ScrollTrigger.refresh();
+      }
+
+      initScrollBlurTypography();
     }
 
     if (document.readyState === 'loading') {

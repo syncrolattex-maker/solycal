@@ -1354,35 +1354,15 @@
       </div>
     </div>
 
-    <!-- RIGHT HALF: Editorial & Technical Description (50vw) -->
+    <!-- RIGHT HALF: Editorial Category Description (50vw) -->
     <div class="split-right" id="split-right-area">
       <div class="split-desc-container">
         <div class="split-meta-tag">
           <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
-          <span id="split-slide-category">// CALDERERÍA PESADA</span>
-          <span class="text-neutral-500 font-normal">|</span>
           <span id="split-slide-index" class="text-neutral-400">01 / 63</span>
         </div>
 
-        <h2 id="split-slide-title" class="split-title">Fabricación a Medida</h2>
-        <p id="split-slide-desc" class="split-desc">
-          Descripción técnica de la fabricación bajo norma y proceso de calidad industrial.
-        </p>
-
-        <div class="split-specs-list" id="split-specs-box">
-          <div class="split-spec-row">
-            <span class="split-spec-label">Normativa de Ejecución</span>
-            <span id="split-spec-norma" class="split-spec-val">UNE-EN 1090-2 EXC3</span>
-          </div>
-          <div class="split-spec-row">
-            <span class="split-spec-label">Material y Calidad</span>
-            <span id="split-spec-material" class="split-spec-val">Acero Estructural S275 / S355</span>
-          </div>
-          <div class="split-spec-row">
-            <span class="split-spec-label">Control Metrológico</span>
-            <span id="split-spec-control" class="split-spec-val">Ensayos No Destructivos (END)</span>
-          </div>
-        </div>
+        <h2 id="split-slide-title" class="split-title">Calderería</h2>
       </div>
     </div>
   </div>
@@ -1542,118 +1522,13 @@
       });
     }
 
-    // METADATOS TÉCNICOS POR CATEGORÍA PARA LA VISTA SPLIT-SCREEN
+    // CATEGORÍAS SOLICITADAS
     const categoryInfo = {
-      'pasarelas': {
-        categoryName: 'Pasarelas & Pasos Elevados',
-        titles: [
-          'Pasarela Peatonal de Gran Vano',
-          'Paso Superior de Alta Capacidad',
-          'Estructura de Acceso Industrial',
-          'Pasarela Técnica en Celosía',
-          'Viga Cajón para Cruce Ferroviario',
-          'Pasarela Metálica Autoportante',
-          'Paso de Servicio con Barandilla',
-          'Pasarela de Obra Civil en Acero'
-        ],
-        descriptions: [
-          'Fabricación y montaje integral de pasarelas de gran tonelaje para obra civil y pasos elevados sobre vías férreas o autovías.',
-          'Estructura galvanizada y pintada con tratamiento C5-M para máxima durabilidad en intemperie y ambientes de alta salinidad.',
-          'Módulos prediseñados y soldados en taller central bajo control dimensional milimétrico para ensamblaje rápido en obra.',
-          'Diseño optimizado de perfiles huecos estructurales con apoyos de neopreno zunchado para absorción de vibraciones dinámicas.'
-        ],
-        norma: 'UNE-EN 1090-2 (Clase EXC3)',
-        material: 'Acero Estructural S355J2+N',
-        control: 'Partículas Magnéticas & Ultrasonidos'
-      },
-      'caldereria': {
-        categoryName: 'Calderería Pesada & Media',
-        titles: [
-          'Depósito Cilíndrico de Gran Presión',
-          'Tolva Cónica de Descarga Rápida',
-          'Ciclón Separador de Partículas',
-          'Virola Curvada de Chapa Gruesa',
-          'Cuerpo Tubular con Bridas Soldadas',
-          'Tanque de Almacenamiento Químico',
-          'Colector Distribuidor Multivía',
-          'Fondo Bombeado para Recipiente'
-        ],
-        descriptions: [
-          'Construcción mecánica pesada de recipientes, conducciones y tolvas con curvado de chapa en caliente y frío.',
-          'Soldadura longitudinal y circunferencial mediante proceso de arco sumergido y cordones TIG multicapa de máxima estanqueidad.',
-          'Tratamiento térmico de alivio de tensiones y decapado químico de uniones críticas para la industria petroquímica y cerámica.',
-          'Piezas fabricadas bajo estricto control de redondez y pruebas hidrostáticas a presión controlada.'
-        ],
-        norma: 'AD-2000 / ASME VIII Div. 1',
-        material: 'Acero al Carbono P265GH / S355JR',
-        control: 'Líquidos Penetrantes & RX 100%'
-      },
-      'marquesinas': {
-        categoryName: 'Marquesinas & Cerramientos',
-        titles: [
-          'Marquesina Volada en Ménsula',
-          'Pérgola Estructural de Gran Luz',
-          'Cubierta de Protección Logística',
-          'Marquesina Arquitectónica con Canalón',
-          'Aparcamiento Estructural Industrial',
-          'Cubierta de Carga en Acero',
-          'Pórtico de Acceso Comercial',
-          'Ménsula Articulada para Sombra'
-        ],
-        descriptions: [
-          'Diseño, cálculo y montaje de marquesinas autoportantes de gran vuelo para plataformas logísticas y zonas comerciales.',
-          'Puntales cónicos y vigas de inercia variable cortadas mediante plasma de alta precisión con tecnología TrueHole.',
-          'Integración de sistemas de drenaje interior oculto, cubiertas de policarbonato alveolar y paneles sándwich aislantes.',
-          'Acabados con granallado Sa 2.5 y termolacado al horno en colores corporativos según carta RAL.'
-        ],
-        norma: 'Código Técnico de la Edificación (CTE)',
-        material: 'Tubos Estructurales S275JOH',
-        control: 'Inspección Visual VT (Nivel II)'
-      },
-      'inoxidable': {
-        categoryName: 'Acero Inoxidable & Sanitario',
-        titles: [
-          'Barandilla Técnica AISI 316L',
-          'Depósito Pulido Espejo Sanitario',
-          'Estructura Farmacéutica Pasivada',
-          'Conducto de Extracción en Inox',
-          'Bancada para Industria Alimentaria',
-          'Tolva Inoxidable sin Retenciones',
-          'Pasamanos Tubular Curvado',
-          'Tubería Sanitaria Purga Argón'
-        ],
-        descriptions: [
-          'Fabricación especializada en taller aislado para aceros inoxidables austeníticos evitando la contaminación férrica.',
-          'Soldaduras TIG con gas de respaldo (purga de argón 99.999%) para cordones limpios con rugosidad Ra inferior a 0.8 µm.',
-          'Decapado, pasivado e inspección con feroxilo garantizando la total regeneración de la capa pasiva anticorrosiva.',
-          'Acabados satinados, pulidos industriales o brillo espejo para cumplimiento de los estándares higiénicos más exigentes.'
-        ],
-        norma: 'EHEDG / UNE-EN 1672-2',
-        material: 'AISI 304L / AISI 316L',
-        control: 'Rugosímetro Digital (Ra < 0.8 µm)'
-      },
-      'industria': {
-        categoryName: 'Mantenimiento & Maquinaria Industrial',
-        titles: [
-          'Bancada de Maquinaria Reforzada',
-          'Bastidor Mecanosoldado de Precisión',
-          'Línea de Transporte con Rodillos',
-          'Mecanizado y Ajuste de Soporte',
-          'Estructura Portante de Molino',
-          'Guía Deslizante Antidesgaste',
-          'Carro de Transferencia Pesada',
-          'Módulo de Elevación Hidráulica'
-        ],
-        descriptions: [
-          'Soluciones a medida para reparación, modernización y diseño de componentes mecánicos para plantas de producción continua.',
-          'Mecanizado posterior de superficies soldadas para garantizar planeidad y tolerancias H7 en alojamientos de rodamientos.',
-          'Fabricación de repuestos y elementos de recambio bajo muestra física o plano del cliente con plazos de respuesta ágiles.',
-          'Personal técnico desplazable con equipos autónomos para asistencia técnica en paradas programadas de fábrica.'
-        ],
-        norma: 'Directiva de Máquinas 2006/42/CE',
-        material: 'Aceros Aleados & Antidesgaste HB400',
-        control: 'Verificación Dimensional 3D'
-      }
+      'pasarelas': 'Pasarelas',
+      'caldereria': 'Calderería',
+      'marquesinas': 'Marquesinas',
+      'inoxidable': 'Acero Inoxidable',
+      'industria': 'Industria'
     };
 
     const splitModal = document.getElementById('split-modal');
@@ -1662,13 +1537,8 @@
     const splitExpandedImg = document.getElementById('split-expanded-img');
     const splitCloseBtn = document.getElementById('split-close-btn');
 
-    const splitSlideCategory = document.getElementById('split-slide-category');
     const splitSlideIndex = document.getElementById('split-slide-index');
     const splitSlideTitle = document.getElementById('split-slide-title');
-    const splitSlideDesc = document.getElementById('split-slide-desc');
-    const splitSpecNorma = document.getElementById('split-spec-norma');
-    const splitSpecMaterial = document.getElementById('split-spec-material');
-    const splitSpecControl = document.getElementById('split-spec-control');
 
     let activeZoomCard = null;
     let isSplitActive = false;
@@ -1690,19 +1560,10 @@
 
       const fullSrc = card.getAttribute('data-full');
       const catKey = getCardCategory(fullSrc);
-      const catData = categoryInfo[catKey] || categoryInfo['caldereria'];
+      const catTitle = categoryInfo[catKey] || 'Calderería';
 
-      // Populate textual & technical details
-      const title = catData.titles[index % catData.titles.length];
-      const desc = catData.descriptions[index % catData.descriptions.length];
-
-      splitSlideCategory.textContent = '// ' + catData.categoryName;
       splitSlideIndex.textContent = String(index + 1).padStart(2, '0') + ' / ' + cards.length;
-      splitSlideTitle.textContent = title;
-      splitSlideDesc.textContent = desc;
-      splitSpecNorma.textContent = catData.norma;
-      splitSpecMaterial.textContent = catData.material;
-      splitSpecControl.textContent = catData.control;
+      splitSlideTitle.textContent = catTitle;
 
       splitExpandedImg.src = fullSrc;
 
@@ -1717,7 +1578,7 @@
           { scale: 1, opacity: 1, duration: 0.6, ease: 'power3.out' }
         );
 
-        gsap.fromTo(['.split-meta-tag', '#split-slide-title', '#split-slide-desc', '#split-specs-box'],
+        gsap.fromTo(['.split-meta-tag', '#split-slide-title'],
           { y: 35, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.15 }
         );

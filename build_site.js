@@ -4777,8 +4777,11 @@ ${getHeader('media', true)}
     border-bottom: none !important;
     pointer-events: none;
   }
-  #main-header a, #main-header button, #main-header div {
+  #main-header a, #main-header button {
     pointer-events: auto;
+  }
+  #gallery-viewport {
+    touch-action: none;
   }
 
   /* SISTEMA DE CUADRÍCULA ESTRICTO Y RESPONSIVE */
@@ -5319,25 +5322,41 @@ ${getHeader('media', true)}
     let dragDistance = 0;
     let draggableInstance = null;
 
+    function getBounds() {
+      const { totalW, totalH } = getStageDimensions();
+      const margin = 120;
+      const minX = (window.innerWidth >= totalW)
+        ? Math.round((window.innerWidth - totalW) / 2)
+        : -(totalW - window.innerWidth + margin);
+      const maxX = (window.innerWidth >= totalW)
+        ? Math.round((window.innerWidth - totalW) / 2)
+        : margin;
+      const minY = (window.innerHeight >= totalH)
+        ? Math.round((window.innerHeight - totalH) / 2)
+        : -(totalH - window.innerHeight + margin);
+      const maxY = (window.innerHeight >= totalH)
+        ? Math.round((window.innerHeight - totalH) / 2)
+        : margin;
+
+      return { minX, maxX, minY, maxY };
+    }
+
     if (typeof Draggable !== 'undefined') {
       gsap.registerPlugin(Draggable);
 
       draggableInstance = Draggable.create(stage, {
         type: 'x,y',
         trigger: viewport,
-        edgeResistance: 0.8,
-        bounds: () => {
-          const { totalW, totalH } = getStageDimensions();
-          return {
-            minX: -(totalW - window.innerWidth + 120),
-            maxX: 120,
-            minY: -(totalH - window.innerHeight + 120),
-            maxY: 120
-          };
-        },
+        bounds: getBounds(),
+        edgeResistance: 0.75,
+        dragClickables: true,
+        zIndexBoost: false,
         cursor: 'grab',
         activeCursor: 'grabbing',
         onPressInit: function() {
+          dragDistance = 0;
+        },
+        onPress: function() {
           dragDistance = 0;
         },
         onDragStart: function() {
@@ -5490,13 +5509,7 @@ ${getHeader('media', true)}
 
     window.addEventListener('resize', () => {
       if (draggableInstance) {
-        const { totalW, totalH } = getStageDimensions();
-        draggableInstance.applyBounds({
-          minX: -(totalW - window.innerWidth + 120),
-          maxX: 120,
-          minY: -(totalH - window.innerHeight + 120),
-          maxY: 120
-        });
+        draggableInstance.applyBounds(getBounds());
       }
     });
 

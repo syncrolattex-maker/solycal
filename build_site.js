@@ -100,6 +100,7 @@ function getHead(title, description, canonicalPath = '') {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
   <!-- Three.js (WebGL Text Pixelation Reveal) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -4782,7 +4783,10 @@ ${getHeader('media', true)}
   }
   #gallery-viewport {
     touch-action: none;
-    perspective: 1200px;
+  }
+  body.dragging, body.dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
   }
 
   /* SISTEMA DE CUADRÍCULA ESTRICTO Y RESPONSIVE */
@@ -4828,7 +4832,6 @@ ${getHeader('media', true)}
     cursor: grab;
     touch-action: none;
     will-change: transform;
-    transform-style: preserve-3d;
   }
   #gallery-stage:active {
     cursor: grabbing;
@@ -4891,9 +4894,9 @@ ${getHeader('media', true)}
   #split-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(7, 8, 10, 0.25);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     cursor: zoom-out;
     pointer-events: auto;
   }
@@ -5350,13 +5353,30 @@ ${getHeader('media', true)}
     }
 
     if (typeof Draggable !== 'undefined') {
-      gsap.registerPlugin(Draggable);
+      if (typeof InertiaPlugin !== 'undefined') {
+        gsap.registerPlugin(Draggable, InertiaPlugin);
+      } else {
+        gsap.registerPlugin(Draggable);
+      }
 
       draggableInstance = Draggable.create(stage, {
         type: 'x,y',
         trigger: viewport,
         bounds: getBounds(),
-        edgeResistance: 0.75,
+        edgeResistance: 0.8,
+        inertia: true,
+        throwProps: {
+          x: {
+            velocity: "auto",
+            resistance: 300,
+            end: endValue => Math.round(endValue)
+          },
+          y: {
+            velocity: "auto",
+            resistance: 300,
+            end: endValue => Math.round(endValue)
+          }
+        },
         dragClickables: true,
         zIndexBoost: false,
         cursor: 'grab',
@@ -5368,33 +5388,15 @@ ${getHeader('media', true)}
           dragDistance = 0;
         },
         onDragStart: function() {
+          document.body.classList.add("dragging");
           isDragging = true;
         },
         onDrag: function() {
           dragDistance += Math.abs(this.deltaX) + Math.abs(this.deltaY);
-
-          // Dynamic 3D Stage Tilt based on drag velocity (Filip Zrnzevic momentum effect)
-          const tiltX = Math.max(-6, Math.min(6, this.deltaY * 0.25));
-          const tiltY = Math.max(-6, Math.min(6, -this.deltaX * 0.25));
-
-          gsap.to(stage, {
-            rotationX: tiltX,
-            rotationY: tiltY,
-            duration: 0.2,
-            overwrite: 'auto',
-            ease: 'power1.out'
-          });
         },
         onDragEnd: function() {
+          document.body.classList.remove("dragging");
           setTimeout(() => { isDragging = false; }, 80);
-
-          // Return tilt to natural state with smooth spring decay
-          gsap.to(stage, {
-            rotationX: 0,
-            rotationY: 0,
-            duration: 0.7,
-            ease: 'power3.out'
-          });
         }
       })[0];
     }

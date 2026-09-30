@@ -895,14 +895,14 @@
     transform: scale(1.06);
   }
 
-  /* ESTILOS DEL MODO ZOOM SPLIT-SCREEN (INSPIRADO EN FILIP ZRNZEVIC) */
+  /* ESTILOS DEL MODO ZOOM IMAGEN COMPLETA SOBRE GRID (INSPIRADO EN FILIP ZRNZEVIC) */
   #split-modal {
     position: fixed;
     inset: 0;
     z-index: 220;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
   #split-modal.is-active {
     pointer-events: auto;
@@ -911,136 +911,64 @@
   #split-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(7, 8, 10, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(7, 8, 10, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: zoom-out;
   }
   .split-wrapper {
     position: relative;
     width: 100vw;
     height: 100vh;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     z-index: 2;
-  }
-  @media (max-width: 900px) {
-    .split-wrapper {
-      flex-direction: column;
-      justify-content: flex-start;
-      overflow-y: auto;
-      padding-top: 5rem;
-      padding-bottom: 2rem;
-    }
+    pointer-events: none;
   }
   .split-left {
     position: relative;
-    width: 50vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 2rem 3rem 4rem;
+    padding: 2.5rem;
+    pointer-events: auto;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     .split-left {
-      width: 100vw;
-      height: 48vh;
-      padding: 1rem 1.5rem;
-      flex-shrink: 0;
+      padding: 1.25rem;
     }
   }
   .split-target-box {
-    width: 100%;
-    height: 100%;
-    max-width: 680px;
-    max-height: 82vh;
-    aspect-ratio: 16 / 10;
+    width: auto;
+    height: auto;
+    max-width: min(88vw, 1100px);
+    max-height: 86vh;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 1.5rem;
     overflow: hidden;
-    box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15);
     background: #0d0f13;
+  }
+  @media (max-width: 768px) {
+    .split-target-box {
+      max-width: 94vw;
+      max-height: 80vh;
+      border-radius: 1rem;
+    }
   }
   .split-target-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    max-height: 86vh;
+    object-fit: contain;
+    display: block;
   }
-  .split-right {
-    position: relative;
-    width: 50vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 3rem 5rem 3rem 3rem;
-  }
-  @media (max-width: 900px) {
-    .split-right {
-      width: 100vw;
-      height: auto;
-      padding: 1.5rem 1.75rem 2rem;
-    }
-  }
-  .split-desc-container {
-    max-width: 540px;
-  }
-  .split-meta-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #F1B541;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  .split-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2rem, 3.5vw, 3.25rem);
-    line-height: 1.12;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.25rem;
-  }
-  .split-desc {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-    color: #cbd5e1;
-    line-height: 1.65;
-    margin-bottom: 2rem;
-    font-weight: 300;
-  }
-  .split-specs-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .split-spec-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-  }
-  .split-spec-label {
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .split-spec-val {
-    color: #ffffff;
-    font-weight: 600;
-  }
+
   #split-close-btn {
     position: fixed;
     top: 2rem;
@@ -1338,7 +1266,7 @@
   </div>
 </main>
 
-<!-- FILIP ZRNZEVIC STYLE SPLIT-SCREEN ZOOM MODAL -->
+<!-- IMAGE EXPANSION OVERLAY OVER GRID -->
 <div id="split-modal" aria-hidden="true">
   <div id="split-backdrop"></div>
   
@@ -1347,22 +1275,9 @@
   </button>
 
   <div class="split-wrapper">
-    <!-- LEFT HALF: Expanded Image (50vw) -->
     <div class="split-left" id="split-left-area">
       <div class="split-target-box" id="split-target-box">
         <img id="split-expanded-img" src="" alt="Detalle del trabajo Solycal">
-      </div>
-    </div>
-
-    <!-- RIGHT HALF: Editorial Category Description (50vw) -->
-    <div class="split-right" id="split-right-area">
-      <div class="split-desc-container">
-        <div class="split-meta-tag">
-          <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
-          <span id="split-slide-index" class="text-neutral-400">01 / 63</span>
-        </div>
-
-        <h2 id="split-slide-title" class="split-title">Calderería</h2>
       </div>
     </div>
   </div>
@@ -1522,14 +1437,6 @@
       });
     }
 
-    // CATEGORÍAS SOLICITADAS
-    const categoryInfo = {
-      'pasarelas': 'Pasarelas',
-      'caldereria': 'Calderería',
-      'marquesinas': 'Marquesinas',
-      'inoxidable': 'Acero Inoxidable',
-      'industria': 'Industria'
-    };
 
     const splitModal = document.getElementById('split-modal');
     const splitBackdrop = document.getElementById('split-backdrop');
@@ -1537,21 +1444,8 @@
     const splitExpandedImg = document.getElementById('split-expanded-img');
     const splitCloseBtn = document.getElementById('split-close-btn');
 
-    const splitSlideIndex = document.getElementById('split-slide-index');
-    const splitSlideTitle = document.getElementById('split-slide-title');
-
     let activeZoomCard = null;
     let isSplitActive = false;
-
-    // Detect category from image filename: e.g. "Pasarela-01.jpg" -> "pasarelas"
-    function getCardCategory(src) {
-      const lower = src.toLowerCase();
-      if (lower.includes('pasarela')) return 'pasarelas';
-      if (lower.includes('caldereria')) return 'caldereria';
-      if (lower.includes('marquesina')) return 'marquesinas';
-      if (lower.includes('inoxidable')) return 'inoxidable';
-      return 'industria';
-    }
 
     function openSplitView(card, index) {
       if (dragDistance > 12 || isSplitActive) return;
@@ -1559,33 +1453,22 @@
       activeZoomCard = card;
 
       const fullSrc = card.getAttribute('data-full');
-      const catKey = getCardCategory(fullSrc);
-      const catTitle = categoryInfo[catKey] || 'Calderería';
-
-      splitSlideIndex.textContent = String(index + 1).padStart(2, '0') + ' / ' + cards.length;
-      splitSlideTitle.textContent = catTitle;
-
       splitExpandedImg.src = fullSrc;
 
       // Animate modal in
       splitModal.classList.add('is-active');
       splitModal.setAttribute('aria-hidden', 'false');
 
-      // GSAP Stagger Entrance for Text
+      // GSAP Spring Entrance for Expanded Image & Close Button
       if (typeof gsap !== 'undefined') {
         gsap.fromTo('.split-target-box',
-          { scale: 0.9, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.6, ease: 'power3.out' }
-        );
-
-        gsap.fromTo(['.split-meta-tag', '#split-slide-title'],
-          { y: 35, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.15 }
+          { scale: 0.88, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.5, ease: 'power3.out' }
         );
 
         gsap.fromTo(splitCloseBtn,
           { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)', delay: 0.2 }
+          { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)', delay: 0.1 }
         );
       }
     }
@@ -1594,10 +1477,10 @@
       if (!isSplitActive) return;
 
       if (typeof gsap !== 'undefined') {
-        gsap.to(['.split-target-box', '.split-desc-container', splitCloseBtn], {
+        gsap.to(['.split-target-box', splitCloseBtn], {
+          scale: 0.9,
           opacity: 0,
-          y: 20,
-          duration: 0.35,
+          duration: 0.3,
           ease: 'power2.in',
           onComplete: () => {
             splitModal.classList.remove('is-active');

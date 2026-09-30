@@ -806,39 +806,92 @@
   #main-header a, #main-header button, #main-header div {
     pointer-events: auto;
   }
+
+  /* SISTEMA DE CUADRÍCULA ESTRICTO Y RESPONSIVE */
+  :root {
+    --card-w: 440px;
+    --card-h: 293px;
+    --gap-x: 48px;
+    --gap-y: 48px;
+    --stage-pad: 80px;
+    --cell-x: calc(var(--card-w) + var(--gap-x));
+    --cell-y: calc(var(--card-h) + var(--gap-y));
+    --stage-w: calc(var(--stage-pad) * 2 + 9 * var(--card-w) + 8 * var(--gap-x));
+    --stage-h: calc(var(--stage-pad) * 2 + 7 * var(--card-h) + 6 * var(--gap-y));
+  }
+
+  /* VERSIÓN MÓVIL: Tarjetas más pequeñas y proporcionadas */
+  @media (max-width: 768px) {
+    :root {
+      --card-w: 240px;
+      --card-h: 160px;
+      --gap-x: 24px;
+      --gap-y: 24px;
+      --stage-pad: 32px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --card-w: 200px;
+      --card-h: 133px;
+      --gap-x: 18px;
+      --gap-y: 18px;
+      --stage-pad: 24px;
+    }
+  }
+
+  #gallery-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--stage-w);
+    height: var(--stage-h);
+    cursor: grab;
+    touch-action: none;
+    will-change: transform;
+  }
+  #gallery-stage:active {
+    cursor: grabbing;
+  }
+
   .gallery-card {
     position: absolute;
+    width: var(--card-w);
+    height: var(--card-h);
+    left: calc(var(--stage-pad) + var(--col) * var(--cell-x));
+    top: calc(var(--stage-pad) + var(--row) * var(--cell-y));
     overflow: hidden;
-    border-radius: 1.25rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: grab;
     will-change: transform;
     user-select: none;
     -webkit-user-select: none;
+    background: #0d0f13;
+  }
+  @media (max-width: 768px) {
+    .gallery-card {
+      border-radius: 0.75rem;
+    }
   }
   .gallery-card:active {
     cursor: grabbing;
   }
   .gallery-card:hover {
-    box-shadow: 0 35px 65px -15px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(241, 181, 65, 0.65), 0 0 35px rgba(241, 181, 65, 0.2);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.95), 0 0 0 2px rgba(241, 181, 65, 0.75), 0 0 30px rgba(241, 181, 65, 0.25);
+    z-index: 10;
   }
   .gallery-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     pointer-events: none;
-    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
   .gallery-card:hover img {
     transform: scale(1.06);
-  }
-  #gallery-stage {
-    cursor: grab;
-    touch-action: none;
-  }
-  #gallery-stage:active {
-    cursor: grabbing;
   }
 </style>
 
@@ -850,257 +903,257 @@
   <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,rgba(7,8,10,0.85)_100%)]"></div>
 
   <!-- EXPANSIVE 2D DRAGGABLE STAGE (Images Only - No Text Blocks) -->
-  <div id="gallery-stage" class="absolute left-0 top-0 will-change-transform" style="width: 4800px; height: 3100px;">
+  <div id="gallery-stage" class="will-change-transform">
     <!-- Pasarelas (1/63) -->
-    <div class="gallery-card" style="left: 150px; top: 185px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-01.jpg">
+    <div class="gallery-card" data-col="0" data-row="0" data-full="assets/img/media/Pasarela-01.jpg">
       <img src="assets/img/media/Pasarela-01.jpg" alt="Pasarela industrial y obra civil Solycal 01" loading="lazy">
     </div>
     <!-- Calderería (2/63) -->
-    <div class="gallery-card" style="left: 626px; top: 127px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-01.jpg">
+    <div class="gallery-card" data-col="1" data-row="0" data-full="assets/img/media/Caldereria-01.jpg">
       <img src="assets/img/media/Caldereria-01.jpg" alt="Calderería pesada y depósitos Solycal 01" loading="lazy">
     </div>
     <!-- Marquesinas (3/63) -->
-    <div class="gallery-card" style="left: 1190px; top: 146px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-01.jpg">
+    <div class="gallery-card" data-col="2" data-row="0" data-full="assets/img/media/Marquesina-01.jpg">
       <img src="assets/img/media/Marquesina-01.jpg" alt="Marquesina y estructura metálica Solycal 01" loading="lazy">
     </div>
     <!-- Acero Inoxidable (4/63) -->
-    <div class="gallery-card" style="left: 1605px; top: 179px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-01.jpg">
+    <div class="gallery-card" data-col="3" data-row="0" data-full="assets/img/media/Inoxidable-01.jpg">
       <img src="assets/img/media/Inoxidable-01.jpg" alt="Trabajo en acero inoxidable Solycal 01" loading="lazy">
     </div>
     <!-- Industria (5/63) -->
-    <div class="gallery-card" style="left: 2185px; top: 116px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-01.jpg">
+    <div class="gallery-card" data-col="4" data-row="0" data-full="assets/img/media/Industria-01.jpg">
       <img src="assets/img/media/Industria-01.jpg" alt="Mantenimiento y maquinaria industrial Solycal 01" loading="lazy">
     </div>
     <!-- Pasarelas (6/63) -->
-    <div class="gallery-card" style="left: 2635px; top: 167px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-02.jpg">
+    <div class="gallery-card" data-col="5" data-row="0" data-full="assets/img/media/Pasarela-02.jpg">
       <img src="assets/img/media/Pasarela-02.jpg" alt="Pasarela industrial y obra civil Solycal 02" loading="lazy">
     </div>
     <!-- Calderería (7/63) -->
-    <div class="gallery-card" style="left: 3141px; top: 162px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-02.jpg">
+    <div class="gallery-card" data-col="6" data-row="0" data-full="assets/img/media/Caldereria-02.jpg">
       <img src="assets/img/media/Caldereria-02.jpg" alt="Calderería pesada y depósitos Solycal 02" loading="lazy">
     </div>
     <!-- Marquesinas (8/63) -->
-    <div class="gallery-card" style="left: 3681px; top: 118px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-02.jpg">
+    <div class="gallery-card" data-col="7" data-row="0" data-full="assets/img/media/Marquesina-02.jpg">
       <img src="assets/img/media/Marquesina-02.jpg" alt="Marquesina y estructura metálica Solycal 02" loading="lazy">
     </div>
     <!-- Acero Inoxidable (9/63) -->
-    <div class="gallery-card" style="left: 4106px; top: 182px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-02.jpg">
+    <div class="gallery-card" data-col="8" data-row="0" data-full="assets/img/media/Inoxidable-02.jpg">
       <img src="assets/img/media/Inoxidable-02.jpg" alt="Trabajo en acero inoxidable Solycal 02" loading="lazy">
     </div>
     <!-- Industria (10/63) -->
-    <div class="gallery-card" style="left: 193px; top: 540px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-02.jpg">
+    <div class="gallery-card" data-col="0" data-row="1" data-full="assets/img/media/Industria-02.jpg">
       <img src="assets/img/media/Industria-02.jpg" alt="Mantenimiento y maquinaria industrial Solycal 02" loading="lazy">
     </div>
     <!-- Pasarelas (11/63) -->
-    <div class="gallery-card" style="left: 621px; top: 531px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-03.jpg">
+    <div class="gallery-card" data-col="1" data-row="1" data-full="assets/img/media/Pasarela-03.jpg">
       <img src="assets/img/media/Pasarela-03.jpg" alt="Pasarela industrial y obra civil Solycal 03" loading="lazy">
     </div>
     <!-- Calderería (12/63) -->
-    <div class="gallery-card" style="left: 1156px; top: 585px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-03.jpg">
+    <div class="gallery-card" data-col="2" data-row="1" data-full="assets/img/media/Caldereria-03.jpg">
       <img src="assets/img/media/Caldereria-03.jpg" alt="Calderería pesada y depósitos Solycal 03" loading="lazy">
     </div>
     <!-- Marquesinas (13/63) -->
-    <div class="gallery-card" style="left: 1668px; top: 523px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-03.jpg">
+    <div class="gallery-card" data-col="3" data-row="1" data-full="assets/img/media/Marquesina-03.jpg">
       <img src="assets/img/media/Marquesina-03.jpg" alt="Marquesina y estructura metálica Solycal 03" loading="lazy">
     </div>
     <!-- Acero Inoxidable (14/63) -->
-    <div class="gallery-card" style="left: 2113px; top: 552px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-03.jpg">
+    <div class="gallery-card" data-col="4" data-row="1" data-full="assets/img/media/Inoxidable-03.jpg">
       <img src="assets/img/media/Inoxidable-03.jpg" alt="Trabajo en acero inoxidable Solycal 03" loading="lazy">
     </div>
     <!-- Industria (15/63) -->
-    <div class="gallery-card" style="left: 2695px; top: 575px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-03.jpg">
+    <div class="gallery-card" data-col="5" data-row="1" data-full="assets/img/media/Industria-03.jpg">
       <img src="assets/img/media/Industria-03.jpg" alt="Mantenimiento y maquinaria industrial Solycal 03" loading="lazy">
     </div>
     <!-- Pasarelas (16/63) -->
-    <div class="gallery-card" style="left: 3111px; top: 515px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-04.jpg">
+    <div class="gallery-card" data-col="6" data-row="1" data-full="assets/img/media/Pasarela-04.jpg">
       <img src="assets/img/media/Pasarela-04.jpg" alt="Pasarela industrial y obra civil Solycal 04" loading="lazy">
     </div>
     <!-- Calderería (17/63) -->
-    <div class="gallery-card" style="left: 3671px; top: 572px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-04.jpg">
+    <div class="gallery-card" data-col="7" data-row="1" data-full="assets/img/media/Caldereria-04.jpg">
       <img src="assets/img/media/Caldereria-04.jpg" alt="Calderería pesada y depósitos Solycal 04" loading="lazy">
     </div>
     <!-- Marquesinas (18/63) -->
-    <div class="gallery-card" style="left: 4153px; top: 556px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-04.jpg">
+    <div class="gallery-card" data-col="8" data-row="1" data-full="assets/img/media/Marquesina-04.jpg">
       <img src="assets/img/media/Marquesina-04.jpg" alt="Marquesina y estructura metálica Solycal 04" loading="lazy">
     </div>
     <!-- Acero Inoxidable (19/63) -->
-    <div class="gallery-card" style="left: 124px; top: 920px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-04.jpg">
+    <div class="gallery-card" data-col="0" data-row="2" data-full="assets/img/media/Inoxidable-04.jpg">
       <img src="assets/img/media/Inoxidable-04.jpg" alt="Trabajo en acero inoxidable Solycal 04" loading="lazy">
     </div>
     <!-- Industria (20/63) -->
-    <div class="gallery-card" style="left: 692px; top: 984px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-04.jpg">
+    <div class="gallery-card" data-col="1" data-row="2" data-full="assets/img/media/Industria-04.jpg">
       <img src="assets/img/media/Industria-04.jpg" alt="Mantenimiento y maquinaria industrial Solycal 04" loading="lazy">
     </div>
     <!-- Pasarelas (21/63) -->
-    <div class="gallery-card" style="left: 1106px; top: 935px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-05.jpg">
+    <div class="gallery-card" data-col="2" data-row="2" data-full="assets/img/media/Pasarela-05.jpg">
       <img src="assets/img/media/Pasarela-05.jpg" alt="Pasarela industrial y obra civil Solycal 05" loading="lazy">
     </div>
     <!-- Calderería (22/63) -->
-    <div class="gallery-card" style="left: 1684px; top: 937px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-05.jpg">
+    <div class="gallery-card" data-col="3" data-row="2" data-full="assets/img/media/Caldereria-05.jpg">
       <img src="assets/img/media/Caldereria-05.jpg" alt="Calderería pesada y depósitos Solycal 05" loading="lazy">
     </div>
     <!-- Marquesinas (23/63) -->
-    <div class="gallery-card" style="left: 2138px; top: 983px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-05.jpg">
+    <div class="gallery-card" data-col="4" data-row="2" data-full="assets/img/media/Marquesina-05.jpg">
       <img src="assets/img/media/Marquesina-05.jpg" alt="Marquesina y estructura metálica Solycal 05" loading="lazy">
     </div>
     <!-- Acero Inoxidable (24/63) -->
-    <div class="gallery-card" style="left: 2638px; top: 919px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-05.jpg">
+    <div class="gallery-card" data-col="5" data-row="2" data-full="assets/img/media/Inoxidable-05.jpg">
       <img src="assets/img/media/Inoxidable-05.jpg" alt="Trabajo en acero inoxidable Solycal 05" loading="lazy">
     </div>
     <!-- Industria (25/63) -->
-    <div class="gallery-card" style="left: 3183px; top: 958px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-05.jpg">
+    <div class="gallery-card" data-col="6" data-row="2" data-full="assets/img/media/Industria-05.jpg">
       <img src="assets/img/media/Industria-05.jpg" alt="Mantenimiento y maquinaria industrial Solycal 05" loading="lazy">
     </div>
     <!-- Pasarelas (26/63) -->
-    <div class="gallery-card" style="left: 3606px; top: 970px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-06.jpg">
+    <div class="gallery-card" data-col="7" data-row="2" data-full="assets/img/media/Pasarela-06.jpg">
       <img src="assets/img/media/Pasarela-06.jpg" alt="Pasarela industrial y obra civil Solycal 06" loading="lazy">
     </div>
     <!-- Calderería (27/63) -->
-    <div class="gallery-card" style="left: 4192px; top: 915px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-06.jpg">
+    <div class="gallery-card" data-col="8" data-row="2" data-full="assets/img/media/Caldereria-06.jpg">
       <img src="assets/img/media/Caldereria-06.jpg" alt="Calderería pesada y depósitos Solycal 06" loading="lazy">
     </div>
     <!-- Marquesinas (28/63) -->
-    <div class="gallery-card" style="left: 123px; top: 1376px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-06.jpg">
+    <div class="gallery-card" data-col="0" data-row="3" data-full="assets/img/media/Marquesina-06.jpg">
       <img src="assets/img/media/Marquesina-06.jpg" alt="Marquesina y estructura metálica Solycal 06" loading="lazy">
     </div>
     <!-- Acero Inoxidable (29/63) -->
-    <div class="gallery-card" style="left: 653px; top: 1350px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-06.jpg">
+    <div class="gallery-card" data-col="1" data-row="3" data-full="assets/img/media/Inoxidable-06.jpg">
       <img src="assets/img/media/Inoxidable-06.jpg" alt="Trabajo en acero inoxidable Solycal 06" loading="lazy">
     </div>
     <!-- Industria (30/63) -->
-    <div class="gallery-card" style="left: 1171px; top: 1324px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-06.jpg">
+    <div class="gallery-card" data-col="2" data-row="3" data-full="assets/img/media/Industria-06.jpg">
       <img src="assets/img/media/Industria-06.jpg" alt="Mantenimiento y maquinaria industrial Solycal 06" loading="lazy">
     </div>
     <!-- Pasarelas (31/63) -->
-    <div class="gallery-card" style="left: 1611px; top: 1385px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-07.jpg">
+    <div class="gallery-card" data-col="3" data-row="3" data-full="assets/img/media/Pasarela-07.jpg">
       <img src="assets/img/media/Pasarela-07.jpg" alt="Pasarela industrial y obra civil Solycal 07" loading="lazy">
     </div>
     <!-- Calderería (32/63) -->
-    <div class="gallery-card" style="left: 2195px; top: 1330px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-07.jpg">
+    <div class="gallery-card" data-col="4" data-row="3" data-full="assets/img/media/Caldereria-07.jpg">
       <img src="assets/img/media/Caldereria-07.jpg" alt="Calderería pesada y depósitos Solycal 07" loading="lazy">
     </div>
     <!-- Marquesinas (33/63) -->
-    <div class="gallery-card" style="left: 2613px; top: 1342px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-07.jpg">
+    <div class="gallery-card" data-col="5" data-row="3" data-full="assets/img/media/Marquesina-07.jpg">
       <img src="assets/img/media/Marquesina-07.jpg" alt="Marquesina y estructura metálica Solycal 07" loading="lazy">
     </div>
     <!-- Acero Inoxidable (34/63) -->
-    <div class="gallery-card" style="left: 3168px; top: 1381px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-07.jpg">
+    <div class="gallery-card" data-col="6" data-row="3" data-full="assets/img/media/Inoxidable-07.jpg">
       <img src="assets/img/media/Inoxidable-07.jpg" alt="Trabajo en acero inoxidable Solycal 07" loading="lazy">
     </div>
     <!-- Industria (35/63) -->
-    <div class="gallery-card" style="left: 3656px; top: 1317px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-07.jpg">
+    <div class="gallery-card" data-col="7" data-row="3" data-full="assets/img/media/Industria-07.jpg">
       <img src="assets/img/media/Industria-07.jpg" alt="Mantenimiento y maquinaria industrial Solycal 07" loading="lazy">
     </div>
     <!-- Pasarelas (36/63) -->
-    <div class="gallery-card" style="left: 4121px; top: 1363px; width: 420px; height: 280px;" data-full="assets/img/media/Pasarela-08.jpg">
+    <div class="gallery-card" data-col="8" data-row="3" data-full="assets/img/media/Pasarela-08.jpg">
       <img src="assets/img/media/Pasarela-08.jpg" alt="Pasarela industrial y obra civil Solycal 08" loading="lazy">
     </div>
     <!-- Calderería (37/63) -->
-    <div class="gallery-card" style="left: 193px; top: 1765px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-08.jpg">
+    <div class="gallery-card" data-col="0" data-row="4" data-full="assets/img/media/Caldereria-08.jpg">
       <img src="assets/img/media/Caldereria-08.jpg" alt="Calderería pesada y depósitos Solycal 08" loading="lazy">
     </div>
     <!-- Marquesinas (38/63) -->
-    <div class="gallery-card" style="left: 606px; top: 1716px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-08.jpg">
+    <div class="gallery-card" data-col="1" data-row="4" data-full="assets/img/media/Marquesina-08.jpg">
       <img src="assets/img/media/Marquesina-08.jpg" alt="Marquesina y estructura metálica Solycal 08" loading="lazy">
     </div>
     <!-- Acero Inoxidable (39/63) -->
-    <div class="gallery-card" style="left: 1181px; top: 1780px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-08.jpg">
+    <div class="gallery-card" data-col="2" data-row="4" data-full="assets/img/media/Inoxidable-08.jpg">
       <img src="assets/img/media/Inoxidable-08.jpg" alt="Trabajo en acero inoxidable Solycal 08" loading="lazy">
     </div>
     <!-- Industria (40/63) -->
-    <div class="gallery-card" style="left: 1640px; top: 1744px; width: 440px; height: 294px;" data-full="assets/img/media/Industria-08.jpg">
+    <div class="gallery-card" data-col="3" data-row="4" data-full="assets/img/media/Industria-08.jpg">
       <img src="assets/img/media/Industria-08.jpg" alt="Mantenimiento y maquinaria industrial Solycal 08" loading="lazy">
     </div>
     <!-- Calderería (41/63) -->
-    <div class="gallery-card" style="left: 2135px; top: 1728px; width: 420px; height: 280px;" data-full="assets/img/media/Caldereria-09.jpg">
+    <div class="gallery-card" data-col="4" data-row="4" data-full="assets/img/media/Caldereria-09.jpg">
       <img src="assets/img/media/Caldereria-09.jpg" alt="Calderería pesada y depósitos Solycal 09" loading="lazy">
     </div>
     <!-- Marquesinas (42/63) -->
-    <div class="gallery-card" style="left: 2685px; top: 1785px; width: 450px; height: 300px;" data-full="assets/img/media/Marquesina-09.jpg">
+    <div class="gallery-card" data-col="5" data-row="4" data-full="assets/img/media/Marquesina-09.jpg">
       <img src="assets/img/media/Marquesina-09.jpg" alt="Marquesina y estructura metálica Solycal 09" loading="lazy">
     </div>
     <!-- Acero Inoxidable (43/63) -->
-    <div class="gallery-card" style="left: 3105px; top: 1725px; width: 430px; height: 287px;" data-full="assets/img/media/Inoxidable-09.jpg">
+    <div class="gallery-card" data-col="6" data-row="4" data-full="assets/img/media/Inoxidable-09.jpg">
       <img src="assets/img/media/Inoxidable-09.jpg" alt="Trabajo en acero inoxidable Solycal 09" loading="lazy">
     </div>
     <!-- Industria (44/63) -->
-    <div class="gallery-card" style="left: 3691px; top: 1748px; width: 460px; height: 307px;" data-full="assets/img/media/Industria-09.jpg">
+    <div class="gallery-card" data-col="7" data-row="4" data-full="assets/img/media/Industria-09.jpg">
       <img src="assets/img/media/Industria-09.jpg" alt="Mantenimiento y maquinaria industrial Solycal 09" loading="lazy">
     </div>
     <!-- Calderería (45/63) -->
-    <div class="gallery-card" style="left: 4126px; top: 1777px; width: 440px; height: 294px;" data-full="assets/img/media/Caldereria-10.jpg">
+    <div class="gallery-card" data-col="8" data-row="4" data-full="assets/img/media/Caldereria-10.jpg">
       <img src="assets/img/media/Caldereria-10.jpg" alt="Calderería pesada y depósitos Solycal 10" loading="lazy">
     </div>
     <!-- Marquesinas (46/63) -->
-    <div class="gallery-card" style="left: 150px; top: 2116px; width: 420px; height: 280px;" data-full="assets/img/media/Marquesina-10.jpg">
+    <div class="gallery-card" data-col="0" data-row="5" data-full="assets/img/media/Marquesina-10.jpg">
       <img src="assets/img/media/Marquesina-10.jpg" alt="Marquesina y estructura metálica Solycal 10" loading="lazy">
     </div>
     <!-- Acero Inoxidable (47/63) -->
-    <div class="gallery-card" style="left: 674px; top: 2168px; width: 450px; height: 300px;" data-full="assets/img/media/Inoxidable-10.jpg">
+    <div class="gallery-card" data-col="1" data-row="5" data-full="assets/img/media/Inoxidable-10.jpg">
       <img src="assets/img/media/Inoxidable-10.jpg" alt="Trabajo en acero inoxidable Solycal 10" loading="lazy">
     </div>
     <!-- Industria (48/63) -->
-    <div class="gallery-card" style="left: 1110px; top: 2160px; width: 430px; height: 287px;" data-full="assets/img/media/Industria-10.jpg">
+    <div class="gallery-card" data-col="2" data-row="5" data-full="assets/img/media/Industria-10.jpg">
       <img src="assets/img/media/Industria-10.jpg" alt="Mantenimiento y maquinaria industrial Solycal 10" loading="lazy">
     </div>
     <!-- Calderería (49/63) -->
-    <div class="gallery-card" style="left: 1695px; top: 2118px; width: 460px; height: 307px;" data-full="assets/img/media/Caldereria-11.jpg">
+    <div class="gallery-card" data-col="3" data-row="5" data-full="assets/img/media/Caldereria-11.jpg">
       <img src="assets/img/media/Caldereria-11.jpg" alt="Calderería pesada y depósitos Solycal 11" loading="lazy">
     </div>
     <!-- Marquesinas (50/63) -->
-    <div class="gallery-card" style="left: 2114px; top: 2182px; width: 440px; height: 294px;" data-full="assets/img/media/Marquesina-11.jpg">
+    <div class="gallery-card" data-col="4" data-row="5" data-full="assets/img/media/Marquesina-11.jpg">
       <img src="assets/img/media/Marquesina-11.jpg" alt="Marquesina y estructura metálica Solycal 11" loading="lazy">
     </div>
     <!-- Acero Inoxidable (51/63) -->
-    <div class="gallery-card" style="left: 2666px; top: 2139px; width: 420px; height: 280px;" data-full="assets/img/media/Inoxidable-11.jpg">
+    <div class="gallery-card" data-col="5" data-row="5" data-full="assets/img/media/Inoxidable-11.jpg">
       <img src="assets/img/media/Inoxidable-11.jpg" alt="Trabajo en acero inoxidable Solycal 11" loading="lazy">
     </div>
     <!-- Industria (52/63) -->
-    <div class="gallery-card" style="left: 3159px; top: 2133px; width: 450px; height: 300px;" data-full="assets/img/media/Industria-11.jpg">
+    <div class="gallery-card" data-col="6" data-row="5" data-full="assets/img/media/Industria-11.jpg">
       <img src="assets/img/media/Industria-11.jpg" alt="Mantenimiento y maquinaria industrial Solycal 11" loading="lazy">
     </div>
     <!-- Calderería (53/63) -->
-    <div class="gallery-card" style="left: 3619px; top: 2184px; width: 430px; height: 287px;" data-full="assets/img/media/Caldereria-12.jpg">
+    <div class="gallery-card" data-col="7" data-row="5" data-full="assets/img/media/Caldereria-12.jpg">
       <img src="assets/img/media/Caldereria-12.jpg" alt="Calderería pesada y depósitos Solycal 12" loading="lazy">
     </div>
     <!-- Marquesinas (54/63) -->
-    <div class="gallery-card" style="left: 4194px; top: 2122px; width: 460px; height: 307px;" data-full="assets/img/media/Marquesina-12.jpg">
+    <div class="gallery-card" data-col="8" data-row="5" data-full="assets/img/media/Marquesina-12.jpg">
       <img src="assets/img/media/Marquesina-12.jpg" alt="Marquesina y estructura metálica Solycal 12" loading="lazy">
     </div>
     <!-- Acero Inoxidable (55/63) -->
-    <div class="gallery-card" style="left: 107px; top: 2554px; width: 440px; height: 294px;" data-full="assets/img/media/Inoxidable-12.jpg">
+    <div class="gallery-card" data-col="0" data-row="6" data-full="assets/img/media/Inoxidable-12.jpg">
       <img src="assets/img/media/Inoxidable-12.jpg" alt="Trabajo en acero inoxidable Solycal 12" loading="lazy">
     </div>
     <!-- Industria (56/63) -->
-    <div class="gallery-card" style="left: 679px; top: 2573px; width: 420px; height: 280px;" data-full="assets/img/media/Industria-12.jpg">
+    <div class="gallery-card" data-col="1" data-row="6" data-full="assets/img/media/Industria-12.jpg">
       <img src="assets/img/media/Industria-12.jpg" alt="Mantenimiento y maquinaria industrial Solycal 12" loading="lazy">
     </div>
     <!-- Calderería (57/63) -->
-    <div class="gallery-card" style="left: 1143px; top: 2515px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-13.jpg">
+    <div class="gallery-card" data-col="2" data-row="6" data-full="assets/img/media/Caldereria-13.jpg">
       <img src="assets/img/media/Caldereria-13.jpg" alt="Calderería pesada y depósitos Solycal 13" loading="lazy">
     </div>
     <!-- Marquesinas (58/63) -->
-    <div class="gallery-card" style="left: 1632px; top: 2573px; width: 430px; height: 287px;" data-full="assets/img/media/Marquesina-13.jpg">
+    <div class="gallery-card" data-col="3" data-row="6" data-full="assets/img/media/Marquesina-13.jpg">
       <img src="assets/img/media/Marquesina-13.jpg" alt="Marquesina y estructura metálica Solycal 13" loading="lazy">
     </div>
     <!-- Acero Inoxidable (59/63) -->
-    <div class="gallery-card" style="left: 2187px; top: 2554px; width: 460px; height: 307px;" data-full="assets/img/media/Inoxidable-13.jpg">
+    <div class="gallery-card" data-col="4" data-row="6" data-full="assets/img/media/Inoxidable-13.jpg">
       <img src="assets/img/media/Inoxidable-13.jpg" alt="Trabajo en acero inoxidable Solycal 13" loading="lazy">
     </div>
     <!-- Calderería (60/63) -->
-    <div class="gallery-card" style="left: 2605px; top: 2521px; width: 440px; height: 294px;" data-full="assets/img/media/Caldereria-14.jpg">
+    <div class="gallery-card" data-col="5" data-row="6" data-full="assets/img/media/Caldereria-14.jpg">
       <img src="assets/img/media/Caldereria-14.jpg" alt="Calderería pesada y depósitos Solycal 14" loading="lazy">
     </div>
     <!-- Marquesinas (61/63) -->
-    <div class="gallery-card" style="left: 3189px; top: 2584px; width: 420px; height: 280px;" data-full="assets/img/media/Marquesina-14.jpg">
+    <div class="gallery-card" data-col="6" data-row="6" data-full="assets/img/media/Marquesina-14.jpg">
       <img src="assets/img/media/Marquesina-14.jpg" alt="Marquesina y estructura metálica Solycal 14" loading="lazy">
     </div>
     <!-- Calderería (62/63) -->
-    <div class="gallery-card" style="left: 3629px; top: 2533px; width: 450px; height: 300px;" data-full="assets/img/media/Caldereria-15.jpg">
+    <div class="gallery-card" data-col="7" data-row="6" data-full="assets/img/media/Caldereria-15.jpg">
       <img src="assets/img/media/Caldereria-15.jpg" alt="Calderería pesada y depósitos Solycal 15" loading="lazy">
     </div>
     <!-- Calderería (63/63) -->
-    <div class="gallery-card" style="left: 4147px; top: 2538px; width: 430px; height: 287px;" data-full="assets/img/media/Caldereria-16.jpg">
+    <div class="gallery-card" data-col="8" data-row="6" data-full="assets/img/media/Caldereria-16.jpg">
       <img src="assets/img/media/Caldereria-16.jpg" alt="Calderería pesada y depósitos Solycal 16" loading="lazy">
     </div>
   </div>
@@ -1128,16 +1181,37 @@
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
 
-    const stageWidth = 4800;
-    const stageHeight = 3100;
+    function getStageDimensions() {
+      const isMobile = window.innerWidth <= 480;
+      const isTablet = window.innerWidth <= 768 && !isMobile;
+      
+      const cardW = isMobile ? 200 : isTablet ? 240 : 440;
+      const cardH = isMobile ? 133 : isTablet ? 160 : 293;
+      const gapX = isMobile ? 18 : isTablet ? 24 : 48;
+      const gapY = isMobile ? 18 : isTablet ? 24 : 48;
+      const pad = isMobile ? 24 : isTablet ? 32 : 80;
+
+      const totalW = pad * 2 + 9 * cardW + 8 * gapX;
+      const totalH = pad * 2 + 7 * cardH + 6 * gapY;
+      return { totalW, totalH };
+    }
+
+    // Apply data-col and data-row as CSS custom properties
+    cards.forEach(card => {
+      const col = card.getAttribute('data-col');
+      const row = card.getAttribute('data-row');
+      card.style.setProperty('--col', col);
+      card.style.setProperty('--row', row);
+    });
 
     // Center stage initially
     function centerStage(animate = false) {
       if (!viewport || !stage) return;
+      const { totalW, totalH } = getStageDimensions();
       const vpW = window.innerWidth;
       const vpH = window.innerHeight;
-      const targetX = Math.round((vpW - stageWidth) / 2);
-      const targetY = Math.round((vpH - stageHeight) / 2);
+      const targetX = Math.round((vpW - totalW) / 2);
+      const targetY = Math.round((vpH - totalH) / 2);
 
       if (animate && typeof gsap !== 'undefined') {
         gsap.to(stage, {
@@ -1164,11 +1238,14 @@
         type: 'x,y',
         trigger: viewport,
         edgeResistance: 0.8,
-        bounds: {
-          minX: -(stageWidth - window.innerWidth + 200),
-          maxX: 200,
-          minY: -(stageHeight - window.innerHeight + 200),
-          maxY: 200
+        bounds: () => {
+          const { totalW, totalH } = getStageDimensions();
+          return {
+            minX: -(totalW - window.innerWidth + 120),
+            maxX: 120,
+            minY: -(totalH - window.innerHeight + 120),
+            maxY: 120
+          };
         },
         cursor: 'grab',
         activeCursor: 'grabbing',
@@ -1287,11 +1364,12 @@
 
     window.addEventListener('resize', () => {
       if (draggableInstance) {
+        const { totalW, totalH } = getStageDimensions();
         draggableInstance.applyBounds({
-          minX: -(stageWidth - window.innerWidth + 200),
-          maxX: 200,
-          minY: -(stageHeight - window.innerHeight + 200),
-          maxY: 200
+          minX: -(totalW - window.innerWidth + 120),
+          maxX: 120,
+          minY: -(totalH - window.innerHeight + 120),
+          maxY: 120
         });
       }
     });

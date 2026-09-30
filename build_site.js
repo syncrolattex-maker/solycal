@@ -4782,6 +4782,7 @@ ${getHeader('media', true)}
   }
   #gallery-viewport {
     touch-action: none;
+    perspective: 1200px;
   }
 
   /* SISTEMA DE CUADRÍCULA ESTRICTO Y RESPONSIVE */
@@ -4827,6 +4828,7 @@ ${getHeader('media', true)}
     cursor: grab;
     touch-action: none;
     will-change: transform;
+    transform-style: preserve-3d;
   }
   #gallery-stage:active {
     cursor: grabbing;
@@ -4878,11 +4880,13 @@ ${getHeader('media', true)}
     z-index: 220;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.3s;
   }
   #split-modal.is-active {
     pointer-events: auto;
     opacity: 1;
+    visibility: visible;
   }
   #split-backdrop {
     position: absolute;
@@ -4891,6 +4895,7 @@ ${getHeader('media', true)}
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
     cursor: zoom-out;
+    pointer-events: auto;
   }
   .split-wrapper {
     position: relative;
@@ -4910,7 +4915,7 @@ ${getHeader('media', true)}
     align-items: center;
     justify-content: center;
     padding: 2.5rem;
-    pointer-events: auto;
+    pointer-events: none;
   }
   @media (max-width: 768px) {
     .split-left {
@@ -4929,6 +4934,8 @@ ${getHeader('media', true)}
     overflow: hidden;
     box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15);
     background: #0d0f13;
+    pointer-events: auto;
+    cursor: zoom-out;
   }
   @media (max-width: 768px) {
     .split-target-box {
@@ -4943,6 +4950,7 @@ ${getHeader('media', true)}
     max-height: 86vh;
     object-fit: contain;
     display: block;
+    cursor: zoom-out;
   }
 
   #split-close-btn {
@@ -5365,16 +5373,14 @@ ${getHeader('media', true)}
         onDrag: function() {
           dragDistance += Math.abs(this.deltaX) + Math.abs(this.deltaY);
 
-          // Dynamic Tilt based on drag velocity (Filip Zrnzevic signature momentum effect)
-          const tiltX = Math.max(-9, Math.min(9, this.deltaY * 0.45));
-          const tiltY = Math.max(-9, Math.min(9, -this.deltaX * 0.45));
-          const skewX = Math.max(-4, Math.min(4, this.deltaX * 0.18));
+          // Dynamic 3D Stage Tilt based on drag velocity (Filip Zrnzevic momentum effect)
+          const tiltX = Math.max(-6, Math.min(6, this.deltaY * 0.25));
+          const tiltY = Math.max(-6, Math.min(6, -this.deltaX * 0.25));
 
-          gsap.to(cards, {
+          gsap.to(stage, {
             rotationX: tiltX,
             rotationY: tiltY,
-            skewX: skewX,
-            duration: 0.25,
+            duration: 0.2,
             overwrite: 'auto',
             ease: 'power1.out'
           });
@@ -5383,11 +5389,10 @@ ${getHeader('media', true)}
           setTimeout(() => { isDragging = false; }, 80);
 
           // Return tilt to natural state with smooth spring decay
-          gsap.to(cards, {
+          gsap.to(stage, {
             rotationX: 0,
             rotationY: 0,
-            skewX: 0,
-            duration: 0.85,
+            duration: 0.7,
             ease: 'power3.out'
           });
         }
@@ -5467,26 +5472,10 @@ ${getHeader('media', true)}
 
     function closeSplitView() {
       if (!isSplitActive) return;
-
-      if (typeof gsap !== 'undefined') {
-        gsap.to(['.split-target-box', splitCloseBtn], {
-          scale: 0.9,
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.in',
-          onComplete: () => {
-            splitModal.classList.remove('is-active');
-            splitModal.setAttribute('aria-hidden', 'true');
-            isSplitActive = false;
-            activeZoomCard = null;
-          }
-        });
-      } else {
-        splitModal.classList.remove('is-active');
-        splitModal.setAttribute('aria-hidden', 'true');
-        isSplitActive = false;
-        activeZoomCard = null;
-      }
+      isSplitActive = false;
+      splitModal.classList.remove('is-active');
+      splitModal.setAttribute('aria-hidden', 'true');
+      activeZoomCard = null;
     }
 
     cards.forEach((card, idx) => {
@@ -5495,11 +5484,16 @@ ${getHeader('media', true)}
       });
     });
 
-    if (splitCloseBtn) {
-      splitCloseBtn.addEventListener('click', closeSplitView);
+    if (splitModal) {
+      splitModal.addEventListener('click', function(e) {
+        closeSplitView();
+      });
     }
-    if (splitBackdrop) {
-      splitBackdrop.addEventListener('click', closeSplitView);
+    if (splitCloseBtn) {
+      splitCloseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeSplitView();
+      });
     }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && isSplitActive) {
@@ -5515,6 +5509,8 @@ ${getHeader('media', true)}
 
   });
 </script>
+</body>
+</html>
 `;
 
 // 7. GENERATE AVISO-LEGAL.HTML

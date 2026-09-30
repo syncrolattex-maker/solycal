@@ -45,6 +45,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
   <!-- Three.js (WebGL Text Pixelation Reveal) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Lenis Smooth Scroll -->
@@ -893,6 +894,184 @@
   .gallery-card:hover img {
     transform: scale(1.06);
   }
+
+  /* ESTILOS DEL MODO ZOOM SPLIT-SCREEN (INSPIRADO EN FILIP ZRNZEVIC) */
+  #split-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 220;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  #split-modal.is-active {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  #split-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 8, 10, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .split-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+  }
+  @media (max-width: 900px) {
+    .split-wrapper {
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow-y: auto;
+      padding-top: 5rem;
+      padding-bottom: 2rem;
+    }
+  }
+  .split-left {
+    position: relative;
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem 3rem 4rem;
+  }
+  @media (max-width: 900px) {
+    .split-left {
+      width: 100vw;
+      height: 48vh;
+      padding: 1rem 1.5rem;
+      flex-shrink: 0;
+    }
+  }
+  .split-target-box {
+    width: 100%;
+    height: 100%;
+    max-width: 680px;
+    max-height: 82vh;
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    background: #0d0f13;
+  }
+  .split-target-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .split-right {
+    position: relative;
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 5rem 3rem 3rem;
+  }
+  @media (max-width: 900px) {
+    .split-right {
+      width: 100vw;
+      height: auto;
+      padding: 1.5rem 1.75rem 2rem;
+    }
+  }
+  .split-desc-container {
+    max-width: 540px;
+  }
+  .split-meta-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #F1B541;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .split-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3.25rem);
+    line-height: 1.12;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  .split-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    color: #cbd5e1;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .split-specs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .split-spec-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+  }
+  .split-spec-label {
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .split-spec-val {
+    color: #ffffff;
+    font-weight: 600;
+  }
+  #split-close-btn {
+    position: fixed;
+    top: 2rem;
+    right: 2.5rem;
+    z-index: 230;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #split-close-btn:hover {
+    background: #F1B541;
+    color: #07080a;
+    border-color: #F1B541;
+    transform: scale(1.08) rotate(90deg);
+  }
+  @media (max-width: 900px) {
+    #split-close-btn {
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
 </style>
 
 <!-- FULLSCREEN VIEWPORT CANVAS (FILIP ZRNZEVIC [gsap] ❍ DRAGGABLE IMAGE GALLERY) -->
@@ -1159,14 +1338,55 @@
   </div>
 </main>
 
-<!-- FULLSCREEN LIGHTBOX (PURE IMAGE VIEW) -->
-<div id="image-lightbox" class="fixed inset-0 z-[250] hidden items-center justify-center bg-black/95 backdrop-blur-2xl opacity-0 transition-opacity duration-300 select-none cursor-zoom-out">
-  <img id="lightbox-img" src="" alt="Ampliación" class="max-w-[92vw] max-h-[92vh] object-contain rounded-2xl shadow-[0_0_90px_rgba(0,0,0,0.9)] transition-transform duration-300">
-  <button id="lightbox-close" class="absolute top-6 right-6 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-brand-yellow hover:text-black text-white flex items-center justify-center transition-all cursor-pointer">
+<!-- FILIP ZRNZEVIC STYLE SPLIT-SCREEN ZOOM MODAL -->
+<div id="split-modal" aria-hidden="true">
+  <div id="split-backdrop"></div>
+  
+  <button id="split-close-btn" aria-label="Cerrar vista detallada">
     <i data-lucide="x" class="w-6 h-6"></i>
   </button>
-</div>
 
+  <div class="split-wrapper">
+    <!-- LEFT HALF: Expanded Image (50vw) -->
+    <div class="split-left" id="split-left-area">
+      <div class="split-target-box" id="split-target-box">
+        <img id="split-expanded-img" src="" alt="Detalle del trabajo Solycal">
+      </div>
+    </div>
+
+    <!-- RIGHT HALF: Editorial & Technical Description (50vw) -->
+    <div class="split-right" id="split-right-area">
+      <div class="split-desc-container">
+        <div class="split-meta-tag">
+          <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
+          <span id="split-slide-category">// CALDERERÍA PESADA</span>
+          <span class="text-neutral-500 font-normal">|</span>
+          <span id="split-slide-index" class="text-neutral-400">01 / 63</span>
+        </div>
+
+        <h2 id="split-slide-title" class="split-title">Fabricación a Medida</h2>
+        <p id="split-slide-desc" class="split-desc">
+          Descripción técnica de la fabricación bajo norma y proceso de calidad industrial.
+        </p>
+
+        <div class="split-specs-list" id="split-specs-box">
+          <div class="split-spec-row">
+            <span class="split-spec-label">Normativa de Ejecución</span>
+            <span id="split-spec-norma" class="split-spec-val">UNE-EN 1090-2 EXC3</span>
+          </div>
+          <div class="split-spec-row">
+            <span class="split-spec-label">Material y Calidad</span>
+            <span id="split-spec-material" class="split-spec-val">Acero Estructural S275 / S355</span>
+          </div>
+          <div class="split-spec-row">
+            <span class="split-spec-label">Control Metrológico</span>
+            <span id="split-spec-control" class="split-spec-val">Ensayos No Destructivos (END)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- GSAP DRAGGABLE ENGINE (FILIP ZRNZEVIC MOMENTUM & VELOCITY TILT) -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -1322,43 +1542,232 @@
       });
     }
 
-    // Lightbox Pure Image on Click (Without triggering on drag)
-    function openLightbox(src) {
-      if (dragDistance > 12) return;
-      lightboxImg.src = src;
-      lightbox.classList.remove('hidden');
-      lightbox.classList.add('flex');
-      setTimeout(() => {
-        lightbox.classList.remove('opacity-0');
-        lightbox.classList.add('opacity-100');
-      }, 10);
+    // METADATOS TÉCNICOS POR CATEGORÍA PARA LA VISTA SPLIT-SCREEN
+    const categoryInfo = {
+      'pasarelas': {
+        categoryName: 'Pasarelas & Pasos Elevados',
+        titles: [
+          'Pasarela Peatonal de Gran Vano',
+          'Paso Superior de Alta Capacidad',
+          'Estructura de Acceso Industrial',
+          'Pasarela Técnica en Celosía',
+          'Viga Cajón para Cruce Ferroviario',
+          'Pasarela Metálica Autoportante',
+          'Paso de Servicio con Barandilla',
+          'Pasarela de Obra Civil en Acero'
+        ],
+        descriptions: [
+          'Fabricación y montaje integral de pasarelas de gran tonelaje para obra civil y pasos elevados sobre vías férreas o autovías.',
+          'Estructura galvanizada y pintada con tratamiento C5-M para máxima durabilidad en intemperie y ambientes de alta salinidad.',
+          'Módulos prediseñados y soldados en taller central bajo control dimensional milimétrico para ensamblaje rápido en obra.',
+          'Diseño optimizado de perfiles huecos estructurales con apoyos de neopreno zunchado para absorción de vibraciones dinámicas.'
+        ],
+        norma: 'UNE-EN 1090-2 (Clase EXC3)',
+        material: 'Acero Estructural S355J2+N',
+        control: 'Partículas Magnéticas & Ultrasonidos'
+      },
+      'caldereria': {
+        categoryName: 'Calderería Pesada & Media',
+        titles: [
+          'Depósito Cilíndrico de Gran Presión',
+          'Tolva Cónica de Descarga Rápida',
+          'Ciclón Separador de Partículas',
+          'Virola Curvada de Chapa Gruesa',
+          'Cuerpo Tubular con Bridas Soldadas',
+          'Tanque de Almacenamiento Químico',
+          'Colector Distribuidor Multivía',
+          'Fondo Bombeado para Recipiente'
+        ],
+        descriptions: [
+          'Construcción mecánica pesada de recipientes, conducciones y tolvas con curvado de chapa en caliente y frío.',
+          'Soldadura longitudinal y circunferencial mediante proceso de arco sumergido y cordones TIG multicapa de máxima estanqueidad.',
+          'Tratamiento térmico de alivio de tensiones y decapado químico de uniones críticas para la industria petroquímica y cerámica.',
+          'Piezas fabricadas bajo estricto control de redondez y pruebas hidrostáticas a presión controlada.'
+        ],
+        norma: 'AD-2000 / ASME VIII Div. 1',
+        material: 'Acero al Carbono P265GH / S355JR',
+        control: 'Líquidos Penetrantes & RX 100%'
+      },
+      'marquesinas': {
+        categoryName: 'Marquesinas & Cerramientos',
+        titles: [
+          'Marquesina Volada en Ménsula',
+          'Pérgola Estructural de Gran Luz',
+          'Cubierta de Protección Logística',
+          'Marquesina Arquitectónica con Canalón',
+          'Aparcamiento Estructural Industrial',
+          'Cubierta de Carga en Acero',
+          'Pórtico de Acceso Comercial',
+          'Ménsula Articulada para Sombra'
+        ],
+        descriptions: [
+          'Diseño, cálculo y montaje de marquesinas autoportantes de gran vuelo para plataformas logísticas y zonas comerciales.',
+          'Puntales cónicos y vigas de inercia variable cortadas mediante plasma de alta precisión con tecnología TrueHole.',
+          'Integración de sistemas de drenaje interior oculto, cubiertas de policarbonato alveolar y paneles sándwich aislantes.',
+          'Acabados con granallado Sa 2.5 y termolacado al horno en colores corporativos según carta RAL.'
+        ],
+        norma: 'Código Técnico de la Edificación (CTE)',
+        material: 'Tubos Estructurales S275JOH',
+        control: 'Inspección Visual VT (Nivel II)'
+      },
+      'inoxidable': {
+        categoryName: 'Acero Inoxidable & Sanitario',
+        titles: [
+          'Barandilla Técnica AISI 316L',
+          'Depósito Pulido Espejo Sanitario',
+          'Estructura Farmacéutica Pasivada',
+          'Conducto de Extracción en Inox',
+          'Bancada para Industria Alimentaria',
+          'Tolva Inoxidable sin Retenciones',
+          'Pasamanos Tubular Curvado',
+          'Tubería Sanitaria Purga Argón'
+        ],
+        descriptions: [
+          'Fabricación especializada en taller aislado para aceros inoxidables austeníticos evitando la contaminación férrica.',
+          'Soldaduras TIG con gas de respaldo (purga de argón 99.999%) para cordones limpios con rugosidad Ra inferior a 0.8 µm.',
+          'Decapado, pasivado e inspección con feroxilo garantizando la total regeneración de la capa pasiva anticorrosiva.',
+          'Acabados satinados, pulidos industriales o brillo espejo para cumplimiento de los estándares higiénicos más exigentes.'
+        ],
+        norma: 'EHEDG / UNE-EN 1672-2',
+        material: 'AISI 304L / AISI 316L',
+        control: 'Rugosímetro Digital (Ra < 0.8 µm)'
+      },
+      'industria': {
+        categoryName: 'Mantenimiento & Maquinaria Industrial',
+        titles: [
+          'Bancada de Maquinaria Reforzada',
+          'Bastidor Mecanosoldado de Precisión',
+          'Línea de Transporte con Rodillos',
+          'Mecanizado y Ajuste de Soporte',
+          'Estructura Portante de Molino',
+          'Guía Deslizante Antidesgaste',
+          'Carro de Transferencia Pesada',
+          'Módulo de Elevación Hidráulica'
+        ],
+        descriptions: [
+          'Soluciones a medida para reparación, modernización y diseño de componentes mecánicos para plantas de producción continua.',
+          'Mecanizado posterior de superficies soldadas para garantizar planeidad y tolerancias H7 en alojamientos de rodamientos.',
+          'Fabricación de repuestos y elementos de recambio bajo muestra física o plano del cliente con plazos de respuesta ágiles.',
+          'Personal técnico desplazable con equipos autónomos para asistencia técnica en paradas programadas de fábrica.'
+        ],
+        norma: 'Directiva de Máquinas 2006/42/CE',
+        material: 'Aceros Aleados & Antidesgaste HB400',
+        control: 'Verificación Dimensional 3D'
+      }
+    };
+
+    const splitModal = document.getElementById('split-modal');
+    const splitBackdrop = document.getElementById('split-backdrop');
+    const splitTargetBox = document.getElementById('split-target-box');
+    const splitExpandedImg = document.getElementById('split-expanded-img');
+    const splitCloseBtn = document.getElementById('split-close-btn');
+
+    const splitSlideCategory = document.getElementById('split-slide-category');
+    const splitSlideIndex = document.getElementById('split-slide-index');
+    const splitSlideTitle = document.getElementById('split-slide-title');
+    const splitSlideDesc = document.getElementById('split-slide-desc');
+    const splitSpecNorma = document.getElementById('split-spec-norma');
+    const splitSpecMaterial = document.getElementById('split-spec-material');
+    const splitSpecControl = document.getElementById('split-spec-control');
+
+    let activeZoomCard = null;
+    let isSplitActive = false;
+
+    // Detect category from image filename: e.g. "Pasarela-01.jpg" -> "pasarelas"
+    function getCardCategory(src) {
+      const lower = src.toLowerCase();
+      if (lower.includes('pasarela')) return 'pasarelas';
+      if (lower.includes('caldereria')) return 'caldereria';
+      if (lower.includes('marquesina')) return 'marquesinas';
+      if (lower.includes('inoxidable')) return 'inoxidable';
+      return 'industria';
     }
 
-    function closeLightbox() {
-      lightbox.classList.remove('opacity-100');
-      lightbox.classList.add('opacity-0');
-      setTimeout(() => {
-        lightbox.classList.remove('flex');
-        lightbox.classList.add('hidden');
-      }, 300);
+    function openSplitView(card, index) {
+      if (dragDistance > 12 || isSplitActive) return;
+      isSplitActive = true;
+      activeZoomCard = card;
+
+      const fullSrc = card.getAttribute('data-full');
+      const catKey = getCardCategory(fullSrc);
+      const catData = categoryInfo[catKey] || categoryInfo['caldereria'];
+
+      // Populate textual & technical details
+      const title = catData.titles[index % catData.titles.length];
+      const desc = catData.descriptions[index % catData.descriptions.length];
+
+      splitSlideCategory.textContent = '// ' + catData.categoryName;
+      splitSlideIndex.textContent = String(index + 1).padStart(2, '0') + ' / ' + cards.length;
+      splitSlideTitle.textContent = title;
+      splitSlideDesc.textContent = desc;
+      splitSpecNorma.textContent = catData.norma;
+      splitSpecMaterial.textContent = catData.material;
+      splitSpecControl.textContent = catData.control;
+
+      splitExpandedImg.src = fullSrc;
+
+      // Animate modal in
+      splitModal.classList.add('is-active');
+      splitModal.setAttribute('aria-hidden', 'false');
+
+      // GSAP Stagger Entrance for Text
+      if (typeof gsap !== 'undefined') {
+        gsap.fromTo('.split-target-box',
+          { scale: 0.9, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.6, ease: 'power3.out' }
+        );
+
+        gsap.fromTo(['.split-meta-tag', '#split-slide-title', '#split-slide-desc', '#split-specs-box'],
+          { y: 35, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.15 }
+        );
+
+        gsap.fromTo(splitCloseBtn,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)', delay: 0.2 }
+        );
+      }
     }
 
-    cards.forEach(card => {
+    function closeSplitView() {
+      if (!isSplitActive) return;
+
+      if (typeof gsap !== 'undefined') {
+        gsap.to(['.split-target-box', '.split-desc-container', splitCloseBtn], {
+          opacity: 0,
+          y: 20,
+          duration: 0.35,
+          ease: 'power2.in',
+          onComplete: () => {
+            splitModal.classList.remove('is-active');
+            splitModal.setAttribute('aria-hidden', 'true');
+            isSplitActive = false;
+            activeZoomCard = null;
+          }
+        });
+      } else {
+        splitModal.classList.remove('is-active');
+        splitModal.setAttribute('aria-hidden', 'true');
+        isSplitActive = false;
+        activeZoomCard = null;
+      }
+    }
+
+    cards.forEach((card, idx) => {
       card.addEventListener('click', function(e) {
-        const fullSrc = this.getAttribute('data-full');
-        if (fullSrc) openLightbox(fullSrc);
+        openSplitView(this, idx);
       });
     });
 
-    if (lightbox) {
-      lightbox.addEventListener('click', closeLightbox);
+    if (splitCloseBtn) {
+      splitCloseBtn.addEventListener('click', closeSplitView);
     }
-    if (lightboxClose) {
-      lightboxClose.addEventListener('click', closeLightbox);
+    if (splitBackdrop) {
+      splitBackdrop.addEventListener('click', closeSplitView);
     }
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
-        closeLightbox();
+      if (e.key === 'Escape' && isSplitActive) {
+        closeSplitView();
       }
     });
 

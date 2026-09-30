@@ -781,6 +781,12 @@
   </div>
 
 <style>
+  #solycal-loader {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
   html, body {
     overflow: hidden !important;
     height: 100vh !important;
@@ -1005,6 +1011,7 @@
 
       draggableInstance = Draggable.create(stage, {
         type: 'x,y',
+        trigger: viewport,
         edgeResistance: 0.8,
         bounds: {
           minX: -(stageWidth - window.innerWidth + 200),
@@ -1050,6 +1057,41 @@
           });
         }
       })[0];
+    }
+
+    // JOBY NAVIGATION MENU CONTROLLER
+    const jobyToggle = document.getElementById('joby-toggle');
+    const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
+    const jobyBackdrop = document.getElementById('joby-backdrop');
+    const jobyWaves = document.getElementById('joby-color-waves');
+    const jobyOverlay = document.getElementById('joby-nav-overlay');
+
+    if (jobyToggle && jobyOverlay) {
+      const toggleJobyMenu = (forceClose = false) => {
+        const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
+        jobyToggle.classList.toggle('is-active', isOpen);
+        if (jobyToggleWrap) jobyToggleWrap.classList.toggle('is-active', isOpen);
+        jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
+        if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
+        jobyOverlay.classList.toggle('is-open', isOpen);
+        jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+
+        if (typeof gsap !== 'undefined' && isOpen) {
+          gsap.fromTo('.joby-nav-link',
+            { y: 80, opacity: 0 },
+            { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: 'power4.out', delay: 0.35 }
+          );
+        }
+      };
+
+      jobyToggle.addEventListener('click', () => toggleJobyMenu());
+      if (jobyBackdrop) jobyBackdrop.addEventListener('click', () => toggleJobyMenu(true));
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
+          toggleJobyMenu(true);
+        }
+      });
     }
 
     // Lightbox Pure Image on Click (Without triggering on drag)

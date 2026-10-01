@@ -442,6 +442,12 @@ function getHead(title, description, canonicalPath = '') {
     .header-theme-light .joby-nav-toggle-wrap.is-active .joby-close-label {
       color: #F1B541 !important;
     }
+    .header-theme-light #brand-logo-text {
+      color: #07080a !important;
+    }
+    .header-theme-light .brand-logo-container:hover #brand-logo-text {
+      color: #F1B541 !important;
+    }
 
     /* PRELOADER INTRO INDUSTRIAL SOLYCAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) */
     #solycal-loader {
@@ -729,7 +735,7 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
       <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center">
-        <img id="brand-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
+        <img id="brand-logo-icon" src="${isDarkText ? 'assets/logo-icon-black.png' : 'assets/logo-icon.png'}" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
         <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
       </a>
 
@@ -3373,7 +3379,7 @@ const instalacionesHtml = `${getHead('Instalaciones Industriales y Maquinaria | 
     height: 100dvh !important;
     width: 100vw !important;
     overflow: hidden !important;
-    background-color: #d6d2ca !important;
+    background-color: #c4c0b8 !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -3383,8 +3389,8 @@ const instalacionesHtml = `${getHead('Instalaciones Industriales y Maquinaria | 
 </style>
 ${getHeader('instalaciones', true, { darkText: true })}
 
-<!-- 3D INTERACTIVE INDUSTRIAL MAP - FULLSCREEN VIEWPORT (KIRILBT/INTERACTIVE-MAP REFERENCE: COLOR #d6d2ca, ZERO SCROLL) -->
-<div class="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#d6d2ca]">
+<!-- 3D INTERACTIVE INDUSTRIAL MAP - FULLSCREEN VIEWPORT (WARM ARCHITECTURAL TONE #c4c0b8, ZERO SCROLL) -->
+<div class="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#c4c0b8]">
   
   <!-- Canvas 3D -->
   <canvas id="webgl-map-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing outline-none block"></canvas>
@@ -3412,8 +3418,8 @@ ${getHeader('instalaciones', true, { darkText: true })}
     </button>
   </div>
 
-  <!-- Loading Bar & Overlay (Styled in #d6d2ca from the start, no dark flash) -->
-  <div id="map-3d-loader" class="absolute inset-0 bg-[#d6d2ca] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
+  <!-- Loading Bar & Overlay (Styled in #c4c0b8 from the start, no dark flash) -->
+  <div id="map-3d-loader" class="absolute inset-0 bg-[#c4c0b8] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
     <div class="w-64 max-w-[85vw] space-y-3 text-center">
       <div class="flex items-center justify-between text-xs font-mono text-neutral-800">
         <span class="flex items-center gap-2 font-bold text-neutral-900">
@@ -3485,7 +3491,7 @@ ${getHeader('instalaciones', true, { darkText: true })}
       </div>
     </div>
 
-    <footer class="w-full bg-[#d6d2ca]/90 backdrop-blur-md border-t border-black/10 py-3 sm:py-3.5 px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[11px] text-neutral-700 pointer-events-auto">
+    <footer class="w-full bg-[#c4c0b8]/90 backdrop-blur-md border-t border-black/10 py-3 sm:py-3.5 px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[11px] text-neutral-700 pointer-events-auto">
       <p class="order-3 sm:order-1 text-center sm:text-left text-neutral-800">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
       <div class="order-1 sm:order-2 flex items-center text-neutral-800 hover:[&_a]:text-black">
         ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
@@ -3650,9 +3656,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // 4. Scene & Renderer Setup (FONDO DEL REPOSITORIO ORIGINAL: #d6d2ca)
+  // 4. Scene & Renderer Setup (FONDO UN PELÍN MÁS OSCURO: #c4c0b8)
   const scene = new THREE.Scene();
-  const BG_COLOR = 0xd6d2ca;
+  const BG_COLOR = 0xc4c0b8;
   scene.background = new THREE.Color(BG_COLOR);
   scene.fog = new THREE.Fog(BG_COLOR, 150, 480);
 
@@ -3686,19 +3692,19 @@ document.addEventListener('DOMContentLoaded', () => {
   controls.maxDistance = 260;
   controls.target.copy(defaultTarget);
 
-  // 7. Lighting (Bright & crisp for warm architectural background #d6d2ca)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.15);
+  // 7. Lighting (Bright & crisp for warm architectural background #c4c0b8)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.25);
   scene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff8ee, 0.55);
+  const dirLight = new THREE.DirectionalLight(0xfff8ee, 0.65);
   dirLight.position.set(60, 100, 50);
   scene.add(dirLight);
 
-  const dirLight2 = new THREE.DirectionalLight(0xdde8f5, 0.35);
+  const dirLight2 = new THREE.DirectionalLight(0xdde8f5, 0.4);
   dirLight2.position.set(-60, 60, -50);
   scene.add(dirLight2);
 
-  // Floor plane (Suelo continuo tono #d6d2ca)
+  // Floor plane (Suelo continuo tono #c4c0b8)
   const floorGeo = new THREE.PlaneGeometry(1200, 1200);
   const floorMat = new THREE.MeshBasicMaterial({ color: BG_COLOR });
   const floorMesh = new THREE.Mesh(floorGeo, floorMat);

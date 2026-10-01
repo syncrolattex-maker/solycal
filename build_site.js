@@ -850,6 +850,21 @@ function getFooter(options = {}) {
         </div>
       </div>
     </footer>
+    <script>
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
+      // Retirar el preloader global si existe en la página
+      const pLoader = document.getElementById('solycal-loader');
+      if (pLoader) {
+        pLoader.style.opacity = '0';
+        pLoader.style.pointerEvents = 'none';
+        setTimeout(() => pLoader.remove(), 400);
+      }
+      document.body.style.overflow = '';
+    </script>
+</body>
+</html>
     `;
   }
 
@@ -3614,6 +3629,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let factoryModel = null;
   const clickableMeshes = [];
 
+  // Failsafe de seguridad: retirar loader tras 3.5 segundos si la red va lenta
+  setTimeout(() => {
+    if (loaderEl && loaderEl.parentElement) {
+      loaderEl.style.opacity = '0';
+      loaderEl.style.pointerEvents = 'none';
+      setTimeout(() => { if (loaderEl.parentElement) loaderEl.remove(); }, 700);
+      createHtmlPins();
+    }
+  }, 3500);
+
   gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
     factoryModel = gltf.scene;
 
@@ -3643,6 +3668,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const scaledHeight = size.y * scaleFactor;
     controls.target.set(0, scaledHeight * 0.35, 0);
+  }, undefined, (err) => {
+    console.error('Error cargando modelo 3D:', err);
+    if (loaderEl) loaderEl.remove();
   });
 
   // 6. Interactive HTML Pins Overlay

@@ -4755,12 +4755,26 @@ ${getFooter()}
 const mediaHtml = `${getHead('Galería de Imágenes | SOLYCAL', 'Galería de imágenes a pantalla completa de proyectos y trabajos de Solycal en calderería pesada, corte plasma HD y estructuras metálicas.', 'media.html')}
 ${getHeader('media', true)}
 
+<!-- PRELOADER OVERLAY (FILIP ZRNZEVIC CONCENTRIC DOT-WAVE PULSE) -->
+<div id="preloader-overlay"></div>
+
 <style>
   #solycal-loader {
     display: none !important;
     pointer-events: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
+  }
+  #preloader-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #07080a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
   }
   html, body {
     overflow: hidden !important;
@@ -4783,6 +4797,7 @@ ${getHeader('media', true)}
   }
   #gallery-viewport {
     touch-action: none;
+    opacity: 0;
   }
   body.dragging, body.dragging * {
     cursor: grabbing !important;
@@ -5269,62 +5284,178 @@ ${getHeader('media', true)}
     </div>
   </div>
 </div>
-<!-- GSAP DRAGGABLE ENGINE (FILIP ZRNZEVIC MOMENTUM & VELOCITY TILT) -->
+<!-- GSAP DRAGGABLE ENGINE & FILIP ZRNZEVIC LOADING SEQUENCE -->
 <script>
+  // Filip Zrnzevic Concentric Dot-Wave Preloader Manager
+  class PreloaderManager {
+    constructor(onComplete) {
+      this.overlay = document.getElementById("preloader-overlay");
+      this.canvas = null;
+      this.ctx = null;
+      this.animationId = null;
+      this.startTime = null;
+      this.duration = 1800; // 1.8s pulse duration
+      this.onComplete = onComplete;
+      this.createLoadingScreen();
+    }
+
+    createLoadingScreen() {
+      if (!this.overlay) {
+        this.overlay = document.createElement("div");
+        this.overlay.id = "preloader-overlay";
+        document.body.appendChild(this.overlay);
+      }
+      this.overlay.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;background:#07080a;display:flex;justify-content:center;align-items:center;z-index:100000;';
+
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = 300;
+      this.canvas.height = 300;
+
+      this.ctx = this.canvas.getContext("2d");
+      this.overlay.appendChild(this.canvas);
+
+      this.startAnimation();
+    }
+
+    startAnimation() {
+      const centerX = this.canvas.width / 2;
+      const centerY = this.canvas.height / 2;
+      let time = 0;
+      let lastTime = 0;
+
+      const dotRings = [
+        { radius: 20, count: 8 },
+        { radius: 35, count: 12 },
+        { radius: 50, count: 16 },
+        { radius: 65, count: 20 },
+        { radius: 80, count: 24 }
+      ];
+
+      const colors = {
+        primary: "#2d333b",
+        accent: "#F1B541"
+      };
+
+      const hexToRgb = hex => [
+        parseInt(hex.slice(1, 3), 16),
+        parseInt(hex.slice(3, 5), 16),
+        parseInt(hex.slice(5, 7), 16)
+      ];
+
+      const animate = timestamp => {
+        if (!this.startTime) this.startTime = timestamp;
+
+        if (!lastTime) lastTime = timestamp;
+        const deltaTime = timestamp - lastTime;
+        lastTime = timestamp;
+        time += deltaTime * 0.001;
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw center dot (accent yellow glow)
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
+        const rgbAccent = hexToRgb(colors.accent);
+        this.ctx.fillStyle = 'rgba(' + rgbAccent[0] + ',' + rgbAccent[1] + ',' + rgbAccent[2] + ',0.9)';
+        this.ctx.fill();
+
+        // Draw Line Pulse Wave animation
+        dotRings.forEach((ring, ringIndex) => {
+          for (let i = 0; i < ring.count; i++) {
+            const angle = (i / ring.count) * Math.PI * 2;
+            const radiusPulse = Math.sin(time * 2.5 - ringIndex * 0.4) * 3;
+            const x = centerX + Math.cos(angle) * (ring.radius + radiusPulse);
+            const y = centerY + Math.sin(angle) * (ring.radius + radiusPulse);
+
+            const opacityWave = 0.4 + Math.sin(time * 2.5 - ringIndex * 0.4 + i * 0.2) * 0.6;
+            const isActive = Math.sin(time * 2.5 - ringIndex * 0.4 + i * 0.2) > 0.6;
+
+            // Draw line from center to point
+            this.ctx.beginPath();
+            this.ctx.moveTo(centerX, centerY);
+            this.ctx.lineTo(x, y);
+            this.ctx.lineWidth = 0.8;
+
+            if (isActive) {
+              this.ctx.strokeStyle = 'rgba(' + rgbAccent[0] + ',' + rgbAccent[1] + ',' + rgbAccent[2] + ',' + (opacityWave * 0.7) + ')';
+            } else {
+              const primaryRgb = hexToRgb(colors.primary);
+              this.ctx.strokeStyle = 'rgba(' + primaryRgb[0] + ',' + primaryRgb[1] + ',' + primaryRgb[2] + ',' + (opacityWave * 0.5) + ')';
+            }
+            this.ctx.stroke();
+
+            // Draw dot at the end of the line
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+            if (isActive) {
+              this.ctx.fillStyle = 'rgba(' + rgbAccent[0] + ',' + rgbAccent[1] + ',' + rgbAccent[2] + ',' + opacityWave + ')';
+            } else {
+              const primaryRgb = hexToRgb(colors.primary);
+              this.ctx.fillStyle = 'rgba(' + primaryRgb[0] + ',' + primaryRgb[1] + ',' + primaryRgb[2] + ',' + opacityWave + ')';
+            }
+            this.ctx.fill();
+          }
+        });
+
+        // Check if we should complete loading
+        if (timestamp - this.startTime >= this.duration) {
+          this.complete();
+          return;
+        }
+
+        this.animationId = requestAnimationFrame(animate);
+      };
+
+      this.animationId = requestAnimationFrame(animate);
+    }
+
+    complete() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+
+      if (this.overlay) {
+        this.overlay.style.opacity = "0";
+        this.overlay.style.transition = "opacity 0.7s ease";
+        setTimeout(() => {
+          this.overlay?.remove();
+          if (this.onComplete) {
+            this.onComplete();
+            this.onComplete = null;
+          }
+        }, 700);
+      } else if (this.onComplete) {
+        this.onComplete();
+        this.onComplete = null;
+      }
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
     }
 
-    // LOGO INTRO ANIMATION EN HEADER (Idéntica a todas las pestañas de Solycal)
-    const logoLink = document.getElementById('brand-logo-link');
-    const logoIcon = document.getElementById('brand-logo-icon');
-    const logoText = document.getElementById('brand-logo-text');
-    
-    if (logoLink && logoIcon && logoText && typeof gsap !== 'undefined') {
-      let hasLoadedBefore = false;
-      try {
-        hasLoadedBefore = !!sessionStorage.getItem('solycal_preloader_seen');
-      } catch (e) {
-        hasLoadedBefore = true;
-      }
-
-      gsap.set(logoIcon, { 
-        opacity: 0, 
-        scale: 0.4,
-        x: 0
-      });
-      gsap.set(logoText, { 
-        opacity: 0, 
-        x: -16, 
-        maxWidth: 0, 
-        marginLeft: 0 
-      });
-
-      const logoTl = gsap.timeline({ delay: hasLoadedBefore ? 0.1 : 0.5 });
-      logoTl
-        .to(logoIcon, { 
-          opacity: 1, 
-          scale: 1, 
-          duration: 0.6, 
-          ease: "back.out(1.8)" 
-        })
-        .to(logoText, { 
-          opacity: 1, 
-          x: 0, 
-          maxWidth: 240, 
-          marginLeft: "0.875rem", 
-          duration: 0.65, 
-          ease: "power3.out" 
-        }, "-=0.25");
-    }
-
     const stage = document.getElementById('gallery-stage');
     const viewport = document.getElementById('gallery-viewport');
     const cards = Array.from(document.querySelectorAll('.gallery-card'));
-    const lightbox = document.getElementById('image-lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxClose = document.getElementById('lightbox-close');
+    const splitModal = document.getElementById('split-modal');
+    const splitBackdrop = document.getElementById('split-backdrop');
+    const splitTargetBox = document.getElementById('split-target-box');
+    const splitExpandedImg = document.getElementById('split-expanded-img');
+    const splitCloseBtn = document.getElementById('split-close-btn');
+
+    const logoLink = document.getElementById('brand-logo-link');
+    const logoIcon = document.getElementById('brand-logo-icon');
+    const logoText = document.getElementById('brand-logo-text');
+
+    let isDragging = false;
+    let dragDistance = 0;
+    let draggableInstance = null;
+    let isIntroDone = false;
+    let isSplitActive = false;
+    let activeZoomCard = null;
 
     function getStageDimensions() {
       const isMobile = window.innerWidth <= 480;
@@ -5338,7 +5469,7 @@ ${getHeader('media', true)}
 
       const totalW = pad * 2 + 9 * cardW + 8 * gapX;
       const totalH = pad * 2 + 7 * cardH + 6 * gapY;
-      return { totalW, totalH };
+      return { totalW, totalH, cardW, cardH, gapX, gapY, pad };
     }
 
     // Apply data-col and data-row as CSS custom properties
@@ -5372,10 +5503,6 @@ ${getHeader('media', true)}
 
     centerStage(false);
 
-    let isDragging = false;
-    let dragDistance = 0;
-    let draggableInstance = null;
-
     function getBounds() {
       const { totalW, totalH } = getStageDimensions();
       const margin = 120;
@@ -5395,54 +5522,165 @@ ${getHeader('media', true)}
       return { minX, maxX, minY, maxY };
     }
 
-    if (typeof Draggable !== 'undefined') {
-      if (typeof InertiaPlugin !== 'undefined') {
-        gsap.registerPlugin(Draggable, InertiaPlugin);
-      } else {
-        gsap.registerPlugin(Draggable);
+    function initDraggable() {
+      if (draggableInstance) return;
+      if (typeof Draggable !== 'undefined') {
+        if (typeof InertiaPlugin !== 'undefined') {
+          gsap.registerPlugin(Draggable, InertiaPlugin);
+        } else {
+          gsap.registerPlugin(Draggable);
+        }
+
+        draggableInstance = Draggable.create(stage, {
+          type: 'x,y',
+          trigger: viewport,
+          bounds: getBounds(),
+          edgeResistance: 0.8,
+          inertia: true,
+          throwProps: {
+            x: {
+              velocity: "auto",
+              resistance: 300,
+              end: endValue => Math.round(endValue)
+            },
+            y: {
+              velocity: "auto",
+              resistance: 300,
+              end: endValue => Math.round(endValue)
+            }
+          },
+          dragClickables: true,
+          zIndexBoost: false,
+          cursor: 'grab',
+          activeCursor: 'grabbing',
+          onPressInit: function() {
+            dragDistance = 0;
+          },
+          onPress: function() {
+            dragDistance = 0;
+          },
+          onDragStart: function() {
+            document.body.classList.add("dragging");
+            isDragging = true;
+          },
+          onDrag: function() {
+            dragDistance += Math.abs(this.deltaX) + Math.abs(this.deltaY);
+          },
+          onDragEnd: function() {
+            document.body.classList.remove("dragging");
+            setTimeout(() => { isDragging = false; }, 80);
+          }
+        })[0];
+      }
+    }
+
+    // Prepare cards stacked at center for the intro card-deal animation
+    if (typeof gsap !== 'undefined') {
+      const dims = getStageDimensions();
+      const stageCenterX = dims.totalW / 2;
+      const stageCenterY = dims.totalH / 2;
+      const cardCenterX = stageCenterX - dims.cardW / 2;
+      const cardCenterY = stageCenterY - dims.cardH / 2;
+
+      cards.forEach((card, index) => {
+        const col = parseInt(card.getAttribute('data-col'), 10);
+        const row = parseInt(card.getAttribute('data-row'), 10);
+        const targetLeft = dims.pad + col * (dims.cardW + dims.gapX);
+        const targetTop = dims.pad + row * (dims.cardH + dims.gapY);
+        const deltaX = cardCenterX - targetLeft;
+        const deltaY = cardCenterY - targetTop;
+
+        gsap.set(card, {
+          x: deltaX,
+          y: deltaY,
+          scale: 0.6,
+          opacity: 0,
+          zIndex: cards.length - index
+        });
+      });
+
+      // Prepare header logo
+      if (logoIcon && logoText) {
+        gsap.set(logoIcon, { opacity: 0, scale: 0.4, x: 0 });
+        gsap.set(logoText, { opacity: 0, x: -16, maxWidth: 0, marginLeft: 0 });
+      }
+    }
+
+    function playIntroAnimation() {
+      if (typeof gsap === 'undefined') {
+        cards.forEach(card => {
+          card.style.opacity = '1';
+          card.style.transform = 'none';
+        });
+        isIntroDone = true;
+        initDraggable();
+        return;
       }
 
-      draggableInstance = Draggable.create(stage, {
-        type: 'x,y',
-        trigger: viewport,
-        bounds: getBounds(),
-        edgeResistance: 0.8,
-        inertia: true,
-        throwProps: {
-          x: {
-            velocity: "auto",
-            resistance: 300,
-            end: endValue => Math.round(endValue)
-          },
-          y: {
-            velocity: "auto",
-            resistance: 300,
-            end: endValue => Math.round(endValue)
-          }
+      // Deal cards out across grid (staggered from start like repository)
+      gsap.to(cards, {
+        duration: 0.35,
+        x: 0,
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        ease: "power2.out",
+        stagger: {
+          amount: 1.4,
+          from: "start",
+          grid: [7, 9]
         },
-        dragClickables: true,
-        zIndexBoost: false,
-        cursor: 'grab',
-        activeCursor: 'grabbing',
-        onPressInit: function() {
-          dragDistance = 0;
-        },
-        onPress: function() {
-          dragDistance = 0;
-        },
-        onDragStart: function() {
-          document.body.classList.add("dragging");
-          isDragging = true;
-        },
-        onDrag: function() {
-          dragDistance += Math.abs(this.deltaX) + Math.abs(this.deltaY);
-        },
-        onDragEnd: function() {
-          document.body.classList.remove("dragging");
-          setTimeout(() => { isDragging = false; }, 80);
+        onComplete: () => {
+          cards.forEach(card => {
+            gsap.set(card, { zIndex: 1 });
+          });
+          isIntroDone = true;
+          initDraggable();
         }
-      })[0];
+      });
+
+      // Synchronized logo entrance in header
+      if (logoIcon && logoText) {
+        const logoTl = gsap.timeline({ delay: 0.2 });
+        logoTl
+          .to(logoIcon, { 
+            opacity: 1, 
+            scale: 1, 
+            duration: 0.6, 
+            ease: "back.out(1.8)" 
+          })
+          .to(logoText, { 
+            opacity: 1, 
+            x: 0, 
+            maxWidth: 240, 
+            marginLeft: "0.875rem", 
+            duration: 0.65, 
+            ease: "power3.out" 
+          }, "-=0.25");
+      }
     }
+
+    // Launch Preloader and chain into Intro Animation
+    const preloader = new PreloaderManager(() => {
+      if (typeof gsap !== 'undefined') {
+        gsap.to(viewport, {
+          duration: 0.5,
+          opacity: 1,
+          ease: "power2.inOut",
+          onComplete: () => {
+            playIntroAnimation();
+          }
+        });
+      } else {
+        if (viewport) viewport.style.opacity = '1';
+        playIntroAnimation();
+      }
+    });
+
+    // Fallback safety timeout if preloader animation is somehow delayed
+    setTimeout(() => {
+      preloader.complete();
+    }, 2400);
 
     // JOBY NAVIGATION MENU CONTROLLER
     const jobyToggle = document.getElementById('joby-toggle');
@@ -5479,18 +5717,8 @@ ${getHeader('media', true)}
       });
     }
 
-
-    const splitModal = document.getElementById('split-modal');
-    const splitBackdrop = document.getElementById('split-backdrop');
-    const splitTargetBox = document.getElementById('split-target-box');
-    const splitExpandedImg = document.getElementById('split-expanded-img');
-    const splitCloseBtn = document.getElementById('split-close-btn');
-
-    let activeZoomCard = null;
-    let isSplitActive = false;
-
     function openSplitView(card, index) {
-      if (dragDistance > 12 || isSplitActive) return;
+      if (!isIntroDone || dragDistance > 12 || isSplitActive) return;
       isSplitActive = true;
       activeZoomCard = card;
 

@@ -371,6 +371,23 @@
       color: #F1B541;
     }
 
+    /* Header Theme Light (para vistas claras como /instalaciones con fondo arquitectónico #d6d2ca) */
+    .header-theme-light .joby-burger-line {
+      background-color: #07080a !important;
+    }
+    .header-theme-light .joby-burger-btn:hover .joby-burger-line {
+      background-color: #F1B541 !important;
+    }
+    .header-theme-light .joby-burger-btn.is-active .joby-burger-line {
+      background-color: #F1B541 !important;
+    }
+    .header-theme-light .joby-close-label {
+      color: #1f2937 !important;
+    }
+    .header-theme-light .joby-nav-toggle-wrap.is-active .joby-close-label {
+      color: #F1B541 !important;
+    }
+
     /* PRELOADER INTRO INDUSTRIAL SOLYCAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) */
     #solycal-loader {
       position: fixed;
@@ -586,7 +603,7 @@
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
-  <header id="main-header" class="sticky top-0 z-[140] bg-transparent border-b border-white/5">
+  <header id="main-header" class=" sticky top-0 z-[140] bg-transparent border-transparent">
     <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
@@ -598,11 +615,11 @@
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">
         <div id="joby-toggle-wrap" class="joby-nav-toggle-wrap">
-          <span class="joby-close-label hidden sm:inline-block">[CERRAR]</span>
+          <span class="joby-close-label hidden sm:inline-block ">[CERRAR]</span>
           <button id="joby-toggle" class="joby-burger-btn" aria-label="Abrir menú de navegación" aria-expanded="false">
             <div class="joby-burger-icon">
-              <span class="joby-burger-line"></span>
-              <span class="joby-burger-line"></span>
+              <span class="joby-burger-line "></span>
+              <span class="joby-burger-line "></span>
             </div>
           </button>
         </div>

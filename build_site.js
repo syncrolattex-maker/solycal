@@ -426,6 +426,23 @@ function getHead(title, description, canonicalPath = '') {
       color: #F1B541;
     }
 
+    /* Header Theme Light (para vistas claras como /instalaciones con fondo arquitectónico #d6d2ca) */
+    .header-theme-light .joby-burger-line {
+      background-color: #07080a !important;
+    }
+    .header-theme-light .joby-burger-btn:hover .joby-burger-line {
+      background-color: #F1B541 !important;
+    }
+    .header-theme-light .joby-burger-btn.is-active .joby-burger-line {
+      background-color: #F1B541 !important;
+    }
+    .header-theme-light .joby-close-label {
+      color: #1f2937 !important;
+    }
+    .header-theme-light .joby-nav-toggle-wrap.is-active .joby-close-label {
+      color: #F1B541 !important;
+    }
+
     /* PRELOADER INTRO INDUSTRIAL SOLYCAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) */
     #solycal-loader {
       position: fixed;
@@ -647,8 +664,9 @@ function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-cente
   `;
 }
 
-function getHeader(activeSlug, isTransparent = false) {
-  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto' || activeSlug === 'media';
+function getHeader(activeSlug, isTransparent = false, options = {}) {
+  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto' || activeSlug === 'media' || activeSlug === 'instalaciones';
+  const isDarkText = !!(options && options.darkText) || activeSlug === 'instalaciones';
   const links = [
     { num: '01', title: 'Inicio', href: 'index.html', slug: 'inicio' },
     { num: '02', title: 'Servicios', href: 'servicios.html', slug: 'servicios' },
@@ -706,23 +724,23 @@ function getHeader(activeSlug, isTransparent = false) {
   </div>
 
   <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
-  <header id="main-header" class="sticky top-0 z-[140] ${isHeaderTransparent ? 'bg-transparent border-b border-white/5' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
+  <header id="main-header" class="${isDarkText ? 'header-theme-light' : ''} ${activeSlug === 'instalaciones' ? 'absolute top-0 left-0 right-0 z-[140] pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto' : 'sticky top-0 z-[140]'} ${isHeaderTransparent ? 'bg-transparent border-transparent' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
     <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
       <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center">
         <img id="brand-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
-        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider text-white group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
+        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
       </a>
 
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">
         <div id="joby-toggle-wrap" class="joby-nav-toggle-wrap">
-          <span class="joby-close-label hidden sm:inline-block">[CERRAR]</span>
+          <span class="joby-close-label hidden sm:inline-block ${isDarkText ? '!text-neutral-800' : ''}">[CERRAR]</span>
           <button id="joby-toggle" class="joby-burger-btn" aria-label="Abrir menú de navegación" aria-expanded="false">
             <div class="joby-burger-icon">
-              <span class="joby-burger-line"></span>
-              <span class="joby-burger-line"></span>
+              <span class="joby-burger-line ${isDarkText ? '!bg-black' : ''}"></span>
+              <span class="joby-burger-line ${isDarkText ? '!bg-black' : ''}"></span>
             </div>
           </button>
         </div>
@@ -3349,88 +3367,86 @@ ${getHeader('servicios')}
 
 // 3. GENERATE INSTALACIONES.HTML (Facilities Page)
 const instalacionesHtml = `${getHead('Instalaciones Industriales y Maquinaria | SOLYCAL Torrent', '5.000 m² de instalaciones industriales equipadas con 7 puentes grúa de hasta 16 Tn y naves segregadas en Torrent (Valencia).', 'instalaciones.html')}
-${getHeader('instalaciones')}
+<style>
+  html, body {
+    height: 100vh !important;
+    height: 100dvh !important;
+    width: 100vw !important;
+    overflow: hidden !important;
+    background-color: #d6d2ca !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #solycal-loader {
+    display: none !important;
+  }
+</style>
+${getHeader('instalaciones', true, { darkText: true })}
 
-<!-- 3D INTERACTIVE INDUSTRIAL MAP (Three.js + Baked Texture + GSAP Camera) - FULLSCREEN / FULLWIDTH -->
-<div class="relative w-full h-[calc(100vh-80px)] min-h-[680px] bg-[#07080a] overflow-hidden select-none border-b border-white/10">
+<!-- 3D INTERACTIVE INDUSTRIAL MAP - FULLSCREEN VIEWPORT (KIRILBT/INTERACTIVE-MAP REFERENCE: COLOR #d6d2ca, ZERO SCROLL) -->
+<div class="fixed inset-0 w-screen h-screen overflow-hidden select-none bg-[#d6d2ca]">
   
   <!-- Canvas 3D -->
   <canvas id="webgl-map-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing outline-none block"></canvas>
 
-  <!-- Industrial HUD Header Overlay -->
-  <div class="absolute top-6 left-6 right-6 sm:left-10 sm:right-10 pointer-events-none flex flex-col md:flex-row md:items-start justify-between gap-4 z-20">
-    <div class="space-y-1">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-white/10 shadow-lg pointer-events-auto">
-        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
-        <span class="font-mono text-[11px] font-semibold tracking-wider text-brand-yellow uppercase">MAPA INTERACTIVO 3D // PLANTA TORRENT</span>
-      </div>
-      <h1 class="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight drop-shadow-md">
-        5.000 m² de Capacidad Técnica
-      </h1>
-      <p class="text-xs sm:text-sm text-neutral-400 font-sans max-w-xl hidden sm:block">
-        Nave industrial segregada en Torrent (Valencia). Pulsa en las áreas o utiliza los controles para explorar las instalaciones técnicas.
-      </p>
-    </div>
-
-    <!-- Quick Selector Buttons / Tour Pills -->
-    <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
-      <button type="button" data-poi="0" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-        <span>01 Acero Carbono</span>
-      </button>
-      <button type="button" data-poi="1" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-        <span>02 Inox & Sanitario</span>
-      </button>
-      <button type="button" data-poi="2" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-        <span>03 Corte CNC</span>
-      </button>
-      <button type="button" data-poi="3" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-        <span>04 Parque Grúas</span>
-      </button>
-      <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-[#111317]/90 hover:bg-brand-yellow hover:text-black border border-white/10 text-neutral-300 transition-all flex items-center justify-center">
-        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-      </button>
-    </div>
+  <!-- Quick Selector Buttons / Tour Pills -->
+  <div class="absolute top-20 sm:top-24 right-4 sm:right-10 flex flex-wrap items-center justify-end gap-2 pointer-events-auto z-20 max-w-[88vw]">
+    <button type="button" data-poi="0" class="poi-nav-btn px-3 py-1.5 rounded-full bg-white/90 hover:bg-white border border-black/10 text-neutral-800 hover:text-black font-mono text-[11px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+      <span class="font-semibold">01 Acero Carbono</span>
+    </button>
+    <button type="button" data-poi="1" class="poi-nav-btn px-3 py-1.5 rounded-full bg-white/90 hover:bg-white border border-black/10 text-neutral-800 hover:text-black font-mono text-[11px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+      <span class="font-semibold">02 Inox</span>
+    </button>
+    <button type="button" data-poi="2" class="poi-nav-btn px-3 py-1.5 rounded-full bg-white/90 hover:bg-white border border-black/10 text-neutral-800 hover:text-black font-mono text-[11px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+      <span class="font-semibold">03 Plasma HD</span>
+    </button>
+    <button type="button" data-poi="3" class="poi-nav-btn px-3 py-1.5 rounded-full bg-white/90 hover:bg-white border border-black/10 text-neutral-800 hover:text-black font-mono text-[11px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      <span class="font-semibold">04 Grúas</span>
+    </button>
+    <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-white/90 hover:bg-brand-yellow hover:text-black border border-black/10 text-neutral-800 transition-all flex items-center justify-center shadow-sm">
+      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+    </button>
   </div>
 
-  <!-- Loading Bar & Overlay -->
-  <div id="map-3d-loader" class="absolute inset-0 bg-[#07080a] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
+  <!-- Loading Bar & Overlay (Styled in #d6d2ca from the start, no dark flash) -->
+  <div id="map-3d-loader" class="absolute inset-0 bg-[#d6d2ca] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
     <div class="w-64 max-w-[85vw] space-y-3 text-center">
-      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
-        <span class="flex items-center gap-2 text-brand-yellow">
-          <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span>
-          CARGANDO MODELO 3D
+      <div class="flex items-center justify-between text-xs font-mono text-neutral-800">
+        <span class="flex items-center gap-2 font-bold text-neutral-900">
+          <span class="w-2.5 h-2.5 rounded-full bg-brand-yellow animate-ping"></span>
+          CARGANDO PLANTA 3D
         </span>
-        <span id="map-progress-num">0%</span>
+        <span id="map-progress-num" class="font-bold">0%</span>
       </div>
-      <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+      <div class="w-full h-1.5 bg-black/10 rounded-full overflow-hidden">
         <div id="map-progress-bar" class="h-full bg-brand-yellow rounded-full transition-all duration-200 w-0"></div>
       </div>
-      <p class="text-[11px] font-mono text-neutral-500 uppercase tracking-widest">Solycal S.L. &bull; Render Engine</p>
+      <p class="text-[10px] font-mono text-neutral-600 uppercase tracking-widest font-semibold">Solycal S.L. &bull; Render Engine</p>
     </div>
   </div>
 
   <!-- 3D Overlay Hotspot Markers Container (HTML Pins projected on 3D Space) -->
   <div id="pins-container" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
 
-  <!-- Active POI Detail Modal Card (Inspired by Kirilbt/interactive-map: Photo + Text + Specs) -->
-  <div id="poi-detail-card" class="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-auto sm:w-[420px] max-w-[calc(100vw-3rem)] bg-[#0a0c0e]/95 backdrop-blur-2xl border border-white/15 rounded-2xl overflow-hidden shadow-2xl z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
+  <!-- Active POI Detail Modal Card -->
+  <div id="poi-detail-card" class="absolute bottom-16 sm:bottom-20 left-4 sm:left-10 w-[380px] max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
     
     <!-- Image Header with gradient overlay -->
-    <div class="relative w-full h-44 bg-neutral-900 overflow-hidden">
-      <img id="poi-card-img" src="assets/instalaciones.jpg" alt="Instalaciones Solycal" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0a0c0e] via-[#0a0c0e]/40 to-transparent"></div>
+    <div class="relative w-full h-44 bg-neutral-200 overflow-hidden">
+      <img id="poi-card-img" src="assets/instalaciones.jpg" alt="Instalaciones Solycal" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
       
       <!-- Top badges on image -->
       <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10">
-          <span id="poi-card-num" class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10">
+          <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
           <span id="poi-card-tag" class="font-mono text-[9px] font-semibold text-brand-yellow uppercase tracking-widest">CALDERERÍA PESADA</span>
         </div>
-        <button id="poi-card-close" type="button" class="w-7 h-7 rounded-full bg-black/60 backdrop-blur-md hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+        <button id="poi-card-close" type="button" class="w-7 h-7 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-colors">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -3441,35 +3457,124 @@ ${getHeader('instalaciones')}
     </div>
 
     <!-- Body Info -->
-    <div class="p-5 space-y-4">
-      <p id="poi-card-desc" class="text-xs text-neutral-300 font-sans leading-relaxed">
+    <div class="p-4 sm:p-5 space-y-3.5">
+      <p id="poi-card-desc" class="text-xs text-neutral-700 font-sans leading-relaxed">
         Área principal de fabricación pesada, depósitos industriales, virolas cilíndricas y estructuras de gran porte con puentes grúa de 16 Tn.
       </p>
 
       <!-- Technical Specifications Tags -->
-      <div id="poi-card-specs" class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 font-mono text-[11px]">
-        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
-          <span class="text-neutral-400 block text-[9px] uppercase tracking-wider">Capacidad Grúa</span>
-          <span class="text-white font-semibold text-xs" id="poi-spec-1">16 Toneladas</span>
+      <div id="poi-card-specs" class="grid grid-cols-2 gap-2 pt-2 border-t border-black/10 font-mono text-[11px]">
+        <div class="p-2.5 rounded-xl bg-neutral-100/90 border border-black/5">
+          <span class="text-neutral-500 block text-[9px] uppercase tracking-wider">Capacidad Grúa</span>
+          <span class="text-neutral-900 font-semibold text-xs" id="poi-spec-1">16 Toneladas</span>
         </div>
-        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
-          <span class="text-neutral-400 block text-[9px] uppercase tracking-wider">Superficie Útil</span>
-          <span class="text-white font-semibold text-xs" id="poi-spec-2">2.400 m²</span>
+        <div class="p-2.5 rounded-xl bg-neutral-100/90 border border-black/5">
+          <span class="text-neutral-500 block text-[9px] uppercase tracking-wider">Superficie Útil</span>
+          <span class="text-neutral-900 font-semibold text-xs" id="poi-spec-2">2.400 m²</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Interaction Hint -->
-  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#111317]/80 backdrop-blur-md border border-white/10 font-mono text-[11px] text-neutral-400 pointer-events-none z-20">
-    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-brand-yellow"></i>
-    <span>Click en cualquier nave para ver foto y detalles &bull; Arrastra para orbitar</span>
+  <!-- Docked Bottom Bar: Interaction hint + Subfooter (Zero vertical scroll) -->
+  <div class="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+    <div class="hidden md:flex justify-between items-center px-6 sm:px-12 pb-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/85 backdrop-blur-md border border-black/10 font-mono text-[10px] text-neutral-700 shadow-sm pointer-events-auto">
+        <i data-lucide="mouse-pointer" class="w-3 h-3 text-neutral-900"></i>
+        <span>Click en nave para ver detalles &bull; Clic izq: Rotar &bull; Clic dcho: Mover &bull; Scroll: Zoom</span>
+      </div>
+    </div>
+
+    <footer class="w-full bg-[#d6d2ca]/90 backdrop-blur-md border-t border-black/10 py-3 sm:py-3.5 px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[11px] text-neutral-700 pointer-events-auto">
+      <p class="order-3 sm:order-1 text-center sm:text-left text-neutral-800">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+      <div class="order-1 sm:order-2 flex items-center text-neutral-800 hover:[&_a]:text-black">
+        ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
+      </div>
+      <div class="order-2 sm:order-3 flex items-center gap-5 text-neutral-700 hover:[&_a]:text-black">
+        <a href="aviso-legal.html" class="hover:text-black transition-colors">Aviso Legal</a>
+        <a href="politica-privacidad.html" class="hover:text-black transition-colors">Privacidad</a>
+        <a href="politica-cookies.html" class="hover:text-black transition-colors">Cookies</a>
+      </div>
+    </footer>
   </div>
+
 </div>
 
-<!-- THREE.JS INTERACTIVE MAP SCRIPT (Kirilbt Inspired: Baked Texture + Smooth Damped Controls + GSAP Camera Transitions) -->
+<!-- THREE.JS INTERACTIVE MAP SCRIPT (Kirilbt Inspired: Color #d6d2ca + Baked Texture + GSAP Camera Transitions) -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // 1. Header Logo Animation (Pop in icon + reveal SOLYCAL letters in black)
+  const logoLink = document.getElementById('brand-logo-link');
+  const logoIcon = document.getElementById('brand-logo-icon');
+  const logoText = document.getElementById('brand-logo-text');
+  
+  if (logoLink && logoIcon && logoText) {
+    gsap.set(logoIcon, { 
+      opacity: 0, 
+      scale: 0.35,
+      x: 0
+    });
+    gsap.set(logoText, { 
+      opacity: 0, 
+      x: -16, 
+      maxWidth: 0, 
+      marginLeft: 0 
+    });
+
+    const logoTl = gsap.timeline({ delay: 0.15 });
+    logoTl
+      .to(logoIcon, { 
+        opacity: 1, 
+        scale: 1, 
+        duration: 0.6, 
+        ease: "back.out(1.8)" 
+      })
+      .to(logoText, { 
+        opacity: 1, 
+        x: 0, 
+        maxWidth: "260px", 
+        marginLeft: "0.75rem", 
+        duration: 0.7, 
+        ease: "power3.out" 
+      }, "-=0.25");
+  }
+
+  // 2. Joby Menu Controller (Open / Close chromatic wave overlay)
+  const jobyToggle = document.getElementById('joby-toggle');
+  const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
+  const jobyBackdrop = document.getElementById('joby-backdrop');
+  const jobyWaves = document.getElementById('joby-color-waves');
+  const jobyOverlay = document.getElementById('joby-nav-overlay');
+
+  if (jobyToggle && jobyOverlay) {
+    const toggleJobyMenu = (forceClose = false) => {
+      const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
+      jobyToggle.classList.toggle('is-active', isOpen);
+      if (jobyToggleWrap) jobyToggleWrap.classList.toggle('is-active', isOpen);
+      jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
+      if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
+      jobyOverlay.classList.toggle('is-open', isOpen);
+      jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+
+      if (typeof gsap !== 'undefined' && isOpen) {
+        gsap.fromTo('.joby-nav-link', 
+          { y: 80, opacity: 0 }, 
+          { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: "power4.out", delay: 0.35 }
+        );
+      }
+    };
+
+    jobyToggle.addEventListener('click', () => toggleJobyMenu());
+    if (jobyBackdrop) jobyBackdrop.addEventListener('click', () => toggleJobyMenu(true));
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
+        toggleJobyMenu(true);
+      }
+    });
+  }
+
+  // 3. Three.js Setup
   const canvas = document.getElementById('webgl-map-canvas');
   if (!canvas) return;
 
@@ -3482,7 +3587,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Detail Card Elements
   const detailCard = document.getElementById('poi-detail-card');
   const cardImg = document.getElementById('poi-card-img');
-  const cardNum = document.getElementById('poi-card-num');
   const cardTag = document.getElementById('poi-card-tag');
   const cardTitle = document.getElementById('poi-card-title');
   const cardDesc = document.getElementById('poi-card-desc');
@@ -3490,7 +3594,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const spec2 = document.getElementById('poi-spec-2');
   const cardCloseBtn = document.getElementById('poi-card-close');
 
-  // Points of Interest Data (Solycal Industrial Facility with Real Section Photos)
+  // Points of Interest Data (Solycal Industrial Facility)
   const POIS = [
     {
       id: 0,
@@ -3501,9 +3605,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'assets/img/Servicios/caldereria-industrial.jpeg',
       spec1: '16 Tn Puentes Grúa',
       spec2: '2.400 m² Superficie',
-      worldPos: new THREE.Vector3(-25, 4, 15),
-      camPos: new THREE.Vector3(-55, 45, 60),
-      targetPos: new THREE.Vector3(-25, 4, 15)
+      worldPos: new THREE.Vector3(-32, 5, 20),
+      camPos: new THREE.Vector3(-58, 38, 55),
+      targetPos: new THREE.Vector3(-32, 5, 20)
     },
     {
       id: 1,
@@ -3514,9 +3618,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'assets/img/media/Inoxidable-01.jpg',
       spec1: 'Descontaminada',
       spec2: '1.200 m² Superficie',
-      worldPos: new THREE.Vector3(25, 4, -10),
-      camPos: new THREE.Vector3(55, 40, 40),
-      targetPos: new THREE.Vector3(25, 4, -10)
+      worldPos: new THREE.Vector3(32, 5, -12),
+      camPos: new THREE.Vector3(62, 35, 40),
+      targetPos: new THREE.Vector3(32, 5, -12)
     },
     {
       id: 2,
@@ -3527,9 +3631,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'assets/img/Servicios/corte-plasma-hd.jpeg',
       spec1: 'Hypertherm 260A',
       spec2: 'Espesor 30 mm',
-      worldPos: new THREE.Vector3(-10, 3, -35),
-      camPos: new THREE.Vector3(-30, 35, -5),
-      targetPos: new THREE.Vector3(-10, 3, -35)
+      worldPos: new THREE.Vector3(-12, 4, -42),
+      camPos: new THREE.Vector3(-35, 32, -12),
+      targetPos: new THREE.Vector3(-12, 4, -42)
     },
     {
       id: 3,
@@ -3540,15 +3644,17 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'assets/img/Servicios/estructuras-metalicas.jpeg',
       spec1: '7 Puentes Grúa',
       spec2: 'Expedición 24/7',
-      worldPos: new THREE.Vector3(35, 4, 25),
-      camPos: new THREE.Vector3(70, 50, 60),
-      targetPos: new THREE.Vector3(35, 4, 25)
+      worldPos: new THREE.Vector3(45, 5, 32),
+      camPos: new THREE.Vector3(75, 42, 65),
+      targetPos: new THREE.Vector3(45, 5, 32)
     }
   ];
 
-  // 1. Scene & Renderer Setup (FONDO NEGRO INDUSTRIAL, SIN GRIDS)
+  // 4. Scene & Renderer Setup (FONDO DEL REPOSITORIO ORIGINAL: #d6d2ca)
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#07080a');
+  const BG_COLOR = 0xd6d2ca;
+  scene.background = new THREE.Color(BG_COLOR);
+  scene.fog = new THREE.Fog(BG_COLOR, 150, 480);
 
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -3560,41 +3666,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (renderer.outputColorSpace) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
   }
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.35;
 
-  // 2. Camera Setup (Perspective with architectural FOV ~38)
-  const defaultCamPos = new THREE.Vector3(110, 85, 120);
-  const defaultTarget = new THREE.Vector3(0, 5, 0);
+  // 5. Camera Setup: Closer framing so the factory is bigger from the start
+  const defaultCamPos = new THREE.Vector3(72, 48, 76);
+  const defaultTarget = new THREE.Vector3(0, 8, 0);
 
-  const camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 1, 1000);
+  const camera = new THREE.PerspectiveCamera(36, container.clientWidth / container.clientHeight, 1, 1000);
   camera.position.copy(defaultCamPos);
 
-  // 3. OrbitControls with smooth damping
+  // 6. OrbitControls with smooth damping
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
   controls.screenSpacePanning = true;
-  controls.maxPolarAngle = Math.PI / 2.05; // Don't dip below floor
-  controls.minDistance = 15;
-  controls.maxDistance = 350;
+  controls.maxPolarAngle = Math.PI / 2.05;
+  controls.minDistance = 20;
+  controls.maxDistance = 260;
   controls.target.copy(defaultTarget);
 
-  // 4. Lighting (Optimized for dark industrial background)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+  // 7. Lighting (Bright & crisp for warm architectural background #d6d2ca)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.15);
   scene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff5e6, 0.45);
-  dirLight.position.set(60, 100, 40);
+  const dirLight = new THREE.DirectionalLight(0xfff8ee, 0.55);
+  dirLight.position.set(60, 100, 50);
   scene.add(dirLight);
 
-  // Floor plane (Suelo oscuro continuo limpio, sin cuadrícula/grids)
-  const floorGeo = new THREE.PlaneGeometry(1000, 1000);
-  const floorMat = new THREE.MeshBasicMaterial({ color: 0x07080a });
+  const dirLight2 = new THREE.DirectionalLight(0xdde8f5, 0.35);
+  dirLight2.position.set(-60, 60, -50);
+  scene.add(dirLight2);
+
+  // Floor plane (Suelo continuo tono #d6d2ca)
+  const floorGeo = new THREE.PlaneGeometry(1200, 1200);
+  const floorMat = new THREE.MeshBasicMaterial({ color: BG_COLOR });
   const floorMesh = new THREE.Mesh(floorGeo, floorMat);
   floorMesh.rotation.x = -Math.PI / 2;
   floorMesh.position.y = -0.05;
   scene.add(floorMesh);
 
-  // 5. Texture & GLB Loader Setup
+  // 8. Texture & GLB Loader Setup
   const loadingManager = new THREE.LoadingManager(
     () => {
       if (loaderEl) {
@@ -3656,7 +3768,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const center = box.getCenter(new THREE.Vector3());
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetDim = 120;
+    const targetDim = 155; // Sized larger for prominent presentation
     const scaleFactor = targetDim / maxDim;
 
     factoryModel.scale.setScalar(scaleFactor);
@@ -3667,13 +3779,14 @@ document.addEventListener('DOMContentLoaded', () => {
     scene.add(factoryModel);
 
     const scaledHeight = size.y * scaleFactor;
-    controls.target.set(0, scaledHeight * 0.35, 0);
+    defaultTarget.set(0, scaledHeight * 0.25, 0);
+    controls.target.copy(defaultTarget);
   }, undefined, (err) => {
     console.error('Error cargando modelo 3D:', err);
     if (loaderEl) loaderEl.remove();
   });
 
-  // 6. Interactive HTML Pins Overlay
+  // 9. Interactive HTML Pins Overlay
   const pinElements = [];
 
   function createHtmlPins() {
@@ -3689,14 +3802,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       pin.innerHTML = ''
         + '<div class="relative flex items-center justify-center">'
-        + '  <span class="absolute w-8 h-8 rounded-full bg-brand-yellow/40 animate-ping"></span>'
-        + '  <span class="w-7 h-7 rounded-full bg-[#0c0e12] border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-xl">'
+        + '  <span class="absolute w-8 h-8 rounded-full bg-brand-yellow/50 animate-ping"></span>'
+        + '  <span class="w-7 h-7 rounded-full bg-black border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-xl">'
         + '    ' + poi.num
         + '  </span>'
         + '</div>'
-        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-[#0a0c0e]/95 backdrop-blur-md border border-white/10 text-left shadow-lg group-hover:border-brand-yellow/50 transition-colors">'
-        + '  <span class="font-mono text-[9px] text-brand-yellow uppercase tracking-wider font-semibold">' + poi.tag + '</span>'
-        + '  <span class="font-sans text-xs font-semibold text-white">' + poi.title + '</span>'
+        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-black/10 text-left shadow-lg group-hover:border-black/30 transition-colors">'
+        + '  <span class="font-mono text-[9px] text-amber-600 uppercase tracking-wider font-bold">' + poi.tag + '</span>'
+        + '  <span class="font-sans text-xs font-bold text-neutral-900">' + poi.title + '</span>'
         + '</div>';
 
       pin.addEventListener('click', (e) => {
@@ -3709,7 +3822,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Raycasting: Click on 3D Model Meshes directly
+  // 10. Raycasting: Click on 3D Model Meshes directly
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   let pointerDownPos = { x: 0, y: 0 };
@@ -3720,7 +3833,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   canvas.addEventListener('pointerup', (e) => {
-    // Avoid triggering click during orbit drag
     const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
     if (dist > 6) return;
 
@@ -3733,7 +3845,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (intersects.length > 0) {
       const hitPoint = intersects[0].point;
-      // Find nearest POI to click position
       let nearestPoi = POIS[0];
       let minDist = Infinity;
       POIS.forEach(p => {
@@ -3747,7 +3858,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 8. Camera Animation (GSAP Tweens)
+  // 11. Camera Animation (GSAP Tweens)
   let activePoiId = null;
 
   function focusOnPoi(poi) {
@@ -3756,11 +3867,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update active state on nav buttons
     document.querySelectorAll('.poi-nav-btn').forEach(btn => {
       if (parseInt(btn.getAttribute('data-poi'), 10) === poi.id) {
-        btn.classList.add('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
-        btn.classList.remove('bg-white/90', 'text-neutral-700');
+        btn.classList.add('bg-black', 'text-white', 'border-black', 'shadow-md');
+        btn.classList.remove('bg-white/90', 'text-neutral-800');
       } else {
-        btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
-        btn.classList.add('bg-white/90', 'text-neutral-700');
+        btn.classList.remove('bg-black', 'text-white', 'border-black', 'shadow-md');
+        btn.classList.add('bg-white/90', 'text-neutral-800');
       }
     });
 
@@ -3809,8 +3920,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetView() {
     activePoiId = null;
     document.querySelectorAll('.poi-nav-btn').forEach(btn => {
-      btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
-      btn.classList.add('bg-white/90', 'text-neutral-700');
+      btn.classList.remove('bg-black', 'text-white', 'border-black', 'shadow-md');
+      btn.classList.add('bg-white/90', 'text-neutral-800');
     });
 
     if (detailCard) {
@@ -3853,7 +3964,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (cardCloseBtn) cardCloseBtn.addEventListener('click', resetView);
 
-  // 9. Update Pin Positions on Render
+  // 12. Update Pin Positions on Render
   const screenVec = new THREE.Vector3();
 
   function updatePins() {
@@ -3878,7 +3989,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 10. Resize Handling
+  // 13. Resize Handling
   function onWindowResize() {
     if (!container) return;
     const w = container.clientWidth;
@@ -3890,10 +4001,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('resize', onWindowResize);
 
-  // 11. Animation Loop
-  let reqId;
+  // 14. Animation Loop
   function animate() {
-    reqId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
     updatePins();
@@ -3902,7 +4012,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-${getFooter({ onlySubfooter: true })}
+<script>
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+  const pLoader = document.getElementById('solycal-loader');
+  if (pLoader) pLoader.remove();
+  document.body.style.overflow = 'hidden';
+</script>
+</body>
+</html>
 `;
 
 // --- STARSHIP FLIGHT 7 DEBRIS SHADER (Adapted from Xor / Noel - OpenProcessing #2666434) ---

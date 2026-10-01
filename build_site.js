@@ -3802,20 +3802,16 @@ document.addEventListener('DOMContentLoaded', () => {
     POIS.forEach((poi) => {
       const pin = document.createElement('button');
       pin.type = 'button';
-      pin.className = 'poi-marker group absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:scale-110 focus:outline-none';
+      pin.className = 'poi-marker group absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-125 focus:outline-none';
       pin.setAttribute('data-id', poi.id);
       pin.setAttribute('aria-label', poi.title);
 
       pin.innerHTML = ''
-        + '<div class="relative flex items-center justify-center">'
-        + '  <span class="absolute w-8 h-8 rounded-full bg-brand-yellow/50 animate-ping"></span>'
-        + '  <span class="w-7 h-7 rounded-full bg-black border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-xl">'
+        + '<div class="relative flex items-center justify-center w-8 h-8">'
+        + '  <span class="absolute inset-0 rounded-full bg-brand-yellow/40 animate-ping pointer-events-none"></span>'
+        + '  <span class="relative w-7 h-7 rounded-full bg-black border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-xl transition-transform duration-200 group-hover:scale-110">'
         + '    ' + poi.num
         + '  </span>'
-        + '</div>'
-        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-black/10 text-left shadow-lg group-hover:border-black/30 transition-colors">'
-        + '  <span class="font-mono text-[9px] text-amber-600 uppercase tracking-wider font-bold">' + poi.tag + '</span>'
-        + '  <span class="font-sans text-xs font-bold text-neutral-900">' + poi.title + '</span>'
         + '</div>';
 
       pin.addEventListener('click', (e) => {

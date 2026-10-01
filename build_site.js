@@ -5480,6 +5480,7 @@ ${getHeader('media', true)}
     let isDragging = false;
     let dragDistance = 0;
     let draggableInstance = null;
+    let isIntroDone = false;
     let isSplitActive = false;
     let activeZoomCard = null;
 
@@ -5627,7 +5628,7 @@ ${getHeader('media', true)}
     }
 
     function setZoom(zoomLevel, btnElement = null, animate = true) {
-      if (isSplitActive) return;
+      if (!isIntroDone || isSplitActive) return;
       currentZoom = zoomLevel;
       const dims = getStageDimensions();
       const vw = window.innerWidth;
@@ -5667,7 +5668,7 @@ ${getHeader('media', true)}
     }
 
     function autoFitZoom(btnElement = null) {
-      if (isSplitActive) return;
+      if (!isIntroDone || isSplitActive) return;
       const fitZoom = calculateFitZoom();
       setZoom(fitZoom, btnElement || btnZoomFit, true);
     }
@@ -5680,7 +5681,7 @@ ${getHeader('media', true)}
 
     // Keyboard Shortcuts: 1 = 30%, 2 = 60%, 3 = 100%, F = FIT
     document.addEventListener('keydown', (e) => {
-      if (isSplitActive) return;
+      if (!isIntroDone || isSplitActive) return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
       switch (e.key) {
         case '1':
@@ -5699,8 +5700,91 @@ ${getHeader('media', true)}
       }
     });
 
-    // Initialize gallery at NORMAL (0.6) zoom level without delay
-    setZoom(0.6, btnZoomNormal, false);
+    // SISTEMA DE CARGA DE IMÁGENES (FILIP ZRNZEVIC CARD-DEAL INTRO)
+    const dims = getStageDimensions();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const finalScaledWidth = dims.totalW * currentZoom;
+    const finalScaledHeight = dims.totalH * currentZoom;
+    const finalCenterX = Math.round((vw - finalScaledWidth) / 2);
+    const finalCenterY = Math.round((vh - finalScaledHeight) / 2);
+
+    updatePercentageIndicator(currentZoom);
+    updateActiveButton(btnZoomNormal, currentZoom);
+
+    if (typeof gsap !== 'undefined') {
+      gsap.set(stage, {
+        scale: currentZoom,
+        x: finalCenterX,
+        y: finalCenterY
+      });
+
+      // Posicionar tarjetas apiladas en el centro para el reparto
+      const cardCenterX = dims.totalW / 2 - dims.cardW / 2;
+      const cardCenterY = dims.totalH / 2 - dims.cardH / 2;
+
+      cards.forEach((card, index) => {
+        const col = parseInt(card.getAttribute('data-col'), 10);
+        const row = parseInt(card.getAttribute('data-row'), 10);
+        const targetLeft = dims.pad + col * (dims.cardW + dims.gapX);
+        const targetTop = dims.pad + row * (dims.cardH + dims.gapY);
+        const deltaX = cardCenterX - targetLeft;
+        const deltaY = cardCenterY - targetTop;
+
+        gsap.set(card, {
+          x: deltaX,
+          y: deltaY,
+          scale: 0.65,
+          opacity: 0,
+          zIndex: cards.length - index
+        });
+      });
+
+      // Ocultar controles inferiores inicialmente
+      const controlsContainer = document.getElementById('controlsContainer');
+      if (controlsContainer) {
+        gsap.set(controlsContainer, { opacity: 0 });
+        if (percentageIndicator) gsap.set(percentageIndicator, { x: -30 });
+        const switchEl = document.getElementById('controls');
+        if (switchEl) gsap.set(switchEl, { y: 30 });
+      }
+
+      // Animación de reparto de cartas desde el centro hacia sus posiciones
+      gsap.to(cards, {
+        duration: 0.35,
+        x: 0,
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        ease: 'power2.out',
+        stagger: {
+          amount: 1.4,
+          from: 'start',
+          grid: [7, 9]
+        },
+        onComplete: () => {
+          cards.forEach(card => {
+            gsap.set(card, { zIndex: 1 });
+          });
+          isIntroDone = true;
+          initDraggable();
+
+          // Revelar controles inferiores suavemente
+          const controlsContainer = document.getElementById('controlsContainer');
+          if (controlsContainer) {
+            const switchEl = document.getElementById('controls');
+            const navTl = gsap.timeline();
+            navTl
+              .to(controlsContainer, { opacity: 1, duration: 0.4, ease: 'power2.out' })
+              .to(percentageIndicator, { x: 0, duration: 0.3, ease: 'power2.out' }, '-=0.25')
+              .to(switchEl, { y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.25');
+          }
+        }
+      });
+    } else {
+      isIntroDone = true;
+      initDraggable();
+    }
 
     // JOBY NAVIGATION MENU CONTROLLER
     const jobyToggle = document.getElementById('joby-toggle');
@@ -5738,7 +5822,7 @@ ${getHeader('media', true)}
     }
 
     function openSplitView(card, index) {
-      if (dragDistance > 12 || isSplitActive) return;
+      if (!isIntroDone || dragDistance > 12 || isSplitActive) return;
       isSplitActive = true;
       activeZoomCard = card;
 

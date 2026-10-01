@@ -3318,7 +3318,7 @@ const instalacionesHtml = `${getHead('Instalaciones Industriales y Maquinaria | 
 ${getHeader('instalaciones')}
 
 <!-- 3D INTERACTIVE INDUSTRIAL MAP (Three.js + Baked Texture + GSAP Camera) -->
-<div class="relative w-full h-[88vh] min-h-[620px] max-h-[920px] bg-[#07080a] overflow-hidden select-none border-b border-white/10">
+<div class="relative w-full h-[88vh] min-h-[640px] max-h-[920px] bg-[#ffffff] overflow-hidden select-none border-b border-black/10">
   
   <!-- Canvas 3D -->
   <canvas id="webgl-map-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing outline-none block"></canvas>
@@ -3326,93 +3326,110 @@ ${getHeader('instalaciones')}
   <!-- Industrial HUD Header Overlay -->
   <div class="absolute top-6 left-6 right-6 sm:left-10 sm:right-10 pointer-events-none flex flex-col md:flex-row md:items-start justify-between gap-4 z-20">
     <div class="space-y-1">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-white/10 shadow-lg pointer-events-auto">
-        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
-        <span class="font-mono text-[11px] font-semibold tracking-wider text-brand-yellow uppercase">MAPA INTERACTIVO 3D // PLANTA TORRENT</span>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 shadow-sm pointer-events-auto">
+        <span class="w-2 h-2 rounded-full bg-[#E5A52A] animate-pulse"></span>
+        <span class="font-mono text-[11px] font-semibold tracking-wider text-black uppercase">MAPA INTERACTIVO 3D // PLANTA TORRENT</span>
       </div>
-      <h1 class="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight drop-shadow-md">
+      <h1 class="text-2xl sm:text-4xl font-display font-bold text-neutral-900 tracking-tight">
         5.000 m² de Capacidad Técnica
       </h1>
-      <p class="text-xs sm:text-sm text-neutral-400 font-sans max-w-xl hidden sm:block">
-        Nave industrial segregada en Torrent (Valencia). Pulsa en las áreas o utiliza los controles para explorar las instalaciones técnicas.
+      <p class="text-xs sm:text-sm text-neutral-600 font-sans max-w-xl hidden sm:block">
+        Haz clic sobre cualquier nave o selector para inspeccionar los talleres, la maquinaria y las especificaciones técnicas.
       </p>
     </div>
 
     <!-- Quick Selector Buttons / Tour Pills -->
     <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
-      <button type="button" data-poi="0" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
+      <button type="button" data-poi="0" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
         <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
         <span>01 Acero Carbono</span>
       </button>
-      <button type="button" data-poi="1" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+      <button type="button" data-poi="1" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
         <span>02 Inox & Sanitario</span>
       </button>
-      <button type="button" data-poi="2" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+      <button type="button" data-poi="2" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
         <span>03 Corte CNC</span>
       </button>
-      <button type="button" data-poi="3" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+      <button type="button" data-poi="3" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
         <span>04 Parque Grúas</span>
       </button>
-      <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-[#111317]/90 hover:bg-brand-yellow hover:text-black border border-white/10 text-neutral-300 transition-all flex items-center justify-center">
+      <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-white/90 hover:bg-brand-yellow hover:text-black border border-neutral-300 text-neutral-700 transition-all shadow-sm flex items-center justify-center">
         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
       </button>
     </div>
   </div>
 
   <!-- Loading Bar & Overlay -->
-  <div id="map-3d-loader" class="absolute inset-0 bg-[#07080a] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
+  <div id="map-3d-loader" class="absolute inset-0 bg-[#ffffff] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
     <div class="w-64 max-w-[85vw] space-y-3 text-center">
-      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
-        <span class="flex items-center gap-2 text-brand-yellow">
+      <div class="flex items-center justify-between text-xs font-mono text-neutral-600">
+        <span class="flex items-center gap-2 text-black font-semibold">
           <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span>
           CARGANDO MODELO 3D
         </span>
         <span id="map-progress-num">0%</span>
       </div>
-      <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+      <div class="w-full h-1 bg-neutral-200 rounded-full overflow-hidden">
         <div id="map-progress-bar" class="h-full bg-brand-yellow rounded-full transition-all duration-200 w-0"></div>
       </div>
-      <p class="text-[11px] font-mono text-neutral-500 uppercase tracking-widest">Solycal S.L. &bull; Render Engine</p>
+      <p class="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">Solycal S.L. &bull; Render Engine</p>
     </div>
   </div>
 
   <!-- 3D Overlay Hotspot Markers Container (HTML Pins projected on 3D Space) -->
   <div id="pins-container" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
 
-  <!-- Active POI Detail Modal Card (Bottom / Side Slide-in) -->
-  <div id="poi-detail-card" class="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-auto sm:max-w-md bg-[#0a0c0e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
-    <div class="flex items-start justify-between gap-4 mb-3">
-      <div class="flex items-center gap-2">
-        <span id="poi-card-num" class="w-6 h-6 rounded-lg bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow font-mono font-bold text-xs">01</span>
-        <span id="poi-card-tag" class="font-mono text-[10px] text-brand-yellow uppercase tracking-widest">INSTALACIÓN</span>
+  <!-- Active POI Detail Modal Card (Inspired by Kirilbt/interactive-map: Photo + Text + Specs) -->
+  <div id="poi-detail-card" class="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-auto sm:w-[420px] max-w-[calc(100vw-3rem)] bg-[#0c0e12]/95 backdrop-blur-2xl border border-white/15 rounded-2xl overflow-hidden shadow-2xl z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
+    
+    <!-- Image Header with gradient overlay -->
+    <div class="relative w-full h-44 bg-neutral-900 overflow-hidden">
+      <img id="poi-card-img" src="assets/instalaciones.jpg" alt="Instalaciones Solycal" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e12] via-[#0c0e12]/40 to-transparent"></div>
+      
+      <!-- Top badges on image -->
+      <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10">
+          <span id="poi-card-num" class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+          <span id="poi-card-tag" class="font-mono text-[9px] font-semibold text-brand-yellow uppercase tracking-widest">CALDERERÍA PESADA</span>
+        </div>
+        <button id="poi-card-close" type="button" class="w-7 h-7 rounded-full bg-black/60 backdrop-blur-md hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
       </div>
-      <button id="poi-card-close" type="button" class="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white flex items-center justify-center transition-colors">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
+
+      <div class="absolute bottom-3 left-4 right-4">
+        <h3 id="poi-card-title" class="text-lg sm:text-xl font-display font-bold text-white tracking-tight drop-shadow-md">Nave de Acero al Carbono</h3>
+      </div>
     </div>
-    <h3 id="poi-card-title" class="text-xl font-display font-bold text-white tracking-tight mb-2">Nave de Acero al Carbono</h3>
-    <p id="poi-card-desc" class="text-xs text-neutral-300 font-sans leading-relaxed mb-4">
-      Área dedicada a la fabricación pesada de calderería, tolvas, conductos y bancadas de gran formato.
-    </p>
-    <div id="poi-card-specs" class="grid grid-cols-2 gap-2 pt-3 border-t border-white/5 font-mono text-[11px]">
-      <div class="p-2 rounded-xl bg-white/[0.02] border border-white/5">
-        <span class="text-neutral-500 block text-[9px] uppercase">Capacidad Grúa</span>
-        <span class="text-white font-semibold" id="poi-spec-1">16 Toneladas</span>
-      </div>
-      <div class="p-2 rounded-xl bg-white/[0.02] border border-white/5">
-        <span class="text-neutral-500 block text-[9px] uppercase">Superficie Útil</span>
-        <span class="text-white font-semibold" id="poi-spec-2">2.400 m²</span>
+
+    <!-- Body Info -->
+    <div class="p-5 space-y-4">
+      <p id="poi-card-desc" class="text-xs text-neutral-300 font-sans leading-relaxed">
+        Área principal de fabricación pesada, depósitos industriales, virolas cilíndricas y estructuras de gran porte con puentes grúa de 16 Tn.
+      </p>
+
+      <!-- Technical Specifications Tags -->
+      <div id="poi-card-specs" class="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 font-mono text-[11px]">
+        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
+          <span class="text-neutral-400 block text-[9px] uppercase tracking-wider">Capacidad Grúa</span>
+          <span class="text-white font-semibold text-xs" id="poi-spec-1">16 Toneladas</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
+          <span class="text-neutral-400 block text-[9px] uppercase tracking-wider">Superficie Útil</span>
+          <span class="text-white font-semibold text-xs" id="poi-spec-2">2.400 m²</span>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Bottom Interaction Hint -->
-  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111317]/80 backdrop-blur-md border border-white/10 font-mono text-[11px] text-neutral-400 pointer-events-none z-20">
-    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-brand-yellow"></i>
-    <span>Arrastra para rotar &bull; Rueda para zoom &bull; Click derecho para desplazar</span>
+  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-neutral-300 font-mono text-[11px] text-neutral-600 shadow-sm pointer-events-none z-20">
+    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-black"></i>
+    <span>Click en cualquier nave para ver foto y detalles &bull; Arrastra para orbitar</span>
   </div>
 </div>
 
@@ -3493,6 +3510,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Detail Card Elements
   const detailCard = document.getElementById('poi-detail-card');
+  const cardImg = document.getElementById('poi-card-img');
   const cardNum = document.getElementById('poi-card-num');
   const cardTag = document.getElementById('poi-card-tag');
   const cardTitle = document.getElementById('poi-card-title');
@@ -3501,18 +3519,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const spec2 = document.getElementById('poi-spec-2');
   const cardCloseBtn = document.getElementById('poi-card-close');
 
-  // Points of Interest Data (Solycal Industrial Facility)
+  // Points of Interest Data (Solycal Industrial Facility with Real Section Photos)
   const POIS = [
     {
       id: 0,
       num: '01',
       tag: 'CALDERERÍA PESADA',
       title: 'Nave de Acero al Carbono',
-      desc: 'Área principal de fabricación pesada, depósitos industriales, virolas cilíndricas y estructuras de gran porte con puentes grúa de 16 Tn.',
-      spec1: '16 Toneladas',
-      spec2: '2.400 m²',
+      desc: 'Área principal de fabricación pesada, depósitos industriales a presión, tolvas, bancadas mecano-soldadas y virolas cilíndricas de gran diámetro.',
+      image: 'assets/img/Servicios/caldereria-industrial.jpeg',
+      spec1: '16 Tn Puentes Grúa',
+      spec2: '2.400 m² Superficie',
       worldPos: new THREE.Vector3(-25, 4, 15),
-      camPos: new THREE.Vector3(-60, 45, 65),
+      camPos: new THREE.Vector3(-55, 45, 60),
       targetPos: new THREE.Vector3(-25, 4, 15)
     },
     {
@@ -3520,9 +3539,10 @@ document.addEventListener('DOMContentLoaded', () => {
       num: '02',
       tag: 'ÁREA DESCONTAMINADA',
       title: 'Nave de Acero Inoxidable & Sanitario',
-      desc: 'Nave segregada con aislamiento térmico y ambiental para evitar contaminación por ferrita en recipientes de acero inoxidable AISI 304/316.',
+      desc: 'Taller segregado con atmósfera controlada para evitar contaminación por ferrita en depósitos y tuberías sanitarias de acero inoxidable AISI 304 / 316.',
+      image: 'assets/img/media/Inoxidable-01.jpg',
       spec1: 'Descontaminada',
-      spec2: '1.200 m²',
+      spec2: '1.200 m² Superficie',
       worldPos: new THREE.Vector3(25, 4, -10),
       camPos: new THREE.Vector3(55, 40, 40),
       targetPos: new THREE.Vector3(25, 4, -10)
@@ -3532,9 +3552,10 @@ document.addEventListener('DOMContentLoaded', () => {
       num: '03',
       tag: 'TECNOLOGÍA CNC',
       title: 'Área de Corte Plasma HD & Curvado',
-      desc: 'Pórtico CNC Hypertherm TrueHole de 9x2,5m para corte de chapa de alta definición, plegadora Ermaksan 4m y cilindros de virolado.',
-      spec1: 'Hypertherm HD',
-      spec2: 'Espesor 30mm',
+      desc: 'Mesa CNC Hypertherm TrueHole de 9x2,5 metros para corte de chapa de alta definición, plegadora Ermaksan de 4.000 mm y cilindros de virolado de 4 rodillos.',
+      image: 'assets/img/Servicios/corte-plasma-hd.jpeg',
+      spec1: 'Hypertherm 260A',
+      spec2: 'Espesor 30 mm',
       worldPos: new THREE.Vector3(-10, 3, -35),
       camPos: new THREE.Vector3(-30, 35, -5),
       targetPos: new THREE.Vector3(-10, 3, -35)
@@ -3543,9 +3564,10 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 3,
       num: '04',
       tag: 'LOGÍSTICA INDUSTRIAL',
-      title: 'Parque de Puentes Grúa & Ensayos',
-      desc: 'Bahía logística con 7 puentes grúa sincronizados para expedición de conjuntos mecano-soldados, zona de líquidos penetrantes y ultrasonidos.',
-      spec1: '7 Unidades',
+      title: 'Parque de Puentes Grúa & Expedición',
+      desc: 'Bahía logística con 7 puentes grúa sincronizados para expedición de conjuntos mecano-soldados, zona de líquidos penetrantes y control no destructivo (NDT).',
+      image: 'assets/img/Servicios/estructuras-metalicas.jpeg',
+      spec1: '7 Puentes Grúa',
       spec2: 'Expedición 24/7',
       worldPos: new THREE.Vector3(35, 4, 25),
       camPos: new THREE.Vector3(70, 50, 60),
@@ -3553,10 +3575,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // 1. Scene & Renderer Setup
+  // 1. Scene & Renderer Setup (FONDO BLANCO, SIN GRIDS)
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#07080a');
-  scene.fog = new THREE.FogExp2('#07080a', 0.0035);
+  scene.background = new THREE.Color('#ffffff');
 
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -3569,7 +3590,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
   }
 
-  // 2. Camera Setup (Perspective with architectural FOV ~40)
+  // 2. Camera Setup (Perspective with architectural FOV ~38)
   const defaultCamPos = new THREE.Vector3(110, 85, 120);
   const defaultTarget = new THREE.Vector3(0, 5, 0);
 
@@ -3586,25 +3607,25 @@ document.addEventListener('DOMContentLoaded', () => {
   controls.maxDistance = 350;
   controls.target.copy(defaultTarget);
 
-  // 4. Lighting (Subtle ambient + directional for soft shadow rim)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+  // 4. Lighting (Optimized for white background)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
   scene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xfff5e6, 0.45);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
   dirLight.position.set(60, 100, 40);
   scene.add(dirLight);
 
-  // Subtle floor grid helper
-  const gridHelper = new THREE.GridHelper(300, 40, 0xF1B541, 0x1f242c);
-  gridHelper.position.y = -0.1;
-  gridHelper.material.opacity = 0.2;
-  gridHelper.material.transparent = true;
-  scene.add(gridHelper);
+  // Floor plane (Suelo blanco continuo limpio, sin cuadrícula/grids)
+  const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+  const floorMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+  floorMesh.rotation.x = -Math.PI / 2;
+  floorMesh.position.y = -0.05;
+  scene.add(floorMesh);
 
   // 5. Texture & GLB Loader Setup
   const loadingManager = new THREE.LoadingManager(
     () => {
-      // On Complete
       if (loaderEl) {
         loaderEl.style.opacity = '0';
         loaderEl.style.pointerEvents = 'none';
@@ -3623,55 +3644,52 @@ document.addEventListener('DOMContentLoaded', () => {
   );
 
   const textureLoader = new THREE.TextureLoader(loadingManager);
-  // Cargar textura baked de fábrica
   const bakedTexture = textureLoader.load('assets/3d/fabrica_baked.png');
   bakedTexture.flipY = false;
   if (THREE.SRGBColorSpace) {
     bakedTexture.colorSpace = THREE.SRGBColorSpace;
   }
 
-  // Create high-grade material with baked texture
   const bakedMaterial = new THREE.MeshBasicMaterial({
     map: bakedTexture
   });
 
   const gltfLoader = new THREE.GLTFLoader(loadingManager);
   let factoryModel = null;
+  const clickableMeshes = [];
 
   gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
     factoryModel = gltf.scene;
 
-    // Apply baked material to all meshes
     factoryModel.traverse((child) => {
       if (child.isMesh) {
         child.material = bakedMaterial;
         child.castShadow = false;
         child.receiveShadow = false;
+        clickableMeshes.push(child);
       }
     });
 
-    // Center and auto-scale model into reasonable scene dimensions
     const box = new THREE.Box3().setFromObject(factoryModel);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetDim = 120; // 120 units in Three.js
+    const targetDim = 120;
     const scaleFactor = targetDim / maxDim;
 
     factoryModel.scale.setScalar(scaleFactor);
     factoryModel.position.x = -center.x * scaleFactor;
     factoryModel.position.z = -center.z * scaleFactor;
-    factoryModel.position.y = -box.min.y * scaleFactor; // Sit flat on floor
+    factoryModel.position.y = -box.min.y * scaleFactor;
 
     scene.add(factoryModel);
 
-    // Dynamic initial camera framing
     const scaledHeight = size.y * scaleFactor;
     controls.target.set(0, scaledHeight * 0.35, 0);
   });
 
-  // 6. Create Interactive HTML Pins Overlay
+  // 6. Interactive HTML Pins Overlay
   const pinElements = [];
 
   function createHtmlPins() {
@@ -3687,14 +3705,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       pin.innerHTML = ''
         + '<div class="relative flex items-center justify-center">'
-        + '  <span class="absolute w-8 h-8 rounded-full bg-brand-yellow/30 animate-ping"></span>'
-        + '  <span class="w-7 h-7 rounded-full bg-[#0a0c0e] border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-lg shadow-black/80">'
+        + '  <span class="absolute w-8 h-8 rounded-full bg-brand-yellow/40 animate-ping"></span>'
+        + '  <span class="w-7 h-7 rounded-full bg-[#0c0e12] border-2 border-brand-yellow flex items-center justify-center text-brand-yellow font-mono text-[11px] font-bold shadow-xl">'
         + '    ' + poi.num
         + '  </span>'
         + '</div>'
-        + '<div class="hidden sm:flex flex-col items-start px-2.5 py-1 rounded-lg bg-[#0a0c0e]/90 backdrop-blur-md border border-white/10 text-left shadow-xl group-hover:border-brand-yellow/50 transition-colors">'
-        + '  <span class="font-mono text-[9px] text-brand-yellow uppercase tracking-wider">' + poi.tag + '</span>'
-        + '  <span class="font-sans text-xs font-semibold text-white">' + poi.title + '</span>'
+        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-black/10 text-left shadow-lg group-hover:border-brand-yellow transition-colors">'
+        + '  <span class="font-mono text-[9px] text-[#b37e19] uppercase tracking-wider font-semibold">' + poi.tag + '</span>'
+        + '  <span class="font-sans text-xs font-bold text-neutral-900">' + poi.title + '</span>'
         + '</div>';
 
       pin.addEventListener('click', (e) => {
@@ -3707,7 +3725,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Camera Animation (GSAP Tweens)
+  // 7. Raycasting: Click on 3D Model Meshes directly
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  let pointerDownPos = { x: 0, y: 0 };
+
+  canvas.addEventListener('pointerdown', (e) => {
+    pointerDownPos.x = e.clientX;
+    pointerDownPos.y = e.clientY;
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    // Avoid triggering click during orbit drag
+    const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+    if (dist > 6) return;
+
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(clickableMeshes, true);
+
+    if (intersects.length > 0) {
+      const hitPoint = intersects[0].point;
+      // Find nearest POI to click position
+      let nearestPoi = POIS[0];
+      let minDist = Infinity;
+      POIS.forEach(p => {
+        const d = p.worldPos.distanceTo(hitPoint);
+        if (d < minDist) {
+          minDist = d;
+          nearestPoi = p;
+        }
+      });
+      focusOnPoi(nearestPoi);
+    }
+  });
+
+  // 8. Camera Animation (GSAP Tweens)
   let activePoiId = null;
 
   function focusOnPoi(poi) {
@@ -3716,17 +3772,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update active state on nav buttons
     document.querySelectorAll('.poi-nav-btn').forEach(btn => {
       if (parseInt(btn.getAttribute('data-poi'), 10) === poi.id) {
-        btn.classList.add('bg-brand-yellow', 'text-black', 'border-brand-yellow');
-        btn.classList.remove('bg-[#111317]/90', 'text-neutral-300');
+        btn.classList.add('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
+        btn.classList.remove('bg-white/90', 'text-neutral-700');
       } else {
-        btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow');
-        btn.classList.add('bg-[#111317]/90', 'text-neutral-300');
+        btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
+        btn.classList.add('bg-white/90', 'text-neutral-700');
       }
     });
 
-    // Populate and display detail card
+    // Populate and display detail card with image
     if (detailCard) {
-      cardNum.textContent = poi.num;
+      if (cardImg) {
+        cardImg.src = poi.image || 'assets/instalaciones.jpg';
+        cardImg.alt = poi.title;
+      }
       cardTag.textContent = poi.tag;
       cardTitle.textContent = poi.title;
       cardDesc.textContent = poi.desc;
@@ -3736,6 +3795,10 @@ document.addEventListener('DOMContentLoaded', () => {
       detailCard.style.pointerEvents = 'auto';
       detailCard.style.transform = 'translateY(0)';
       detailCard.style.opacity = '1';
+
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
     }
 
     // GSAP Camera & Target Interpolation
@@ -3762,8 +3825,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetView() {
     activePoiId = null;
     document.querySelectorAll('.poi-nav-btn').forEach(btn => {
-      btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow');
-      btn.classList.add('bg-[#111317]/90', 'text-neutral-300');
+      btn.classList.remove('bg-brand-yellow', 'text-black', 'border-brand-yellow', 'shadow-md');
+      btn.classList.add('bg-white/90', 'text-neutral-700');
     });
 
     if (detailCard) {
@@ -3806,9 +3869,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (cardCloseBtn) cardCloseBtn.addEventListener('click', resetView);
 
-  // 8. Update Pin Positions on Render
+  // 9. Update Pin Positions on Render
   const screenVec = new THREE.Vector3();
-  const raycaster = new THREE.Raycaster();
 
   function updatePins() {
     const width = container.clientWidth;
@@ -3818,13 +3880,11 @@ document.addEventListener('DOMContentLoaded', () => {
       screenVec.copy(item.poi.worldPos);
       screenVec.project(camera);
 
-      // Check if behind camera
       if (screenVec.z > 1) {
         item.el.style.display = 'none';
         return;
       }
 
-      // Convert from NDC (-1..1) to screen coordinates (px)
       const x = (screenVec.x * 0.5 + 0.5) * width;
       const y = (-(screenVec.y * 0.5) + 0.5) * height;
 
@@ -3834,7 +3894,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 9. Resize Handling
+  // 10. Resize Handling
   function onWindowResize() {
     if (!container) return;
     const w = container.clientWidth;
@@ -3846,7 +3906,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('resize', onWindowResize);
 
-  // 10. Animation Loop
+  // 11. Animation Loop
   let reqId;
   function animate() {
     reqId = requestAnimationFrame(animate);

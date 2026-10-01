@@ -833,6 +833,25 @@ function getHeader(activeSlug, isTransparent = false) {
 
 function getFooter(options = {}) {
   const showMatrix = typeof options === 'boolean' ? options : (options.showMatrix !== false);
+  const onlySubfooter = !!(options && options.onlySubfooter);
+
+  if (onlySubfooter) {
+    return `
+    <footer id="main-footer" class="relative bg-[#07080a] border-t border-white/10 py-6 text-sm text-neutral-400">
+      <div class="w-full px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
+        <p class="order-3 md:order-1 text-center md:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+        <div class="order-1 md:order-2 flex items-center">
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
+        </div>
+        <div class="order-2 md:order-3 flex items-center gap-6">
+          <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
+          <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
+          <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
+        </div>
+      </div>
+    </footer>
+    `;
+  }
 
   return `
   ${showMatrix ? `
@@ -3317,8 +3336,8 @@ ${getHeader('servicios')}
 const instalacionesHtml = `${getHead('Instalaciones Industriales y Maquinaria | SOLYCAL Torrent', '5.000 m² de instalaciones industriales equipadas con 7 puentes grúa de hasta 16 Tn y naves segregadas en Torrent (Valencia).', 'instalaciones.html')}
 ${getHeader('instalaciones')}
 
-<!-- 3D INTERACTIVE INDUSTRIAL MAP (Three.js + Baked Texture + GSAP Camera) -->
-<div class="relative w-full h-[88vh] min-h-[640px] max-h-[920px] bg-[#ffffff] overflow-hidden select-none border-b border-black/10">
+<!-- 3D INTERACTIVE INDUSTRIAL MAP (Three.js + Baked Texture + GSAP Camera) - FULLSCREEN / FULLWIDTH -->
+<div class="relative w-full h-[calc(100vh-80px)] min-h-[680px] bg-[#07080a] overflow-hidden select-none border-b border-white/10">
   
   <!-- Canvas 3D -->
   <canvas id="webgl-map-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing outline-none block"></canvas>
@@ -3326,56 +3345,56 @@ ${getHeader('instalaciones')}
   <!-- Industrial HUD Header Overlay -->
   <div class="absolute top-6 left-6 right-6 sm:left-10 sm:right-10 pointer-events-none flex flex-col md:flex-row md:items-start justify-between gap-4 z-20">
     <div class="space-y-1">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-black/10 shadow-sm pointer-events-auto">
-        <span class="w-2 h-2 rounded-full bg-[#E5A52A] animate-pulse"></span>
-        <span class="font-mono text-[11px] font-semibold tracking-wider text-black uppercase">MAPA INTERACTIVO 3D // PLANTA TORRENT</span>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-white/10 shadow-lg pointer-events-auto">
+        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
+        <span class="font-mono text-[11px] font-semibold tracking-wider text-brand-yellow uppercase">MAPA INTERACTIVO 3D // PLANTA TORRENT</span>
       </div>
-      <h1 class="text-2xl sm:text-4xl font-display font-bold text-neutral-900 tracking-tight">
+      <h1 class="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight drop-shadow-md">
         5.000 m² de Capacidad Técnica
       </h1>
-      <p class="text-xs sm:text-sm text-neutral-600 font-sans max-w-xl hidden sm:block">
-        Haz clic sobre cualquier nave o selector para inspeccionar los talleres, la maquinaria y las especificaciones técnicas.
+      <p class="text-xs sm:text-sm text-neutral-400 font-sans max-w-xl hidden sm:block">
+        Nave industrial segregada en Torrent (Valencia). Pulsa en las áreas o utiliza los controles para explorar las instalaciones técnicas.
       </p>
     </div>
 
     <!-- Quick Selector Buttons / Tour Pills -->
     <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
-      <button type="button" data-poi="0" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
+      <button type="button" data-poi="0" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
         <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
         <span>01 Acero Carbono</span>
       </button>
-      <button type="button" data-poi="1" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+      <button type="button" data-poi="1" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
         <span>02 Inox & Sanitario</span>
       </button>
-      <button type="button" data-poi="2" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+      <button type="button" data-poi="2" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
         <span>03 Corte CNC</span>
       </button>
-      <button type="button" data-poi="3" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-neutral-100 border border-neutral-300 text-neutral-700 hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-200 shadow-sm flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      <button type="button" data-poi="3" class="poi-nav-btn px-3.5 py-1.5 rounded-full bg-[#111317]/90 hover:bg-[#181b21] border border-white/10 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-wider transition-all duration-200 flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
         <span>04 Parque Grúas</span>
       </button>
-      <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-white/90 hover:bg-brand-yellow hover:text-black border border-neutral-300 text-neutral-700 transition-all shadow-sm flex items-center justify-center">
+      <button type="button" id="btn-reset-cam" title="Restablecer vista general" class="w-8 h-8 rounded-full bg-[#111317]/90 hover:bg-brand-yellow hover:text-black border border-white/10 text-neutral-300 transition-all flex items-center justify-center">
         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
       </button>
     </div>
   </div>
 
   <!-- Loading Bar & Overlay -->
-  <div id="map-3d-loader" class="absolute inset-0 bg-[#ffffff] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
+  <div id="map-3d-loader" class="absolute inset-0 bg-[#07080a] z-40 flex flex-col items-center justify-center transition-opacity duration-700">
     <div class="w-64 max-w-[85vw] space-y-3 text-center">
-      <div class="flex items-center justify-between text-xs font-mono text-neutral-600">
-        <span class="flex items-center gap-2 text-black font-semibold">
+      <div class="flex items-center justify-between text-xs font-mono text-neutral-400">
+        <span class="flex items-center gap-2 text-brand-yellow">
           <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span>
           CARGANDO MODELO 3D
         </span>
         <span id="map-progress-num">0%</span>
       </div>
-      <div class="w-full h-1 bg-neutral-200 rounded-full overflow-hidden">
+      <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
         <div id="map-progress-bar" class="h-full bg-brand-yellow rounded-full transition-all duration-200 w-0"></div>
       </div>
-      <p class="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">Solycal S.L. &bull; Render Engine</p>
+      <p class="text-[11px] font-mono text-neutral-500 uppercase tracking-widest">Solycal S.L. &bull; Render Engine</p>
     </div>
   </div>
 
@@ -3383,12 +3402,12 @@ ${getHeader('instalaciones')}
   <div id="pins-container" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
 
   <!-- Active POI Detail Modal Card (Inspired by Kirilbt/interactive-map: Photo + Text + Specs) -->
-  <div id="poi-detail-card" class="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-auto sm:w-[420px] max-w-[calc(100vw-3rem)] bg-[#0c0e12]/95 backdrop-blur-2xl border border-white/15 rounded-2xl overflow-hidden shadow-2xl z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
+  <div id="poi-detail-card" class="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-auto sm:w-[420px] max-w-[calc(100vw-3rem)] bg-[#0a0c0e]/95 backdrop-blur-2xl border border-white/15 rounded-2xl overflow-hidden shadow-2xl z-30 transform translate-y-[120%] opacity-0 pointer-events-none transition-all duration-500 ease-out">
     
     <!-- Image Header with gradient overlay -->
     <div class="relative w-full h-44 bg-neutral-900 overflow-hidden">
       <img id="poi-card-img" src="assets/instalaciones.jpg" alt="Instalaciones Solycal" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0c0e12] via-[#0c0e12]/40 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0a0c0e] via-[#0a0c0e]/40 to-transparent"></div>
       
       <!-- Top badges on image -->
       <div class="absolute top-3 left-3 right-3 flex items-center justify-between">
@@ -3427,74 +3446,11 @@ ${getHeader('instalaciones')}
   </div>
 
   <!-- Bottom Interaction Hint -->
-  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-neutral-300 font-mono text-[11px] text-neutral-600 shadow-sm pointer-events-none z-20">
-    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-black"></i>
+  <div class="absolute bottom-6 right-6 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#111317]/80 backdrop-blur-md border border-white/10 font-mono text-[11px] text-neutral-400 pointer-events-none z-20">
+    <i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-brand-yellow"></i>
     <span>Click en cualquier nave para ver foto y detalles &bull; Arrastra para orbitar</span>
   </div>
 </div>
-
-<!-- CAPACIDADES TÉCNICAS Y SEGREGACIÓN INDUSTRIAL -->
-<section class="py-24 bg-[#07080a] border-b border-white/5">
-  <div class="w-full px-6 sm:px-12 space-y-20">
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4 reveal hover:border-brand-yellow/30 transition-colors">
-        <div class="w-12 h-12 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">01</div>
-        <h3 class="text-2xl font-display font-bold text-white">Nave Acero al Carbono</h3>
-        <p class="text-xs text-neutral-400 font-sans leading-relaxed">
-          Área dedicada a la calderería pesada, depósitos cilíndricos, chimeneas, bancadas estructurales y ductos industriales de alto tonelaje.
-        </p>
-      </div>
-
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4 reveal hover:border-brand-yellow/30 transition-colors">
-        <div class="w-12 h-12 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">02</div>
-        <h3 class="text-2xl font-display font-bold text-white">Nave Acero Inoxidable y Aluminio</h3>
-        <p class="text-xs text-neutral-400 font-sans leading-relaxed">
-          Instalación segregada y descontaminada, con puente grúa y herramientas exclusivas para evitar contaminación férrica en depósitos alimentarios y farmacéuticos.
-        </p>
-      </div>
-
-      <div class="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-4 reveal hover:border-brand-yellow/30 transition-colors">
-        <div class="w-12 h-12 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow font-mono font-bold text-lg">03</div>
-        <h3 class="text-2xl font-display font-bold text-white">Corte Plasma CNC & Curvado</h3>
-        <p class="text-xs text-neutral-400 font-sans leading-relaxed">
-          Mesa Hypertherm HPR260XD de 9x2,5 metros con biselado automático, junto a cilindros de virolar de 4 rodillos y plegadora CNC de 4.000 mm.
-        </p>
-      </div>
-    </div>
-
-    <!-- Machinery List -->
-    <div class="p-10 rounded-3xl bg-white/[0.02] border border-white/10 space-y-8 reveal">
-      <div>
-        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-2">// PARQUE DE MAQUINARIA INDUSTRIAL</span>
-        <h2 class="text-3xl font-display font-bold text-white">Capacidad Técnica Instalada</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-mono text-xs">
-        <div class="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-          <span class="text-brand-yellow font-bold block">7 PUENTES GRÚA</span>
-          <p class="text-neutral-300">Capacidad unitaria y combinada de hasta 16 toneladas para izado de depósitos y vigas.</p>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-          <span class="text-brand-yellow font-bold block">CORTE PLASMA HD</span>
-          <p class="text-neutral-300">Hypertherm HPR260XD, pórtico de 9.000 x 2.500 mm y tecnología TrueHole.</p>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-          <span class="text-brand-yellow font-bold block">PLEGADORA CNC</span>
-          <p class="text-neutral-300">Ermaksan de 4.000 mm de longitud útil para conformado de chapas gruesas.</p>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-          <span class="text-brand-yellow font-bold block">CILINDRO CURVADOR</span>
-          <p class="text-neutral-300">Curvado de cilindros y virolas hasta 2.000 mm de ancho y 12 mm de espesor.</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
 
 <!-- THREE.JS INTERACTIVE MAP SCRIPT (Kirilbt Inspired: Baked Texture + Smooth Damped Controls + GSAP Camera Transitions) -->
 <script>
@@ -3575,9 +3531,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // 1. Scene & Renderer Setup (FONDO BLANCO, SIN GRIDS)
+  // 1. Scene & Renderer Setup (FONDO NEGRO INDUSTRIAL, SIN GRIDS)
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#ffffff');
+  scene.background = new THREE.Color('#07080a');
 
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
@@ -3607,17 +3563,17 @@ document.addEventListener('DOMContentLoaded', () => {
   controls.maxDistance = 350;
   controls.target.copy(defaultTarget);
 
-  // 4. Lighting (Optimized for white background)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+  // 4. Lighting (Optimized for dark industrial background)
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
   scene.add(ambientLight);
 
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  const dirLight = new THREE.DirectionalLight(0xfff5e6, 0.45);
   dirLight.position.set(60, 100, 40);
   scene.add(dirLight);
 
-  // Floor plane (Suelo blanco continuo limpio, sin cuadrícula/grids)
+  // Floor plane (Suelo oscuro continuo limpio, sin cuadrícula/grids)
   const floorGeo = new THREE.PlaneGeometry(1000, 1000);
-  const floorMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const floorMat = new THREE.MeshBasicMaterial({ color: 0x07080a });
   const floorMesh = new THREE.Mesh(floorGeo, floorMat);
   floorMesh.rotation.x = -Math.PI / 2;
   floorMesh.position.y = -0.05;
@@ -3710,9 +3666,9 @@ document.addEventListener('DOMContentLoaded', () => {
         + '    ' + poi.num
         + '  </span>'
         + '</div>'
-        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-black/10 text-left shadow-lg group-hover:border-brand-yellow transition-colors">'
-        + '  <span class="font-mono text-[9px] text-[#b37e19] uppercase tracking-wider font-semibold">' + poi.tag + '</span>'
-        + '  <span class="font-sans text-xs font-bold text-neutral-900">' + poi.title + '</span>'
+        + '<div class="hidden sm:flex flex-col items-start px-3 py-1.5 rounded-xl bg-[#0a0c0e]/95 backdrop-blur-md border border-white/10 text-left shadow-lg group-hover:border-brand-yellow/50 transition-colors">'
+        + '  <span class="font-mono text-[9px] text-brand-yellow uppercase tracking-wider font-semibold">' + poi.tag + '</span>'
+        + '  <span class="font-sans text-xs font-semibold text-white">' + poi.title + '</span>'
         + '</div>';
 
       pin.addEventListener('click', (e) => {
@@ -3918,7 +3874,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-${getFooter()}
+${getFooter({ onlySubfooter: true })}
 `;
 
 // --- STARSHIP FLIGHT 7 DEBRIS SHADER (Adapted from Xor / Noel - OpenProcessing #2666434) ---

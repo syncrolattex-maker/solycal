@@ -3743,6 +3743,17 @@ document.addEventListener('DOMContentLoaded', () => {
     map: bakedTexture
   });
 
+  const industrialFallbackMat = new THREE.MeshStandardMaterial({
+    color: 0xd6d2c8,
+    roughness: 0.58,
+    metalness: 0.18,
+    side: THREE.DoubleSide
+  });
+
+  const lampMat = new THREE.MeshBasicMaterial({
+    color: 0xfffae8
+  });
+
   const gltfLoader = new THREE.GLTFLoader(loadingManager);
   let factoryModel = null;
   const clickableMeshes = [];
@@ -3762,11 +3773,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     factoryModel.traverse((child) => {
       if (child.isMesh) {
-        if (child.geometry && child.geometry.attributes.uv) {
+        const name = (child.name || '').toLowerCase();
+        if (name.includes('corona light')) {
+          child.material = lampMat;
+        } else if (child.geometry && child.geometry.attributes && child.geometry.attributes.uv) {
           child.material = bakedMaterial;
           clickableMeshes.push(child);
         } else {
-          child.visible = false;
+          // Si el objeto exportado no tiene UVs (ej. lamp004), renderizar con material industrial iluminado
+          child.material = industrialFallbackMat;
+          clickableMeshes.push(child);
         }
         child.castShadow = false;
         child.receiveShadow = false;

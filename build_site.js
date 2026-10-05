@@ -104,6 +104,8 @@ function getHead(title, description, canonicalPath = '') {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
   <!-- Three.js (WebGL 3D Map & Shaders) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="assets/vendor/fflate.min.js"></script>
+  <script src="assets/vendor/FBXLoader.js"></script>
   <script src="assets/vendor/GLTFLoader.js"></script>
   <script src="assets/vendor/OrbitControls.js"></script>
   <!-- Lenis Smooth Scroll -->
@@ -3768,8 +3770,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 3500);
 
-  gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
-    factoryModel = gltf.scene;
+  const fbxLoader = new THREE.FBXLoader(loadingManager);
+
+  fbxLoader.load('assets/3d/fabrica2.fbx', (fbxGroup) => {
+    factoryModel = fbxGroup;
 
     factoryModel.traverse((child) => {
       if (child.isMesh) {
@@ -3777,20 +3781,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (name.includes('corona light')) {
           child.material = lampMat;
         } else {
-          // Asegurar que la textura bakeada (fabrica_baked.png) se aplica siempre al modelo
-          if (!child.geometry.attributes.uv) {
-            const pos = child.geometry.attributes.position;
-            child.geometry.computeBoundingBox();
-            const bbox = child.geometry.boundingBox;
-            const sizeX = (bbox.max.x - bbox.min.x) || 1;
-            const sizeY = (bbox.max.y - bbox.min.y) || 1;
-            const uvs = new Float32Array(pos.count * 2);
-            for (let i = 0; i < pos.count; i++) {
-              uvs[i * 2] = (pos.getX(i) - bbox.min.x) / sizeX;
-              uvs[i * 2 + 1] = (pos.getY(i) - bbox.min.y) / sizeY;
-            }
-            child.geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-          }
           child.material = bakedMaterial;
           clickableMeshes.push(child);
         }
@@ -3818,7 +3808,14 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultTarget.set(0, scaledHeight * 0.25, 0);
     controls.target.copy(defaultTarget);
   }, undefined, (err) => {
-    console.error('Error cargando modelo 3D:', err);
+    console.error('Error cargando modelo FBX:', err);
+    // Fallback a GLB si falla
+    const gltfLoader = new THREE.GLTFLoader(loadingManager);
+    gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
+      factoryModel = gltf.scene;
+      factoryModel.traverse((c) => { if (c.isMesh) { c.material = bakedMaterial; clickableMeshes.push(c); } });
+      scene.add(factoryModel);
+    });
     if (loaderEl) loaderEl.remove();
   });
 

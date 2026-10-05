@@ -1233,12 +1233,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = (child.name || '').toLowerCase();
         if (name.includes('corona light')) {
           child.material = lampMat;
-        } else if (child.geometry && child.geometry.attributes && child.geometry.attributes.uv) {
-          child.material = bakedMaterial;
-          clickableMeshes.push(child);
         } else {
-          // Si el objeto exportado no tiene UVs (ej. lamp004), renderizar con material industrial iluminado
-          child.material = industrialFallbackMat;
+          // Asegurar que la textura bakeada (fabrica_baked.png) se aplica siempre al modelo
+          if (!child.geometry.attributes.uv) {
+            const pos = child.geometry.attributes.position;
+            child.geometry.computeBoundingBox();
+            const bbox = child.geometry.boundingBox;
+            const sizeX = (bbox.max.x - bbox.min.x) || 1;
+            const sizeY = (bbox.max.y - bbox.min.y) || 1;
+            const uvs = new Float32Array(pos.count * 2);
+            for (let i = 0; i < pos.count; i++) {
+              uvs[i * 2] = (pos.getX(i) - bbox.min.x) / sizeX;
+              uvs[i * 2 + 1] = (pos.getY(i) - bbox.min.y) / sizeY;
+            }
+            child.geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+          }
+          child.material = bakedMaterial;
           clickableMeshes.push(child);
         }
         child.castShadow = false;

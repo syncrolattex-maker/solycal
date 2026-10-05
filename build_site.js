@@ -3770,10 +3770,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 3500);
 
-  const fbxLoader = new THREE.FBXLoader(loadingManager);
+  const gltfLoader = new THREE.GLTFLoader(loadingManager);
 
-  fbxLoader.load('assets/3d/fabrica2.fbx', (fbxGroup) => {
-    factoryModel = fbxGroup;
+  gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
+    factoryModel = gltf.scene;
 
     factoryModel.traverse((child) => {
       if (child.isMesh) {
@@ -3808,14 +3808,7 @@ document.addEventListener('DOMContentLoaded', () => {
     defaultTarget.set(0, scaledHeight * 0.25, 0);
     controls.target.copy(defaultTarget);
   }, undefined, (err) => {
-    console.error('Error cargando modelo FBX:', err);
-    // Fallback a GLB si falla
-    const gltfLoader = new THREE.GLTFLoader(loadingManager);
-    gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
-      factoryModel = gltf.scene;
-      factoryModel.traverse((c) => { if (c.isMesh) { c.material = bakedMaterial; clickableMeshes.push(c); } });
-      scene.add(factoryModel);
-    });
+    console.error('Error cargando modelo GLB:', err);
     if (loaderEl) loaderEl.remove();
   });
 

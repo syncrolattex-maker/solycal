@@ -3762,10 +3762,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     factoryModel.traverse((child) => {
       if (child.isMesh) {
-        child.material = bakedMaterial;
+        if (child.geometry && child.geometry.attributes.uv) {
+          child.material = bakedMaterial;
+          clickableMeshes.push(child);
+        } else {
+          child.visible = false;
+        }
         child.castShadow = false;
         child.receiveShadow = false;
-        clickableMeshes.push(child);
       }
     });
 

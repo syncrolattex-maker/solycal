@@ -3770,8 +3770,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 3500);
 
-  const gltfLoader = new THREE.GLTFLoader(loadingManager);
-
   gltfLoader.load('assets/3d/fabrica.glb', (gltf) => {
     factoryModel = gltf.scene;
 

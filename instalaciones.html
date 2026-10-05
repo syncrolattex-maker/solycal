@@ -1236,6 +1236,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (name.includes('corona light')) {
           child.material = lampMat;
         } else {
+          if (!child.geometry.attributes.uv) {
+            const pos = child.geometry.attributes.position;
+            child.geometry.computeBoundingBox();
+            const bbox = child.geometry.boundingBox;
+            const sizeX = (bbox.max.x - bbox.min.x) || 1;
+            const sizeY = (bbox.max.y - bbox.min.y) || 1;
+            const uvs = new Float32Array(pos.count * 2);
+            for (let i = 0; i < pos.count; i++) {
+              uvs[i * 2] = (pos.getX(i) - bbox.min.x) / sizeX;
+              uvs[i * 2 + 1] = (pos.getY(i) - bbox.min.y) / sizeY;
+            }
+            child.geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+          }
           child.material = bakedMaterial;
           clickableMeshes.push(child);
         }

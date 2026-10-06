@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /scratch/
+Disallow: /acceso.html
+Disallow: /acceso
 
 Sitemap: https://solycal.es/sitemap.xml

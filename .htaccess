@@ -15,6 +15,7 @@
   RewriteRule ^equipo/?$ /equipo.html [R=301,L]
   RewriteRule ^contacto/?$ /contacto.html [R=301,L]
   RewriteRule ^media/?$ /media.html [R=301,L]
+  RewriteRule ^acceso/?$ /acceso.html [R=301,L]
   RewriteRule ^aviso-legal/?$ /aviso-legal.html [R=301,L]
   RewriteRule ^politica-de-privacidad/?$ /politica-privacidad.html [R=301,L]
   RewriteRule ^politica-de-cookies/?$ /politica-cookies.html [R=301,L]

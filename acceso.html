@@ -111,10 +111,10 @@
       if (!canvas || !window.THREE) return;
 
       const TRAIL_MAX = 128;
-      const gridSize = 36;
-      const cubeWidth = 0.85;
-      const cubeHeight = 3.2;
-      const gap = 0.02;
+      const gridSize = 70;
+      const cubeWidth = 0.42;
+      const cubeHeight = 3.0;
+      const gap = 0.015;
       const bounds = gridSize * (cubeWidth + gap);
 
       // Parámetros de onda adaptados a Dark Mode estricto (negro obsidiana / grafito profundo con crestas en amarillo corporativo)
@@ -126,7 +126,7 @@
         waveJitter: 0.18,
         waveMaxHeight: 0.58,
         fadeTime: 2.2,
-        trailSpacing: 0.1,
+        trailSpacing: 0.08,
         colorBase: new THREE.Color(0x060709), // Negro azabache / carbón oscuro
         colorHigh: new THREE.Color(0xF1B541)  // Acento amarillo corporativo Solycal en la cresta
       };

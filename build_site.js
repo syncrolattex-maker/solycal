@@ -6804,10 +6804,9 @@ const accesoHtml = `<!DOCTYPE html>
 <body class="h-full flex items-center justify-center p-4 bg-black select-none">
 
   <div class="w-full max-w-sm">
-    <!-- Header minimalista -->
+    <!-- Logo -->
     <div class="text-center mb-8">
-      <img src="assets/logo-icon.png" alt="Solycal" class="w-8 h-auto mx-auto mb-4 opacity-90">
-      <h1 class="text-xl font-bold tracking-tight text-white">Solycal S.L.</h1>
+      <img src="assets/logo-icon.png" alt="Solycal" class="w-10 h-auto mx-auto opacity-95">
     </div>
 
     <!-- Formulario de acceso: solo user y pass -->

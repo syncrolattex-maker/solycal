@@ -638,6 +638,19 @@ function getHead(title, description, canonicalPath = '') {
       transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
+  <script>
+    (function() {
+      // Si ya está en la página de acceso, permitir navegación
+      const isAuthPage = window.location.pathname.endsWith('acceso.html') || window.location.pathname.endsWith('/acceso');
+      const isAuthorized = localStorage.getItem('solycal_site_unlocked') === 'true' || sessionStorage.getItem('solycal_auth_user');
+      
+      if (!isAuthorized && !isAuthPage) {
+        // Redirigir de inmediato al portal de acceso con usuario y código
+        const currentTarget = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace('acceso.html?redirect=' + currentTarget);
+      }
+    })();
+  </script>
 </head>
 <body class="antialiased">
 `;
@@ -6922,8 +6935,32 @@ ${getHeader('acceso')}
         </div>
 
         <div class="space-y-3">
-          <p class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// MÓDULOS INTERNOS DISPONIBLES</p>
+          <p class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// PORTAL Y MÓDULOS DESBLOQUEADOS</p>
           
+          <!-- BOTÓN PRINCIPAL: NAVEGAR A LA WEB CORPORATIVA COMPLETA -->
+          <a
+            id="redirect-to-site-btn"
+            href="index.html"
+            class="p-4 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 hover:border-brand-yellow hover:bg-brand-yellow/15 transition-all block group"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-yellow text-black flex items-center justify-center font-bold">
+                  <i data-lucide="globe" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-white text-sm group-hover:text-brand-yellow transition-colors flex items-center gap-2">
+                    Acceder a la Web Corporativa <span class="text-xs px-2 py-0.5 rounded bg-brand-yellow/20 text-brand-yellow font-mono font-normal">DESBLOQUEADA</span>
+                  </h3>
+                  <p class="font-mono text-[11px] text-neutral-400">
+                    Navegación autorizada en Inicio, Servicios, Maqueta 3D, Calidad y Contacto
+                  </p>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-brand-yellow group-hover:translate-x-1 transition-transform"></i>
+            </div>
+          </a>
+
           <!-- MÓDULO 1: CRM INDUSTRIAL -->
           <a
             href="http://localhost:3000"
@@ -6933,7 +6970,7 @@ ${getHeader('acceso')}
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-brand-yellow/10 text-brand-yellow flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
                   <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                 </div>
                 <div>
@@ -6956,7 +6993,7 @@ ${getHeader('acceso')}
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-brand-yellow/10 text-brand-yellow flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
                   <i data-lucide="box" class="w-4 h-4"></i>
                 </div>
                 <div>
@@ -6979,7 +7016,7 @@ ${getHeader('acceso')}
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-brand-yellow/10 text-brand-yellow flex items-center justify-center">
+                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
                   <i data-lucide="file-check" class="w-4 h-4"></i>
                 </div>
                 <div>
@@ -7024,11 +7061,30 @@ ${getHeader('acceso')}
     { user: 'taller', code: 'SOL-2026' }
   ];
 
+  function getRedirectTarget() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectParam = urlParams.get('redirect');
+      if (redirectParam) {
+        const decoded = decodeURIComponent(redirectParam);
+        if (decoded && !decoded.includes('acceso.html')) {
+          return decoded;
+        }
+      }
+    } catch(err) {}
+    return 'index.html';
+  }
+
   function checkSession() {
     const sessionUser = sessionStorage.getItem('solycal_auth_user');
     const formView = document.getElementById('auth-form-view');
     const successView = document.getElementById('auth-success-view');
     const badge = document.getElementById('user-display-badge');
+    const redirectBtn = document.getElementById('redirect-to-site-btn');
+
+    if (redirectBtn) {
+      redirectBtn.setAttribute('href', getRedirectTarget());
+    }
 
     if (sessionUser) {
       if (formView) formView.classList.add('hidden');
@@ -7053,14 +7109,23 @@ ${getHeader('acceso')}
 
     if (isValid) {
       if (errorBox) errorBox.classList.add('hidden');
+      // Desbloquear sesión y almacenar estado de autorización global
       sessionStorage.setItem('solycal_auth_user', userInput);
+      localStorage.setItem('solycal_site_unlocked', 'true');
+      
+      const target = getRedirectTarget();
+      // Si el usuario venía intentando ver una página específica, redirigir automáticamente
+      if (target && target !== 'acceso.html') {
+        window.location.href = target;
+        return;
+      }
       checkSession();
       if (window.lucide && lucide.createIcons) lucide.createIcons();
     } else {
       if (errorBox && errorText) {
         errorText.textContent = 'Usuario o código incorrecto. Compruebe los datos introducidos.';
         errorBox.classList.remove('hidden');
-        // Pequeña animación de shake en el formulario
+        // Animación de aviso
         const card = document.getElementById('access-form');
         if (card) {
           card.classList.add('animate-pulse');
@@ -7072,6 +7137,7 @@ ${getHeader('acceso')}
 
   function handleLogout() {
     sessionStorage.removeItem('solycal_auth_user');
+    localStorage.removeItem('solycal_site_unlocked');
     checkSession();
     if (window.lucide && lucide.createIcons) lucide.createIcons();
   }

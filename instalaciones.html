@@ -583,6 +583,19 @@
       transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
+  <script>
+    (function() {
+      // Si ya está en la página de acceso, permitir navegación
+      const isAuthPage = window.location.pathname.endsWith('acceso.html') || window.location.pathname.endsWith('/acceso');
+      const isAuthorized = localStorage.getItem('solycal_site_unlocked') === 'true' || sessionStorage.getItem('solycal_auth_user');
+      
+      if (!isAuthorized && !isAuthPage) {
+        // Redirigir de inmediato al portal de acceso con usuario y código
+        const currentTarget = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.replace('acceso.html?redirect=' + currentTarget);
+      }
+    })();
+  </script>
 </head>
 <body class="antialiased">
 

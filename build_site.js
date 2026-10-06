@@ -7836,22 +7836,25 @@ const adminNoticiasHtml = `<!DOCTYPE html>
 // PÁGINA 13: ACCESO RESTRINGIDO (UNDER CONSTRUCTION // SOLO USER Y PASS // FONDO NEGRO)
 // ==========================================
 const accesoHtml = `<!DOCTYPE html>
-<html lang="es" class="h-full bg-black">
+<html lang="es" class="h-full bg-black overflow-hidden">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solycal S.L.</title>
+  <title>Solycal S.L. // Portal de Acceso</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: #000000;
       color: #ffffff;
+      overflow: hidden;
     }
     .font-display {
       font-family: 'Syne', sans-serif;
@@ -7859,11 +7862,37 @@ const accesoHtml = `<!DOCTYPE html>
     .font-mono {
       font-family: 'Space Mono', monospace;
     }
+    #webgl-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      z-index: 1;
+      pointer-events: auto;
+    }
+    .login-container {
+      position: relative;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.75) 100%);
+    }
   </style>
 </head>
-<body class="h-full flex items-center justify-center p-4 bg-black select-none">
+<body class="h-full w-full flex items-center justify-center p-4 bg-black select-none relative">
 
-  <div class="w-full max-w-sm">
+  <!-- CANVAS 3D INTERACTIVO WAVY CUBES (ARKON DIGITAL 3D WAVE GRID) -->
+  <canvas id="webgl-canvas"></canvas>
+  <div class="vignette-overlay"></div>
+
+  <!-- TARJETA DE LOGIN FLOTANTE MINIMALISTA -->
+  <div class="login-container w-full max-w-sm p-8 sm:p-9 rounded-2xl bg-[#07080a]/85 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
     <!-- Logo + Letras SOLYCAL -->
     <div class="flex items-center justify-center gap-3 mb-8">
       <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain">
@@ -7882,7 +7911,7 @@ const accesoHtml = `<!DOCTYPE html>
           placeholder="Usuario"
           autocomplete="off"
           autofocus
-          class="w-full px-4 py-3 bg-[#0a0a0a] border border-neutral-800 rounded-lg text-white placeholder-neutral-600 font-mono text-sm focus:outline-none focus:border-neutral-500 transition-colors"
+          class="w-full px-4 py-3 bg-[#111317]/90 border border-white/10 rounded-xl text-white placeholder-neutral-500 font-mono text-sm focus:outline-none focus:border-[#F1B541] focus:ring-1 focus:ring-[#F1B541] transition-all"
         />
       </div>
 
@@ -7895,22 +7924,350 @@ const accesoHtml = `<!DOCTYPE html>
           required
           placeholder="Contraseña"
           autocomplete="off"
-          class="w-full px-4 py-3 bg-[#0a0a0a] border border-neutral-800 rounded-lg text-white placeholder-neutral-600 font-mono text-sm tracking-widest focus:outline-none focus:border-neutral-500 transition-colors"
+          class="w-full px-4 py-3 bg-[#111317]/90 border border-white/10 rounded-xl text-white placeholder-neutral-500 font-mono text-sm tracking-widest focus:outline-none focus:border-[#F1B541] focus:ring-1 focus:ring-[#F1B541] transition-all"
         />
       </div>
 
-      <div id="err" class="hidden text-center text-xs font-mono text-red-500 pt-1">
+      <div id="err" class="hidden text-center text-xs font-mono text-red-400 pt-1">
         Acceso denegado
       </div>
 
       <button
         type="submit"
-        class="w-full py-3 bg-white text-black font-mono text-xs uppercase tracking-widest font-bold rounded-lg hover:bg-neutral-200 active:scale-[0.99] transition-all"
+        class="w-full py-3 bg-[#F1B541] text-black font-mono text-xs uppercase tracking-widest font-bold rounded-xl hover:bg-[#e5a52a] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)]"
       >
         Entrar
       </button>
     </form>
   </div>
+
+  <!-- THREE.JS WAVY CUBES IMPLEMENTATION -->
+  <script>
+    (function initWavyCubes() {
+      const canvas = document.getElementById('webgl-canvas');
+      if (!canvas || !window.THREE) return;
+
+      const TRAIL_MAX = 128;
+      const gridSize = 36;
+      const cubeWidth = 0.85;
+      const cubeHeight = 3.2;
+      const gap = 0.02;
+      const bounds = gridSize * (cubeWidth + gap);
+
+      // Parámetros de onda inspirados en arkon.digital adaptados a paleta Solycal (gris grafito / azul-acero / amarillo industrial)
+      const params = {
+        waveAmplitude: 0.55,
+        waveSpeed: 6.2,
+        waveFrequency: 1.25,
+        waveWidth: 3.2,
+        waveJitter: 0.18,
+        waveMaxHeight: 0.55,
+        fadeTime: 2.2,
+        trailSpacing: 0.1,
+        colorBase: new THREE.Color(0x181a1f),
+        colorHigh: new THREE.Color(0xF1B541)
+      };
+
+      // Scene & Renderer
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x050608);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.6;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      // Camera orbital suave
+      const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 200);
+      const radius = 13.5;
+      const alphaRange = Math.PI * 0.04;
+      const betaRange = Math.PI * 0.06;
+      const mouse = new THREE.Vector2(0, 0);
+      const lerpedMouse = new THREE.Vector2(0, 0);
+
+      function updateCameraPosition(x, y) {
+        const n = y * alphaRange;
+        const r = x * betaRange;
+        camera.position.set(
+          -radius * Math.cos(n) * Math.sin(r),
+          radius * Math.cos(n) * Math.cos(r),
+          radius * Math.sin(n)
+        );
+        camera.up.set(0, 0, -1);
+        camera.lookAt(0, 0, 0);
+      }
+      updateCameraPosition(0, 0);
+
+      // Luces
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xfff5e6, 3.5);
+      dirLight.position.set(-20, 12, 8);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.set(1024, 1024);
+      dirLight.shadow.radius = 5;
+      dirLight.shadow.bias = -0.0001;
+      dirLight.shadow.camera.near = 0.1;
+      dirLight.shadow.camera.far = 60;
+      dirLight.shadow.camera.left = -22;
+      dirLight.shadow.camera.right = 22;
+      dirLight.shadow.camera.top = 22;
+      dirLight.shadow.camera.bottom = -22;
+      scene.add(dirLight);
+
+      const fillLight = new THREE.DirectionalLight(0x4466aa, 1.2);
+      fillLight.position.set(12, 6, -5);
+      scene.add(fillLight);
+
+      // DataTexture para los puntos de la estela del ratón (X, Z, edad, distDelta)
+      const trailData = new Float32Array(TRAIL_MAX * 4);
+      const trailTexture = new THREE.DataTexture(
+        trailData,
+        TRAIL_MAX,
+        1,
+        THREE.RGBAFormat,
+        THREE.FloatType
+      );
+      trailTexture.needsUpdate = true;
+
+      const trailUniforms = {
+        uTrailTexture: { value: trailTexture },
+        uTrailCount: { value: 0 },
+        uFadeTime: { value: params.fadeTime },
+        uWaveSpeed: { value: params.waveSpeed },
+        uWaveFreq: { value: params.waveFrequency },
+        uWaveWidth: { value: params.waveWidth },
+        uAmplitude: { value: params.waveAmplitude },
+        uJitter: { value: params.waveJitter },
+        uMaxHeight: { value: params.waveMaxHeight },
+        uColorBase: { value: params.colorBase },
+        uColorHigh: { value: params.colorHigh }
+      };
+
+      // InstancedMesh de cubos
+      const totalInstances = gridSize * gridSize;
+      const cubeGeometry = new THREE.BoxGeometry(cubeWidth, cubeHeight, cubeWidth);
+      const offsetAttr = new THREE.InstancedBufferAttribute(new Float32Array(totalInstances * 2), 2);
+      cubeGeometry.setAttribute('aOffset', offsetAttr);
+
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.35,
+        metalness: 0.25
+      });
+
+      // Shaders personalizados para la onda expansiva y deformación Y
+      material.onBeforeCompile = (shader) => {
+        Object.assign(shader.uniforms, trailUniforms);
+
+        shader.vertexShader = shader.vertexShader.replace(
+          '#include <common>',
+          \`#include <common>
+          varying float vHeight;
+          attribute vec2 aOffset;
+          uniform sampler2D uTrailTexture;
+          uniform int       uTrailCount;
+          uniform float     uWaveSpeed;
+          uniform float     uWaveFreq;
+          uniform float     uWaveWidth;
+          uniform float     uFadeTime;
+          uniform float     uAmplitude;
+          uniform float     uJitter;
+          uniform float     uMaxHeight;
+
+          vec2 hash2(vec2 p) {
+            p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+            return fract(sin(p) * 43758.5453123) - 0.5;
+          }
+          \`
+        ).replace(
+          '#include <begin_vertex>',
+          \`#include <begin_vertex>
+          vHeight = 0.0;
+
+          if (position.y > 0.0) {
+            vec2 jitter = hash2(aOffset) * uJitter;
+            vec2 worldXZ = aOffset + jitter;
+            float waveHeight = 0.0;
+            float totalWeight = 0.0;
+
+            for (int i = 0; i < 128; i++) {
+              if (i >= uTrailCount) break;
+              vec4 td = texture2D(uTrailTexture, vec2((float(i) + 0.5) / 128.0, 0.5));
+              float dist = length(worldXZ - td.rg);
+              float wavefront = uWaveSpeed * td.b;
+              float relDist = dist - wavefront;
+
+              float windowEnvelope = exp(-(relDist * relDist) / (uWaveWidth * uWaveWidth));
+              float fade = exp(-td.b / uFadeTime);
+              float atten = 1.0 / (1.0 + dist * 0.12);
+              float weight = fade * windowEnvelope * atten * td.a;
+
+              waveHeight += weight * cos(uWaveFreq * relDist);
+              totalWeight += weight;
+            }
+
+            waveHeight /= max(totalWeight, 1.0);
+            float displacement = clamp(waveHeight * uAmplitude, -uMaxHeight, uMaxHeight);
+            transformed.y += displacement;
+            vHeight = displacement;
+          }
+          \`
+        );
+
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <common>',
+          \`#include <common>
+          varying float vHeight;
+          uniform vec3  uColorBase;
+          uniform vec3  uColorHigh;
+          uniform float uMaxHeight;
+          \`
+        ).replace(
+          '#include <color_fragment>',
+          \`#include <color_fragment>
+          float waveT = clamp(vHeight / uMaxHeight, 0.0, 1.0);
+          diffuseColor.rgb = mix(uColorBase, uColorHigh, waveT);
+          \`
+        );
+      };
+
+      const instancedMesh = new THREE.InstancedMesh(cubeGeometry, material, totalInstances);
+      instancedMesh.castShadow = true;
+      instancedMesh.receiveShadow = true;
+
+      // Matriz de posicionamiento
+      const dummy = new THREE.Object3D();
+      const step = cubeWidth + gap;
+      const halfGrid = (gridSize - 1) * step / 2;
+
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          const idx = r * gridSize + c;
+          const x = r * step - halfGrid;
+          const z = c * step - halfGrid;
+          dummy.position.set(x, 0, z);
+          dummy.updateMatrix();
+          instancedMesh.setMatrixAt(idx, dummy.matrix);
+          offsetAttr.setXY(idx, x, z);
+        }
+      }
+      instancedMesh.instanceMatrix.needsUpdate = true;
+      offsetAttr.needsUpdate = true;
+      scene.add(instancedMesh);
+
+      // Plano de raycasting horizontal en Y=0
+      const rayPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(bounds * 2, bounds * 2),
+        new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide })
+      );
+      rayPlane.rotation.x = -Math.PI / 2;
+      rayPlane.updateMatrixWorld(true);
+
+      const raycaster = new THREE.Raycaster();
+      const mouseNDC = new THREE.Vector2();
+      const trail = [];
+      let lastPoint = null;
+      let timeSinceLastMove = 0;
+      let randomTimer = 0;
+
+      function addPoint(x, z, distDelta) {
+        if (trail.length >= TRAIL_MAX) trail.shift();
+        trail.push({ x, z, age: 0, distDelta });
+      }
+
+      function addRandomPulse() {
+        const rx = (Math.random() * 0.6 - 0.3) * bounds;
+        const rz = (Math.random() * 0.6 - 0.3) * bounds;
+        addPoint(rx, rz, 0.75 + Math.random() * 0.35);
+      }
+
+      window.addEventListener('pointermove', (e) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+        mouseNDC.set(mouse.x, mouse.y);
+        raycaster.setFromCamera(mouseNDC, camera);
+        const hits = raycaster.intersectObject(rayPlane);
+        if (hits.length > 0) {
+          const pt = hits[0].point;
+          let delta = 0;
+          if (lastPoint) {
+            const dx = pt.x - lastPoint.x;
+            const dz = pt.z - lastPoint.z;
+            delta = Math.sqrt(dx * dx + dz * dz);
+            if (delta < params.trailSpacing) return;
+          }
+          addPoint(pt.x, pt.z, Math.max(delta, 0.15));
+          lastPoint = { x: pt.x, z: pt.z };
+          timeSinceLastMove = 0;
+        }
+      });
+
+      // Crear algunas ondas al inicio para deleite visual inmediato
+      setTimeout(() => addRandomPulse(), 300);
+      setTimeout(() => addRandomPulse(), 900);
+
+      // Resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Animation Loop
+      let lastTime = performance.now();
+      function animate(now) {
+        requestAnimationFrame(animate);
+
+        const delta = Math.min((now - lastTime) / 1000, 0.1);
+        lastTime = now;
+
+        // Suavizado de la cámara
+        lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.05;
+        lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.05;
+        updateCameraPosition(lerpedMouse.x, lerpedMouse.y);
+
+        // Actualizar edades del trail
+        const maxAge = params.fadeTime * 3.5;
+        for (let i = trail.length - 1; i >= 0; i--) {
+          trail[i].age += delta;
+          if (trail[i].age > maxAge) trail.splice(i, 1);
+        }
+
+        // Si el usuario no mueve el cursor, emitir pulsos orgánicos periódicos
+        timeSinceLastMove += delta;
+        randomTimer += delta;
+        if (timeSinceLastMove > 2.5 && randomTimer > 1.8) {
+          addRandomPulse();
+          randomTimer = 0;
+        }
+
+        // Subir datos del trail a la textura Float
+        const count = Math.min(trail.length, TRAIL_MAX);
+        for (let i = 0; i < count; i++) {
+          const offset = i * 4;
+          trailData[offset] = trail[i].x;
+          trailData[offset + 1] = trail[i].z;
+          trailData[offset + 2] = trail[i].age;
+          trailData[offset + 3] = trail[i].distDelta;
+        }
+        trailTexture.needsUpdate = true;
+        trailUniforms.uTrailCount.value = count;
+
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(animate);
+    })();
+  </script>
 
   <script>
     const VALID = [

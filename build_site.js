@@ -6788,13 +6788,16 @@ const accesoHtml = `<!DOCTYPE html>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: #000000;
       color: #ffffff;
+    }
+    .font-display {
+      font-family: 'Syne', sans-serif;
     }
     .font-mono {
       font-family: 'Space Mono', monospace;
@@ -6804,9 +6807,10 @@ const accesoHtml = `<!DOCTYPE html>
 <body class="h-full flex items-center justify-center p-4 bg-black select-none">
 
   <div class="w-full max-w-sm">
-    <!-- Logo -->
-    <div class="text-center mb-8">
-      <img src="assets/logo-icon.png" alt="Solycal" class="w-10 h-auto mx-auto opacity-95">
+    <!-- Logo + Letras SOLYCAL -->
+    <div class="flex items-center justify-center gap-3 mb-8">
+      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain">
+      <span class="font-display font-bold text-2xl tracking-wider text-white">SOLYCAL</span>
     </div>
 
     <!-- Formulario de acceso: solo user y pass -->

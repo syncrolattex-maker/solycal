@@ -8177,17 +8177,9 @@ const accesoHtml = `<!DOCTYPE html>
       const trail = [];
       let lastPoint = null;
       let timeSinceLastMove = 0;
-      let randomTimer = 0;
-
       function addPoint(x, z, distDelta) {
         if (trail.length >= TRAIL_MAX) trail.shift();
         trail.push({ x, z, age: 0, distDelta });
-      }
-
-      function addRandomPulse() {
-        const rx = (Math.random() * 0.6 - 0.3) * bounds;
-        const rz = (Math.random() * 0.6 - 0.3) * bounds;
-        addPoint(rx, rz, 0.75 + Math.random() * 0.35);
       }
 
       window.addEventListener('pointermove', (e) => {
@@ -8208,13 +8200,8 @@ const accesoHtml = `<!DOCTYPE html>
           }
           addPoint(pt.x, pt.z, Math.max(delta, 0.15));
           lastPoint = { x: pt.x, z: pt.z };
-          timeSinceLastMove = 0;
         }
       });
-
-      // Crear algunas ondas al inicio para deleite visual inmediato
-      setTimeout(() => addRandomPulse(), 300);
-      setTimeout(() => addRandomPulse(), 900);
 
       // Resize
       window.addEventListener('resize', () => {
@@ -8231,24 +8218,16 @@ const accesoHtml = `<!DOCTYPE html>
         const delta = Math.min((now - lastTime) / 1000, 0.1);
         lastTime = now;
 
-        // Suavizado de la cámara
+        // Suavizado de la cámara únicamente siguiendo el movimiento del ratón
         lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.05;
         lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.05;
         updateCameraPosition(lerpedMouse.x, lerpedMouse.y);
 
-        // Actualizar edades del trail
+        // Actualizar edades del trail (sin generar nuevos puntos automáticamente)
         const maxAge = params.fadeTime * 3.5;
         for (let i = trail.length - 1; i >= 0; i--) {
           trail[i].age += delta;
           if (trail[i].age > maxAge) trail.splice(i, 1);
-        }
-
-        // Si el usuario no mueve el cursor, emitir pulsos orgánicos periódicos
-        timeSinceLastMove += delta;
-        randomTimer += delta;
-        if (timeSinceLastMove > 2.5 && randomTimer > 1.8) {
-          addRandomPulse();
-          randomTimer = 0;
         }
 
         // Subir datos del trail a la textura Float

@@ -6776,394 +6776,123 @@ ${getFooter()}
 `;
 
 // ==========================================
-// PÁGINA 11: ACCESO RESTRINGIDO (AUTH POR USUARIO Y CÓDIGO)
+// PÁGINA 11: ACCESO RESTRINGIDO (UNDER CONSTRUCTION // SOLO USER Y PASS // FONDO NEGRO)
 // ==========================================
-const accesoHtml = `${getHead(
-  'Acceso Restringido // Portal Interno &middot; SOLYCAL',
-  'Portal de acceso restringido para personal técnico y clientes autorizados de SOLYCAL S.L. Verificación mediante usuario y código de seguridad.',
-  'acceso.html'
-)}
-${getHeader('acceso')}
+const accesoHtml = `<!DOCTYPE html>
+<html lang="es" class="h-full bg-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solycal &middot; En Construcción</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+    }
+    .font-mono {
+      font-family: 'Space Mono', monospace;
+    }
+  </style>
+</head>
+<body class="h-full flex items-center justify-center p-4 bg-black select-none">
 
-<main class="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center relative overflow-hidden bg-[#07080a]">
-  <!-- Grid de fondo sutil industrial -->
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(241,181,65,0.06)_0%,transparent_70%)] pointer-events-none"></div>
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
-
-  <div class="w-full max-w-xl relative z-10">
-    
-    <!-- HEADER DE SECCIÓN -->
+  <div class="w-full max-w-sm">
+    <!-- Header minimalista under construction -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-mono text-[11px] uppercase tracking-widest mb-4">
-        <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
-        <span>Entorno Seguro // Área Protegida</span>
-      </div>
-      <h1 class="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">
-        Acceso <span class="text-brand-yellow">Restringido</span>
-      </h1>
-      <p class="mt-2 text-sm text-neutral-400 font-sans max-w-md mx-auto">
-        Autenticación requerida para acceder al CRM de proyectos, presupuestos y documentación técnica de taller.
-      </p>
+      <img src="assets/logo-icon.png" alt="Solycal" class="w-8 h-auto mx-auto mb-5 opacity-90">
+      <p class="font-mono text-[11px] tracking-[0.25em] uppercase text-neutral-500 mb-2">UNDER CONSTRUCTION</p>
+      <h1 class="text-xl font-bold tracking-tight text-white">Solycal S.L.</h1>
     </div>
 
-    <!-- TARJETA PRINCIPAL DE AUTENTICACIÓN -->
-    <div class="relative rounded-2xl bg-[#0a0c0e] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-6 sm:p-10 backdrop-blur-xl">
-      
-      <!-- ESTADO: FORMULARIO DE ACCESO (VISTA NO AUTENTICADA) -->
-      <div id="auth-form-view">
-        <div class="flex items-center justify-between pb-6 mb-6 border-b border-white/5">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-brand-surface border border-white/10 flex items-center justify-center text-brand-yellow">
-              <i data-lucide="lock" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="font-mono text-xs text-white uppercase tracking-wider font-semibold">Credenciales Técnicas</p>
-              <p class="font-mono text-[11px] text-neutral-500">SOLYCAL SECURE GATEWAY v2.6</p>
-            </div>
-          </div>
-          <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            ACTIVO
-          </span>
-        </div>
-
-        <form id="access-form" class="space-y-5" autocomplete="off" onsubmit="handleAuthSubmit(event)">
-          <!-- CAMPO USUARIO -->
-          <div>
-            <label for="auth-username" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-2">
-              Usuario // Identificador
-            </label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
-                <i data-lucide="user" class="w-4 h-4"></i>
-              </div>
-              <input
-                type="text"
-                id="auth-username"
-                name="username"
-                required
-                placeholder="ej. oficina / admin"
-                autocomplete="username"
-                class="w-full pl-10 pr-4 py-3 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-mono text-sm focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
-              />
-            </div>
-          </div>
-
-          <!-- CAMPO CÓDIGO DE ACCESO / PIN -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label for="auth-code" class="block font-mono text-xs uppercase tracking-wider text-neutral-300">
-                Código de Acceso // PIN
-              </label>
-              <span class="font-mono text-[10px] text-neutral-500 uppercase">Sensible a mayúsculas</span>
-            </div>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500">
-                <i data-lucide="key-round" class="w-4 h-4"></i>
-              </div>
-              <input
-                type="password"
-                id="auth-code"
-                name="code"
-                required
-                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                autocomplete="current-password"
-                class="w-full pl-10 pr-12 py-3 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-mono text-sm tracking-widest focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
-              />
-              <button
-                type="button"
-                id="toggle-password-btn"
-                onclick="toggleCodeVisibility()"
-                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-500 hover:text-white transition-colors"
-                title="Mostrar/Ocultar Código"
-              >
-                <i data-lucide="eye" id="toggle-eye-icon" class="w-4 h-4"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- MENSAJE DE ERROR -->
-          <div id="auth-error-msg" class="hidden rounded-xl bg-red-500/10 border border-red-500/30 p-3.5 text-red-400 font-mono text-xs flex items-center gap-2.5">
-            <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
-            <span id="auth-error-text">Credenciales no válidas. Revise usuario o código.</span>
-          </div>
-
-          <!-- BOTÓN SUBMIT -->
-          <div class="pt-2">
-            <button
-              type="submit"
-              id="submit-auth-btn"
-              class="w-full py-3.5 px-6 rounded-full bg-brand-yellow text-black font-mono uppercase text-xs font-semibold tracking-wider hover:bg-yellow-400 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(241,181,65,0.25)]"
-            >
-              <i data-lucide="log-in" class="w-4 h-4"></i>
-              <span>Verificar y Acceder</span>
-            </button>
-          </div>
-        </form>
-
-        <!-- PISTA DEMO / INDICADOR PARA FACILITAR USO -->
-        <div class="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-500 font-mono text-[11px]">
-          <span class="flex items-center gap-1.5">
-            <i data-lucide="info" class="w-3.5 h-3.5 text-brand-yellow"></i>
-            Acceso Autorizado Solycal
-          </span>
-          <span class="text-neutral-400 bg-white/[0.03] px-2 py-1 rounded border border-white/5">
-            DEMO: <strong class="text-brand-yellow">admin</strong> / <strong class="text-brand-yellow">SOL-2026</strong>
-          </span>
-        </div>
+    <!-- Formulario de acceso: solo user y pass -->
+    <form id="gate-form" class="space-y-4" onsubmit="handleAccess(event)" autocomplete="off">
+      <div>
+        <label for="u" class="sr-only">Usuario</label>
+        <input
+          type="text"
+          id="u"
+          name="user"
+          required
+          placeholder="Usuario"
+          autocomplete="off"
+          autofocus
+          class="w-full px-4 py-3 bg-[#0a0a0a] border border-neutral-800 rounded-lg text-white placeholder-neutral-600 font-mono text-sm focus:outline-none focus:border-neutral-500 transition-colors"
+        />
       </div>
 
-      <!-- ESTADO: PANEL AUTENTICADO (VISTA SESIÓN INICIADA) -->
-      <div id="auth-success-view" class="hidden space-y-6">
-        <div class="flex items-center justify-between pb-6 border-b border-white/5">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <p class="font-mono text-xs text-white uppercase tracking-wider font-semibold">Sesión Verificada</p>
-              <p class="font-mono text-[11px] text-emerald-400" id="user-display-badge">USUARIO: ADMIN</p>
-            </div>
-          </div>
-          <button
-            onclick="handleLogout()"
-            class="px-3 py-1.5 rounded-lg border border-white/10 hover:border-red-500/40 text-neutral-400 hover:text-red-400 font-mono text-[11px] uppercase tracking-wider transition-colors flex items-center gap-1.5"
-          >
-            <i data-lucide="log-out" class="w-3 h-3"></i>
-            <span>Cerrar</span>
-          </button>
-        </div>
-
-        <div class="space-y-3">
-          <p class="font-mono text-xs text-brand-yellow uppercase tracking-widest">// PORTAL Y MÓDULOS DESBLOQUEADOS</p>
-          
-          <!-- BOTÓN PRINCIPAL: NAVEGAR A LA WEB CORPORATIVA COMPLETA -->
-          <a
-            id="redirect-to-site-btn"
-            href="index.html"
-            class="p-4 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 hover:border-brand-yellow hover:bg-brand-yellow/15 transition-all block group"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-brand-yellow text-black flex items-center justify-center font-bold">
-                  <i data-lucide="globe" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <h3 class="font-display font-bold text-white text-sm group-hover:text-brand-yellow transition-colors flex items-center gap-2">
-                    Acceder a la Web Corporativa <span class="text-xs px-2 py-0.5 rounded bg-brand-yellow/20 text-brand-yellow font-mono font-normal">DESBLOQUEADA</span>
-                  </h3>
-                  <p class="font-mono text-[11px] text-neutral-400">
-                    Navegación autorizada en Inicio, Servicios, Maqueta 3D, Calidad y Contacto
-                  </p>
-                </div>
-              </div>
-              <i data-lucide="arrow-right" class="w-4 h-4 text-brand-yellow group-hover:translate-x-1 transition-transform"></i>
-            </div>
-          </a>
-
-          <!-- MÓDULO 1: CRM INDUSTRIAL -->
-          <a
-            href="http://localhost:3000"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="p-4 rounded-xl bg-[#111317] border border-white/10 hover:border-brand-yellow/50 transition-all block group"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
-                  <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <h3 class="font-display font-bold text-white text-sm group-hover:text-brand-yellow transition-colors">
-                    Industrial CRM (Next.js &bull; Port 3000)
-                  </h3>
-                  <p class="font-mono text-[11px] text-neutral-400">
-                    Gestión de Leads, Oficina Técnica, Kilos de Acero y Presupuestos
-                  </p>
-                </div>
-              </div>
-              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-500 group-hover:text-brand-yellow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"></i>
-            </div>
-          </a>
-
-          <!-- MÓDULO 2: VISOR DE INSTALACIONES 3D -->
-          <a
-            href="instalaciones.html"
-            class="p-4 rounded-xl bg-[#111317] border border-white/10 hover:border-brand-yellow/50 transition-all block group"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
-                  <i data-lucide="box" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <h3 class="font-display font-bold text-white text-sm group-hover:text-brand-yellow transition-colors">
-                    Mapa de Planta 3D &bull; Maqueta de Taller
-                  </h3>
-                  <p class="font-mono text-[11px] text-neutral-400">
-                    Distribución de puentes grúa, plasma HD y zonas de ensamblaje
-                  </p>
-                </div>
-              </div>
-              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-500 group-hover:text-brand-yellow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"></i>
-            </div>
-          </a>
-
-          <!-- MÓDULO 3: DOSSIER TÉCNICO Y NORMAS -->
-          <a
-            href="calidad.html"
-            class="p-4 rounded-xl bg-[#111317] border border-white/10 hover:border-brand-yellow/50 transition-all block group"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-white/5 text-brand-yellow flex items-center justify-center">
-                  <i data-lucide="file-check" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <h3 class="font-display font-bold text-white text-sm group-hover:text-brand-yellow transition-colors">
-                    Certificaciones &bull; EN 1090-1 / EN 15085-2 / ISO 9001
-                  </h3>
-                  <p class="font-mono text-[11px] text-neutral-400">
-                    Trazabilidad de materiales, homologaciones WPQR y marcado CE
-                  </p>
-                </div>
-              </div>
-              <i data-lucide="arrow-up-right" class="w-4 h-4 text-neutral-500 group-hover:text-brand-yellow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"></i>
-            </div>
-          </a>
-        </div>
-
-        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 font-mono text-[11px] text-neutral-400 flex items-center justify-between">
-          <span>IP Registrada: <span class="text-white">127.0.0.1</span></span>
-          <span class="text-emerald-400 flex items-center gap-1">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> CANAL CIFRADO
-          </span>
-        </div>
+      <div>
+        <label for="p" class="sr-only">Contraseña o Código</label>
+        <input
+          type="password"
+          id="p"
+          name="pass"
+          required
+          placeholder="Contraseña"
+          autocomplete="off"
+          class="w-full px-4 py-3 bg-[#0a0a0a] border border-neutral-800 rounded-lg text-white placeholder-neutral-600 font-mono text-sm tracking-widest focus:outline-none focus:border-neutral-500 transition-colors"
+        />
       </div>
 
-    </div>
+      <div id="err" class="hidden text-center text-xs font-mono text-red-500 pt-1">
+        Acceso denegado
+      </div>
 
-    <!-- NOTA DE SEGURIDAD AL PIE -->
-    <p class="text-center mt-6 font-mono text-[11px] text-neutral-600">
-      Cualquier intento no autorizado de acceso queda monitorizado conforme a la normativa vigente.
-    </p>
-
+      <button
+        type="submit"
+        class="w-full py-3 bg-white text-black font-mono text-xs uppercase tracking-widest font-bold rounded-lg hover:bg-neutral-200 active:scale-[0.99] transition-all"
+      >
+        Entrar
+      </button>
+    </form>
   </div>
-</main>
 
-<script>
-  // LÓGICA DE VALIDACIÓN Y CONTROL DE SESIÓN
-  const VALID_USERS = [
-    { user: 'admin', code: 'SOL-2026' },
-    { user: 'admin', code: 'SOL2026' },
-    { user: 'solycal', code: '1234' },
-    { user: 'oficina', code: 'SOL-2026' },
-    { user: 'taller', code: 'SOL-2026' }
-  ];
+  <script>
+    const VALID = [
+      { u: 'admin', p: 'SOL-2026' },
+      { u: 'admin', p: 'SOL2026' },
+      { u: 'solycal', p: '1234' },
+      { u: 'oficina', p: 'SOL-2026' }
+    ];
 
-  function getRedirectTarget() {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectParam = urlParams.get('redirect');
-      if (redirectParam) {
-        const decoded = decodeURIComponent(redirectParam);
-        if (decoded && !decoded.includes('acceso.html')) {
-          return decoded;
-        }
-      }
-    } catch(err) {}
-    return 'index.html';
-  }
+    function handleAccess(e) {
+      e.preventDefault();
+      const uVal = document.getElementById('u').value.trim().toLowerCase();
+      const pVal = document.getElementById('p').value.trim();
+      const err = document.getElementById('err');
 
-  function checkSession() {
-    const sessionUser = sessionStorage.getItem('solycal_auth_user');
-    const formView = document.getElementById('auth-form-view');
-    const successView = document.getElementById('auth-success-view');
-    const badge = document.getElementById('user-display-badge');
-    const redirectBtn = document.getElementById('redirect-to-site-btn');
+      const ok = VALID.some(v => v.u === uVal && v.p === pVal);
 
-    if (redirectBtn) {
-      redirectBtn.setAttribute('href', getRedirectTarget());
-    }
+      if (ok) {
+        localStorage.setItem('solycal_site_unlocked', 'true');
+        sessionStorage.setItem('solycal_auth_user', uVal);
+        
+        let target = 'index.html';
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const r = params.get('redirect');
+          if (r) {
+            const dec = decodeURIComponent(r);
+            if (dec && !dec.includes('acceso.html')) target = dec;
+          }
+        } catch(e) {}
 
-    if (sessionUser) {
-      if (formView) formView.classList.add('hidden');
-      if (successView) successView.classList.remove('hidden');
-      if (badge) badge.textContent = 'USUARIO: ' + sessionUser.toUpperCase();
-    } else {
-      if (formView) formView.classList.remove('hidden');
-      if (successView) successView.classList.add('hidden');
-    }
-  }
-
-  function handleAuthSubmit(e) {
-    e.preventDefault();
-    const userInput = document.getElementById('auth-username').value.trim().toLowerCase();
-    const codeInput = document.getElementById('auth-code').value.trim();
-    const errorBox = document.getElementById('auth-error-msg');
-    const errorText = document.getElementById('auth-error-text');
-
-    const isValid = VALID_USERS.some(u => 
-      u.user.toLowerCase() === userInput && u.code === codeInput
-    );
-
-    if (isValid) {
-      if (errorBox) errorBox.classList.add('hidden');
-      // Desbloquear sesión y almacenar estado de autorización global
-      sessionStorage.setItem('solycal_auth_user', userInput);
-      localStorage.setItem('solycal_site_unlocked', 'true');
-      
-      const target = getRedirectTarget();
-      // Si el usuario venía intentando ver una página específica, redirigir automáticamente
-      if (target && target !== 'acceso.html') {
         window.location.href = target;
-        return;
-      }
-      checkSession();
-      if (window.lucide && lucide.createIcons) lucide.createIcons();
-    } else {
-      if (errorBox && errorText) {
-        errorText.textContent = 'Usuario o código incorrecto. Compruebe los datos introducidos.';
-        errorBox.classList.remove('hidden');
-        // Animación de aviso
-        const card = document.getElementById('access-form');
-        if (card) {
-          card.classList.add('animate-pulse');
-          setTimeout(() => card.classList.remove('animate-pulse'), 400);
-        }
+      } else {
+        if (err) err.classList.remove('hidden');
+        document.getElementById('p').value = '';
+        document.getElementById('p').focus();
       }
     }
-  }
-
-  function handleLogout() {
-    sessionStorage.removeItem('solycal_auth_user');
-    localStorage.removeItem('solycal_site_unlocked');
-    checkSession();
-    if (window.lucide && lucide.createIcons) lucide.createIcons();
-  }
-
-  function toggleCodeVisibility() {
-    const input = document.getElementById('auth-code');
-    const icon = document.getElementById('toggle-eye-icon');
-    if (!input) return;
-    
-    if (input.type === 'password') {
-      input.type = 'text';
-      if (icon) icon.setAttribute('data-lucide', 'eye-off');
-    } else {
-      input.type = 'password';
-      if (icon) icon.setAttribute('data-lucide', 'eye');
-    }
-    if (window.lucide && lucide.createIcons) lucide.createIcons();
-  }
-
-  // Inicializar al cargar
-  window.addEventListener('DOMContentLoaded', () => {
-    checkSession();
-  });
-</script>
-
-${getFooter()}
+  </script>
+</body>
+</html>
 `;
 
 // WRITE ALL 11 CLEAN PAGES

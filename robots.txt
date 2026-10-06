@@ -3,5 +3,7 @@ Allow: /
 Disallow: /scratch/
 Disallow: /acceso.html
 Disallow: /acceso
+Disallow: /admin-noticias.html
+Disallow: /admin-noticias
 
 Sitemap: https://solycal.es/sitemap.xml

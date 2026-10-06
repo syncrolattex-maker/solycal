@@ -836,8 +836,8 @@
 
   <div class="max-w-7xl mx-auto relative z-10">
 
-    <!-- HERO HEADER -->
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-white/10">
+    <!-- HERO HEADER PÚBLICO (SIN CONTROLES DE ADMINISTRACIÓN) -->
+    <div class="pb-12 border-b border-white/10">
       <div class="max-w-3xl">
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-mono text-[11px] uppercase tracking-widest mb-4">
           <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
@@ -848,62 +848,12 @@
           <span class="text-brand-yellow">Calderería Industrial</span>
         </h1>
         <p class="mt-4 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed max-w-2xl">
-          Volcado oficial de publicaciones, hitos técnicos, ampliaciones de planta y novedades operativas de SOLYCAL S.L. en Torrent (Valencia).
+          Publicaciones oficiales, hitos técnicos, ampliaciones de planta y novedades operativas de SOLYCAL S.L. en Torrent (Valencia).
         </p>
       </div>
-
-      <!-- BOTÓN DE ACCESO AL PANEL DE ADMINISTRACIÓN -->
-      <div class="flex items-center gap-3">
-        <button
-          id="toggle-admin-btn"
-          onclick="toggleAdminMode()"
-          class="btn-magnetic px-5 py-3 rounded-full border border-white/20 text-neutral-300 hover:text-white hover:border-brand-yellow font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 bg-[#0a0c0e]"
-          title="Activar panel para crear, editar o borrar entradas"
-        >
-          <i data-lucide="sliders-horizontal" class="w-4 h-4 text-brand-yellow"></i>
-          <span id="admin-btn-label">Administrar Noticias</span>
-        </button>
-      </div>
     </div>
 
-    <!-- BARRA DE GESTIÓN Y ADMINISTRACIÓN (MODO ADMINISTRADOR) -->
-    <div id="admin-toolbar" class="hidden my-8 p-5 rounded-2xl bg-[#0a0c0e] border border-brand-yellow/40 shadow-[0_0_30px_rgba(241,181,65,0.08)]">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-xs font-bold text-brand-yellow uppercase tracking-wider">PANEL DE GESTIÓN ACTIVO</span>
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            </div>
-            <p class="font-mono text-[11px] text-neutral-400">Puedes crear, modificar o eliminar noticias en tiempo real con persistencia automática.</p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-3">
-          <button
-            onclick="openCreateModal()"
-            class="px-4 py-2.5 rounded-full bg-brand-yellow text-black font-mono text-xs uppercase font-semibold tracking-wider hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(241,181,65,0.25)]"
-          >
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>+ Nueva Noticia</span>
-          </button>
-
-          <button
-            onclick="resetToOriginals()"
-            class="px-4 py-2.5 rounded-full border border-white/15 text-neutral-300 hover:text-white hover:border-white/30 font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 bg-white/[0.02]"
-            title="Restablece las noticias al volcado original"
-          >
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            <span>Restaurar Volcado</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- FILTROS Y BUSCADOR -->
+    <!-- FILTROS Y BUSCADOR PÚBLICO -->
     <div class="py-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <!-- Pills de categorías -->
       <div class="flex flex-wrap items-center gap-2 font-mono text-xs" id="category-filters">
@@ -944,7 +894,7 @@
   </div>
 </main>
 
-<!-- MODAL: LEER NOTICIA COMPLETA -->
+<!-- MODAL: LEER NOTICIA COMPLETA (PÚBLICO) -->
 <div id="read-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
   <div class="relative w-full max-w-3xl rounded-2xl bg-[#0a0c0e] border border-white/10 p-6 sm:p-10 shadow-2xl my-8">
     <button
@@ -976,7 +926,7 @@
       </div>
 
       <div class="pt-6 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-500">
-        <span>SOLYCAL S.L. &bull; OFICINA TÉCNICA</span>
+        <span>SOLYCAL S.L. &bull; COMUNICADOS OFICIALES</span>
         <button
           onclick="closeReadModal()"
           class="text-brand-yellow hover:underline"
@@ -986,139 +936,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- MODAL: CREAR / EDITAR NOTICIA (CRUD) -->
-<div id="edit-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
-  <div class="relative w-full max-w-2xl rounded-2xl bg-[#0a0c0e] border border-brand-yellow/30 p-6 sm:p-8 shadow-2xl my-8">
-    <button
-      onclick="closeEditModal()"
-      class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 text-neutral-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
-      title="Cancelar"
-    >
-      <i data-lucide="x" class="w-4 h-4"></i>
-    </button>
-
-    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-      <div class="w-9 h-9 rounded-lg bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow">
-        <i data-lucide="edit-3" class="w-4 h-4"></i>
-      </div>
-      <div>
-        <h3 id="edit-modal-title" class="font-display font-bold text-xl text-white">Editar Noticia</h3>
-        <p class="font-mono text-[11px] text-neutral-400">Modifica los campos del artículo para actualizar el catálogo público.</p>
-      </div>
-    </div>
-
-    <form id="news-form" onsubmit="handleSaveNews(event)" class="space-y-4">
-      <input type="hidden" id="form-news-id" value="">
-
-      <div>
-        <label for="form-title" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-          Título de la Noticia *
-        </label>
-        <input
-          type="text"
-          id="form-title"
-          required
-          placeholder="ej. Ampliación de parque de maquinaria con corte plasma HD"
-          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-sm focus:outline-none focus:border-brand-yellow transition-colors"
-        />
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label for="form-category" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-            Categoría *
-          </label>
-          <select
-            id="form-category"
-            required
-            class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
-          >
-            <option value="Trayectoria">Trayectoria</option>
-            <option value="Equipo">Equipo</option>
-            <option value="Procesos Técnicos">Procesos Técnicos</option>
-            <option value="Tecnología">Tecnología</option>
-            <option value="Calidad">Calidad</option>
-            <option value="Actualidad">Actualidad</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="form-date" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-            Fecha *
-          </label>
-          <input
-            type="text"
-            id="form-date"
-            required
-            placeholder="ej. 24 May 2024"
-            class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label for="form-image" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-          Ruta o URL de Imagen
-        </label>
-        <input
-          type="text"
-          id="form-image"
-          placeholder="ej. assets/instalaciones.jpg"
-          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
-        />
-      </div>
-
-      <div>
-        <label for="form-summary" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-          Resumen / Breve descripción (Lead) *
-        </label>
-        <textarea
-          id="form-summary"
-          rows="2"
-          required
-          placeholder="Breve extracto visible en la tarjeta principal..."
-          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-xs focus:outline-none focus:border-brand-yellow transition-colors"
-        ></textarea>
-      </div>
-
-      <div>
-        <label for="form-content" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
-          Contenido Completo del Artículo *
-        </label>
-        <textarea
-          id="form-content"
-          rows="6"
-          required
-          placeholder="Escribe el cuerpo de la noticia. Puedes separar párrafos con saltos de línea..."
-          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-xs leading-relaxed focus:outline-none focus:border-brand-yellow transition-colors"
-        ></textarea>
-      </div>
-
-      <div class="pt-4 border-t border-white/10 flex items-center justify-end gap-3 font-mono text-xs">
-        <button
-          type="button"
-          onclick="closeEditModal()"
-          class="px-5 py-2.5 rounded-full border border-white/15 text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="px-6 py-2.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(241,181,65,0.25)]"
-        >
-          Guardar Noticia
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- TOAST NOTIFICACIÓN -->
-<div id="toast-msg" class="fixed bottom-6 right-6 z-[300] hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-[#111317] border border-brand-yellow/40 text-white font-mono text-xs shadow-2xl transition-all">
-  <i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i>
-  <span id="toast-text">Cambios guardados con éxito.</span>
 </div>
 
 <script>
@@ -1182,11 +999,10 @@
     }
   ];
 
-  // ESTADO GLOBAL REACTIVO
+  // ESTADO PÚBLICO
   let newsList = [];
   let currentCategory = 'Todas';
   let searchTerm = '';
-  let isAdminMode = false;
 
   // INICIALIZACIÓN
   function loadNews() {
@@ -1196,27 +1012,13 @@
         newsList = JSON.parse(stored);
       } else {
         newsList = [...DEFAULT_NEWS];
-        saveToStorage();
+        localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
       }
     } catch (e) {
       newsList = [...DEFAULT_NEWS];
     }
     renderCategories();
     renderNews();
-  }
-
-  function saveToStorage() {
-    localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
-  }
-
-  function resetToOriginals() {
-    if (confirm('¿Restablecer todas las noticias al volcado original de Solycal? Se conservarán los artículos base.')) {
-      newsList = [...DEFAULT_NEWS];
-      saveToStorage();
-      renderCategories();
-      renderNews();
-      showToast('Volcado original restaurado correctamente.');
-    }
   }
 
   // GESTIÓN DE CATEGORÍAS
@@ -1258,26 +1060,7 @@
     renderNews();
   }
 
-  // MODO ADMINISTRACIÓN
-  function toggleAdminMode() {
-    isAdminMode = !isAdminMode;
-    const toolbar = document.getElementById('admin-toolbar');
-    const label = document.getElementById('admin-btn-label');
-    const btn = document.getElementById('toggle-admin-btn');
-
-    if (toolbar) toolbar.classList.toggle('hidden', !isAdminMode);
-    if (label) label.textContent = isAdminMode ? 'Cerrar Gestor' : 'Administrar Noticias';
-    if (btn) {
-      if (isAdminMode) {
-        btn.classList.add('border-brand-yellow', 'text-brand-yellow');
-      } else {
-        btn.classList.remove('border-brand-yellow', 'text-brand-yellow');
-      }
-    }
-    renderNews();
-  }
-
-  // RENDERIZADO DEL GRID
+  // RENDERIZADO DEL GRID PÚBLICO (SOLO LECTURA)
   function renderNews() {
     const grid = document.getElementById('news-grid');
     const emptyState = document.getElementById('news-empty-state');
@@ -1322,26 +1105,6 @@
             <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded bg-[#0a0c0e]/90 backdrop-blur-md border border-white/15 text-brand-yellow font-mono text-[10px] uppercase tracking-wider font-semibold">
               ${item.category}
             </span>
-
-            ${isAdminMode ? `
-              <!-- BADGE DE GESTIÓN RÁPIDA -->
-              <div class="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-20">
-                <button
-                  onclick="openEditModal('${item.id}')"
-                  class="p-2 rounded-lg bg-black/80 hover:bg-brand-yellow hover:text-black text-white border border-white/20 transition-colors"
-                  title="Editar Noticia"
-                >
-                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                </button>
-                <button
-                  onclick="deleteNews('${item.id}')"
-                  class="p-2 rounded-lg bg-black/80 hover:bg-red-500 text-white border border-white/20 transition-colors"
-                  title="Eliminar Noticia"
-                >
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-            ` : ''}
           </div>
 
           <!-- CONTENIDO DE LA TARJETA -->
@@ -1364,14 +1127,6 @@
                 <span>Leer Noticia</span>
                 <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"></i>
               </button>
-
-              ${isAdminMode ? `
-                <div class="flex items-center gap-2">
-                  <button onclick="openEditModal('${item.id}')" class="text-xs font-mono text-neutral-400 hover:text-brand-yellow underline">Editar</button>
-                  <span class="text-neutral-700">&bull;</span>
-                  <button onclick="deleteNews('${item.id}')" class="text-xs font-mono text-red-400 hover:text-red-300 underline">Borrar</button>
-                </div>
-              ` : ''}
             </div>
           </div>
 
@@ -1384,7 +1139,7 @@
     }
   }
 
-  // MODAL DE LECTURA
+  // MODAL DE LECTURA PÚBLICO
   function openReadModal(id) {
     const item = newsList.find(n => n.id === id);
     if (!item) return;
@@ -1400,7 +1155,6 @@
 
     const contentBox = document.getElementById('read-content');
     if (contentBox) {
-      // Formatear saltos de línea en párrafos
       const paragraphs = (item.content || item.summary).split('\n\n');
       contentBox.innerHTML = paragraphs.map(p => `<p class="mb-3">${p.replace(/\n/g, '<br>')}</p>`).join('');
     }
@@ -1423,147 +1177,15 @@
     document.body.style.overflow = '';
   }
 
-  // MODAL DE EDICIÓN / CREACIÓN
-  function openCreateModal() {
-    document.getElementById('edit-modal-title').textContent = '+ Nueva Entrada de Noticia';
-    document.getElementById('form-news-id').value = '';
-    document.getElementById('form-title').value = '';
-    document.getElementById('form-category').value = 'Actualidad';
-    
-    const today = new Date();
-    const options = { day: '2-digit', month: 'short', year: 'numeric' };
-    document.getElementById('form-date').value = today.toLocaleDateString('es-ES', options);
-    
-    document.getElementById('form-image').value = 'assets/instalaciones.jpg';
-    document.getElementById('form-summary').value = '';
-    document.getElementById('form-content').value = '';
-
-    const modal = document.getElementById('edit-modal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-    document.body.style.overflow = 'hidden';
-    if (window.lucide && lucide.createIcons) lucide.createIcons();
-  }
-
-  function openEditModal(id) {
-    const item = newsList.find(n => n.id === id);
-    if (!item) return;
-
-    document.getElementById('edit-modal-title').textContent = 'Editar Noticia';
-    document.getElementById('form-news-id').value = item.id;
-    document.getElementById('form-title').value = item.title;
-    document.getElementById('form-category').value = item.category;
-    document.getElementById('form-date').value = item.date;
-    document.getElementById('form-image').value = item.image || '';
-    document.getElementById('form-summary').value = item.summary;
-    document.getElementById('form-content').value = item.content || item.summary;
-
-    const modal = document.getElementById('edit-modal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
-    document.body.style.overflow = 'hidden';
-    if (window.lucide && lucide.createIcons) lucide.createIcons();
-  }
-
-  function closeEditModal() {
-    const modal = document.getElementById('edit-modal');
-    if (modal) {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-    document.body.style.overflow = '';
-  }
-
-  function handleSaveNews(e) {
-    e.preventDefault();
-    const id = document.getElementById('form-news-id').value;
-    const title = document.getElementById('form-title').value.trim();
-    const category = document.getElementById('form-category').value.trim();
-    const date = document.getElementById('form-date').value.trim();
-    const image = document.getElementById('form-image').value.trim() || 'assets/instalaciones.jpg';
-    const summary = document.getElementById('form-summary').value.trim();
-    const content = document.getElementById('form-content').value.trim();
-
-    if (!title || !summary || !content) {
-      alert('Por favor, rellene todos los campos obligatorios.');
-      return;
-    }
-
-    if (id) {
-      // Editar existente
-      const index = newsList.findIndex(n => n.id === id);
-      if (index !== -1) {
-        newsList[index] = { ...newsList[index], title, category, date, image, summary, content };
-        showToast('Noticia actualizada con éxito.');
-      }
-    } else {
-      // Crear nueva entrada
-      const newEntry = {
-        id: 'news-' + Date.now(),
-        title,
-        category,
-        date,
-        image,
-        summary,
-        content
-      };
-      newsList.unshift(newEntry);
-      showToast('Nueva noticia añadida al catálogo.');
-    }
-
-    saveToStorage();
-    closeEditModal();
-    renderCategories();
-    renderNews();
-  }
-
-  function deleteNews(id) {
-    const item = newsList.find(n => n.id === id);
-    if (!item) return;
-
-    if (confirm(`¿Eliminar definitivamente la noticia "${item.title}"?`)) {
-      newsList = newsList.filter(n => n.id !== id);
-      saveToStorage();
-      renderCategories();
-      renderNews();
-      showToast('Noticia eliminada del portal.');
-    }
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById('toast-msg');
-    const toastText = document.getElementById('toast-text');
-    if (!toast || !toastText) return;
-
-    toastText.textContent = msg;
-    toast.classList.remove('hidden');
-    toast.classList.add('flex');
-
-    setTimeout(() => {
-      toast.classList.add('hidden');
-      toast.classList.remove('flex');
-    }, 3500);
-  }
-
-  // Teclado Esc para cerrar modales
+  // Teclado Esc para cerrar modal de lectura
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeReadModal();
-      closeEditModal();
     }
   });
 
-  // Activar modo admin automáticamente si la URL contiene ?admin=true
   window.addEventListener('DOMContentLoaded', () => {
     loadNews();
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === 'true') {
-      toggleAdminMode();
-    }
   });
 </script>
 

@@ -10,6 +10,7 @@ import {
   Calculator,
   ArrowUpRight,
   Scale,
+  Newspaper,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -158,6 +159,19 @@ export default function Sidebar({
             <span>Escandallos (Server Action)</span>
             <Calculator className="w-3.5 h-3.5 text-brand-yellow" />
           </Link>
+
+          <a
+            href="/admin-noticias.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-brand-textMuted hover:text-white hover:bg-brand-surface/50 transition-all"
+          >
+            <div className="flex items-center gap-2">
+              <Newspaper className="w-3.5 h-3.5 text-brand-yellow" />
+              <span>Gestor de Noticias</span>
+            </div>
+            <ArrowUpRight className="w-3.5 h-3.5 text-brand-yellow" />
+          </a>
         </nav>
       </div>
 

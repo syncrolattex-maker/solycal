@@ -686,7 +686,7 @@ function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-cente
 }
 
 function getHeader(activeSlug, isTransparent = false, options = {}) {
-  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto' || activeSlug === 'media' || activeSlug === 'instalaciones';
+  const isHeaderTransparent = isTransparent || activeSlug === 'calidad' || activeSlug === 'contacto' || activeSlug === 'media' || activeSlug === 'instalaciones' || activeSlug === 'noticias';
   const isDarkText = !!(options && options.darkText) || activeSlug === 'instalaciones';
   const links = [
     { num: '01', title: 'Inicio', href: 'index.html', slug: 'inicio' },
@@ -694,8 +694,9 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     { num: '03', title: 'Instalaciones', href: 'instalaciones.html', slug: 'instalaciones' },
     { num: '04', title: 'Calidad & Normas', href: 'calidad.html', slug: 'calidad' },
     { num: '05', title: 'Equipo', href: 'equipo.html', slug: 'equipo' },
-    { num: '06', title: 'Contacto', href: 'contacto.html', slug: 'contacto' },
-    { num: '07', title: 'Media', href: 'media.html', slug: 'media' }
+    { num: '06', title: 'Noticias', href: 'noticias.html', slug: 'noticias' },
+    { num: '07', title: 'Contacto', href: 'contacto.html', slug: 'contacto' },
+    { num: '08', title: 'Media', href: 'media.html', slug: 'media' }
   ];
 
   const menuItems = links.map(l => {
@@ -979,9 +980,10 @@ function getFooter(options = {}) {
             <li><a href="instalaciones.html" class="hover:text-brand-yellow transition-colors">03. Planta e Instalaciones</a></li>
             <li><a href="calidad.html" class="hover:text-brand-yellow transition-colors">04. Calidad y Certificaciones</a></li>
             <li><a href="equipo.html" class="hover:text-brand-yellow transition-colors">05. Equipo Técnico</a></li>
-            <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">06. Contacto Directo</a></li>
-            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">07. Galería Técnica / Media</a></li>
-            <li><a href="acceso.html" class="hover:text-brand-yellow transition-colors text-neutral-400 flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3 text-brand-yellow"></i> 08. Acceso Restringido</a></li>
+            <li><a href="noticias.html" class="hover:text-brand-yellow transition-colors">06. Noticias y Actualidad</a></li>
+            <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">07. Contacto Directo</a></li>
+            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">08. Galería Técnica / Media</a></li>
+            <li><a href="acceso.html" class="hover:text-brand-yellow transition-colors text-neutral-400 flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3 text-brand-yellow"></i> 09. Acceso Restringido</a></li>
           </ul>
         </div>
 
@@ -6776,7 +6778,758 @@ ${getFooter()}
 `;
 
 // ==========================================
-// PÁGINA 11: ACCESO RESTRINGIDO (UNDER CONSTRUCTION // SOLO USER Y PASS // FONDO NEGRO)
+// PÁGINA 11: NOTICIAS (VOLCADO DE LA WEB ORIGINAL + GESTOR CRUD COMPLETO)
+// ==========================================
+const noticiasHtml = `${getHead(
+  'Noticias y Actualidad // Calderería Industrial &middot; SOLYCAL',
+  'Noticias, hitos técnicos, evolución de planta y actualidad metalúrgica de SOLYCAL S.L. en Torrent, Valencia.',
+  'noticias.html'
+)}
+${getHeader('noticias')}
+
+<main class="min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-12 bg-[#07080a] relative overflow-hidden">
+  <!-- Grid sutil de fondo -->
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(241,181,65,0.05)_0%,transparent_60%)] pointer-events-none"></div>
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_30%,#000_70%,transparent_100%)] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+
+    <!-- HERO HEADER -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-white/10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-mono text-[11px] uppercase tracking-widest mb-4">
+          <i data-lucide="newspaper" class="w-3.5 h-3.5"></i>
+          <span>// COMUNICADOS & ACTUALIDAD TÉCNICA</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight leading-tight">
+          Noticias e Innovación en <br class="hidden sm:inline">
+          <span class="text-brand-yellow">Calderería Industrial</span>
+        </h1>
+        <p class="mt-4 text-sm sm:text-base text-neutral-400 font-sans leading-relaxed max-w-2xl">
+          Volcado oficial de publicaciones, hitos técnicos, ampliaciones de planta y novedades operativas de SOLYCAL S.L. en Torrent (Valencia).
+        </p>
+      </div>
+
+      <!-- BOTÓN DE ACCESO AL PANEL DE ADMINISTRACIÓN -->
+      <div class="flex items-center gap-3">
+        <button
+          id="toggle-admin-btn"
+          onclick="toggleAdminMode()"
+          class="btn-magnetic px-5 py-3 rounded-full border border-white/20 text-neutral-300 hover:text-white hover:border-brand-yellow font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 bg-[#0a0c0e]"
+          title="Activar panel para crear, editar o borrar entradas"
+        >
+          <i data-lucide="sliders-horizontal" class="w-4 h-4 text-brand-yellow"></i>
+          <span id="admin-btn-label">Administrar Noticias</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- BARRA DE GESTIÓN Y ADMINISTRACIÓN (MODO ADMINISTRADOR) -->
+    <div id="admin-toolbar" class="hidden my-8 p-5 rounded-2xl bg-[#0a0c0e] border border-brand-yellow/40 shadow-[0_0_30px_rgba(241,181,65,0.08)]">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-bold text-brand-yellow uppercase tracking-wider">PANEL DE GESTIÓN ACTIVO</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+            <p class="font-mono text-[11px] text-neutral-400">Puedes crear, modificar o eliminar noticias en tiempo real con persistencia automática.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            onclick="openCreateModal()"
+            class="px-4 py-2.5 rounded-full bg-brand-yellow text-black font-mono text-xs uppercase font-semibold tracking-wider hover:bg-yellow-400 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(241,181,65,0.25)]"
+          >
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Nueva Noticia</span>
+          </button>
+
+          <button
+            onclick="resetToOriginals()"
+            class="px-4 py-2.5 rounded-full border border-white/15 text-neutral-300 hover:text-white hover:border-white/30 font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 bg-white/[0.02]"
+            title="Restablece las noticias al volcado original"
+          >
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Restaurar Volcado</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTROS Y BUSCADOR -->
+    <div class="py-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Pills de categorías -->
+      <div class="flex flex-wrap items-center gap-2 font-mono text-xs" id="category-filters">
+        <!-- Renderizado dinámico -->
+      </div>
+
+      <!-- Input de búsqueda -->
+      <div class="relative w-full md:w-72">
+        <i data-lucide="search" class="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        <input
+          type="text"
+          id="news-search-input"
+          oninput="handleSearch(this.value)"
+          placeholder="Buscar noticias..."
+          class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-500 font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
+        />
+      </div>
+    </div>
+
+    <!-- CONTADOR DE NOTICIAS -->
+    <div class="pb-6 flex items-center justify-between text-xs font-mono text-neutral-500">
+      <span id="news-count">// MOSTRANDO 0 ENTRADAS</span>
+      <span class="text-neutral-600">HISTORIAL Y TALLER &bull; SOLYCAL S.L.</span>
+    </div>
+
+    <!-- GRID DINÁMICO DE NOTICIAS -->
+    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Se inyectan las tarjetas con JavaScript -->
+    </div>
+
+    <!-- ESTADO VACÍO (NO RESULTS) -->
+    <div id="news-empty-state" class="hidden text-center py-24 rounded-2xl bg-[#0a0c0e] border border-white/10 mt-4">
+      <i data-lucide="file-question" class="w-10 h-10 text-neutral-600 mx-auto mb-3"></i>
+      <h3 class="text-lg font-bold text-white font-display">No se encontraron noticias</h3>
+      <p class="text-xs text-neutral-400 font-mono mt-1">Pruebe a cambiar el término de búsqueda o seleccione otra categoría.</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL: LEER NOTICIA COMPLETA -->
+<div id="read-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+  <div class="relative w-full max-w-3xl rounded-2xl bg-[#0a0c0e] border border-white/10 p-6 sm:p-10 shadow-2xl my-8">
+    <button
+      onclick="closeReadModal()"
+      class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 text-neutral-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+      title="Cerrar (Esc)"
+    >
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+
+    <div class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span id="read-category" class="px-2.5 py-1 rounded bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-mono text-xs uppercase tracking-wider font-semibold">
+          CATEGORÍA
+        </span>
+        <span id="read-date" class="font-mono text-xs text-neutral-500">FECHA</span>
+      </div>
+
+      <h2 id="read-title" class="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight leading-snug">
+        Título de la Noticia
+      </h2>
+
+      <div id="read-image-container" class="rounded-xl overflow-hidden border border-white/10 max-h-80 w-full bg-[#111317]">
+        <img id="read-image" src="" alt="Noticia" class="w-full h-full object-cover">
+      </div>
+
+      <div class="prose prose-invert max-w-none font-sans text-sm sm:text-base text-neutral-300 leading-relaxed space-y-4" id="read-content">
+        <!-- Párrafos inyectados -->
+      </div>
+
+      <div class="pt-6 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-500">
+        <span>SOLYCAL S.L. &bull; OFICINA TÉCNICA</span>
+        <button
+          onclick="closeReadModal()"
+          class="text-brand-yellow hover:underline"
+        >
+          &larr; Volver al listado
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CREAR / EDITAR NOTICIA (CRUD) -->
+<div id="edit-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+  <div class="relative w-full max-w-2xl rounded-2xl bg-[#0a0c0e] border border-brand-yellow/30 p-6 sm:p-8 shadow-2xl my-8">
+    <button
+      onclick="closeEditModal()"
+      class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 text-neutral-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+      title="Cancelar"
+    >
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+
+    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+      <div class="w-9 h-9 rounded-lg bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow">
+        <i data-lucide="edit-3" class="w-4 h-4"></i>
+      </div>
+      <div>
+        <h3 id="edit-modal-title" class="font-display font-bold text-xl text-white">Editar Noticia</h3>
+        <p class="font-mono text-[11px] text-neutral-400">Modifica los campos del artículo para actualizar el catálogo público.</p>
+      </div>
+    </div>
+
+    <form id="news-form" onsubmit="handleSaveNews(event)" class="space-y-4">
+      <input type="hidden" id="form-news-id" value="">
+
+      <div>
+        <label for="form-title" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+          Título de la Noticia *
+        </label>
+        <input
+          type="text"
+          id="form-title"
+          required
+          placeholder="ej. Ampliación de parque de maquinaria con corte plasma HD"
+          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-sm focus:outline-none focus:border-brand-yellow transition-colors"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="form-category" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+            Categoría *
+          </label>
+          <select
+            id="form-category"
+            required
+            class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
+          >
+            <option value="Trayectoria">Trayectoria</option>
+            <option value="Equipo">Equipo</option>
+            <option value="Procesos Técnicos">Procesos Técnicos</option>
+            <option value="Tecnología">Tecnología</option>
+            <option value="Calidad">Calidad</option>
+            <option value="Actualidad">Actualidad</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="form-date" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+            Fecha *
+          </label>
+          <input
+            type="text"
+            id="form-date"
+            required
+            placeholder="ej. 24 May 2024"
+            class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="form-image" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+          Ruta o URL de Imagen
+        </label>
+        <input
+          type="text"
+          id="form-image"
+          placeholder="ej. assets/instalaciones.jpg"
+          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-mono text-xs focus:outline-none focus:border-brand-yellow transition-colors"
+        />
+      </div>
+
+      <div>
+        <label for="form-summary" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+          Resumen / Breve descripción (Lead) *
+        </label>
+        <textarea
+          id="form-summary"
+          rows="2"
+          required
+          placeholder="Breve extracto visible en la tarjeta principal..."
+          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-xs focus:outline-none focus:border-brand-yellow transition-colors"
+        ></textarea>
+      </div>
+
+      <div>
+        <label for="form-content" class="block font-mono text-xs uppercase tracking-wider text-neutral-300 mb-1.5">
+          Contenido Completo del Artículo *
+        </label>
+        <textarea
+          id="form-content"
+          rows="6"
+          required
+          placeholder="Escribe el cuerpo de la noticia. Puedes separar párrafos con saltos de línea..."
+          class="w-full px-4 py-2.5 rounded-xl bg-[#111317] border border-white/10 text-white placeholder-neutral-600 font-sans text-xs leading-relaxed focus:outline-none focus:border-brand-yellow transition-colors"
+        ></textarea>
+      </div>
+
+      <div class="pt-4 border-t border-white/10 flex items-center justify-end gap-3 font-mono text-xs">
+        <button
+          type="button"
+          onclick="closeEditModal()"
+          class="px-5 py-2.5 rounded-full border border-white/15 text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-6 py-2.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(241,181,65,0.25)]"
+        >
+          Guardar Noticia
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICACIÓN -->
+<div id="toast-msg" class="fixed bottom-6 right-6 z-[300] hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-[#111317] border border-brand-yellow/40 text-white font-mono text-xs shadow-2xl transition-all">
+  <i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i>
+  <span id="toast-text">Cambios guardados con éxito.</span>
+</div>
+
+<script>
+  // =========================================================================
+  // VOLCADO INICIAL DE NOTICIAS DE LA WEB ORIGINAL DE SOLYCAL
+  // =========================================================================
+  const DEFAULT_NEWS = [
+    {
+      id: 'news-1',
+      title: 'Los orígenes de Solycal: Crecimiento continuo desde 2013 en el Polígono Masía del Juez',
+      category: 'Trayectoria',
+      date: '15 Mar 2023',
+      image: 'assets/instalaciones.jpg',
+      summary: 'Solycal inició su actividad metalúrgica en 2013 con una nave de 1.500 m² y 5 profesionales. Hoy consolidamos una infraestructura de 5.000 m² con 7 puentes grúa de hasta 16 Tn.',
+      content: 'En el año 2013, Soldadura y Calderería Valenciana S.L. (Solycal) dio sus primeros pasos en el Polígono Industrial Masía del Juez de Torrent (Valencia). El objetivo inicial fue responder a la creciente demanda de calderería de alta precisión y estructuras metálicas con un equipo nuclear de cinco especialistas en calderería y soldadura.\\n\\nCon el transcurso de los años y la confianza de clientes de sectores como el químico, ferroviario, cementero y energético, las instalaciones han evolucionado hasta abarcar 5.000 m² distribuidos en áreas especializadas: corte térmico de chapa, conformado y plegado, calderería pesada, soldadura TIG/MIG homologada y montaje final.\\n\\nEsta evolución técnica nos permite asumir proyectos de alta envergadura con total solvencia, control dimensional milimétrico y marcado CE EN 1090-1.'
+    },
+    {
+      id: 'news-2',
+      title: 'Coordinación entre Oficina Técnica y Taller: Entrevista a Enrique Avia, Jefe de Producción',
+      category: 'Equipo',
+      date: '20 Jun 2023',
+      image: 'assets/mecanizado.jpg',
+      summary: 'Enrique Avia, jefe de producción de Solycal, analiza la importancia crítica de la sincronización entre planos CAD/3D y operarios de taller para garantizar tolerancias mínimas.',
+      content: 'Para Enrique Avia, jefe de producción en Solycal, la clave de la precisión industrial reside en la comunicación bidireccional entre la oficina técnica y las bancadas de montaje.\\n\\n"Cada pieza o estructura que entra a producción pasa por una revisión minuciosa de despiece y tolerancias. Nuestra oficina técnica modela en 3D y genera desarrollos exactos para plegado y corte plasma. Sin embargo, es la destreza del calderero y del soldador homologado lo que garantiza que los cordones de penetración completa y los ajustes dimensionales cumplan al milímetro las especificaciones de proyecto", explica Avia.\\n\\nLa optimización constante de tiempos y recursos permite a Solycal abordar tanto piezas unitarias bajo plano como series medias con tiempos de entrega reducidos.'
+    },
+    {
+      id: 'news-3',
+      title: 'Calderería Técnica en Acero Inoxidable para la Industria Química y Alimentaria',
+      category: 'Procesos Técnicos',
+      date: '12 Sep 2023',
+      image: 'assets/weld.jpg',
+      summary: 'Desarrollo de tolvas, conductos de aspiración y depósitos presurizados en AISI 304L y AISI 316L con soldadura TIG de purga y acabados pasivados.',
+      content: 'El mecanizado y conformado de aceros inoxidables austeníticos requiere protocolos de fabricación diferenciados para evitar la contaminación cruzada con aceros al carbono. En Solycal disponemos de zonas de trabajo y utillajes específicos para el procesado de inoxidables.\\n\\nNuestras homologaciones de soldadura TIG (GTAW) bajo norma EN ISO 15614-1 garantizan cordones limpios, con gas de respaldo y purga interior para evitar oxidaciones en la raíz.\\n\\nCada depósito o elemento para fluidos corrosivos se entrega con certificado de colada 3.1 y ensayos no destructivos (líquidos penetrantes y control visual VT) conforme a la directiva de equipos a presión.'
+    },
+    {
+      id: 'news-4',
+      title: 'Corte Plasma HD Hypertherm TrueHole y Conformado CNC: Máxima Eficiencia en Chapa Gruesa',
+      category: 'Tecnología',
+      date: '28 Nov 2023',
+      image: 'assets/plasma-machine.png',
+      summary: 'Incorporación de corte por plasma Hypertherm de alta definición con biselado automático y capacidad de corte en espesores de hasta 50 mm.',
+      content: 'La tecnología TrueHole integrada en nuestra mesa de corte plasma HD permite obtener orificios cilíndricos con conicidad prácticamente nula, ideales para atornillado directo sin necesidad de taladrado posterior en taller.\\n\\nCombinada con nuestra prensa plegadora CNC de 4 metros y hasta 320 toneladas, logramos desarrollar desarrollos de calderería de gran envergadura: conos concéntricos y excéntricos, tolvas de descarga, virolas y perfiles estructurales conformados.\\n\\nLa reducción de empalmes soldados se traduce en mayor resistencia mecánica y reducción de costes para el cliente.'
+    },
+    {
+      id: 'news-5',
+      title: 'Superación de Auditorías LRQA: Certificación Marcado CE EN 1090-1 y Soldadura EN 15085-2',
+      category: 'Calidad',
+      date: '18 Feb 2024',
+      image: 'assets/cert-lrqa.png',
+      summary: 'Solycal renueva satisfactoriamente sus auditorías externas de Control de Producción en Fábrica (CPF) bajo el organismo notificado LRQA.',
+      content: 'La calidad no es un reclamo, sino un requisito técnico indispensable. Solycal renueva sus certificaciones según las normativas europeas más exigentes: Marcado CE para estructuras metálicas de acero bajo norma EN 1090-1 (Clase de Ejecución EXC3) y homologación para soldadura de vehículos y componentes ferroviarios según EN 15085-2.\\n\\nTodo el acero procesado cuenta con trazabilidad total desde la recepción de la bobina o chapa hasta el montaje final en obra, respaldado por nuestro sistema de gestión ISO 9001:2015 auditado por LRQA.'
+    },
+    {
+      id: 'news-6',
+      title: 'Planificación Operativa y Respuesta a Proyectos Industriales Urgentes',
+      category: 'Actualidad',
+      date: '24 May 2024',
+      image: 'assets/instalaciones.jpg',
+      summary: 'Protocolos de trabajo continuo en paradas técnicas de planta y capacidad de premontaje en nuestras naves de 5.000 m².',
+      content: 'En la industria pesada, cada hora de parada técnica no programada representa un coste crítico. En Solycal contamos con la flexibilidad operativa y los medios mecánicos (7 puentes grúa de hasta 16 toneladas) para ejecutar premontajes completos en nuestras instalaciones.\\n\\nEste ensayo previo en taller garantiza que, una vez trasladadas las estructuras o conducciones a las instalaciones del cliente, el montaje y acople final se realice en tiempos récord sin imprevistos de alineación o soldadura en campo.'
+    }
+  ];
+
+  // ESTADO GLOBAL REACTIVO
+  let newsList = [];
+  let currentCategory = 'Todas';
+  let searchTerm = '';
+  let isAdminMode = false;
+
+  // INICIALIZACIÓN
+  function loadNews() {
+    try {
+      const stored = localStorage.getItem('solycal_news_data');
+      if (stored) {
+        newsList = JSON.parse(stored);
+      } else {
+        newsList = [...DEFAULT_NEWS];
+        saveToStorage();
+      }
+    } catch (e) {
+      newsList = [...DEFAULT_NEWS];
+    }
+    renderCategories();
+    renderNews();
+  }
+
+  function saveToStorage() {
+    localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
+  }
+
+  function resetToOriginals() {
+    if (confirm('¿Restablecer todas las noticias al volcado original de Solycal? Se conservarán los artículos base.')) {
+      newsList = [...DEFAULT_NEWS];
+      saveToStorage();
+      renderCategories();
+      renderNews();
+      showToast('Volcado original restaurado correctamente.');
+    }
+  }
+
+  // GESTIÓN DE CATEGORÍAS
+  function renderCategories() {
+    const categoriesSet = new Set(['Todas']);
+    newsList.forEach(n => categoriesSet.add(n.category));
+    const categories = Array.from(categoriesSet);
+
+    const container = document.getElementById('category-filters');
+    if (!container) return;
+
+    container.innerHTML = categories.map(cat => {
+      const isActive = cat === currentCategory;
+      const count = cat === 'Todas' ? newsList.length : newsList.filter(n => n.category === cat).length;
+      return \`
+        <button
+          onclick="filterCategory('\${cat}')"
+          class="px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 \${
+            isActive
+              ? 'bg-brand-yellow text-black font-semibold shadow-[0_0_12px_rgba(241,181,65,0.25)]'
+              : 'bg-white/5 border border-white/10 text-neutral-400 hover:text-white hover:border-white/25'
+          }"
+        >
+          <span>\${cat}</span>
+          <span class="opacity-60 text-[10px]">(\${count})</span>
+        </button>
+      \`;
+    }).join('');
+  }
+
+  function filterCategory(cat) {
+    currentCategory = cat;
+    renderCategories();
+    renderNews();
+  }
+
+  function handleSearch(term) {
+    searchTerm = term.toLowerCase().trim();
+    renderNews();
+  }
+
+  // MODO ADMINISTRACIÓN
+  function toggleAdminMode() {
+    isAdminMode = !isAdminMode;
+    const toolbar = document.getElementById('admin-toolbar');
+    const label = document.getElementById('admin-btn-label');
+    const btn = document.getElementById('toggle-admin-btn');
+
+    if (toolbar) toolbar.classList.toggle('hidden', !isAdminMode);
+    if (label) label.textContent = isAdminMode ? 'Cerrar Gestor' : 'Administrar Noticias';
+    if (btn) {
+      if (isAdminMode) {
+        btn.classList.add('border-brand-yellow', 'text-brand-yellow');
+      } else {
+        btn.classList.remove('border-brand-yellow', 'text-brand-yellow');
+      }
+    }
+    renderNews();
+  }
+
+  // RENDERIZADO DEL GRID
+  function renderNews() {
+    const grid = document.getElementById('news-grid');
+    const emptyState = document.getElementById('news-empty-state');
+    const countLabel = document.getElementById('news-count');
+    if (!grid) return;
+
+    let filtered = newsList.filter(n => {
+      const matchCat = currentCategory === 'Todas' || n.category === currentCategory;
+      const matchSearch = !searchTerm || 
+        n.title.toLowerCase().includes(searchTerm) || 
+        n.summary.toLowerCase().includes(searchTerm) ||
+        n.content.toLowerCase().includes(searchTerm);
+      return matchCat && matchSearch;
+    });
+
+    if (countLabel) {
+      countLabel.textContent = \`// MOSTRANDO \${filtered.length} DE \${newsList.length} ENTRADAS\`;
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+
+    grid.innerHTML = filtered.map(item => {
+      return \`
+        <article class="group rounded-2xl bg-[#0a0c0e] border border-white/10 hover:border-brand-yellow/40 transition-all duration-300 flex flex-col justify-between overflow-hidden relative shadow-lg">
+          
+          <!-- IMAGEN DE LA NOTICIA -->
+          <div class="relative h-48 sm:h-52 overflow-hidden bg-[#111317]">
+            <img
+              src="\${item.image || 'assets/instalaciones.jpg'}"
+              alt="\${item.title}"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
+              onerror="this.src='assets/instalaciones.jpg'"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0c0e] via-transparent to-transparent"></div>
+
+            <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded bg-[#0a0c0e]/90 backdrop-blur-md border border-white/15 text-brand-yellow font-mono text-[10px] uppercase tracking-wider font-semibold">
+              \${item.category}
+            </span>
+
+            \${isAdminMode ? \`
+              <!-- BADGE DE GESTIÓN RÁPIDA -->
+              <div class="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-20">
+                <button
+                  onclick="openEditModal('\${item.id}')"
+                  class="p-2 rounded-lg bg-black/80 hover:bg-brand-yellow hover:text-black text-white border border-white/20 transition-colors"
+                  title="Editar Noticia"
+                >
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+                <button
+                  onclick="deleteNews('\${item.id}')"
+                  class="p-2 rounded-lg bg-black/80 hover:bg-red-500 text-white border border-white/20 transition-colors"
+                  title="Eliminar Noticia"
+                >
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            \` : ''}
+          </div>
+
+          <!-- CONTENIDO DE LA TARJETA -->
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <span class="font-mono text-xs text-neutral-400 block">// \${item.date}</span>
+              <h2 class="font-display font-bold text-lg sm:text-xl text-white tracking-tight leading-snug group-hover:text-brand-yellow transition-colors line-clamp-2">
+                \${item.title}
+              </h2>
+              <p class="font-sans text-xs text-neutral-400 leading-relaxed line-clamp-3">
+                \${item.summary}
+              </p>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 flex items-center justify-between">
+              <button
+                onclick="openReadModal('\${item.id}')"
+                class="font-mono text-xs text-brand-yellow hover:text-yellow-300 font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors group/link"
+              >
+                <span>Leer Noticia</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"></i>
+              </button>
+
+              \${isAdminMode ? \`
+                <div class="flex items-center gap-2">
+                  <button onclick="openEditModal('\${item.id}')" class="text-xs font-mono text-neutral-400 hover:text-brand-yellow underline">Editar</button>
+                  <span class="text-neutral-700">&bull;</span>
+                  <button onclick="deleteNews('\${item.id}')" class="text-xs font-mono text-red-400 hover:text-red-300 underline">Borrar</button>
+                </div>
+              \` : ''}
+            </div>
+          </div>
+
+        </article>
+      \`;
+    }).join('');
+
+    if (window.lucide && lucide.createIcons) {
+      lucide.createIcons();
+    }
+  }
+
+  // MODAL DE LECTURA
+  function openReadModal(id) {
+    const item = newsList.find(n => n.id === id);
+    if (!item) return;
+
+    document.getElementById('read-category').textContent = item.category;
+    document.getElementById('read-date').textContent = '// ' + item.date;
+    document.getElementById('read-title').textContent = item.title;
+    
+    const imgEl = document.getElementById('read-image');
+    if (imgEl) {
+      imgEl.src = item.image || 'assets/instalaciones.jpg';
+    }
+
+    const contentBox = document.getElementById('read-content');
+    if (contentBox) {
+      // Formatear saltos de línea en párrafos
+      const paragraphs = (item.content || item.summary).split('\\n\\n');
+      contentBox.innerHTML = paragraphs.map(p => \`<p class="mb-3">\${p.replace(/\\n/g, '<br>')}</p>\`).join('');
+    }
+
+    const modal = document.getElementById('read-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    document.body.style.overflow = 'hidden';
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+  }
+
+  function closeReadModal() {
+    const modal = document.getElementById('read-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    document.body.style.overflow = '';
+  }
+
+  // MODAL DE EDICIÓN / CREACIÓN
+  function openCreateModal() {
+    document.getElementById('edit-modal-title').textContent = '+ Nueva Entrada de Noticia';
+    document.getElementById('form-news-id').value = '';
+    document.getElementById('form-title').value = '';
+    document.getElementById('form-category').value = 'Actualidad';
+    
+    const today = new Date();
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    document.getElementById('form-date').value = today.toLocaleDateString('es-ES', options);
+    
+    document.getElementById('form-image').value = 'assets/instalaciones.jpg';
+    document.getElementById('form-summary').value = '';
+    document.getElementById('form-content').value = '';
+
+    const modal = document.getElementById('edit-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    document.body.style.overflow = 'hidden';
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+  }
+
+  function openEditModal(id) {
+    const item = newsList.find(n => n.id === id);
+    if (!item) return;
+
+    document.getElementById('edit-modal-title').textContent = 'Editar Noticia';
+    document.getElementById('form-news-id').value = item.id;
+    document.getElementById('form-title').value = item.title;
+    document.getElementById('form-category').value = item.category;
+    document.getElementById('form-date').value = item.date;
+    document.getElementById('form-image').value = item.image || '';
+    document.getElementById('form-summary').value = item.summary;
+    document.getElementById('form-content').value = item.content || item.summary;
+
+    const modal = document.getElementById('edit-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    document.body.style.overflow = 'hidden';
+    if (window.lucide && lucide.createIcons) lucide.createIcons();
+  }
+
+  function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    document.body.style.overflow = '';
+  }
+
+  function handleSaveNews(e) {
+    e.preventDefault();
+    const id = document.getElementById('form-news-id').value;
+    const title = document.getElementById('form-title').value.trim();
+    const category = document.getElementById('form-category').value.trim();
+    const date = document.getElementById('form-date').value.trim();
+    const image = document.getElementById('form-image').value.trim() || 'assets/instalaciones.jpg';
+    const summary = document.getElementById('form-summary').value.trim();
+    const content = document.getElementById('form-content').value.trim();
+
+    if (!title || !summary || !content) {
+      alert('Por favor, rellene todos los campos obligatorios.');
+      return;
+    }
+
+    if (id) {
+      // Editar existente
+      const index = newsList.findIndex(n => n.id === id);
+      if (index !== -1) {
+        newsList[index] = { ...newsList[index], title, category, date, image, summary, content };
+        showToast('Noticia actualizada con éxito.');
+      }
+    } else {
+      // Crear nueva entrada
+      const newEntry = {
+        id: 'news-' + Date.now(),
+        title,
+        category,
+        date,
+        image,
+        summary,
+        content
+      };
+      newsList.unshift(newEntry);
+      showToast('Nueva noticia añadida al catálogo.');
+    }
+
+    saveToStorage();
+    closeEditModal();
+    renderCategories();
+    renderNews();
+  }
+
+  function deleteNews(id) {
+    const item = newsList.find(n => n.id === id);
+    if (!item) return;
+
+    if (confirm(\`¿Eliminar definitivamente la noticia "\${item.title}"?\`)) {
+      newsList = newsList.filter(n => n.id !== id);
+      saveToStorage();
+      renderCategories();
+      renderNews();
+      showToast('Noticia eliminada del portal.');
+    }
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast-msg');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+
+    toastText.textContent = msg;
+    toast.classList.remove('hidden');
+    toast.classList.add('flex');
+
+    setTimeout(() => {
+      toast.classList.add('hidden');
+      toast.classList.remove('flex');
+    }, 3500);
+  }
+
+  // Teclado Esc para cerrar modales
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeReadModal();
+      closeEditModal();
+    }
+  });
+
+  // Activar modo admin automáticamente si la URL contiene ?admin=true
+  window.addEventListener('DOMContentLoaded', () => {
+    loadNews();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === 'true') {
+      toggleAdminMode();
+    }
+  });
+</script>
+
+${getFooter()}
+`;
+
+// ==========================================
+// PÁGINA 12: ACCESO RESTRINGIDO (UNDER CONSTRUCTION // SOLO USER Y PASS // FONDO NEGRO)
 // ==========================================
 const accesoHtml = `<!DOCTYPE html>
 <html lang="es" class="h-full bg-black">
@@ -6897,7 +7650,7 @@ const accesoHtml = `<!DOCTYPE html>
 </html>
 `;
 
-// WRITE ALL 11 CLEAN PAGES
+// WRITE ALL 12 CLEAN PAGES
 fs.writeFileSync('index.html', indexHtml, 'utf8');
 fs.writeFileSync('servicios.html', serviciosHtml, 'utf8');
 fs.writeFileSync('instalaciones.html', instalacionesHtml, 'utf8');
@@ -6905,6 +7658,7 @@ fs.writeFileSync('calidad.html', calidadHtml, 'utf8');
 fs.writeFileSync('equipo.html', equipoHtml, 'utf8');
 fs.writeFileSync('contacto.html', contactoHtml, 'utf8');
 fs.writeFileSync('media.html', mediaHtml, 'utf8');
+fs.writeFileSync('noticias.html', noticiasHtml, 'utf8');
 fs.writeFileSync('aviso-legal.html', avisoLegalHtml, 'utf8');
 fs.writeFileSync('politica-privacidad.html', politicaPrivacidadHtml, 'utf8');
 fs.writeFileSync('politica-cookies.html', politicaCookiesHtml, 'utf8');
@@ -6918,6 +7672,7 @@ const pages = [
   { path: 'instalaciones.html', priority: '0.8', changefreq: 'monthly' },
   { path: 'calidad.html', priority: '0.8', changefreq: 'monthly' },
   { path: 'equipo.html', priority: '0.7', changefreq: 'monthly' },
+  { path: 'noticias.html', priority: '0.8', changefreq: 'weekly' },
   { path: 'contacto.html', priority: '0.9', changefreq: 'monthly' },
   { path: 'media.html', priority: '0.8', changefreq: 'weekly' },
   { path: 'aviso-legal.html', priority: '0.3', changefreq: 'yearly' },
@@ -6962,6 +7717,7 @@ const htaccessContent = `# Redirecciones 301 permanentes para preservar SEO prev
   RewriteRule ^instalaciones/?$ /instalaciones.html [R=301,L]
   RewriteRule ^calidad/?$ /calidad.html [R=301,L]
   RewriteRule ^equipo/?$ /equipo.html [R=301,L]
+  RewriteRule ^noticias/?$ /noticias.html [R=301,L]
   RewriteRule ^contacto/?$ /contacto.html [R=301,L]
   RewriteRule ^media/?$ /media.html [R=301,L]
   RewriteRule ^acceso/?$ /acceso.html [R=301,L]
@@ -6977,5 +7733,5 @@ const htaccessContent = `# Redirecciones 301 permanentes para preservar SEO prev
 `;
 fs.writeFileSync('.htaccess', htaccessContent, 'utf8');
 
-console.log('ALL 11 MULTI-PAGE SITES (INCLUDING ACCESO.HTML), SITEMAP.XML, ROBOTS.TXT, AND .HTACCESS GENERATED SUCCESSFULLY!');
+console.log('ALL 12 MULTI-PAGE SITES (INCLUDING NOTICIAS.HTML & ACCESO.HTML), SITEMAP.XML, ROBOTS.TXT, AND .HTACCESS GENERATED SUCCESSFULLY!');
 

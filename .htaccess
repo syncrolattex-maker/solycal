@@ -13,6 +13,7 @@
   RewriteRule ^instalaciones/?$ /instalaciones.html [R=301,L]
   RewriteRule ^calidad/?$ /calidad.html [R=301,L]
   RewriteRule ^equipo/?$ /equipo.html [R=301,L]
+  RewriteRule ^noticias/?$ /noticias.html [R=301,L]
   RewriteRule ^contacto/?$ /contacto.html [R=301,L]
   RewriteRule ^media/?$ /media.html [R=301,L]
   RewriteRule ^acceso/?$ /acceso.html [R=301,L]

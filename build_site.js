@@ -7954,23 +7954,23 @@ const accesoHtml = `<!DOCTYPE html>
       const gap = 0.02;
       const bounds = gridSize * (cubeWidth + gap);
 
-      // Parámetros de onda inspirados en arkon.digital adaptados a paleta Solycal (gris grafito / azul-acero / amarillo industrial)
+      // Parámetros de onda adaptados a Dark Mode estricto (negro obsidiana / grafito profundo con crestas en amarillo corporativo)
       const params = {
-        waveAmplitude: 0.55,
+        waveAmplitude: 0.58,
         waveSpeed: 6.2,
         waveFrequency: 1.25,
         waveWidth: 3.2,
         waveJitter: 0.18,
-        waveMaxHeight: 0.55,
+        waveMaxHeight: 0.58,
         fadeTime: 2.2,
         trailSpacing: 0.1,
-        colorBase: new THREE.Color(0x181a1f),
-        colorHigh: new THREE.Color(0xF1B541)
+        colorBase: new THREE.Color(0x060709), // Negro azabache / carbón oscuro
+        colorHigh: new THREE.Color(0xF1B541)  // Acento amarillo corporativo Solycal en la cresta
       };
 
       // Scene & Renderer
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x050608);
+      scene.background = new THREE.Color(0x000000);
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
@@ -7980,7 +7980,7 @@ const accesoHtml = `<!DOCTYPE html>
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.6;
+      renderer.toneMappingExposure = 1.05;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -8005,15 +8005,15 @@ const accesoHtml = `<!DOCTYPE html>
       }
       updateCameraPosition(0, 0);
 
-      // Luces
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+      // Luces sutiles y contrastadas para conservar el negro profundo
+      const ambientLight = new THREE.AmbientLight(0x08090b, 1.2);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0xfff5e6, 3.5);
-      dirLight.position.set(-20, 12, 8);
+      const dirLight = new THREE.DirectionalLight(0xfff0d0, 1.6);
+      dirLight.position.set(-18, 14, 8);
       dirLight.castShadow = true;
       dirLight.shadow.mapSize.set(1024, 1024);
-      dirLight.shadow.radius = 5;
+      dirLight.shadow.radius = 4;
       dirLight.shadow.bias = -0.0001;
       dirLight.shadow.camera.near = 0.1;
       dirLight.shadow.camera.far = 60;
@@ -8023,7 +8023,7 @@ const accesoHtml = `<!DOCTYPE html>
       dirLight.shadow.camera.bottom = -22;
       scene.add(dirLight);
 
-      const fillLight = new THREE.DirectionalLight(0x4466aa, 1.2);
+      const fillLight = new THREE.DirectionalLight(0x1a2233, 0.8);
       fillLight.position.set(12, 6, -5);
       scene.add(fillLight);
 
@@ -8059,9 +8059,9 @@ const accesoHtml = `<!DOCTYPE html>
       cubeGeometry.setAttribute('aOffset', offsetAttr);
 
       const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.35,
-        metalness: 0.25
+        color: 0x060709,
+        roughness: 0.65,
+        metalness: 0.4
       });
 
       // Shaders personalizados para la onda expansiva y deformación Y

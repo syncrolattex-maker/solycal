@@ -889,25 +889,24 @@
     <!-- CONTENEDOR PRINCIPAL INTERACTIVO (ESTILO YICHENXIE.COM/#WORK) -->
     <div id="news-interactive-stage" class="relative hidden lg:grid grid-cols-12 gap-8 items-start min-h-[580px] py-4">
       
-      <!-- COLUMNA IZQUIERDA: LISTADO SCROLLEABLE DE TÍTULOS -->
+      <!-- COLUMNA IZQUIERDA: LISTADO SCROLLEABLE DE TÍTULOS (SCROLL INTERNO SIN BARRA VISIBLE) -->
       <div class="col-span-6 xl:col-span-7 pr-4">
         <div 
           id="news-title-list" 
-          class="max-h-[68vh] overflow-y-auto space-y-3 pr-4 custom-scrollbar transition-opacity duration-300"
-          style="scrollbar-width: thin; scrollbar-color: rgba(241,181,65,0.4) rgba(255,255,255,0.03);"
+          class="max-h-[65vh] overflow-y-auto space-y-5 pr-6 custom-scrollbar transition-opacity duration-300 select-none"
         >
-          <!-- Títulos inyectados dinámicamente -->
+          <!-- Solo los títulos inyectados dinámicamente -->
         </div>
       </div>
 
-      <!-- SVG CUERDA / CONECTOR ELÁSTICO ENTRE TÍTULO ACTIVO Y TARJETA PREVIEW -->
+      <!-- SVG CUERDA / CONECTOR ELÁSTICO ADAPTATIVO ENTRE TÍTULO ACTIVO Y TARJETA PREVIEW -->
       <svg 
         id="news-rope-svg" 
         class="pointer-events-none absolute inset-0 w-full h-full z-20 overflow-visible"
         aria-hidden="true"
       >
         <path id="news-rope-path" d="" fill="none" stroke="#F1B541" stroke-width="2" stroke-linecap="round" stroke-dasharray="none" opacity="0.85"></path>
-        <circle id="news-rope-start" cx="-100" cy="-100" r="4.5" fill="#F1B541" class="shadow-lg"></circle>
+        <circle id="news-rope-start" cx="-100" cy="-100" r="4" fill="#F1B541"></circle>
         <circle id="news-rope-end" cx="-100" cy="-100" r="4.5" fill="#F1B541" stroke="#07080a" stroke-width="2"></circle>
       </svg>
 
@@ -988,22 +987,18 @@
   </div>
 </main>
 
-<!-- ESTILOS ESPECÍFICOS PARA EL SCROLLBAR INDUSTRIAL Y EL EFECTO DE HOVER -->
+<!-- ESTILOS ESPECÍFICOS: SCROLL INVISIBLE Y EFECTOS EDITORIALES -->
 <style>
-  /* Custom scrollbar para la lista izquierda de títulos */
+  /* Scrollbar completamente oculta tanto en Webkit, Firefox e IE/Edge */
+  #news-title-list {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    scroll-behavior: smooth;
+  }
   #news-title-list::-webkit-scrollbar {
-    width: 5px;
-  }
-  #news-title-list::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 9999px;
-  }
-  #news-title-list::-webkit-scrollbar-thumb {
-    background: rgba(241, 181, 65, 0.3);
-    border-radius: 9999px;
-  }
-  #news-title-list::-webkit-scrollbar-thumb:hover {
-    background: rgba(241, 181, 65, 0.6);
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
   }
 
   /* Animación de entrada suave del Preview */
@@ -1020,7 +1015,7 @@
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   #news-title-list.is-hovering .news-title-item:not(.is-active) {
-    opacity: 0.35;
+    opacity: 0.28;
   }
   #news-title-list.is-hovering .news-title-item.is-active {
     opacity: 1;
@@ -1243,39 +1238,27 @@
       activeArticleId = filtered[0].id;
     }
 
-    // 1. RENDERIZAR LISTA IZQUIERDA (DESKTOP)
+    // 1. RENDERIZAR LISTA IZQUIERDA (DESKTOP) - SOLO TÍTULOS PUROS
     if (titleList) {
-      titleList.innerHTML = filtered.map((item, idx) => {
+      titleList.innerHTML = filtered.map((item) => {
         const isActive = item.id === activeArticleId;
-        const indexFormatted = String(idx + 1).padStart(2, '0');
         return `
           <div 
             id="title-item-${item.id}"
             data-id="${item.id}"
             onmouseenter="handleTitleHover('${item.id}')"
             onclick="handleTitleClick('${item.id}')"
-            class="news-title-item group/item relative py-3.5 px-1 cursor-pointer select-none transition-all duration-300 ${
+            class="news-title-item group/item relative py-2.5 cursor-pointer select-none transition-all duration-300 block ${
               isActive ? 'is-active' : ''
             }"
           >
-            <!-- Meta sutil: índice numérico y fecha -->
-            <div class="flex items-center gap-2 text-xs font-mono mb-1.5 transition-colors ${
-              isActive ? 'text-brand-yellow' : 'text-neutral-500'
-            }">
-              <span class="font-bold text-[11px]">// ${indexFormatted}</span>
-              <span class="opacity-50">&bull;</span>
-              <span class="uppercase tracking-wider text-[10px]">${item.category}</span>
-              <span class="opacity-50">&bull;</span>
-              <span class="text-[11px]">${item.date}</span>
-            </div>
-
-            <!-- Título: Solo texto elegante y editorial, sin recuadros -->
-            <h3 class="title-text font-display text-2xl sm:text-3xl font-light leading-snug tracking-tight transition-all duration-300 ${
+            <!-- Título único, sin recuadros ni numeración, con span inline para cálculo de longitud de texto adaptativo -->
+            <h3 class="font-display text-2xl sm:text-3xl lg:text-3xl leading-snug tracking-tight transition-all duration-300 ${
               isActive 
-                ? 'text-brand-yellow font-medium translate-x-2' 
-                : 'text-neutral-300 group-hover/item:text-white'
+                ? 'text-brand-yellow font-bold translate-x-2' 
+                : 'text-neutral-300 font-light group-hover/item:text-white'
             }">
-              ${item.title}
+              <span class="title-text-span inline relative">${item.title}</span>
             </h3>
           </div>
         `;
@@ -1346,21 +1329,15 @@
     
     activeArticleId = id;
 
-    // Actualizar estado de los títulos sin recuadros ni fondos
+    // Actualizar estado de los títulos sin recuadros ni numeración
     document.querySelectorAll('.news-title-item').forEach(el => {
       const isCurrent = el.dataset.id === id;
       el.classList.toggle('is-active', isCurrent);
-      
-      const meta = el.querySelector('.font-mono');
-      if (meta) {
-        meta.classList.toggle('text-brand-yellow', isCurrent);
-        meta.classList.toggle('text-neutral-500', !isCurrent);
-      }
 
       const titleText = el.querySelector('h3');
       if (titleText) {
         titleText.classList.toggle('text-brand-yellow', isCurrent);
-        titleText.classList.toggle('font-medium', isCurrent);
+        titleText.classList.toggle('font-bold', isCurrent);
         titleText.classList.toggle('translate-x-2', isCurrent);
         titleText.classList.toggle('text-neutral-300', !isCurrent);
         titleText.classList.toggle('font-light', !isCurrent);
@@ -1415,7 +1392,7 @@
     }
   }
 
-  // FÍSICA Y DIBUJO DE LA CUERDA ELÁSTICA (ROPE ANIMATION)
+  // FÍSICA Y DIBUJO DE LA CUERDA ELÁSTICA ADAPTATIVA
   function hideRope() {
     const path = document.getElementById('news-rope-path');
     const startC = document.getElementById('news-rope-start');
@@ -1444,38 +1421,43 @@
     }
 
     const stageRect = stage.getBoundingClientRect();
-    const itemRect = activeEl.getBoundingClientRect();
     const cardRect = cardEl.getBoundingClientRect();
 
-    // Comprobar si el elemento activo está scrolleado fuera de la vista
+    // Comprobar si el elemento activo está scrolleado fuera del contenedor de títulos
     const titleList = document.getElementById('news-title-list');
     if (titleList) {
       const listRect = titleList.getBoundingClientRect();
-      if (itemRect.bottom < listRect.top || itemRect.top > listRect.bottom) {
+      const itemRect = activeEl.getBoundingClientRect();
+      if (itemRect.bottom < listRect.top + 10 || itemRect.top > listRect.bottom - 10) {
         hideRope();
         return;
       }
     }
 
-    // Coordenadas relativas al contenedor SVG interactivo
-    const sx = itemRect.right - stageRect.left;
-    const sy = itemRect.top + itemRect.height / 2 - stageRect.top;
+    // ADAPTATIVO: Medir el span exacto del texto del titular activo
+    const textSpan = activeEl.querySelector('.title-text-span') || activeEl.querySelector('h3') || activeEl;
+    const textRect = textSpan.getBoundingClientRect();
 
+    // Punto de anclaje inicial: justo al final de la línea de texto del título activo + 10px
+    const sx = Math.min(textRect.right - stageRect.left + 12, cardRect.left - stageRect.left - 40);
+    const sy = textRect.top + textRect.height / 2 - stageRect.top;
+
+    // Punto de destino: anclado al lateral izquierdo de la tarjeta preview
     const ex = cardRect.left - stageRect.left;
-    const ey = cardRect.top + Math.min(120, cardRect.height / 2) - stageRect.top;
+    const ey = cardRect.top + Math.min(110, cardRect.height / 2) - stageRect.top;
 
     // Distancia horizontal entre extremos
     const dx = ex - sx;
-    if (dx <= 0) {
+    if (dx <= 15) {
       hideRope();
       return;
     }
 
     // Puntos de control Bézier con deflexión elástica (sag)
     const sag = ropeCurrentSag;
-    const c1x = sx + dx * 0.35;
+    const c1x = sx + dx * 0.38;
     const c1y = sy + sag;
-    const c2x = sx + dx * 0.65;
+    const c2x = sx + dx * 0.68;
     const c2y = ey + sag;
 
     const d = `M ${sx.toFixed(1)} ${sy.toFixed(1)} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${ex.toFixed(1)} ${ey.toFixed(1)}`;

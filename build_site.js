@@ -7206,15 +7206,15 @@ ${getHeader('noticias')}
             data-id="\${item.id}"
             onmouseenter="handleTitleHover('\${item.id}')"
             onclick="handleTitleClick('\${item.id}')"
-            class="news-title-item group/item relative py-2.5 cursor-pointer select-none transition-all duration-300 block \${
+            class="news-title-item group/item relative py-2.5 cursor-pointer select-none transition-opacity duration-300 block \${
               isActive ? 'is-active' : ''
             }"
           >
-            <!-- Título único, sin recuadros ni numeración, con span inline para cálculo de longitud de texto adaptativo -->
-            <h3 class="font-display text-2xl sm:text-3xl lg:text-3xl leading-snug tracking-tight transition-all duration-300 \${
+            <!-- Título: tipografía y posición estables, sin transformaciones físicas -->
+            <h3 class="font-display text-2xl sm:text-3xl lg:text-3xl font-light leading-snug tracking-tight transition-colors duration-200 \${
               isActive 
-                ? 'text-brand-yellow font-bold translate-x-2' 
-                : 'text-neutral-300 font-light group-hover/item:text-white'
+                ? 'text-brand-yellow' 
+                : 'text-neutral-300 group-hover/item:text-white'
             }">
               <span class="title-text-span inline relative">\${item.title}</span>
             </h3>
@@ -7287,7 +7287,7 @@ ${getHeader('noticias')}
     
     activeArticleId = id;
 
-    // Actualizar estado de los títulos sin recuadros ni numeración
+    // Actualizar estado de los títulos sin alterar tipografía ni mover letras
     document.querySelectorAll('.news-title-item').forEach(el => {
       const isCurrent = el.dataset.id === id;
       el.classList.toggle('is-active', isCurrent);
@@ -7295,10 +7295,7 @@ ${getHeader('noticias')}
       const titleText = el.querySelector('h3');
       if (titleText) {
         titleText.classList.toggle('text-brand-yellow', isCurrent);
-        titleText.classList.toggle('font-bold', isCurrent);
-        titleText.classList.toggle('translate-x-2', isCurrent);
         titleText.classList.toggle('text-neutral-300', !isCurrent);
-        titleText.classList.toggle('font-light', !isCurrent);
       }
     });
 

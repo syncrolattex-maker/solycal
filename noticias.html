@@ -931,7 +931,7 @@
   </div>
 </main>
 
-<!-- ESTILOS ESPECÍFICOS: SCROLL INVISIBLE Y EFECTOS EDITORIALES -->
+<!-- ESTILOS ESPECÍFICOS: SCROLL INVISIBLE, EFECTOS EDITORIALES Y MOVIMIENTO ORGÁNICO -->
 <style>
   /* Scrollbar completamente oculta tanto en Webkit, Firefox e IE/Edge */
   #news-title-list {
@@ -945,15 +945,17 @@
     height: 0;
   }
 
-  /* Animación de entrada suave del Preview */
-  @keyframes previewFade {
-    from { opacity: 0; transform: translateY(8px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  /* Animación y transición fluida de posición física (sensación de movimiento y desaceleración elástica) */
+  #news-preview-card {
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15),
+                border-color 0.3s ease;
+    will-change: transform, opacity;
   }
+
   .preview-card-visible {
     opacity: 1 !important;
     pointer-events: auto !important;
-    transform: translateY(0) scale(1) !important;
   }
 
   /* Efecto de atenuación de títulos no activos solo durante hover activo */
@@ -1308,6 +1310,7 @@
     const cardEl = document.getElementById('news-preview-card');
     if (cardEl) {
       cardEl.classList.remove('preview-card-visible');
+      cardEl.style.transform = 'translate3d(0, 8px, 0) scale(0.98)';
     }
   }
 
@@ -1316,7 +1319,7 @@
     if (activeArticleId === id) return;
     
     // Provocar un impulso elástico a la cuerda
-    ropeVelocity = 28;
+    ropeVelocity = 32;
     activeArticleId = id;
 
     // Actualizar estado de los títulos sin alterar tipografía ni mover letras
@@ -1346,7 +1349,17 @@
     }
   }
 
-  // ACTUALIZAR CONTENIDO DE LA TARJETA PREVIEW (FORMATOS DINÁMICOS ALTERNADOS)
+  // VARIACIONES DE DISPOSICIÓN FÍSICA PARA TRANSMITIR MOVIMIENTO ORGÁNICO
+  const CARD_OFFSETS = [
+    { x: 0,   y: 0,   rot: 0 },       // Noticia 1: Anclada en origen neutro
+    { x: 24,  y: 35,  rot: 0.8 },     // Noticia 2: Desplazada hacia afuera y abajo con micro inclinación
+    { x: -16, y: -20, rot: -0.6 },    // Noticia 3: Desplazada hacia el centro y arriba
+    { x: 18,  y: 45,  rot: 0.5 },     // Noticia 4: Desplazada abajo hacia la derecha
+    { x: -10, y: 15,  rot: -0.4 },    // Noticia 5: Levemente retraída con sutil caída
+    { x: 20,  y: -15, rot: 0.7 }      // Noticia 6: Elevada hacia la derecha
+  ];
+
+  // ACTUALIZAR CONTENIDO Y DISPOSICIÓN DE LA TARJETA PREVIEW (SENSACIÓN DE MOVIMIENTO)
   function updatePreviewCard(id) {
     const item = newsList.find(n => n.id === id);
     if (!item) return;
@@ -1355,9 +1368,13 @@
     const bodyEl = document.getElementById('preview-card-body');
     if (!cardEl || !bodyEl) return;
 
-    // Determinar formato alternado según el id o índice (0: Visual, 1: Editorial, 2: Técnico)
+    // Determinar formato y desplazamiento según el id o índice
     const itemIdx = newsList.findIndex(n => n.id === id);
     const layoutType = itemIdx >= 0 ? itemIdx % 3 : 0;
+    const offset = itemIdx >= 0 ? CARD_OFFSETS[itemIdx % CARD_OFFSETS.length] : CARD_OFFSETS[0];
+
+    // Aplicar transformación física de posición (movimiento orgánico del punto de origen)
+    cardEl.style.transform = `translate3d(${offset.x}px, ${offset.y}px, 0) rotate(${offset.rot}deg) scale(1)`;
 
     let html = '';
 
@@ -1577,7 +1594,7 @@
     const sx = Math.min(textRect.right - stageRect.left + 12, cardRect.left - stageRect.left - 40);
     const sy = textRect.top + textRect.height / 2 - stageRect.top;
 
-    // Punto de destino: anclado al lateral izquierdo de la tarjeta preview
+    // Punto de destino: anclado al lateral izquierdo real de la tarjeta preview (incluso con offset y rotación)
     const ex = cardRect.left - stageRect.left;
     const ey = cardRect.top + Math.min(110, cardRect.height / 2) - stageRect.top;
 

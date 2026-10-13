@@ -893,7 +893,7 @@
       <div class="col-span-6 xl:col-span-7 pr-4">
         <div 
           id="news-title-list" 
-          class="max-h-[65vh] overflow-y-auto space-y-5 pr-6 custom-scrollbar transition-opacity duration-300 select-none"
+          class="max-h-[72vh] min-h-[460px] overflow-y-auto overscroll-contain space-y-3.5 pr-4 transition-opacity duration-300 select-none cursor-default"
         >
           <!-- Solo los títulos inyectados dinámicamente -->
         </div>
@@ -933,16 +933,20 @@
 
 <!-- ESTILOS ESPECÍFICOS: SCROLL INVISIBLE, EFECTOS EDITORIALES Y MOVIMIENTO ORGÁNICO -->
 <style>
-  /* Scrollbar completamente oculta tanto en Webkit, Firefox e IE/Edge */
+  /* Scrollbar oculta sin barra visual pero con scroll 100% activo y fluido */
   #news-title-list {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-    scroll-behavior: smooth;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+    overflow-y: scroll !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   #news-title-list::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-    width: 0;
-    height: 0;
+    display: none !important; /* Chrome, Safari, Opera, Edge */
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
   }
 
   /* Animación y transición fluida de posición física (sensación de movimiento y desaceleración elástica) */
@@ -1802,14 +1806,20 @@
     animationFrameId = requestAnimationFrame(tick);
   }
 
-  // Sincronizar cuerda con el scroll de la lista
+  // Sincronizar cuerda con el scroll de la lista y garantizar reactividad de rueda
   window.addEventListener('DOMContentLoaded', () => {
     const titleList = document.getElementById('news-title-list');
     if (titleList) {
+      // Evento rueda pasivo para que el scroll interno responda inmediatamente
+      titleList.addEventListener('wheel', (e) => {
+        ropeVelocity = Math.sign(e.deltaY) * 14;
+        requestAnimationFrame(updateRopePositions);
+      }, { passive: true });
+
       titleList.addEventListener('scroll', () => {
         ropeVelocity = 12; // Pequeño rebote al scrollear
         updateRopePositions();
-      });
+      }, { passive: true });
     }
     window.addEventListener('resize', updateRopePositions);
     window.addEventListener('scroll', updateRopePositions, { passive: true });

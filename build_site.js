@@ -6868,11 +6868,11 @@ ${getHeader('noticias')}
         <circle id="news-rope-end" cx="-100" cy="-100" r="4.5" fill="#F1B541" stroke="#07080a" stroke-width="2"></circle>
       </svg>
 
-      <!-- COLUMNA DERECHA: TARJETA PREVIEW FLOTANTE (ESTILO GLASS DARK INDUSTRIAL) -->
+      <!-- COLUMNA DERECHA: TARJETA PREVIEW FLOTANTE (ESTILO GLASS DARK INDUSTRIAL - OCULTA SI NO HAY HOVER/SELECCIÓN) -->
       <div class="col-span-6 xl:col-span-5 sticky top-28 z-30">
         <div 
           id="news-preview-card"
-          class="relative rounded-2xl bg-[#0a0c0e]/95 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 transition-all duration-300 group hover:border-brand-yellow/50"
+          class="relative rounded-2xl bg-[#0a0c0e]/95 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 transition-all duration-300 group hover:border-brand-yellow/50 opacity-0 pointer-events-none translate-y-2 scale-[0.98]"
         >
           <!-- Indicador visual superior -->
           <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
@@ -6961,16 +6961,18 @@ ${getHeader('noticias')}
 
   /* Animación de entrada suave del Preview */
   @keyframes previewFade {
-    from { opacity: 0.4; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
-  .preview-animate {
-    animation: previewFade 0.25s ease-out forwards;
+  .preview-card-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
   }
 
-  /* Efecto de atenuación de títulos no activos */
+  /* Efecto de atenuación de títulos no activos solo durante hover activo */
   .news-title-item {
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
   }
   #news-title-list.is-hovering .news-title-item:not(.is-active) {
     opacity: 0.28;
@@ -7090,6 +7092,7 @@ ${getHeader('noticias')}
   let currentCategory = 'Todas';
   let searchTerm = '';
   let activeArticleId = null;
+  let isPointerInCard = false;
 
   // Variables para la física de la cuerda elástica (Rope)
   let ropeCurrentSag = 0;
@@ -7183,17 +7186,16 @@ ${getHeader('noticias')}
       if (desktopStage) desktopStage.classList.add('hidden');
       if (mobileStream) mobileStream.innerHTML = '';
       if (emptyState) emptyState.classList.remove('hidden');
-      activeArticleId = null;
-      hideRope();
+      clearActiveState();
       return;
     }
 
     if (emptyState) emptyState.classList.add('hidden');
     if (desktopStage) desktopStage.classList.remove('hidden');
 
-    // Comprobar si el artículo activo actual sigue presente en el filtro
-    if (!activeArticleId || !filtered.some(n => n.id === activeArticleId)) {
-      activeArticleId = filtered[0].id;
+    // Por defecto, sin hover no hay nada seleccionado ni encadenado
+    if (activeArticleId && !filtered.some(n => n.id === activeArticleId)) {
+      clearActiveState();
     }
 
     // 1. RENDERIZAR LISTA IZQUIERDA (DESKTOP) - SOLO TÍTULOS PUROS
@@ -7222,13 +7224,37 @@ ${getHeader('noticias')}
         \`;
       }).join('');
 
-      // Listener para atenuar no seleccionados al hover
+      // Listener para mouseenter y mouseleave del contenedor
       titleList.onmouseenter = () => titleList.classList.add('is-hovering');
-      titleList.onmouseleave = () => titleList.classList.remove('is-hovering');
+      titleList.onmouseleave = () => {
+        titleList.classList.remove('is-hovering');
+        // Si el puntero no se fue a la tarjeta flotante, desvanecer noticia encadenada
+        setTimeout(() => {
+          if (!isPointerInCard) {
+            clearActiveState();
+          }
+        }, 50);
+      };
     }
 
-    // 2. ACTUALIZAR PREVIEW CARD DERECHA
-    updatePreviewCard(activeArticleId);
+    // Registrar listeners para la preview card
+    const cardEl = document.getElementById('news-preview-card');
+    if (cardEl) {
+      cardEl.onmouseenter = () => { isPointerInCard = true; };
+      cardEl.onmouseleave = () => { 
+        isPointerInCard = false; 
+        clearActiveState();
+      };
+    }
+
+    // Si hay un artículo activo, actualizar preview, sino ocultar
+    if (activeArticleId) {
+      updatePreviewCard(activeArticleId);
+      requestAnimationFrame(updateRopePositions);
+    } else {
+      hidePreviewCard();
+      hideRope();
+    }
 
     // 3. RENDERIZAR MOBILE STREAM (TARJETAS TRADICIONALES EN PANTALLAS PEQUEÑAS)
     if (mobileStream) {
@@ -7273,9 +7299,30 @@ ${getHeader('noticias')}
     if (window.lucide && lucide.createIcons) {
       lucide.createIcons();
     }
+  }
 
-    // Actualizar puntos de la cuerda tras el renderizado
-    requestAnimationFrame(updateRopePositions);
+  // LIMPIAR SELECCIÓN Y OCULTAR NOTICIA ENCADENADA
+  function clearActiveState() {
+    activeArticleId = null;
+    hideRope();
+    hidePreviewCard();
+
+    // Restablecer estilos de los títulos
+    document.querySelectorAll('.news-title-item').forEach(el => {
+      el.classList.remove('is-active');
+      const titleText = el.querySelector('h3');
+      if (titleText) {
+        titleText.classList.remove('text-brand-yellow');
+        titleText.classList.add('text-neutral-300');
+      }
+    });
+  }
+
+  function hidePreviewCard() {
+    const cardEl = document.getElementById('news-preview-card');
+    if (cardEl) {
+      cardEl.classList.remove('preview-card-visible');
+    }
   }
 
   // HOVER Y SELECCIÓN DE TÍTULO
@@ -7284,7 +7331,6 @@ ${getHeader('noticias')}
     
     // Provocar un impulso elástico a la cuerda
     ropeVelocity = 28;
-    
     activeArticleId = id;
 
     // Actualizar estado de los títulos sin alterar tipografía ni mover letras
@@ -7336,10 +7382,7 @@ ${getHeader('noticias')}
     }
 
     if (cardEl) {
-      cardEl.classList.remove('preview-animate');
-      // Forzar reflow para reiniciar animación CSS
-      void cardEl.offsetWidth;
-      cardEl.classList.add('preview-animate');
+      cardEl.classList.add('preview-card-visible');
     }
 
     if (window.lucide && lucide.createIcons) {
@@ -7393,7 +7436,7 @@ ${getHeader('noticias')}
     const textSpan = activeEl.querySelector('.title-text-span') || activeEl.querySelector('h3') || activeEl;
     const textRect = textSpan.getBoundingClientRect();
 
-    // Punto de anclaje inicial: justo al final de la línea de texto del título activo + 10px
+    // Punto de anclaje inicial: justo al final de la línea de texto del titular activo + 12px
     const sx = Math.min(textRect.right - stageRect.left + 12, cardRect.left - stageRect.left - 40);
     const sy = textRect.top + textRect.height / 2 - stageRect.top;
 

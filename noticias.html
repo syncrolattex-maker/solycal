@@ -893,7 +893,11 @@
       <div class="col-span-6 xl:col-span-7 pr-4">
         <div 
           id="news-title-list" 
-          class="max-h-[72vh] min-h-[460px] overflow-y-auto overscroll-contain space-y-3.5 pr-4 transition-opacity duration-300 select-none cursor-default"
+          data-lenis-prevent
+          tabindex="0"
+          role="region"
+          aria-label="Listado de noticias"
+          class="max-h-[72vh] min-h-[460px] overflow-y-scroll overscroll-contain space-y-3.5 pr-4 transition-opacity duration-300 select-none cursor-default outline-none"
         >
           <!-- Solo los títulos inyectados dinámicamente -->
         </div>
@@ -933,14 +937,15 @@
 
 <!-- ESTILOS ESPECÍFICOS: SCROLL INVISIBLE, EFECTOS EDITORIALES Y MOVIMIENTO ORGÁNICO -->
 <style>
-  /* Scrollbar oculta sin barra visual pero con scroll 100% activo y fluido */
+  /* Scrollbar oculta sin barra visual pero con scroll 100% garantizado con rueda y gestos */
   #news-title-list {
     scrollbar-width: none !important; /* Firefox */
     -ms-overflow-style: none !important; /* IE/Edge */
     overflow-y: scroll !important;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    pointer-events: auto !important;
   }
   #news-title-list::-webkit-scrollbar {
     display: none !important; /* Chrome, Safari, Opera, Edge */
@@ -1806,18 +1811,22 @@
     animationFrameId = requestAnimationFrame(tick);
   }
 
-  // Sincronizar cuerda con el scroll de la lista y garantizar reactividad de rueda
+  // Sincronizar cuerda y forzar scroll nativo directo en el listado de noticias
   window.addEventListener('DOMContentLoaded', () => {
     const titleList = document.getElementById('news-title-list');
     if (titleList) {
-      // Evento rueda pasivo para que el scroll interno responda inmediatamente
+      // Manejador activo de rueda: evita que librerías externas o Lenis bloqueen el scroll en la lista
       titleList.addEventListener('wheel', (e) => {
+        // Scroll directo garantizado
+        titleList.scrollTop += e.deltaY;
+        e.stopPropagation();
+        
         ropeVelocity = Math.sign(e.deltaY) * 14;
         requestAnimationFrame(updateRopePositions);
-      }, { passive: true });
+      }, { passive: false });
 
       titleList.addEventListener('scroll', () => {
-        ropeVelocity = 12; // Pequeño rebote al scrollear
+        ropeVelocity = 12; // Rebote elástico de la cuerda
         updateRopePositions();
       }, { passive: true });
     }

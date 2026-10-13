@@ -550,14 +550,14 @@ Solycal 14 de abril de 2020."
 
     function loadNews() {
       try {
-        const stored = localStorage.getItem('solycal_news_data_v2') || localStorage.getItem('solycal_news_data');
+        const stored = localStorage.getItem('solycal_news_data_v3');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length <= 6) {
+          if (Array.isArray(parsed) && parsed.length >= 10) {
+            newsList = parsed;
+          } else {
             newsList = [...DEFAULT_NEWS];
             saveToStorage();
-          } else {
-            newsList = parsed;
           }
         } else {
           newsList = [...DEFAULT_NEWS];
@@ -572,6 +572,7 @@ Solycal 14 de abril de 2020."
 
     function saveToStorage() {
       try {
+        localStorage.setItem('solycal_news_data_v3', JSON.stringify(newsList));
         localStorage.setItem('solycal_news_data_v2', JSON.stringify(newsList));
         localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
       } catch (e) {}

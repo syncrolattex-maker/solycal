@@ -7193,21 +7193,18 @@ ${getHeader('noticias')}
   // INICIALIZACIÓN
   function loadNews() {
     try {
-      const stored = localStorage.getItem('solycal_news_data_v2') || localStorage.getItem('solycal_news_data');
+      const stored = localStorage.getItem('solycal_news_data_v3');
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Si el almacenamiento previo solo tenía las 6 noticias antiguas, actualizar al volcado oficial completo (22 noticias)
-        if (Array.isArray(parsed) && parsed.length <= 6) {
-          newsList = [...DEFAULT_NEWS];
-          localStorage.setItem('solycal_news_data_v2', JSON.stringify(newsList));
-          localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
-        } else {
+        if (Array.isArray(parsed) && parsed.length >= 10) {
           newsList = parsed;
+        } else {
+          newsList = [...DEFAULT_NEWS];
+          localStorage.setItem('solycal_news_data_v3', JSON.stringify(newsList));
         }
       } else {
         newsList = [...DEFAULT_NEWS];
-        localStorage.setItem('solycal_news_data_v2', JSON.stringify(newsList));
-        localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
+        localStorage.setItem('solycal_news_data_v3', JSON.stringify(newsList));
       }
     } catch (e) {
       newsList = [...DEFAULT_NEWS];
@@ -7215,6 +7212,13 @@ ${getHeader('noticias')}
     renderCategories();
     renderNews();
     startRopeLoop();
+  }
+
+  // Ejecución directa inmediata y por evento para máxima fiabilidad
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadNews);
+  } else {
+    loadNews();
   }
 
   // GESTIÓN DE CATEGORÍAS
@@ -8342,14 +8346,14 @@ const adminNoticiasHtml = `<!DOCTYPE html>
 
     function loadNews() {
       try {
-        const stored = localStorage.getItem('solycal_news_data_v2') || localStorage.getItem('solycal_news_data');
+        const stored = localStorage.getItem('solycal_news_data_v3');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length <= 6) {
+          if (Array.isArray(parsed) && parsed.length >= 10) {
+            newsList = parsed;
+          } else {
             newsList = [...DEFAULT_NEWS];
             saveToStorage();
-          } else {
-            newsList = parsed;
           }
         } else {
           newsList = [...DEFAULT_NEWS];
@@ -8364,6 +8368,7 @@ const adminNoticiasHtml = `<!DOCTYPE html>
 
     function saveToStorage() {
       try {
+        localStorage.setItem('solycal_news_data_v3', JSON.stringify(newsList));
         localStorage.setItem('solycal_news_data_v2', JSON.stringify(newsList));
         localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
       } catch (e) {}

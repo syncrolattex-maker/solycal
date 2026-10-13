@@ -6834,12 +6834,7 @@ ${getHeader('noticias')}
     <!-- CONTADOR DE NOTICIAS -->
     <div class="pb-6 flex items-center justify-between text-xs font-mono text-neutral-500">
       <span id="news-count">// MOSTRANDO 0 ENTRADAS</span>
-      <span class="text-neutral-600">HISTORIAL Y TALLER &bull; SOLYCAL S.L.</span>
-    </div>
-
-    <!-- GRID DINÁMICO DE NOTICIAS -->
-    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Se inyectan las tarjetas con JavaScript -->
+      <span class="text-neutral-600 hidden sm:inline">EXPLORADOR INTERACTIVO &bull; SOLYCAL S.L.</span>
     </div>
 
     <!-- ESTADO VACÍO (NO RESULTS) -->
@@ -6849,8 +6844,146 @@ ${getHeader('noticias')}
       <p class="text-xs text-neutral-400 font-mono mt-1">Pruebe a cambiar el término de búsqueda o seleccione otra categoría.</p>
     </div>
 
+    <!-- CONTENEDOR PRINCIPAL INTERACTIVO (ESTILO YICHENXIE.COM/#WORK) -->
+    <div id="news-interactive-stage" class="relative hidden lg:grid grid-cols-12 gap-8 items-start min-h-[580px] py-4">
+      
+      <!-- COLUMNA IZQUIERDA: LISTADO SCROLLEABLE DE TÍTULOS -->
+      <div class="col-span-6 xl:col-span-7 pr-4">
+        <div 
+          id="news-title-list" 
+          class="max-h-[68vh] overflow-y-auto space-y-3 pr-4 custom-scrollbar transition-opacity duration-300"
+          style="scrollbar-width: thin; scrollbar-color: rgba(241,181,65,0.4) rgba(255,255,255,0.03);"
+        >
+          <!-- Títulos inyectados dinámicamente -->
+        </div>
+      </div>
+
+      <!-- SVG CUERDA / CONECTOR ELÁSTICO ENTRE TÍTULO ACTIVO Y TARJETA PREVIEW -->
+      <svg 
+        id="news-rope-svg" 
+        class="pointer-events-none absolute inset-0 w-full h-full z-20 overflow-visible"
+        aria-hidden="true"
+      >
+        <path id="news-rope-path" d="" fill="none" stroke="#F1B541" stroke-width="2" stroke-linecap="round" stroke-dasharray="none" opacity="0.85"></path>
+        <circle id="news-rope-start" cx="-100" cy="-100" r="4.5" fill="#F1B541" class="shadow-lg"></circle>
+        <circle id="news-rope-end" cx="-100" cy="-100" r="4.5" fill="#F1B541" stroke="#07080a" stroke-width="2"></circle>
+      </svg>
+
+      <!-- COLUMNA DERECHA: TARJETA PREVIEW FLOTANTE (ESTILO GLASS DARK INDUSTRIAL) -->
+      <div class="col-span-6 xl:col-span-5 sticky top-28 z-30">
+        <div 
+          id="news-preview-card"
+          class="relative rounded-2xl bg-[#0a0c0e]/95 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] p-6 transition-all duration-300 group hover:border-brand-yellow/50"
+        >
+          <!-- Indicador visual superior -->
+          <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
+            <span id="preview-category" class="px-2.5 py-1 rounded bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-mono text-[10px] uppercase tracking-wider font-semibold">
+              CATEGORÍA
+            </span>
+            <span id="preview-date" class="font-mono text-xs text-neutral-400">
+              // FECHA
+            </span>
+          </div>
+
+          <!-- Imagen con overlay -->
+          <div class="relative h-48 sm:h-56 rounded-xl overflow-hidden bg-[#111317] border border-white/5 mb-5 cursor-pointer" onclick="handleCurrentPreviewClick()">
+            <img 
+              id="preview-image" 
+              src="assets/instalaciones.jpg" 
+              alt="Vista previa" 
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+              onerror="this.src='assets/instalaciones.jpg'"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0c0e] via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-brand-yellow/0 group-hover:bg-brand-yellow/5 transition-colors"></div>
+            
+            <div class="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-[#07080a]/80 backdrop-blur-md border border-white/10 text-white font-mono text-[10px] flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span>Clic para abrir</span>
+              <i data-lucide="external-link" class="w-3 h-3 text-brand-yellow"></i>
+            </div>
+          </div>
+
+          <!-- Contenido informativo -->
+          <div class="space-y-3">
+            <h3 
+              id="preview-title" 
+              onclick="handleCurrentPreviewClick()"
+              class="font-display font-bold text-xl sm:text-2xl text-white tracking-tight leading-snug cursor-pointer group-hover:text-brand-yellow transition-colors"
+            >
+              Título de la Noticia
+            </h3>
+            
+            <p id="preview-summary" class="font-sans text-xs sm:text-sm text-neutral-400 leading-relaxed line-clamp-3">
+              Resumen de la noticia seleccionada...
+            </p>
+          </div>
+
+          <!-- Botón de apertura -->
+          <div class="pt-5 mt-5 border-t border-white/5 flex items-center justify-between">
+            <button
+              id="preview-read-btn"
+              onclick="handleCurrentPreviewClick()"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-yellow text-black font-mono text-xs font-semibold uppercase tracking-wider hover:bg-brand-accent transition-colors shadow-[0_0_15px_rgba(241,181,65,0.25)]"
+            >
+              <span>Leer Noticia Completa</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <span class="font-mono text-[10px] text-neutral-500 uppercase tracking-widest hidden sm:inline">
+              [ENTER / CLIC]
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- VISTA MOBILE / TABLET (GRID ADAPTATIVO CON CARDS STREAM CUANDO SCREEN < LG) -->
+    <div id="news-mobile-stream" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+      <!-- Se inyecta dinámicamente -->
+    </div>
+
   </div>
 </main>
+
+<!-- ESTILOS ESPECÍFICOS PARA EL SCROLLBAR INDUSTRIAL Y EL EFECTO DE HOVER -->
+<style>
+  /* Custom scrollbar para la lista izquierda de títulos */
+  #news-title-list::-webkit-scrollbar {
+    width: 5px;
+  }
+  #news-title-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 9999px;
+  }
+  #news-title-list::-webkit-scrollbar-thumb {
+    background: rgba(241, 181, 65, 0.3);
+    border-radius: 9999px;
+  }
+  #news-title-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(241, 181, 65, 0.6);
+  }
+
+  /* Animación de entrada suave del Preview */
+  @keyframes previewFade {
+    from { opacity: 0.4; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .preview-animate {
+    animation: previewFade 0.25s ease-out forwards;
+  }
+
+  /* Efecto de atenuación de títulos no activos */
+  .news-title-item {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #news-title-list.is-hovering .news-title-item:not(.is-active) {
+    opacity: 0.35;
+  }
+  #news-title-list.is-hovering .news-title-item.is-active {
+    opacity: 1;
+  }
+</style>
 
 <!-- MODAL: LEER NOTICIA COMPLETA (PÚBLICO) -->
 <div id="read-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
@@ -6961,6 +7094,13 @@ ${getHeader('noticias')}
   let newsList = [];
   let currentCategory = 'Todas';
   let searchTerm = '';
+  let activeArticleId = null;
+
+  // Variables para la física de la cuerda elástica (Rope)
+  let ropeCurrentSag = 0;
+  let ropeTargetSag = 0;
+  let ropeVelocity = 0;
+  let animationFrameId = null;
 
   // INICIALIZACIÓN
   function loadNews() {
@@ -6977,6 +7117,7 @@ ${getHeader('noticias')}
     }
     renderCategories();
     renderNews();
+    startRopeLoop();
   }
 
   // GESTIÓN DE CATEGORÍAS
@@ -7018,14 +7159,8 @@ ${getHeader('noticias')}
     renderNews();
   }
 
-  // RENDERIZADO DEL GRID PÚBLICO (SOLO LECTURA)
-  function renderNews() {
-    const grid = document.getElementById('news-grid');
-    const emptyState = document.getElementById('news-empty-state');
-    const countLabel = document.getElementById('news-count');
-    if (!grid) return;
-
-    let filtered = newsList.filter(n => {
+  function getFilteredNews() {
+    return newsList.filter(n => {
       const matchCat = currentCategory === 'Todas' || n.category === currentCategory;
       const matchSearch = !searchTerm || 
         n.title.toLowerCase().includes(searchTerm) || 
@@ -7033,69 +7168,324 @@ ${getHeader('noticias')}
         n.content.toLowerCase().includes(searchTerm);
       return matchCat && matchSearch;
     });
+  }
+
+  // RENDERIZADO DEL INTERFAZ YICHENXIE STYLE + FALLBACK MOBILE
+  function renderNews() {
+    const desktopStage = document.getElementById('news-interactive-stage');
+    const mobileStream = document.getElementById('news-mobile-stream');
+    const emptyState = document.getElementById('news-empty-state');
+    const countLabel = document.getElementById('news-count');
+    const titleList = document.getElementById('news-title-list');
+
+    const filtered = getFilteredNews();
 
     if (countLabel) {
       countLabel.textContent = \`// MOSTRANDO \${filtered.length} DE \${newsList.length} ENTRADAS\`;
     }
 
     if (filtered.length === 0) {
-      grid.innerHTML = '';
+      if (desktopStage) desktopStage.classList.add('hidden');
+      if (mobileStream) mobileStream.innerHTML = '';
       if (emptyState) emptyState.classList.remove('hidden');
+      activeArticleId = null;
+      hideRope();
       return;
     }
 
     if (emptyState) emptyState.classList.add('hidden');
+    if (desktopStage) desktopStage.classList.remove('hidden');
 
-    grid.innerHTML = filtered.map(item => {
-      return \`
-        <article class="group rounded-2xl bg-[#0a0c0e] border border-white/10 hover:border-brand-yellow/40 transition-all duration-300 flex flex-col justify-between overflow-hidden relative shadow-lg">
-          
-          <!-- IMAGEN DE LA NOTICIA -->
-          <div class="relative h-48 sm:h-52 overflow-hidden bg-[#111317]">
+    // Comprobar si el artículo activo actual sigue presente en el filtro
+    if (!activeArticleId || !filtered.some(n => n.id === activeArticleId)) {
+      activeArticleId = filtered[0].id;
+    }
+
+    // 1. RENDERIZAR LISTA IZQUIERDA (DESKTOP)
+    if (titleList) {
+      titleList.innerHTML = filtered.map((item, idx) => {
+        const isActive = item.id === activeArticleId;
+        const indexFormatted = String(idx + 1).padStart(2, '0');
+        return \`
+          <div 
+            id="title-item-\${item.id}"
+            data-id="\${item.id}"
+            onmouseenter="handleTitleHover('\${item.id}')"
+            onclick="handleTitleClick('\${item.id}')"
+            class="news-title-item group/item relative p-5 rounded-xl border cursor-pointer select-none transition-all duration-300 \${
+              isActive 
+                ? 'is-active bg-[#0a0c0e] border-brand-yellow/60 shadow-[0_4px_25px_rgba(241,181,65,0.08)]' 
+                : 'bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.04]'
+            }"
+          >
+            <!-- Meta encabezado: índice numérico, categoría y fecha -->
+            <div class="flex items-center justify-between text-xs font-mono mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-brand-yellow font-bold text-[11px]">// \${indexFormatted}</span>
+                <span class="px-2 py-0.5 rounded bg-white/5 text-[10px] uppercase tracking-wider text-neutral-400 group-hover/item:text-neutral-200">
+                  \${item.category}
+                </span>
+              </div>
+              <span class="text-neutral-500 text-[11px]">\${item.date}</span>
+            </div>
+
+            <!-- Título editorial con cambio de estilo activo -->
+            <h3 class="font-display text-xl sm:text-2xl font-normal leading-snug tracking-tight text-neutral-300 group-hover/item:text-white transition-colors \${
+              isActive ? 'text-white !font-bold' : ''
+            }">
+              \${item.title}
+            </h3>
+
+            <!-- Indicador sutil de punto de conexión lateral -->
+            <div class="connection-point absolute -right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full \${
+              isActive ? 'bg-brand-yellow' : 'bg-transparent'
+            }"></div>
+          </div>
+        \`;
+      }).join('');
+
+      // Listener para atenuar no seleccionados al hover
+      titleList.onmouseenter = () => titleList.classList.add('is-hovering');
+      titleList.onmouseleave = () => titleList.classList.remove('is-hovering');
+    }
+
+    // 2. ACTUALIZAR PREVIEW CARD DERECHA
+    updatePreviewCard(activeArticleId);
+
+    // 3. RENDERIZAR MOBILE STREAM (TARJETAS TRADICIONALES EN PANTALLAS PEQUEÑAS)
+    if (mobileStream) {
+      mobileStream.innerHTML = filtered.map(item => \`
+        <article class="group rounded-2xl bg-[#0a0c0e] border border-white/10 hover:border-brand-yellow/40 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-lg">
+          <div class="relative h-48 overflow-hidden bg-[#111317]">
             <img
               src="\${item.image || 'assets/instalaciones.jpg'}"
               alt="\${item.title}"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
+              class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
               onerror="this.src='assets/instalaciones.jpg'"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-[#0a0c0e] via-transparent to-transparent"></div>
-
-            <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded bg-[#0a0c0e]/90 backdrop-blur-md border border-white/15 text-brand-yellow font-mono text-[10px] uppercase tracking-wider font-semibold">
+            <span class="absolute top-3.5 left-3.5 px-2.5 py-1 rounded bg-[#0a0c0e]/90 backdrop-blur-md border border-white/15 text-brand-yellow font-mono text-[10px] uppercase font-semibold">
               \${item.category}
             </span>
           </div>
-
-          <!-- CONTENIDO DE LA TARJETA -->
           <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <span class="font-mono text-xs text-neutral-400 block">// \${item.date}</span>
-              <h2 class="font-display font-bold text-lg sm:text-xl text-white tracking-tight leading-snug group-hover:text-brand-yellow transition-colors line-clamp-2">
+              <h2 class="font-display font-bold text-lg text-white leading-snug group-hover:text-brand-yellow transition-colors line-clamp-2">
                 \${item.title}
               </h2>
               <p class="font-sans text-xs text-neutral-400 leading-relaxed line-clamp-3">
                 \${item.summary}
               </p>
             </div>
-
             <div class="pt-4 border-t border-white/5 flex items-center justify-between">
               <button
                 onclick="openReadModal('\${item.id}')"
-                class="font-mono text-xs text-brand-yellow hover:text-yellow-300 font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors group/link"
+                class="font-mono text-xs text-brand-yellow font-semibold uppercase tracking-wider flex items-center gap-1.5 group/link"
               >
                 <span>Leer Noticia</span>
                 <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"></i>
               </button>
             </div>
           </div>
-
         </article>
-      \`;
-    }).join('');
+      \`).join('');
+    }
+
+    if (window.lucide && lucide.createIcons) {
+      lucide.createIcons();
+    }
+
+    // Actualizar puntos de la cuerda tras el renderizado
+    requestAnimationFrame(updateRopePositions);
+  }
+
+  // HOVER Y SELECCIÓN DE TÍTULO
+  function handleTitleHover(id) {
+    if (activeArticleId === id) return;
+    
+    // Provocar un impulso elástico a la cuerda
+    ropeVelocity = 28;
+    
+    activeArticleId = id;
+
+    // Actualizar clases activas en los items
+    document.querySelectorAll('.news-title-item').forEach(el => {
+      const isCurrent = el.dataset.id === id;
+      el.classList.toggle('is-active', isCurrent);
+      el.classList.toggle('bg-[#0a0c0e]', isCurrent);
+      el.classList.toggle('border-brand-yellow/60', isCurrent);
+      el.classList.toggle('shadow-[0_4px_25px_rgba(241,181,65,0.08)]', isCurrent);
+      
+      const titleText = el.querySelector('h3');
+      if (titleText) {
+        titleText.classList.toggle('!font-bold', isCurrent);
+        titleText.classList.toggle('text-white', isCurrent);
+      }
+
+      const dot = el.querySelector('.connection-point');
+      if (dot) {
+        dot.classList.toggle('bg-brand-yellow', isCurrent);
+        dot.classList.toggle('bg-transparent', !isCurrent);
+      }
+    });
+
+    updatePreviewCard(id);
+    updateRopePositions();
+  }
+
+  function handleTitleClick(id) {
+    handleTitleHover(id);
+    openReadModal(id);
+  }
+
+  function handleCurrentPreviewClick() {
+    if (activeArticleId) {
+      openReadModal(activeArticleId);
+    }
+  }
+
+  // ACTUALIZAR CONTENIDO DE LA TARJETA PREVIEW
+  function updatePreviewCard(id) {
+    const item = newsList.find(n => n.id === id);
+    if (!item) return;
+
+    const catEl = document.getElementById('preview-category');
+    const dateEl = document.getElementById('preview-date');
+    const titleEl = document.getElementById('preview-title');
+    const summaryEl = document.getElementById('preview-summary');
+    const imgEl = document.getElementById('preview-image');
+    const cardEl = document.getElementById('news-preview-card');
+
+    if (catEl) catEl.textContent = item.category;
+    if (dateEl) dateEl.textContent = '// ' + item.date;
+    if (titleEl) titleEl.textContent = item.title;
+    if (summaryEl) summaryEl.textContent = item.summary;
+    if (imgEl) {
+      imgEl.src = item.image || 'assets/instalaciones.jpg';
+      imgEl.alt = item.title;
+    }
+
+    if (cardEl) {
+      cardEl.classList.remove('preview-animate');
+      // Forzar reflow para reiniciar animación CSS
+      void cardEl.offsetWidth;
+      cardEl.classList.add('preview-animate');
+    }
 
     if (window.lucide && lucide.createIcons) {
       lucide.createIcons();
     }
   }
+
+  // FÍSICA Y DIBUJO DE LA CUERDA ELÁSTICA (ROPE ANIMATION)
+  function hideRope() {
+    const path = document.getElementById('news-rope-path');
+    const startC = document.getElementById('news-rope-start');
+    const endC = document.getElementById('news-rope-end');
+    if (path) path.setAttribute('d', '');
+    if (startC) { startC.setAttribute('cx', '-100'); startC.setAttribute('cy', '-100'); }
+    if (endC) { endC.setAttribute('cx', '-100'); endC.setAttribute('cy', '-100'); }
+  }
+
+  function updateRopePositions() {
+    if (!activeArticleId) {
+      hideRope();
+      return;
+    }
+
+    const stage = document.getElementById('news-interactive-stage');
+    const activeEl = document.getElementById('title-item-' + activeArticleId);
+    const cardEl = document.getElementById('news-preview-card');
+    const path = document.getElementById('news-rope-path');
+    const startC = document.getElementById('news-rope-start');
+    const endC = document.getElementById('news-rope-end');
+
+    if (!stage || !activeEl || !cardEl || !path || window.innerWidth < 1024) {
+      hideRope();
+      return;
+    }
+
+    const stageRect = stage.getBoundingClientRect();
+    const itemRect = activeEl.getBoundingClientRect();
+    const cardRect = cardEl.getBoundingClientRect();
+
+    // Comprobar si el elemento activo está scrolleado fuera de la vista
+    const titleList = document.getElementById('news-title-list');
+    if (titleList) {
+      const listRect = titleList.getBoundingClientRect();
+      if (itemRect.bottom < listRect.top || itemRect.top > listRect.bottom) {
+        hideRope();
+        return;
+      }
+    }
+
+    // Coordenadas relativas al contenedor SVG interactivo
+    const sx = itemRect.right - stageRect.left;
+    const sy = itemRect.top + itemRect.height / 2 - stageRect.top;
+
+    const ex = cardRect.left - stageRect.left;
+    const ey = cardRect.top + Math.min(120, cardRect.height / 2) - stageRect.top;
+
+    // Distancia horizontal entre extremos
+    const dx = ex - sx;
+    if (dx <= 0) {
+      hideRope();
+      return;
+    }
+
+    // Puntos de control Bézier con deflexión elástica (sag)
+    const sag = ropeCurrentSag;
+    const c1x = sx + dx * 0.35;
+    const c1y = sy + sag;
+    const c2x = sx + dx * 0.65;
+    const c2y = ey + sag;
+
+    const d = \`M \${sx.toFixed(1)} \${sy.toFixed(1)} C \${c1x.toFixed(1)} \${c1y.toFixed(1)}, \${c2x.toFixed(1)} \${c2y.toFixed(1)}, \${ex.toFixed(1)} \${ey.toFixed(1)}\`;
+    path.setAttribute('d', d);
+
+    if (startC) {
+      startC.setAttribute('cx', sx.toFixed(1));
+      startC.setAttribute('cy', sy.toFixed(1));
+    }
+    if (endC) {
+      endC.setAttribute('cx', ex.toFixed(1));
+      endC.setAttribute('cy', ey.toFixed(1));
+    }
+  }
+
+  // LOOP DE FÍSICA ARMÓNICA (SPRING LOOP)
+  function startRopeLoop() {
+    function tick() {
+      // Amortiguamiento armónico tipo resorte (k=0.08, damping=0.82)
+      const springK = 0.08;
+      const damping = 0.82;
+      const force = (ropeTargetSag - ropeCurrentSag) * springK;
+      ropeVelocity = (ropeVelocity + force) * damping;
+      ropeCurrentSag += ropeVelocity;
+
+      if (Math.abs(ropeVelocity) > 0.01 || Math.abs(ropeCurrentSag - ropeTargetSag) > 0.01) {
+        updateRopePositions();
+      }
+
+      animationFrameId = requestAnimationFrame(tick);
+    }
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = requestAnimationFrame(tick);
+  }
+
+  // Sincronizar cuerda con el scroll de la lista
+  window.addEventListener('DOMContentLoaded', () => {
+    const titleList = document.getElementById('news-title-list');
+    if (titleList) {
+      titleList.addEventListener('scroll', () => {
+        ropeVelocity = 12; // Pequeño rebote al scrollear
+        updateRopePositions();
+      });
+    }
+    window.addEventListener('resize', updateRopePositions);
+    window.addEventListener('scroll', updateRopePositions, { passive: true });
+  });
 
   // MODAL DE LECTURA PÚBLICO
   function openReadModal(id) {

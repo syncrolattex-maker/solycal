@@ -309,61 +309,240 @@
 
   <script>
     const DEFAULT_NEWS = [
-      {
-        id: 'news-1',
-        title: 'Los orígenes de Solycal: Crecimiento continuo desde 2013 en el Polígono Masía del Juez',
-        category: 'Trayectoria',
-        date: '15 Mar 2023',
-        image: 'assets/instalaciones.jpg',
-        summary: 'Solycal inició su actividad metalúrgica en 2013 con una nave de 1.500 m² y 5 profesionales. Hoy consolidamos una infraestructura de 5.000 m² con 7 puentes grúa de hasta 16 Tn.',
-        content: 'En el año 2013, Soldadura y Calderería Valenciana S.L. (Solycal) dio sus primeros pasos en el Polígono Industrial Masía del Juez de Torrent (Valencia). El objetivo inicial fue responder a la creciente demanda de calderería de alta precisión y estructuras metálicas con un equipo nuclear de cinco especialistas en calderería y soldadura.\n\nCon el transcurso de los años y la confianza de clientes de sectores como el químico, ferroviario, cementero y energético, las instalaciones han evolucionado hasta abarcar 5.000 m² distribuidos en áreas especializadas: corte térmico de chapa, conformado y plegado, calderería pesada, soldadura TIG/MIG homologada y montaje final.\n\nEsta evolución técnica nos permite asumir proyectos de alta envergadura con total solvencia, control dimensional milimétrico y marcado CE EN 1090-1.'
-      },
-      {
-        id: 'news-2',
-        title: 'Coordinación entre Oficina Técnica y Taller: Entrevista a Enrique Avia, Jefe de Producción',
-        category: 'Equipo',
-        date: '20 Jun 2023',
-        image: 'assets/mecanizado.jpg',
-        summary: 'Enrique Avia, jefe de producción de Solycal, analiza la importancia crítica de la sincronización entre planos CAD/3D y operarios de taller para garantizar tolerancias mínimas.',
-        content: 'Para Enrique Avia, jefe de producción en Solycal, la clave de la precisión industrial reside en la comunicación bidireccional entre la oficina técnica y las bancadas de montaje.\n\n"Cada pieza o estructura que entra a producción pasa por una revisión minuciosa de despiece y tolerancias. Nuestra oficina técnica modela en 3D y genera desarrollos exactos para plegado y corte plasma. Sin embargo, es la destreza del calderero y del soldador homologado lo que garantiza que los cordones de penetración completa y los ajustes dimensionales cumplan al milímetro las especificaciones de proyecto", explica Avia.\n\nLa optimización constante de tiempos y recursos permite a Solycal abordar tanto piezas unitarias bajo plano como series medias con tiempos de entrega reducidos.'
-      },
-      {
-        id: 'news-3',
-        title: 'Calderería Técnica en Acero Inoxidable para la Industria Química y Alimentaria',
-        category: 'Procesos Técnicos',
-        date: '12 Sep 2023',
-        image: 'assets/weld.jpg',
-        summary: 'Desarrollo de tolvas, conductos de aspiración y depósitos presurizados en AISI 304L y AISI 316L con soldadura TIG de purga y acabados pasivados.',
-        content: 'El mecanizado y conformado de aceros inoxidables austeníticos requiere protocolos de fabricación diferenciados para evitar la contaminación cruzada con aceros al carbono. En Solycal disponemos de zonas de trabajo y utillajes específicos para el procesado de inoxidables.\n\nNuestras homologaciones de soldadura TIG (GTAW) bajo norma EN ISO 15614-1 garantizan cordones limpios, con gas de respaldo y purga interior para evitar oxidaciones en la raíz.\n\nCada depósito o elemento para fluidos corrosivos se entrega con certificado de colada 3.1 y ensayos no destructivos (líquidos penetrantes y control visual VT) conforme a la directiva de equipos a presión.'
-      },
-      {
-        id: 'news-4',
-        title: 'Corte Plasma HD Hypertherm TrueHole y Conformado CNC: Máxima Eficiencia en Chapa Gruesa',
-        category: 'Tecnología',
-        date: '28 Nov 2023',
-        image: 'assets/plasma-machine.png',
-        summary: 'Incorporación de corte por plasma Hypertherm de alta definición con biselado automático y capacidad de corte en espesores de hasta 50 mm.',
-        content: 'La tecnología TrueHole integrada en nuestra mesa de corte plasma HD permite obtener orificios cilíndricos con conicidad prácticamente nula, ideales para atornillado directo sin necesidad de taladrado posterior en taller.\n\nCombinada con nuestra prensa plegadora CNC de 4 metros y hasta 320 toneladas, logramos desarrollar desarrollos de calderería de gran envergadura: conos concéntricos y excéntricos, tolvas de descarga, virolas y perfiles estructurales conformados.\n\nLa reducción de empalmes soldados se traduce en mayor resistencia mecánica y reducción de costes para el cliente.'
-      },
-      {
-        id: 'news-5',
-        title: 'Superación de Auditorías LRQA: Certificación Marcado CE EN 1090-1 y Soldadura EN 15085-2',
-        category: 'Calidad',
-        date: '18 Feb 2024',
-        image: 'assets/cert-lrqa.png',
-        summary: 'Solycal renueva satisfactoriamente sus auditorías externas de Control de Producción en Fábrica (CPF) bajo el organismo notificado LRQA.',
-        content: 'La calidad no es un reclamo, sino un requisito técnico indispensable. Solycal renueva sus certificaciones según las normativas europeas más exigentes: Marcado CE para estructuras metálicas de acero bajo norma EN 1090-1 (Clase de Ejecución EXC3) y homologación para soldadura de vehículos y componentes ferroviarios según EN 15085-2.\n\nTodo el acero procesado cuenta con trazabilidad total desde la recepción de la bobina o chapa hasta el montaje final en obra, respaldado por nuestro sistema de gestión ISO 9001:2015 auditado por LRQA.'
-      },
-      {
-        id: 'news-6',
-        title: 'Planificación Operativa y Respuesta a Proyectos Industriales Urgentes',
-        category: 'Actualidad',
-        date: '24 May 2024',
-        image: 'assets/instalaciones.jpg',
-        summary: 'Protocolos de trabajo continuo en paradas técnicas de planta y capacidad de premontaje en nuestras naves de 5.000 m².',
-        content: 'En la industria pesada, cada hora de parada técnica no programada representa un coste crítico. En Solycal contamos con la flexibilidad operativa y los medios mecánicos (7 puentes grúa de hasta 16 toneladas) para ejecutar premontajes completos en nuestras instalaciones.\n\nEste ensayo previo en taller garantiza que, una vez trasladadas las estructuras o conducciones a las instalaciones del cliente, el montaje y acople final se realice en tiempos récord sin imprevistos de alineación o soldadura en campo.'
-      }
-    ];
+  {
+    "id": "solycal-post-1",
+    "title": "Ayuda Generalitat Valenciana En Inversión Productiva 2026.",
+    "category": "Innovación & Ayudas",
+    "date": "30 Sep 2026",
+    "image": "https://solycal.es/wp-content/uploads/2026/09/Cartel-2026-1024x768.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Generalitat Valenciana En Inversión Productiva 2026..",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Generalitat Valenciana En Inversión Productiva 2026.."
+  },
+  {
+    "id": "solycal-post-2",
+    "title": "Publicidad Del Acuerdo De Escisión Parcial Tomado En Junta Universal De Fecha 25 De Septiembre De 2025.",
+    "category": "Corporativo",
+    "date": "15 Oct 2025",
+    "image": "assets/instalaciones.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Publicidad Del Acuerdo De Escisión Parcial Tomado En Junta Universal De Fecha 25 De Septiembre De 2025..",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Publicidad Del Acuerdo De Escisión Parcial Tomado En Junta Universal De Fecha 25 De Septiembre De 2025.."
+  },
+  {
+    "id": "solycal-post-3",
+    "title": "Ayuda Generalitat Valenciana En Inversión Productiva 2025.",
+    "category": "Innovación & Ayudas",
+    "date": "10 Sep 2025",
+    "image": "https://solycal.es/wp-content/uploads/2025/10/Cartel-web-1024x768.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Generalitat Valenciana En Inversión Productiva 2025..",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Generalitat Valenciana En Inversión Productiva 2025.."
+  },
+  {
+    "id": "solycal-post-4",
+    "title": "Proyecto De Modificación Estructural Escisión Parcial De La Sociedad “soldadura Y Caldereria Valenciana, S.l.”",
+    "category": "Corporativo",
+    "date": "16 Jul 2025",
+    "image": "assets/instalaciones.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Proyecto De Modificación Estructural Escisión Parcial De La Sociedad “soldadura Y Caldereria Valenciana, S.l.”.",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Proyecto De Modificación Estructural Escisión Parcial De La Sociedad “soldadura Y Caldereria Valenciana, S.l.”."
+  },
+  {
+    "id": "solycal-post-5",
+    "title": "Ayuda Instalación Fotovoltaica 2024",
+    "category": "Innovación & Ayudas",
+    "date": "13 Feb 2024",
+    "image": "https://solycal.es/wp-content/uploads/2024/03/Ayuda-instalación-fotovoltaica-2024.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Instalación Fotovoltaica 2024.",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayuda Instalación Fotovoltaica 2024."
+  },
+  {
+    "id": "solycal-post-6",
+    "title": "Ayuda Industrialización 2023",
+    "category": "Innovación & Ayudas",
+    "date": "13 Feb 2024",
+    "image": "https://solycal.es/wp-content/uploads/2024/02/Cartel-Ayuda-Industrialización-2023-1-1024x380.jpg",
+    "summary": "Conselleria de Innovación, Industria, Comercio y Turismo",
+    "content": "Conselleria de Innovación, Industria, Comercio y Turismo"
+  },
+  {
+    "id": "solycal-post-7",
+    "title": "Ayudas Industrialización 2023",
+    "category": "Innovación & Ayudas",
+    "date": "7 Sep 2023",
+    "image": "https://solycal.es/wp-content/uploads/2023/09/CARTEL-AYUDAS-INDUSTRIALIZACIÓN-2023-1024x347.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayudas Industrialización 2023.",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayudas Industrialización 2023."
+  },
+  {
+    "id": "solycal-post-8",
+    "title": "Estrenamos Las Nuevas Instalaciones",
+    "category": "Instalaciones",
+    "date": "27 Sep 2022",
+    "image": "https://solycal.es/wp-content/uploads/2022/09/20220622_122002-1024x768.jpg",
+    "summary": "Junio 2022. Con el traslado del plasma de alta definición y la máquina laser, iniciamos el asentamiento de Solycal en las nuevas instalaciones",
+    "content": "Junio 2022. Con el traslado del plasma de alta definición y la máquina laser, iniciamos el asentamiento de Solycal en las nuevas instalaciones"
+  },
+  {
+    "id": "solycal-post-9",
+    "title": "Ayudas Industrializacion 2022",
+    "category": "Innovación & Ayudas",
+    "date": "9 Ago 2022",
+    "image": "https://solycal.es/wp-content/uploads/2022/08/AYUDAS-INDUSTRIALIZACIÓN-2022-1024x551.jpg",
+    "summary": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayudas Industrializacion 2022.",
+    "content": "Publicación y comunicado oficial de SOLYCAL S.L. relativo a Ayudas Industrializacion 2022."
+  },
+  {
+    "id": "solycal-post-10",
+    "title": "Montaje De Maquinaria",
+    "category": "Tecnología",
+    "date": "3 Sep 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/09/IMG_20200609_163555_100-1024x768.jpg",
+    "summary": "Terminó agosto. En agosto seguimos dando servicio a nuestros clientes en la fabricación de piezas a medida, soldadura, mecanizado, ajustes y montajes. Es un mes en el que dedicamos atención especial al mantenimiento,...",
+    "content": "Terminó agosto. En agosto seguimos dando servicio a nuestros clientes en la fabricación de piezas a medida, soldadura, mecanizado, ajustes y montajes. Es un mes en el que dedicamos atención especial al mantenimiento, nuestros principales clientes hacen paros en la producción para realizar mejoras en sus instalaciones en las que nosotros entramos.Ahora comenzamos septiembre con&hellip;"
+  },
+  {
+    "id": "solycal-post-11",
+    "title": "Jefe De Mecanizados",
+    "category": "Equipo",
+    "date": "5 Ago 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/08/IMG_20200727_123339_175-768x1024.jpg",
+    "summary": "Enrique ajustando una máquina nueva Hoy queremos hablar de Enrique Avia, jefe de producción de Solycal. Con una amplia y dilatada experiencia en el sector del metal, Enrique domina todos los campos de la empresa y una...",
+    "content": "Hoy queremos hablar de Enrique Avia, jefe de producción de Solycal. Con una amplia y dilatada experiencia en el sector del metal, Enrique domina todos los campos de la empresa y una de sus fortalezas es la gestión de recursos para optimizar los procesos. Su templanza y carácter para resolver problemas y liderar equipos unido a sus amplios conocimientos en mecánica, soldadura, calderería, mecanizado, ajuste de piezas en montajes industriales, &nbsp;además conocimientos de diseño en 2 y 3D hacen de él un pilar esencial de la empresa en el propósito de la mejora continua. &nbsp;"
+  },
+  {
+    "id": "solycal-post-12",
+    "title": "Grupo Solycal",
+    "category": "Equipo",
+    "date": "23 Jul 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/07/IMG_20200723_161443_2252-742x1024.jpg",
+    "summary": "Formamos un equipo que trabaja cada día con un solo objetivo, la mejora contínua. Oficina técnica, diseño y simulación en 3D, ,mecanizado, soldadura, calderería, ensamblaje y montaje industrial, mantenimiento y repara...",
+    "content": "Formamos un equipo que trabaja cada día con un solo objetivo, la mejora contínua. Oficina técnica, diseño y simulación en 3D, ,mecanizado, soldadura, calderería, ensamblaje y montaje industrial, mantenimiento y reparación de maquinara. Un equipo de profesionales mejorando cada día para hacer realidad las necesidades de nuestros clientes."
+  },
+  {
+    "id": "solycal-post-13",
+    "title": "VOLVEMOS",
+    "category": "Actualidad",
+    "date": "22 Abr 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/04/Foto07-1024x768.jpg",
+    "summary": "Parece mucho tiempo pero solo ha pasado un mes. Una ola Covid-19 se desplazaba con fuerza, no la vimos venir y de repente, todo se paró. La industria paró la fabricación de coches. Tiendas, bares, terrazas y restauran...",
+    "content": "Parece mucho tiempo pero solo ha pasado un mes.
+
+Una ola Covid-19 se desplazaba con fuerza, no
+la vimos venir y de repente, todo se paró.
+
+La industria paró la fabricación de coches.
+
+Tiendas, bares, terrazas y restaurantes, puntos
+de reunión y tertulias, bajaron sus persianas.
+
+Se cancelaron los viajes y se cerraron las
+fronteras.
+
+Se suspendieron los conciertos y eventos
+deportivos.
+
+Ahora la calles están vacías, la contaminación
+baja,la tierra respira y tenemos tiempo para estar en casa.
+
+Profesiones que no parecían importantes, son ahora
+el sustento de la sociedad del bienestar.
+
+Muchos mayores están solos y mucha gente ha
+perdido a sus seres queridos sin poderse despedir.
+
+El mundo ha cambiado y no será igual que antes,
+tendremos que tener más higiene y una mayor distancia social, pero poco a poco
+debemos volver a la normalidad.
+
+Hoy abrimos Solycal y pondremos todos los
+medios que estén a nuestro alcance para garantizar la seguridad y bienestar de
+nuestro personal, proveedores y clientes.
+
+Juntos saldremos de esta situación.
+
+Solycal 14 de abril de 2020."
+  },
+  {
+    "id": "solycal-post-14",
+    "title": "Caldereria Acero Inoxidable",
+    "category": "Procesos Técnicos",
+    "date": "2 Mar 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/03/IMG_20200217_142554_769-768x1024.jpg",
+    "summary": "Una Oficina Técnica con larga experiencia, medios técnicos y personal altamente cualificado son los valores de nuestra empresa. En la foto fabricación de depósitos de acero inoxidable",
+    "content": "Una Oficina Técnica con larga experiencia, medios técnicos y personal altamente cualificado son los valores de nuestra empresa. En la foto fabricación de depósitos de acero inoxidable"
+  },
+  {
+    "id": "solycal-post-15",
+    "title": "Soldadura MIG/MAG",
+    "category": "Procesos Técnicos",
+    "date": "18 Feb 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/02/IMG_0127-1024x683.jpg",
+    "summary": "Con este tipo de soldadura, el gas protector proporciona una atmósfera inerte mientras se produce con arco eléctrico. La máquina va alimentado el hilo que se funde bajo una cubierta de gas protector.",
+    "content": "Con este tipo de soldadura, el gas protector proporciona una atmósfera inerte mientras se produce con arco eléctrico. La máquina va alimentado el  hilo que se funde bajo una cubierta de gas protector."
+  },
+  {
+    "id": "solycal-post-16",
+    "title": "Nuevas Instalaciones",
+    "category": "Instalaciones",
+    "date": "15 Feb 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/02/IMG-20200215-WA00012-1.jpg",
+    "summary": "Reunión con Mano de Santo Estudio de Arquitectura, presentación de los primeros bocetos de las nuevas Naves de Solycal en Torrent, 8000 m2 de parcela y 5000 m2 construidos. 15 de febrero 2020",
+    "content": "Reunión con Mano de Santo Estudio de Arquitectura, presentación de  los primeros bocetos de las nuevas  Naves de Solycal en Torrent, 8000 m2 de parcela y 5000 m2 construidos. 15 de febrero 2020"
+  },
+  {
+    "id": "solycal-post-17",
+    "title": "Fabricacion De Conductos",
+    "category": "Procesos Técnicos",
+    "date": "14 Feb 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/02/IMG_20200110_113936_697-1024x768.jpg",
+    "summary": "Manipulación de conducto de grandes dimensiones para continuar con el proceso de soldadura y montaje. Por su envergadura, mas de 20 m de longitud, se emplearon dos puentes grúa. Febrero 2020.",
+    "content": "Manipulación de conducto de grandes dimensiones para continuar con el proceso de soldadura y montaje. Por su envergadura, mas de 20 m de longitud, se emplearon dos puentes grúa. Febrero 2020."
+  },
+  {
+    "id": "solycal-post-18",
+    "title": "Mejora Contínua",
+    "category": "Tecnología",
+    "date": "11 Feb 2020",
+    "image": "https://solycal.es/wp-content/uploads/2020/02/IMG_20200124_090536_424-1024x768.jpg",
+    "summary": "En Solycal cuidamos los procesos de los proyectos que abordamos, desde el diseño, pedido de elementos comerciales y fabricación, hasta el proceso de verificación de piezas, carga de material y entrega al cliente. Cono...",
+    "content": "En Solycal cuidamos los procesos de los proyectos que abordamos, desde el diseño, pedido de elementos comerciales y fabricación, hasta el proceso de verificación de piezas, carga de material y entrega al cliente. Conoce más en Paragonix Earn En Español. Febrero 2020"
+  },
+  {
+    "id": "solycal-post-19",
+    "title": "Calderería Y Soldadura",
+    "category": "Procesos Técnicos",
+    "date": "30 Oct 2019",
+    "image": "https://solycal.es/wp-content/uploads/2019/10/IMG_20190916_171557_869-1024x768.jpg",
+    "summary": "Solycal, para un buen trabajo en equipo es importante la coordinación de todos los departamentos de la empresa, gerencia, administración, compras, seguridad e higiene, oficina técnica y taller. Cada una de las persona...",
+    "content": "Solycal, para un buen trabajo en equipo es importante la coordinación de todos los departamentos de la empresa, gerencia, administración, compras, seguridad e higiene, oficina técnica y taller. Cada una de las personas que trabaja en la empresa, forma parte de la cadena que permite realizar los proyectos con dinamismo, calidad y eficacia cada día. Octubre 2019."
+  },
+  {
+    "id": "solycal-post-20",
+    "title": "Procesos Solycal",
+    "category": "Procesos Técnicos",
+    "date": "5 Ago 2019",
+    "image": "https://solycal.es/wp-content/uploads/2019/02/Best-Mig-Welder-Under-1000-1024x451.jpg",
+    "summary": "Proceso de soldadura y ensamblaje. Agosto 2019",
+    "content": "Proceso de soldadura y ensamblaje. Agosto 2019"
+  },
+  {
+    "id": "solycal-post-21",
+    "title": "Calderería Y Soldadura Técnica De Aluminio.",
+    "category": "Procesos Técnicos",
+    "date": "5 May 2019",
+    "image": "https://solycal.es/wp-content/uploads/2019/05/IMG_20190225_155323_0022-1010x1024.jpg",
+    "summary": "Desde Grupo Solycal estamos orgullosos de participar en el Proyecto Lanzador Miura-5 para la empresa de Tecnología Espacial, PLD SPACE",
+    "content": "Desde Grupo Solycal estamos orgullosos de participar en el Proyecto Lanzador Miura-5 para la empresa de Tecnología Espacial, PLD SPACE"
+  },
+  {
+    "id": "solycal-post-22",
+    "title": "Solycal, Torrente 2012",
+    "category": "Instalaciones",
+    "date": "1 Mar 2019",
+    "image": "https://solycal.es/wp-content/uploads/2019/03/2013-09-03-13.07.30-1024x768.jpg",
+    "summary": "Solycal inició su andadura en el año 2013, en el Polígono Industrial Masía del Juez. Una nave de 1500m2, ilusión, un equipo de 5 personas y gran capacidad de trabajo fué suficiente para iniciar la empresa.",
+    "content": "Solycal inició su andadura en el año 2013, en el Polígono Industrial Masía del Juez. Una nave de 1500m2, ilusión, un equipo de 5 personas y gran capacidad de trabajo fué suficiente para iniciar la empresa."
+  }
+];
 
     let newsList = [];
     let currentCategory = 'Todas';
@@ -371,9 +550,15 @@
 
     function loadNews() {
       try {
-        const stored = localStorage.getItem('solycal_news_data');
+        const stored = localStorage.getItem('solycal_news_data_v2') || localStorage.getItem('solycal_news_data');
         if (stored) {
-          newsList = JSON.parse(stored);
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length <= 6) {
+            newsList = [...DEFAULT_NEWS];
+            saveToStorage();
+          } else {
+            newsList = parsed;
+          }
         } else {
           newsList = [...DEFAULT_NEWS];
           saveToStorage();
@@ -386,7 +571,10 @@
     }
 
     function saveToStorage() {
-      localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
+      try {
+        localStorage.setItem('solycal_news_data_v2', JSON.stringify(newsList));
+        localStorage.setItem('solycal_news_data', JSON.stringify(newsList));
+      } catch (e) {}
     }
 
     function resetToOriginals() {

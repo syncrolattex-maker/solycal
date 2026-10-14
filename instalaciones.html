@@ -1212,14 +1212,21 @@ document.addEventListener('DOMContentLoaded', () => {
   );
 
   const textureLoader = new THREE.TextureLoader(loadingManager);
-  const bakedTexture = textureLoader.load('assets/3d/fabrica_baked.png');
+  const bakedTexture = textureLoader.load('assets/3d/fabrica_baked.png', (tex) => {
+    tex.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.needsUpdate = true;
+  });
   bakedTexture.flipY = false;
   if (THREE.SRGBColorSpace) {
     bakedTexture.colorSpace = THREE.SRGBColorSpace;
   }
 
   const bakedMaterial = new THREE.MeshBasicMaterial({
-    map: bakedTexture
+    map: bakedTexture,
+    side: THREE.DoubleSide
   });
 
   const industrialFallbackMat = new THREE.MeshStandardMaterial({
@@ -1256,19 +1263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (name.includes('corona light')) {
           child.material = lampMat;
         } else {
-          if (!child.geometry.attributes.uv) {
-            const pos = child.geometry.attributes.position;
-            child.geometry.computeBoundingBox();
-            const bbox = child.geometry.boundingBox;
-            const sizeX = (bbox.max.x - bbox.min.x) || 1;
-            const sizeY = (bbox.max.y - bbox.min.y) || 1;
-            const uvs = new Float32Array(pos.count * 2);
-            for (let i = 0; i < pos.count; i++) {
-              uvs[i * 2] = (pos.getX(i) - bbox.min.x) / sizeX;
-              uvs[i * 2 + 1] = (pos.getY(i) - bbox.min.y) / sizeY;
-            }
-            child.geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-          }
+          // Asignar el material horneado (baked) con sus coordenadas UV mapeadas en 3ds Max
           child.material = bakedMaterial;
           clickableMeshes.push(child);
         }

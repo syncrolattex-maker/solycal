@@ -8753,10 +8753,27 @@ const accesoHtml = `<!DOCTYPE html>
       z-index: 0;
       pointer-events: none;
     }
-    .login-container {
-      position: relative;
-      z-index: 10;
-      pointer-events: auto;
+    .glass-card {
+      background: rgba(13, 16, 22, 0.45);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 
+                  0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+                  0 1px 0 0 rgba(255, 255, 255, 0.25) inset;
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) inset;
+      transition: all 0.25s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: #F1B541;
+      box-shadow: 0 0 0 1px #F1B541, 0 0 15px rgba(241, 181, 65, 0.25);
     }
   </style>
 </head>
@@ -8771,16 +8788,19 @@ const accesoHtml = `<!DOCTYPE html>
   <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
   <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
 
-  <!-- TARJETA DE LOGIN FLOTANTE MINIMALISTA -->
-  <div class="login-container w-full max-w-sm p-8 sm:p-9 rounded-2xl bg-[#07080a]/85 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
+  <!-- TARJETA DE LOGIN EN GLASS (GLASSMORPHISM INDUSTRIAL) -->
+  <div class="login-container glass-card w-full max-w-sm p-8 sm:p-9 rounded-2xl relative">
+    <!-- Resplandor sutil superior de cristal -->
+    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-yellow/10 blur-2xl rounded-full pointer-events-none"></div>
+
     <!-- Logo + Letras SOLYCAL -->
-    <div class="flex items-center justify-center gap-3 mb-8">
-      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain">
+    <div class="flex items-center justify-center gap-3 mb-8 relative z-10">
+      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
       <span class="font-display font-bold text-2xl tracking-wider text-white">SOLYCAL</span>
     </div>
 
     <!-- Formulario de acceso: solo user y pass -->
-    <form id="gate-form" class="space-y-4" onsubmit="handleAccess(event)" autocomplete="off">
+    <form id="gate-form" class="space-y-4 relative z-10" onsubmit="handleAccess(event)" autocomplete="off">
       <div>
         <label for="u" class="sr-only">Usuario</label>
         <input
@@ -8791,7 +8811,7 @@ const accesoHtml = `<!DOCTYPE html>
           placeholder="Usuario"
           autocomplete="off"
           autofocus
-          class="w-full px-4 py-3 bg-[#111317]/90 border border-white/10 rounded-xl text-white placeholder-neutral-500 font-mono text-sm focus:outline-none focus:border-[#F1B541] focus:ring-1 focus:ring-[#F1B541] transition-all"
+          class="glass-input w-full px-4 py-3 rounded-xl text-white placeholder-neutral-400 font-mono text-sm focus:outline-none"
         />
       </div>
 
@@ -8804,7 +8824,7 @@ const accesoHtml = `<!DOCTYPE html>
           required
           placeholder="Contraseña"
           autocomplete="off"
-          class="w-full px-4 py-3 bg-[#111317]/90 border border-white/10 rounded-xl text-white placeholder-neutral-500 font-mono text-sm tracking-widest focus:outline-none focus:border-[#F1B541] focus:ring-1 focus:ring-[#F1B541] transition-all"
+          class="glass-input w-full px-4 py-3 rounded-xl text-white placeholder-neutral-400 font-mono text-sm tracking-widest focus:outline-none"
         />
       </div>
 
@@ -8814,7 +8834,7 @@ const accesoHtml = `<!DOCTYPE html>
 
       <button
         type="submit"
-        class="w-full py-3 bg-[#F1B541] text-black font-mono text-xs uppercase tracking-widest font-bold rounded-xl hover:bg-[#e5a52a] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(241,181,65,0.25)]"
+        class="w-full py-3 bg-[#F1B541] text-black font-mono text-xs uppercase tracking-widest font-bold rounded-xl hover:bg-[#e5a52a] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(241,181,65,0.35)] hover:shadow-[0_0_35px_rgba(241,181,65,0.55)] cursor-pointer"
       >
         Entrar
       </button>

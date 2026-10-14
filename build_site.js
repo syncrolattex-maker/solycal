@@ -4108,12 +4108,17 @@ void main() {
         p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);
     }
 
-    // Fondo 100% negro puro: se elimina el degradado azul/cian superior derecho
-    vec4 result = S * S;
+    // Colores vivos, intensos y vibrantes: mezcla de nebulosa cósmica y estelas incandescentes
+    vec4 C_mod = C - 1.0; 
+    vec4 background = max(p.x * C_mod * 1.8, vec4(0.0)); 
+    vec4 debris = S * S * 2.2;
+    vec4 result = background + debris;
+
+    // Saturation and vibrant tone mapping
     vec4 O = vec4(
-        customTanh(result.r),
-        customTanh(result.g),
-        customTanh(result.b),
+        customTanh(result.r * 1.3),
+        customTanh(result.g * 1.15),
+        customTanh(result.b * 1.4),
         1.0
     );
     gl_FragColor = O;
@@ -8784,9 +8789,9 @@ const accesoHtml = `<!DOCTYPE html>
     <canvas id="debris-canvas" class="w-full h-full block"></canvas>
   </div>
 
-  <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
-  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
-  <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
+  <!-- Máscara de profundidad sutil para realzar los colores vivos del fondo -->
+  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-black/10 via-transparent to-black/40"></div>
+  <div class="fixed inset-0 dot-grid opacity-10 pointer-events-none z-[1]"></div>
 
   <!-- TARJETA DE LOGIN EN GLASS (GLASSMORPHISM INDUSTRIAL) -->
   <div class="login-container glass-card w-full max-w-sm p-8 sm:p-9 rounded-2xl relative">

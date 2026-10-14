@@ -2023,82 +2023,115 @@ function getFooter(options = {}) {
         const mainFooter = document.getElementById('main-footer');
 
         if (footerShaderCanvas && mainFooter) {
-          const gl = footerShaderCanvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
-          
-            const vsSource = ${JSON.stringify(footerShaderVertex)};
-            const fsSource = ${JSON.stringify(footerShaderFragment)};
+          try {
+            const gl = footerShaderCanvas.getContext('webgl', { 
+              alpha: true, 
+              antialias: false, 
+              depth: false, 
+              stencil: false, 
+              powerPreference: 'low-power',
+              preserveDrawingBuffer: false 
+            });
 
-            function createShader(gl, type, source) {
-              const shader = gl.createShader(type);
-              gl.shaderSource(shader, source);
-              gl.compileShader(shader);
-              if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                gl.deleteShader(shader);
-                return null;
+            if (gl) {
+              const vsSource = ${JSON.stringify(footerShaderVertex)};
+              const fsSource = ${JSON.stringify(footerShaderFragment)};
+
+              function createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                  console.warn('Shader compile error:', gl.getShaderInfoLog(shader));
+                  gl.deleteShader(shader);
+                  return null;
+                }
+                return shader;
               }
-              return shader;
-            }
 
-            const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
-            const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-            const program = gl.createProgram();
-            gl.attachShader(program, vs);
-            gl.attachShader(program, fs);
-            gl.linkProgram(program);
+              const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+              const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-            const posBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-              -1, -1,
-               1, -1,
-              -1,  1,
-              -1,  1,
-               1, -1,
-               1,  1
-            ]), gl.STATIC_DRAW);
+              if (vs && fs) {
+                const program = gl.createProgram();
+                gl.attachShader(program, vs);
+                gl.attachShader(program, fs);
+                gl.linkProgram(program);
 
-            const aPosLoc = gl.getAttribLocation(program, 'a_pos');
-            const uResLoc = gl.getUniformLocation(program, 'u_resolution');
-            const uTimeLoc = gl.getUniformLocation(program, 'u_time');
+                if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                  const posBuffer = gl.createBuffer();
+                  gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+                  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1,
+                     1, -1,
+                    -1,  1,
+                    -1,  1,
+                     1, -1,
+                     1,  1
+                  ]), gl.STATIC_DRAW);
 
-            let isFooterActive = false;
-            const footerObserver = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                isFooterActive = entry.isIntersecting;
-              });
-            }, { threshold: 0.05 });
-            footerObserver.observe(mainFooter);
+                  const aPosLoc = gl.getAttribLocation(program, 'a_pos');
+                  const uResLoc = gl.getUniformLocation(program, 'u_resolution');
+                  const uTimeLoc = gl.getUniformLocation(program, 'u_time');
 
-            function resizeCanvas() {
-              const rect = footerShaderCanvas.getBoundingClientRect();
-              const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-              const w = Math.floor(rect.width * dpr);
-              const h = Math.floor(rect.height * dpr);
-              if (footerShaderCanvas.width !== w || footerShaderCanvas.height !== h) {
-                footerShaderCanvas.width = Math.max(1, w);
-                footerShaderCanvas.height = Math.max(1, h);
-                gl.viewport(0, 0, footerShaderCanvas.width, footerShaderCanvas.height);
+                  let isFooterActive = false;
+                  let rafId = null;
+
+                  // Resolución interna optimizada fija/acotada (estilo Framer Canvas Shader)
+                  // El canvas mide 100% de ancho x alto con CSS, pero internamente renderiza
+                  // a resolución ligera (e.g. max 480x270) dando un degradado de seda ultra-suave
+                  // a 60 FPS sin cargar la GPU ni congelar el hilo principal.
+                  function resizeCanvas() {
+                    const rect = footerShaderCanvas.getBoundingClientRect();
+                    const targetW = Math.min(Math.max(1, Math.floor(rect.width || 384)), 512);
+                    const targetH = Math.min(Math.max(1, Math.floor(rect.height || 216)), 320);
+
+                    if (footerShaderCanvas.width !== targetW || footerShaderCanvas.height !== targetH) {
+                      footerShaderCanvas.width = targetW;
+                      footerShaderCanvas.height = targetH;
+                      gl.viewport(0, 0, targetW, targetH);
+                    }
+                  }
+
+                  window.addEventListener('resize', resizeCanvas, { passive: true });
+                  resizeCanvas();
+
+                  const startTime = performance.now();
+
+                  function renderShader(now) {
+                    if (!isFooterActive) {
+                      rafId = null;
+                      return;
+                    }
+
+                    gl.useProgram(program);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+                    gl.enableVertexAttribArray(aPosLoc);
+                    gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+                    gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
+                    gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+                    rafId = requestAnimationFrame(renderShader);
+                  }
+
+                  const footerObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                      isFooterActive = entry.isIntersecting;
+                      if (isFooterActive && !rafId) {
+                        rafId = requestAnimationFrame(renderShader);
+                      }
+                    });
+                  }, { threshold: 0.02, rootMargin: '100px' });
+
+                  footerObserver.observe(mainFooter);
+                }
               }
             }
-            window.addEventListener('resize', resizeCanvas, { passive: true });
-            resizeCanvas();
-
-            let startTime = performance.now();
-            function renderShader(now) {
-              requestAnimationFrame(renderShader);
-              if (!isFooterActive) return;
-
-              gl.useProgram(program);
-              gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-              gl.enableVertexAttribArray(aPosLoc);
-              gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
-
-              gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
-              gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
-
-              gl.drawArrays(gl.TRIANGLES, 0, 6);
-            }
-            requestAnimationFrame(renderShader);
+          } catch (e) {
+            console.warn('WebGL Footer Shader fallback to CSS gradient:', e);
           }
         }
 

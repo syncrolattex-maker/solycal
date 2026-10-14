@@ -1942,82 +1942,115 @@
         const mainFooter = document.getElementById('main-footer');
 
         if (footerShaderCanvas && mainFooter) {
-          const gl = footerShaderCanvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
-          
-            const vsSource = "\nattribute vec2 a_pos;\nvarying vec2 v_uv;\nvoid main() {\n  v_uv = a_pos * 0.5 + 0.5;\n  gl_Position = vec4(a_pos, 0.0, 1.0);\n}\n";
-            const fsSource = "\nprecision mediump float;\nvarying vec2 v_uv;\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec2 rotVec(vec2 v, float a) {\n  float c = cos(a), s = sin(a);\n  return vec2(v.x * c - v.y * s, v.x * s + v.y * c);\n}\n\nfloat hash(vec2 p) {\n  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n  vec2 i = floor(p);\n  vec2 f = fract(p);\n  f = f * f * (3.0 - 2.0 * f);\n  float a = hash(i);\n  float b = hash(i + vec2(1.0, 0.0));\n  float c = hash(i + vec2(0.0, 1.0));\n  float d = hash(i + vec2(1.0, 1.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nvec2 warpUV(vec2 uv) {\n  float a = (uv.x * 2.5 + noise(uv * 1.8 + u_time * 0.15)) * 3.14159;\n  a *= 0.65;\n  return vec2(cos(a) * uv.x - sin(a) * uv.y, sin(a) * uv.x + cos(a) * uv.y);\n}\n\nvoid main() {\n  vec2 uv = v_uv;\n  float ratio = u_resolution.x / max(u_resolution.y, 1.0);\n  float t = u_time * 0.45;\n\n  vec2 tuv = uv - 0.5;\n  float degree = noise(vec2(t * 0.08, tuv.x * tuv.y * 3.0) + vec2(12.3, 45.6));\n  tuv.y /= ratio;\n  tuv = rotVec(tuv, (degree - 0.5) * 1.8 + 0.6);\n  tuv.y *= ratio;\n\n  vec2 uv2 = (uv * 2.0 - 1.0);\n  uv2 = rotVec(uv2, 0.42);\n  vec2 warped = warpUV(uv2) * 0.5;\n\n  vec2 blendUV = mix(tuv, warped, 0.52);\n\n  // Paleta Corporativa Solycal Industrial\n  vec3 c0 = vec3(0.027, 0.031, 0.039); // #07080a carbón profundo\n  vec3 c1 = vec3(0.706, 0.325, 0.035); // #b45309 ámbar forja\n  vec3 c2 = vec3(0.945, 0.710, 0.255); // #F1B541 oro corporativo Solycal\n  vec3 c3 = vec3(0.992, 0.902, 0.541); // #FDE68A destello titanio / plasma\n\n  vec2 r1 = rotVec(blendUV, -0.22);\n  vec2 r2 = rotVec(blendUV, 0.35);\n\n  float s1 = smoothstep(-0.35, 0.35, r1.x);\n  float s2 = smoothstep(-0.35, 0.35, r2.x);\n  float sY = smoothstep(0.4, -0.4, blendUV.y);\n\n  vec3 layer1 = mix(c0, c2, s1);\n  vec3 layer2 = mix(c3, c1, s2);\n  vec3 col = mix(layer1, layer2, sY);\n\n  // Curva de contraste vibrante\n  col = mix(col, col * col + 0.45 * sqrt(max(col, vec3(0.0))), 0.35);\n\n  gl_FragColor = vec4(col, 1.0);\n}\n";
+          try {
+            const gl = footerShaderCanvas.getContext('webgl', { 
+              alpha: true, 
+              antialias: false, 
+              depth: false, 
+              stencil: false, 
+              powerPreference: 'low-power',
+              preserveDrawingBuffer: false 
+            });
 
-            function createShader(gl, type, source) {
-              const shader = gl.createShader(type);
-              gl.shaderSource(shader, source);
-              gl.compileShader(shader);
-              if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                gl.deleteShader(shader);
-                return null;
+            if (gl) {
+              const vsSource = "\nattribute vec2 a_pos;\nvarying vec2 v_uv;\nvoid main() {\n  v_uv = a_pos * 0.5 + 0.5;\n  gl_Position = vec4(a_pos, 0.0, 1.0);\n}\n";
+              const fsSource = "\nprecision mediump float;\nvarying vec2 v_uv;\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec2 rotVec(vec2 v, float a) {\n  float c = cos(a), s = sin(a);\n  return vec2(v.x * c - v.y * s, v.x * s + v.y * c);\n}\n\nfloat hash(vec2 p) {\n  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n  vec2 i = floor(p);\n  vec2 f = fract(p);\n  f = f * f * (3.0 - 2.0 * f);\n  float a = hash(i);\n  float b = hash(i + vec2(1.0, 0.0));\n  float c = hash(i + vec2(0.0, 1.0));\n  float d = hash(i + vec2(1.0, 1.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nvec2 warpUV(vec2 uv) {\n  float a = (uv.x * 2.5 + noise(uv * 1.8 + u_time * 0.15)) * 3.14159;\n  a *= 0.65;\n  return vec2(cos(a) * uv.x - sin(a) * uv.y, sin(a) * uv.x + cos(a) * uv.y);\n}\n\nvoid main() {\n  vec2 uv = v_uv;\n  float ratio = u_resolution.x / max(u_resolution.y, 1.0);\n  float t = u_time * 0.45;\n\n  vec2 tuv = uv - 0.5;\n  float degree = noise(vec2(t * 0.08, tuv.x * tuv.y * 3.0) + vec2(12.3, 45.6));\n  tuv.y /= ratio;\n  tuv = rotVec(tuv, (degree - 0.5) * 1.8 + 0.6);\n  tuv.y *= ratio;\n\n  vec2 uv2 = (uv * 2.0 - 1.0);\n  uv2 = rotVec(uv2, 0.42);\n  vec2 warped = warpUV(uv2) * 0.5;\n\n  vec2 blendUV = mix(tuv, warped, 0.52);\n\n  // Paleta Corporativa Solycal Industrial\n  vec3 c0 = vec3(0.027, 0.031, 0.039); // #07080a carbón profundo\n  vec3 c1 = vec3(0.706, 0.325, 0.035); // #b45309 ámbar forja\n  vec3 c2 = vec3(0.945, 0.710, 0.255); // #F1B541 oro corporativo Solycal\n  vec3 c3 = vec3(0.992, 0.902, 0.541); // #FDE68A destello titanio / plasma\n\n  vec2 r1 = rotVec(blendUV, -0.22);\n  vec2 r2 = rotVec(blendUV, 0.35);\n\n  float s1 = smoothstep(-0.35, 0.35, r1.x);\n  float s2 = smoothstep(-0.35, 0.35, r2.x);\n  float sY = smoothstep(0.4, -0.4, blendUV.y);\n\n  vec3 layer1 = mix(c0, c2, s1);\n  vec3 layer2 = mix(c3, c1, s2);\n  vec3 col = mix(layer1, layer2, sY);\n\n  // Curva de contraste vibrante\n  col = mix(col, col * col + 0.45 * sqrt(max(col, vec3(0.0))), 0.35);\n\n  gl_FragColor = vec4(col, 1.0);\n}\n";
+
+              function createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                  console.warn('Shader compile error:', gl.getShaderInfoLog(shader));
+                  gl.deleteShader(shader);
+                  return null;
+                }
+                return shader;
               }
-              return shader;
-            }
 
-            const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
-            const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-            const program = gl.createProgram();
-            gl.attachShader(program, vs);
-            gl.attachShader(program, fs);
-            gl.linkProgram(program);
+              const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+              const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-            const posBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-              -1, -1,
-               1, -1,
-              -1,  1,
-              -1,  1,
-               1, -1,
-               1,  1
-            ]), gl.STATIC_DRAW);
+              if (vs && fs) {
+                const program = gl.createProgram();
+                gl.attachShader(program, vs);
+                gl.attachShader(program, fs);
+                gl.linkProgram(program);
 
-            const aPosLoc = gl.getAttribLocation(program, 'a_pos');
-            const uResLoc = gl.getUniformLocation(program, 'u_resolution');
-            const uTimeLoc = gl.getUniformLocation(program, 'u_time');
+                if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                  const posBuffer = gl.createBuffer();
+                  gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+                  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1,
+                     1, -1,
+                    -1,  1,
+                    -1,  1,
+                     1, -1,
+                     1,  1
+                  ]), gl.STATIC_DRAW);
 
-            let isFooterActive = false;
-            const footerObserver = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                isFooterActive = entry.isIntersecting;
-              });
-            }, { threshold: 0.05 });
-            footerObserver.observe(mainFooter);
+                  const aPosLoc = gl.getAttribLocation(program, 'a_pos');
+                  const uResLoc = gl.getUniformLocation(program, 'u_resolution');
+                  const uTimeLoc = gl.getUniformLocation(program, 'u_time');
 
-            function resizeCanvas() {
-              const rect = footerShaderCanvas.getBoundingClientRect();
-              const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-              const w = Math.floor(rect.width * dpr);
-              const h = Math.floor(rect.height * dpr);
-              if (footerShaderCanvas.width !== w || footerShaderCanvas.height !== h) {
-                footerShaderCanvas.width = Math.max(1, w);
-                footerShaderCanvas.height = Math.max(1, h);
-                gl.viewport(0, 0, footerShaderCanvas.width, footerShaderCanvas.height);
+                  let isFooterActive = false;
+                  let rafId = null;
+
+                  // Resolución interna optimizada fija/acotada (estilo Framer Canvas Shader)
+                  // El canvas mide 100% de ancho x alto con CSS, pero internamente renderiza
+                  // a resolución ligera (e.g. max 480x270) dando un degradado de seda ultra-suave
+                  // a 60 FPS sin cargar la GPU ni congelar el hilo principal.
+                  function resizeCanvas() {
+                    const rect = footerShaderCanvas.getBoundingClientRect();
+                    const targetW = Math.min(Math.max(1, Math.floor(rect.width || 384)), 512);
+                    const targetH = Math.min(Math.max(1, Math.floor(rect.height || 216)), 320);
+
+                    if (footerShaderCanvas.width !== targetW || footerShaderCanvas.height !== targetH) {
+                      footerShaderCanvas.width = targetW;
+                      footerShaderCanvas.height = targetH;
+                      gl.viewport(0, 0, targetW, targetH);
+                    }
+                  }
+
+                  window.addEventListener('resize', resizeCanvas, { passive: true });
+                  resizeCanvas();
+
+                  const startTime = performance.now();
+
+                  function renderShader(now) {
+                    if (!isFooterActive) {
+                      rafId = null;
+                      return;
+                    }
+
+                    gl.useProgram(program);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+                    gl.enableVertexAttribArray(aPosLoc);
+                    gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+                    gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
+                    gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+                    rafId = requestAnimationFrame(renderShader);
+                  }
+
+                  const footerObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                      isFooterActive = entry.isIntersecting;
+                      if (isFooterActive && !rafId) {
+                        rafId = requestAnimationFrame(renderShader);
+                      }
+                    });
+                  }, { threshold: 0.02, rootMargin: '100px' });
+
+                  footerObserver.observe(mainFooter);
+                }
               }
             }
-            window.addEventListener('resize', resizeCanvas, { passive: true });
-            resizeCanvas();
-
-            let startTime = performance.now();
-            function renderShader(now) {
-              requestAnimationFrame(renderShader);
-              if (!isFooterActive) return;
-
-              gl.useProgram(program);
-              gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-              gl.enableVertexAttribArray(aPosLoc);
-              gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
-
-              gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
-              gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
-
-              gl.drawArrays(gl.TRIANGLES, 0, 6);
-            }
-            requestAnimationFrame(renderShader);
+          } catch (e) {
+            console.warn('WebGL Footer Shader fallback to CSS gradient:', e);
           }
         }
 

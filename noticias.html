@@ -1932,14 +1932,15 @@
   </div>
   
 
-  <!-- FOOTER REFINED EDITORIAL WITH WAVESONSPHERE BACKGROUND BOTTOM-LEFT -->
+  <!-- FOOTER REFINED EDITORIAL WITH SHADER FLUID GRADIENT BACKGROUND -->
   <footer id="main-footer" class="relative bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
     
-    <!-- Canvas de Fondo: WavesOnSphere 2.0 que abarca más área y se corta nítidamente en la base inferior -->
-    <div class="absolute -bottom-[22%] sm:-bottom-[25%] -left-12 sm:-left-16 w-[520px] sm:w-[680px] lg:w-[820px] aspect-square pointer-events-auto z-0 opacity-55 hover:opacity-90 transition-opacity duration-700" title="Pulsa para generar ondas en la esfera">
-      <canvas id="footer-bg-sphere" width="600" height="600" class="w-full h-full block"></canvas>
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#050608]/90 pointer-events-none"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-[#050608]/70 pointer-events-none"></div>
+    <!-- Canvas WebGL Full-Bleed: Fluid Shader Gradient animado (estilo Framer Shader Footer con colores corporativos Solycal) -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-75"></canvas>
+      <!-- Gradiente sutil superior e inferior para fundido armónico con el resto de la página -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#050608] via-transparent via-15% to-[#050608]/85 pointer-events-none"></div>
+      <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
     </div>
 
     <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
@@ -2969,161 +2970,91 @@
         }
 
         // =========================================================================
-        // WAVESONSPHERE 2.0 (OpenProcessing #406138) COMO FONDO INFERIOR IZQUIERDO
+        // PROCEDURAL FLUID SHADER GRADIENT (Estilo Framer Shader Footer)
+        // Paleta Corporativa Solycal: Carbón Profundo (#07080a), Ámbar Forja (#b45309), 
+        // Oro Industrial (#F1B541) y Destello Titanio (#FDE68A)
         // =========================================================================
-        // WAVESONSPHERE 2.0 (OpenProcessing #406138 - KaijinQ) CÓDIGO 100% LITERAL
-        // =========================================================================
-        const footerBgCanvas = document.getElementById('footer-bg-sphere');
+        const footerShaderCanvas = document.getElementById('footer-shader-canvas');
         const mainFooter = document.getElementById('main-footer');
 
-        if (footerBgCanvas && mainFooter) {
-          const bgCtx = footerBgCanvas.getContext('2d');
+        if (footerShaderCanvas && mainFooter) {
+          const gl = footerShaderCanvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' });
           
-          // Variables exactas del código original
-          let Nmax = 1000;
-          let M = 500;
-          let H = 0.99999;
+            const vsSource = "\nattribute vec2 a_pos;\nvarying vec2 v_uv;\nvoid main() {\n  v_uv = a_pos * 0.5 + 0.5;\n  gl_Position = vec4(a_pos, 0.0, 1.0);\n}\n";
+            const fsSource = "\nprecision mediump float;\nvarying vec2 v_uv;\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec2 rotVec(vec2 v, float a) {\n  float c = cos(a), s = sin(a);\n  return vec2(v.x * c - v.y * s, v.x * s + v.y * c);\n}\n\nfloat hash(vec2 p) {\n  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n  vec2 i = floor(p);\n  vec2 f = fract(p);\n  f = f * f * (3.0 - 2.0 * f);\n  float a = hash(i);\n  float b = hash(i + vec2(1.0, 0.0));\n  float c = hash(i + vec2(0.0, 1.0));\n  float d = hash(i + vec2(1.0, 1.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nvec2 warpUV(vec2 uv) {\n  float a = (uv.x * 2.5 + noise(uv * 1.8 + u_time * 0.15)) * 3.14159;\n  a *= 0.65;\n  return vec2(cos(a) * uv.x - sin(a) * uv.y, sin(a) * uv.x + cos(a) * uv.y);\n}\n\nvoid main() {\n  vec2 uv = v_uv;\n  float ratio = u_resolution.x / max(u_resolution.y, 1.0);\n  float t = u_time * 0.45;\n\n  vec2 tuv = uv - 0.5;\n  float degree = noise(vec2(t * 0.08, tuv.x * tuv.y * 3.0) + vec2(12.3, 45.6));\n  tuv.y /= ratio;\n  tuv = rotVec(tuv, (degree - 0.5) * 1.8 + 0.6);\n  tuv.y *= ratio;\n\n  vec2 uv2 = (uv * 2.0 - 1.0);\n  uv2 = rotVec(uv2, 0.42);\n  vec2 warped = warpUV(uv2) * 0.5;\n\n  vec2 blendUV = mix(tuv, warped, 0.52);\n\n  // Paleta Corporativa Solycal Industrial\n  vec3 c0 = vec3(0.027, 0.031, 0.039); // #07080a carbón profundo\n  vec3 c1 = vec3(0.706, 0.325, 0.035); // #b45309 ámbar forja\n  vec3 c2 = vec3(0.945, 0.710, 0.255); // #F1B541 oro corporativo Solycal\n  vec3 c3 = vec3(0.992, 0.902, 0.541); // #FDE68A destello titanio / plasma\n\n  vec2 r1 = rotVec(blendUV, -0.22);\n  vec2 r2 = rotVec(blendUV, 0.35);\n\n  float s1 = smoothstep(-0.35, 0.35, r1.x);\n  float s2 = smoothstep(-0.35, 0.35, r2.x);\n  float sY = smoothstep(0.4, -0.4, blendUV.y);\n\n  vec3 layer1 = mix(c0, c2, s1);\n  vec3 layer2 = mix(c3, c1, s2);\n  vec3 col = mix(layer1, layer2, sY);\n\n  // Curva de contraste vibrante\n  col = mix(col, col * col + 0.45 * sqrt(max(col, vec3(0.0))), 0.35);\n\n  gl_FragColor = vec4(col, 1.0);\n}\n";
 
-          let X = new Float32Array(Nmax + 1);
-          let Y = new Float32Array(Nmax + 1);
-          let Z = new Float32Array(Nmax + 1);
-          let VX = new Float32Array(Nmax + 1);
-          let dVX = new Float32Array(Nmax + 1);
-          let VY = new Float32Array(Nmax + 1);
-          let dVY = new Float32Array(Nmax + 1);
-          let VZ = new Float32Array(Nmax + 1);
-          let dVZ = new Float32Array(Nmax + 1);
-          let L;
-          let R = 2 * Math.sqrt((4 * Math.PI * (200 * 200) / Nmax) / (2 * Math.sqrt(3)));
-          let N, NN, KX, KY, KZ;
-          let KVX, KdVX, KVY, KdVY, KVZ, KdVZ;
-
-          // setup()
-          for (N = 0; N <= Nmax; N++) {
-            X[N] = Math.random() * 600 - 300;
-            Y[N] = Math.random() * 600 - 300;
-            Z[N] = Math.random() * 600 - 300;
-            if (Z[N] > 250) {
-              L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-              dVX[N] = dVX[N] + (Y[N] / L);
-              dVY[N] = dVY[N] - (X[N] / L);
+            function createShader(gl, type, source) {
+              const shader = gl.createShader(type);
+              gl.shaderSource(shader, source);
+              gl.compileShader(shader);
+              if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                gl.deleteShader(shader);
+                return null;
+              }
+              return shader;
             }
+
+            const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+            const program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+
+            const posBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+              -1, -1,
+               1, -1,
+              -1,  1,
+              -1,  1,
+               1, -1,
+               1,  1
+            ]), gl.STATIC_DRAW);
+
+            const aPosLoc = gl.getAttribLocation(program, 'a_pos');
+            const uResLoc = gl.getUniformLocation(program, 'u_resolution');
+            const uTimeLoc = gl.getUniformLocation(program, 'u_time');
+
+            let isFooterActive = false;
+            const footerObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                isFooterActive = entry.isIntersecting;
+              });
+            }, { threshold: 0.05 });
+            footerObserver.observe(mainFooter);
+
+            function resizeCanvas() {
+              const rect = footerShaderCanvas.getBoundingClientRect();
+              const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+              const w = Math.floor(rect.width * dpr);
+              const h = Math.floor(rect.height * dpr);
+              if (footerShaderCanvas.width !== w || footerShaderCanvas.height !== h) {
+                footerShaderCanvas.width = Math.max(1, w);
+                footerShaderCanvas.height = Math.max(1, h);
+                gl.viewport(0, 0, footerShaderCanvas.width, footerShaderCanvas.height);
+              }
+            }
+            window.addEventListener('resize', resizeCanvas, { passive: true });
+            resizeCanvas();
+
+            let startTime = performance.now();
+            function renderShader(now) {
+              requestAnimationFrame(renderShader);
+              if (!isFooterActive) return;
+
+              gl.useProgram(program);
+              gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+              gl.enableVertexAttribArray(aPosLoc);
+              gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+              gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
+              gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
+
+              gl.drawArrays(gl.TRIANGLES, 0, 6);
+            }
+            requestAnimationFrame(renderShader);
           }
-
-          // Rotación ambiental continua y orgánica (sin influencia del cursor)
-          let autoAngleX = 0;
-          let autoAngleY = 0;
-
-          // mousePressed() intacto con la interacción al hacer clic
-          mainFooter.addEventListener('pointerdown', () => {
-            for (N = 0; N <= Nmax; N++) {
-              if (Z[N] > 180) {
-                L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-                dVX[N] = dVX[N] + (2.5 * Y[N] / L);
-                dVY[N] = dVY[N] - (2.5 * X[N] / L);
-              }
-            }
-          });
-
-          let isFooterActive = false;
-          const footerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              isFooterActive = entry.isIntersecting;
-            });
-          }, { threshold: 0.05 });
-          footerObserver.observe(mainFooter);
-
-          // draw()
-          function draw() {
-            requestAnimationFrame(draw);
-            if (!isFooterActive) return;
-
-            bgCtx.clearRect(0, 0, 600, 600);
-            bgCtx.lineWidth = 1;
-
-            // Rotación suave con modulación armónica aleatoria
-            autoAngleX += 0.008;
-            autoAngleY += 0.006;
-            const rotX = Math.sin(autoAngleX) * 0.004 + Math.cos(autoAngleY * 0.7) * 0.002;
-            const rotY = Math.cos(autoAngleY) * 0.004 + Math.sin(autoAngleX * 0.5) * 0.002;
-            const cosX = Math.cos(rotX);
-            const sinX = Math.sin(rotX);
-            const cosY = Math.cos(rotY);
-            const sinY = Math.sin(rotY);
-
-            for (N = 0; N <= Nmax; N++) {
-              for (NN = N + 1; NN <= Nmax; NN++) {
-                L = Math.sqrt(((X[N] - X[NN]) * (X[N] - X[NN])) + ((Y[N] - Y[NN]) * (Y[N] - Y[NN])));
-                L = Math.sqrt(((Z[N] - Z[NN]) * (Z[N] - Z[NN])) + (L * L));
-                if (L < R) {
-                  X[N] = X[N] - ((X[NN] - X[N]) * ((R - L) / (2 * L)));
-                  Y[N] = Y[N] - ((Y[NN] - Y[N]) * ((R - L) / (2 * L)));
-                  Z[N] = Z[N] - ((Z[NN] - Z[N]) * ((R - L) / (2 * L)));
-                  X[NN] = X[NN] + ((X[NN] - X[N]) * ((R - L) / (2 * L)));
-                  Y[NN] = Y[NN] + ((Y[NN] - Y[N]) * ((R - L) / (2 * L)));
-                  Z[NN] = Z[NN] + ((Z[NN] - Z[N]) * ((R - L) / (2 * L)));
-                  dVX[N] = dVX[N] + ((VX[NN] - VX[N]) / M);
-                  dVX[NN] = dVX[NN] - ((VX[NN] - VX[N]) / M);
-                  dVY[N] = dVY[N] + ((VY[NN] - VY[N]) / M);
-                  dVY[NN] = dVY[NN] - ((VY[NN] - VY[N]) / M);
-                  dVZ[N] = dVZ[N] + ((VZ[NN] - VZ[N]) / M);
-                  dVZ[NN] = dVZ[NN] - ((VZ[NN] - VZ[N]) / M);
-                }
-                if (Z[N] > Z[NN]) {
-                  KX = X[N]; KY = Y[N]; KZ = Z[N]; KVX = VX[N]; KdVX = dVX[N];
-                  KVY = VY[N]; KdVY = dVY[N]; KVZ = VZ[N]; KdVZ = dVZ[N];
-                  X[N] = X[NN]; Y[N] = Y[NN]; Z[N] = Z[NN]; VX[N] = VX[NN]; dVX[N] = dVX[NN];
-                  VY[N] = VY[NN]; dVY[N] = dVY[NN]; VZ[N] = VZ[NN]; dVZ[N] = dVZ[NN];
-                  X[NN] = KX; Y[NN] = KY; Z[NN] = KZ; VX[NN] = KVX; dVX[NN] = KdVX;
-                  VY[NN] = KVY; dVY[NN] = KdVY; VZ[NN] = KVZ; dVZ[NN] = KdVZ;
-                }
-              }
-              L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-              L = Math.sqrt((Z[N] * Z[N]) + (L * L));
-              X[N] = X[N] + (X[N] * (200 - L) / (2 * L));
-              Y[N] = Y[N] + (Y[N] * (200 - L) / (2 * L));
-              Z[N] = Z[N] + (Z[N] * (200 - L) / (2 * L));
-              KX = X[N] + VX[N]; KY = Y[N] + VY[N]; KZ = Z[N] + VZ[N];
-              L = Math.sqrt((KX * KX) + (KY * KY));
-              L = Math.sqrt((KZ * KZ) + (L * L));
-              VX[N] = VX[N] - (KX * (L - 200) / (2 * L));
-              VY[N] = VY[N] - (KY * (L - 200) / (2 * L));
-              VZ[N] = VZ[N] - (KZ * (L - 200) / (2 * L));
-              KZ = Z[N]; KX = X[N];
-              Z[N] = (KZ * cosX) - (KX * sinX);
-              X[N] = (KZ * sinX) + (KX * cosX);
-              KZ = Z[N]; KY = Y[N];
-              Z[N] = (KZ * cosY) - (KY * sinY);
-              Y[N] = (KZ * sinY) + (KY * cosY);
-              KVZ = VZ[N]; KVX = VX[N];
-              VZ[N] = (KVZ * cosX) - (KVX * sinX);
-              VX[N] = (KVZ * sinX) + (KVX * cosX);
-              KVZ = VZ[N]; KVY = VY[N];
-              VZ[N] = (KVZ * cosY) - (KVY * sinY);
-              VY[N] = (KVZ * sinY) + (KVY * cosY);
-              KdVZ = dVZ[N]; KdVX = dVX[N];
-              dVZ[N] = (KdVZ * cosX) - (KdVX * sinX);
-              dVX[N] = (KdVZ * sinX) + (KdVX * cosX);
-              KdVZ = dVZ[N]; KdVY = dVY[N];
-              dVZ[N] = (KdVZ * cosY) - (KdVY * sinY);
-              dVY[N] = (KdVZ * sinY) + (KdVY * cosY);
-              VX[N] = VX[N] + dVX[N]; dVX[N] = dVX[N] * H;
-              VY[N] = VY[N] + dVY[N]; dVY[N] = dVY[N] * H;
-              VZ[N] = VZ[N] + dVZ[N]; dVZ[N] = dVZ[N] * H;
-              L = Math.sqrt((VX[N] * VX[N]) + (VY[N] * VY[N]));
-              L = Math.sqrt((VZ[N] * VZ[N]) + (L * L));
-              if (L > 12.5) {
-                const c = Math.floor(125 + (Z[N] / 2));
-                bgCtx.strokeStyle = 'rgb(' + c + ',' + c + ',' + c + ')';
-                bgCtx.beginPath();
-                bgCtx.moveTo((X[N] + (VX[N] * (L - 12.5) / L)) * 1.4 + 300, (Y[N] + (VY[N] * (L - 12.5) / L)) * 1.4 + 300);
-                bgCtx.lineTo(X[N] * 1.4 + 300, Y[N] * 1.4 + 300);
-                bgCtx.stroke();
-              }
-            }
-          }
-
-          requestAnimationFrame(draw);
         }
 
         // =========================================================================

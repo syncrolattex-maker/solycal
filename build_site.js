@@ -8744,34 +8744,32 @@ const accesoHtml = `<!DOCTYPE html>
     .font-mono {
       font-family: 'Space Mono', monospace;
     }
-    #webgl-canvas {
+    #debris-canvas {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100vh;
       display: block;
-      z-index: 1;
-      pointer-events: auto;
+      z-index: 0;
+      pointer-events: none;
     }
     .login-container {
       position: relative;
       z-index: 10;
       pointer-events: auto;
     }
-    .vignette-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      background: radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.75) 100%);
-    }
   </style>
 </head>
-<body class="h-full w-full flex items-center justify-center p-4 bg-black select-none relative">
+<body class="h-full w-full flex items-center justify-center p-4 bg-black select-none relative overflow-hidden">
 
-  <!-- CANVAS 3D INTERACTIVO WAVY CUBES (ARKON DIGITAL 3D WAVE GRID) -->
-  <canvas id="webgl-canvas"></canvas>
-  <div class="vignette-overlay"></div>
+  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (OpenProcessing #2666434 - Mismo que en Calidad y Normas) -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
+    <canvas id="debris-canvas" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
+  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
+  <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
 
   <!-- TARJETA DE LOGIN FLOTANTE MINIMALISTA -->
   <div class="login-container w-full max-w-sm p-8 sm:p-9 rounded-2xl bg-[#07080a]/85 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
@@ -8823,310 +8821,137 @@ const accesoHtml = `<!DOCTYPE html>
     </form>
   </div>
 
-  <!-- THREE.JS WAVY CUBES IMPLEMENTATION -->
+  <!-- THREE.JS SHADER STARSHIP DEBRIS (HEREDADO DE /CALIDAD Y NORMAS) -->
   <script>
-    (function initWavyCubes() {
-      const canvas = document.getElementById('webgl-canvas');
-      if (!canvas || !window.THREE) return;
+    (function initCalidadBackground() {
+      if (typeof THREE === 'undefined') return;
 
-      const TRAIL_MAX = 128;
-      const gridSize = 70;
-      const cubeWidth = 0.42;
-      const cubeHeight = 3.0;
-      const gap = 0.015;
-      const bounds = gridSize * (cubeWidth + gap);
+      const canvas = document.getElementById('debris-canvas');
+      if (!canvas) return;
 
-      // Parámetros de onda adaptados a Dark Mode estricto (negro obsidiana / grafito profundo con crestas en amarillo corporativo)
-      const params = {
-        waveAmplitude: 0.58,
-        waveSpeed: 6.2,
-        waveFrequency: 1.25,
-        waveWidth: 3.2,
-        waveJitter: 0.18,
-        waveMaxHeight: 0.58,
-        fadeTime: 2.2,
-        trailSpacing: 0.08,
-        colorBase: new THREE.Color(0x060709), // Negro azabache / carbón oscuro
-        colorHigh: new THREE.Color(0xF1B541)  // Acento amarillo corporativo Solycal en la cresta
-      };
+      // Generador procedural de textura de ruido Perlin para iChannel0 (256x256)
+      function createPerlinNoiseTexture() {
+        const size = 256;
+        const c = document.createElement('canvas');
+        c.width = size;
+        c.height = size;
+        const ctx = c.getContext('2d');
+        const imgData = ctx.createImageData(size, size);
+        const data = imgData.data;
 
-      // Scene & Renderer
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
+        const p = new Uint8Array(256);
+        for (let i = 0; i < 256; i++) p[i] = i;
+        for (let i = 255; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = p[i]; p[i] = p[j]; p[j] = tmp;
+        }
+        const perm = new Uint8Array(512);
+        for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        powerPreference: 'high-performance'
-      });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.05;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        function grad(hash, x, y) {
+          const h = hash & 3;
+          const u = h < 2 ? x : y;
+          const v = h < 2 ? y : x;
+          return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+        }
+        function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        function lerp(a, b, t) { return a + t * (b - a); }
+        function perlin2D(x, y) {
+          const X = Math.floor(x) & 255;
+          const Y = Math.floor(y) & 255;
+          const xf = x - Math.floor(x);
+          const yf = y - Math.floor(y);
+          const u = fade(xf);
+          const v = fade(yf);
+          const aa = perm[perm[X] + Y];
+          const ab = perm[perm[X] + Y + 1];
+          const ba = perm[perm[X + 1] + Y];
+          const bb = perm[perm[X + 1] + Y + 1];
+          const x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u);
+          const x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u);
+          return lerp(x1, x2, v);
+        }
 
-      // Camera orbital suave
-      const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 200);
-      const radius = 13.5;
-      const alphaRange = Math.PI * 0.04;
-      const betaRange = Math.PI * 0.06;
-      const mouse = new THREE.Vector2(0, 0);
-      const lerpedMouse = new THREE.Vector2(0, 0);
-
-      function updateCameraPosition(x, y) {
-        const n = y * alphaRange;
-        const r = x * betaRange;
-        camera.position.set(
-          -radius * Math.cos(n) * Math.sin(r),
-          radius * Math.cos(n) * Math.cos(r),
-          radius * Math.sin(n)
-        );
-        camera.up.set(0, 0, -1);
-        camera.lookAt(0, 0, 0);
-      }
-      updateCameraPosition(0, 0);
-
-      // Luces sutiles y contrastadas para conservar el negro profundo
-      const ambientLight = new THREE.AmbientLight(0x08090b, 1.2);
-      scene.add(ambientLight);
-
-      const dirLight = new THREE.DirectionalLight(0xfff0d0, 1.6);
-      dirLight.position.set(-18, 14, 8);
-      dirLight.castShadow = true;
-      dirLight.shadow.mapSize.set(1024, 1024);
-      dirLight.shadow.radius = 4;
-      dirLight.shadow.bias = -0.0001;
-      dirLight.shadow.camera.near = 0.1;
-      dirLight.shadow.camera.far = 60;
-      dirLight.shadow.camera.left = -22;
-      dirLight.shadow.camera.right = 22;
-      dirLight.shadow.camera.top = 22;
-      dirLight.shadow.camera.bottom = -22;
-      scene.add(dirLight);
-
-      const fillLight = new THREE.DirectionalLight(0x1a2233, 0.8);
-      fillLight.position.set(12, 6, -5);
-      scene.add(fillLight);
-
-      // DataTexture para los puntos de la estela del ratón (X, Z, edad, distDelta)
-      const trailData = new Float32Array(TRAIL_MAX * 4);
-      const trailTexture = new THREE.DataTexture(
-        trailData,
-        TRAIL_MAX,
-        1,
-        THREE.RGBAFormat,
-        THREE.FloatType
-      );
-      trailTexture.needsUpdate = true;
-
-      const trailUniforms = {
-        uTrailTexture: { value: trailTexture },
-        uTrailCount: { value: 0 },
-        uFadeTime: { value: params.fadeTime },
-        uWaveSpeed: { value: params.waveSpeed },
-        uWaveFreq: { value: params.waveFrequency },
-        uWaveWidth: { value: params.waveWidth },
-        uAmplitude: { value: params.waveAmplitude },
-        uJitter: { value: params.waveJitter },
-        uMaxHeight: { value: params.waveMaxHeight },
-        uColorBase: { value: params.colorBase },
-        uColorHigh: { value: params.colorHigh }
-      };
-
-      // InstancedMesh de cubos
-      const totalInstances = gridSize * gridSize;
-      const cubeGeometry = new THREE.BoxGeometry(cubeWidth, cubeHeight, cubeWidth);
-      const offsetAttr = new THREE.InstancedBufferAttribute(new Float32Array(totalInstances * 2), 2);
-      cubeGeometry.setAttribute('aOffset', offsetAttr);
-
-      const material = new THREE.MeshStandardMaterial({
-        color: 0x060709,
-        roughness: 0.65,
-        metalness: 0.4
-      });
-
-      // Shaders personalizados para la onda expansiva y deformación Y
-      material.onBeforeCompile = (shader) => {
-        Object.assign(shader.uniforms, trailUniforms);
-
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <common>',
-          \`#include <common>
-          varying float vHeight;
-          attribute vec2 aOffset;
-          uniform sampler2D uTrailTexture;
-          uniform int       uTrailCount;
-          uniform float     uWaveSpeed;
-          uniform float     uWaveFreq;
-          uniform float     uWaveWidth;
-          uniform float     uFadeTime;
-          uniform float     uAmplitude;
-          uniform float     uJitter;
-          uniform float     uMaxHeight;
-
-          vec2 hash2(vec2 p) {
-            p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-            return fract(sin(p) * 43758.5453123) - 0.5;
-          }
-          \`
-        ).replace(
-          '#include <begin_vertex>',
-          \`#include <begin_vertex>
-          vHeight = 0.0;
-
-          if (position.y > 0.0) {
-            vec2 jitter = hash2(aOffset) * uJitter;
-            vec2 worldXZ = aOffset + jitter;
-            float waveHeight = 0.0;
-            float totalWeight = 0.0;
-
-            for (int i = 0; i < 128; i++) {
-              if (i >= uTrailCount) break;
-              vec4 td = texture2D(uTrailTexture, vec2((float(i) + 0.5) / 128.0, 0.5));
-              float dist = length(worldXZ - td.rg);
-              float wavefront = uWaveSpeed * td.b;
-              float relDist = dist - wavefront;
-
-              float windowEnvelope = exp(-(relDist * relDist) / (uWaveWidth * uWaveWidth));
-              float fade = exp(-td.b / uFadeTime);
-              float atten = 1.0 / (1.0 + dist * 0.12);
-              float weight = fade * windowEnvelope * atten * td.a;
-
-              waveHeight += weight * cos(uWaveFreq * relDist);
-              totalWeight += weight;
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            let n = 0;
+            let amp = 1;
+            let freq = 0.035;
+            for (let o = 0; o < 3; o++) {
+              n += perlin2D(x * freq, y * freq) * amp;
+              freq *= 2;
+              amp *= 0.5;
             }
-
-            waveHeight /= max(totalWeight, 1.0);
-            float displacement = clamp(waveHeight * uAmplitude, -uMaxHeight, uMaxHeight);
-            transformed.y += displacement;
-            vHeight = displacement;
+            const val = Math.floor(Math.min(255, Math.max(0, (n * 0.5 + 0.5) * 255)));
+            const idx = (y * size + x) * 4;
+            data[idx] = val;
+            data[idx + 1] = val;
+            data[idx + 2] = val;
+            data[idx + 3] = 255;
           }
-          \`
-        );
+        }
+        ctx.putImageData(imgData, 0, 0);
 
-        shader.fragmentShader = shader.fragmentShader.replace(
-          '#include <common>',
-          \`#include <common>
-          varying float vHeight;
-          uniform vec3  uColorBase;
-          uniform vec3  uColorHigh;
-          uniform float uMaxHeight;
-          \`
-        ).replace(
-          '#include <color_fragment>',
-          \`#include <color_fragment>
-          float waveT = clamp(vHeight / uMaxHeight, 0.0, 1.0);
-          diffuseColor.rgb = mix(uColorBase, uColorHigh, waveT);
-          \`
-        );
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        return tex;
+      }
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      renderer.setPixelRatio(dpr);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      const noiseTexture = createPerlinNoiseTexture();
+
+      const uniforms = {
+        iTime: { value: 0 },
+        iResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+        iChannel0: { value: noiseTexture },
+        iMouse: { value: new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5) }
       };
 
-      const instancedMesh = new THREE.InstancedMesh(cubeGeometry, material, totalInstances);
-      instancedMesh.castShadow = true;
-      instancedMesh.receiveShadow = true;
-
-      // Matriz de posicionamiento
-      const dummy = new THREE.Object3D();
-      const step = cubeWidth + gap;
-      const halfGrid = (gridSize - 1) * step / 2;
-
-      for (let r = 0; r < gridSize; r++) {
-        for (let c = 0; c < gridSize; c++) {
-          const idx = r * gridSize + c;
-          const x = r * step - halfGrid;
-          const z = c * step - halfGrid;
-          dummy.position.set(x, 0, z);
-          dummy.updateMatrix();
-          instancedMesh.setMatrixAt(idx, dummy.matrix);
-          offsetAttr.setXY(idx, x, z);
-        }
-      }
-      instancedMesh.instanceMatrix.needsUpdate = true;
-      offsetAttr.needsUpdate = true;
-      scene.add(instancedMesh);
-
-      // Plano de raycasting horizontal en Y=0
-      const rayPlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(bounds * 2, bounds * 2),
-        new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide })
-      );
-      rayPlane.rotation.x = -Math.PI / 2;
-      rayPlane.updateMatrixWorld(true);
-
-      const raycaster = new THREE.Raycaster();
-      const mouseNDC = new THREE.Vector2();
-      const trail = [];
-      let lastPoint = null;
-      let timeSinceLastMove = 0;
-      function addPoint(x, z, distDelta) {
-        if (trail.length >= TRAIL_MAX) trail.shift();
-        trail.push({ x, z, age: 0, distDelta });
-      }
-
-      window.addEventListener('pointermove', (e) => {
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-        mouseNDC.set(mouse.x, mouse.y);
-        raycaster.setFromCamera(mouseNDC, camera);
-        const hits = raycaster.intersectObject(rayPlane);
-        if (hits.length > 0) {
-          const pt = hits[0].point;
-          let delta = 0;
-          if (lastPoint) {
-            const dx = pt.x - lastPoint.x;
-            const dz = pt.z - lastPoint.z;
-            delta = Math.sqrt(dx * dx + dz * dz);
-            if (delta < params.trailSpacing) return;
-          }
-          addPoint(pt.x, pt.z, Math.max(delta, 0.15));
-          lastPoint = { x: pt.x, z: pt.z };
-        }
+      const material = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: ${JSON.stringify(starshipVertexShader)},
+        fragmentShader: ${JSON.stringify(starshipFragmentShader)},
+        depthWrite: false,
+        depthTest: false
       });
 
-      // Resize
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+      scene.add(mesh);
+
+      function onResize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const currentDpr = Math.min(window.devicePixelRatio || 1, 1.25);
+        renderer.setPixelRatio(currentDpr);
+        renderer.setSize(w, h, false);
+        uniforms.iResolution.value.set(w * currentDpr, h * currentDpr);
+      }
+      onResize();
+      window.addEventListener('resize', onResize);
+
+      const targetMouse = new THREE.Vector2(window.innerWidth * 0.5, window.innerHeight * 0.5);
+      window.addEventListener('pointermove', function(e) {
+        targetMouse.set(e.clientX, window.innerHeight - e.clientY);
       });
 
-      // Animation Loop
-      let lastTime = performance.now();
-      function animate(now) {
-        requestAnimationFrame(animate);
-
-        const delta = Math.min((now - lastTime) / 1000, 0.1);
-        lastTime = now;
-
-        // Suavizado de la cámara únicamente siguiendo el movimiento del ratón
-        lerpedMouse.x += (mouse.x - lerpedMouse.x) * 0.05;
-        lerpedMouse.y += (mouse.y - lerpedMouse.y) * 0.05;
-        updateCameraPosition(lerpedMouse.x, lerpedMouse.y);
-
-        // Actualizar edades del trail (sin generar nuevos puntos automáticamente)
-        const maxAge = params.fadeTime * 3.5;
-        for (let i = trail.length - 1; i >= 0; i--) {
-          trail[i].age += delta;
-          if (trail[i].age > maxAge) trail.splice(i, 1);
-        }
-
-        // Subir datos del trail a la textura Float
-        const count = Math.min(trail.length, TRAIL_MAX);
-        for (let i = 0; i < count; i++) {
-          const offset = i * 4;
-          trailData[offset] = trail[i].x;
-          trailData[offset + 1] = trail[i].z;
-          trailData[offset + 2] = trail[i].age;
-          trailData[offset + 3] = trail[i].distDelta;
-        }
-        trailTexture.needsUpdate = true;
-        trailUniforms.uTrailCount.value = count;
-
+      let startTime = performance.now();
+      function renderLoop() {
+        requestAnimationFrame(renderLoop);
+        const elapsed = (performance.now() - startTime) * 0.001;
+        uniforms.iTime.value = elapsed;
+        uniforms.iMouse.value.lerp(targetMouse, 0.05);
         renderer.render(scene, camera);
       }
-      requestAnimationFrame(animate);
+      requestAnimationFrame(renderLoop);
     })();
   </script>
 

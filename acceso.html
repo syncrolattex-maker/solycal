@@ -60,24 +60,20 @@
 </head>
 <body class="h-full w-full flex items-center justify-center p-4 bg-black select-none relative overflow-hidden">
 
-  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (OpenProcessing #2666434 - Mismo que en Calidad y Normas) -->
+  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (100% puro y vivo sin filtros de oscurecimiento) -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
     <canvas id="debris-canvas" class="w-full h-full block"></canvas>
   </div>
 
-  <!-- Máscara de profundidad sutil para realzar los colores vivos del fondo -->
-  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-black/10 via-transparent to-black/40"></div>
-  <div class="fixed inset-0 dot-grid opacity-10 pointer-events-none z-[1]"></div>
-
-  <!-- TARJETA DE LOGIN EN GLASS (GLASSMORPHISM INDUSTRIAL) -->
-  <div class="login-container glass-card w-full max-w-sm p-8 sm:p-9 rounded-2xl relative">
+  <!-- TARJETA DE LOGIN EN CRISTAL PURO (GLASSMORPHISM) -->
+  <div class="login-container glass-card w-full max-w-sm p-8 sm:p-9 rounded-2xl relative z-10">
     <!-- Resplandor sutil superior de cristal -->
-    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-yellow/10 blur-2xl rounded-full pointer-events-none"></div>
+    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-yellow/15 blur-2xl rounded-full pointer-events-none"></div>
 
     <!-- Logo + Letras SOLYCAL -->
     <div class="flex items-center justify-center gap-3 mb-8 relative z-10">
-      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
-      <span class="font-display font-bold text-2xl tracking-wider text-white">SOLYCAL</span>
+      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+      <span class="font-display font-bold text-2xl tracking-wider text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">SOLYCAL</span>
     </div>
 
     <!-- Formulario de acceso: solo user y pass -->

@@ -4108,17 +4108,14 @@ void main() {
         p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);
     }
 
-    // Colores vivos, intensos y vibrantes: mezcla de nebulosa cósmica y estelas incandescentes
-    vec4 C_mod = C - 1.0; 
-    vec4 background = max(p.x * C_mod * 1.8, vec4(0.0)); 
-    vec4 debris = S * S * 2.2;
-    vec4 result = background + debris;
+    // Fondo limpio sin gradiente azul en la esquina superior derecha:
+    // Solo partículas y estelas vivas, brillantes y saturadas sobre negro profundo
+    vec4 debris = S * S * 3.0;
 
-    // Saturation and vibrant tone mapping
     vec4 O = vec4(
-        customTanh(result.r * 1.3),
-        customTanh(result.g * 1.15),
-        customTanh(result.b * 1.4),
+        customTanh(debris.r * 1.5),
+        customTanh(debris.g * 1.35),
+        customTanh(debris.b * 1.5),
         1.0
     );
     gl_FragColor = O;

@@ -733,27 +733,27 @@ function getHead(title, description, canonicalPath = '') {
 `;
 }
 
-function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-center gap-4') {
+function getSocialIcons(iconSize = 'w-5 h-5', containerClass = 'flex items-center gap-4', linkColorClass = 'text-neutral-400') {
   return `
   <div class="${containerClass}">
-    <a href="https://www.linkedin.com/company/solycal/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Solycal" title="LinkedIn" class="text-neutral-400 hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
+    <a href="https://www.linkedin.com/company/solycal/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Solycal" title="LinkedIn" class="${linkColorClass} hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
       <svg class="${iconSize} fill-current" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
       </svg>
     </a>
-    <a href="https://www.instagram.com/solycal_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Solycal" title="Instagram" class="text-neutral-400 hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
+    <a href="https://www.instagram.com/solycal_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Solycal" title="Instagram" class="${linkColorClass} hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
       <svg class="${iconSize} fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
       </svg>
     </a>
-    <a href="https://www.facebook.com/solycal" target="_blank" rel="noopener noreferrer" aria-label="Facebook Solycal" title="Facebook" class="text-neutral-400 hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
+    <a href="https://www.facebook.com/solycal" target="_blank" rel="noopener noreferrer" aria-label="Facebook Solycal" title="Facebook" class="${linkColorClass} hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
       <svg class="${iconSize} fill-current" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14 13.5h2.5l1-4H14V7c0-1.03.28-1.5 1.5-1.5h2V2.14C17.17 2.09 16.2 2 15.14 2 12.3 2 10.5 3.73 10.5 6.9V9.5H7.5v4h3v10.5h3.5V13.5z"/>
       </svg>
     </a>
-    <a href="https://www.youtube.com/channel/UC4_Yk1tJqoAFrBOQ-fi4T7w" target="_blank" rel="noopener noreferrer" aria-label="YouTube Solycal" title="YouTube" class="text-neutral-400 hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
+    <a href="https://www.youtube.com/channel/UC4_Yk1tJqoAFrBOQ-fi4T7w" target="_blank" rel="noopener noreferrer" aria-label="YouTube Solycal" title="YouTube" class="${linkColorClass} hover:text-brand-yellow transition-all duration-200 hover:scale-110 inline-flex items-center justify-center">
       <svg class="${iconSize} fill-current" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
       </svg>
@@ -989,19 +989,19 @@ void main() {
   float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
   float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  // Paleta corporativa viva, cálida e industrial Solycal
-  vec3 cBg = vec3(0.020, 0.024, 0.031);       // #050608 Carbón profundo limpio
-  vec3 cAmber = vec3(0.82, 0.35, 0.04);       // Ámbar forja ardiente vivo
-  vec3 cGold = vec3(1.0, 0.76, 0.22);         // Oro industrial Solycal puro
-  vec3 cTitanium = vec3(1.0, 0.94, 0.62);     // Destello plasma luminoso cálido
+  // Paleta industrial: Naranjas y amarillos oscuros profundos
+  vec3 cBg = vec3(0.020, 0.024, 0.031);          // #050608 Carbón profundo limpio
+  vec3 cDarkOrange = vec3(0.56, 0.22, 0.03);     // Naranja forja oscuro profundo
+  vec3 cDarkYellow = vec3(0.58, 0.38, 0.06);     // Amarillo oro oscuro / latón patinado
+  vec3 cDeepAmber = vec3(0.44, 0.16, 0.02);      // Ámbar quemado profundo
 
-  // Mezcla horizontal fluida de tonos cálidos
+  // Mezcla horizontal fluida de tonos oscuros
   float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.8 + uv.y * 2.2) * 0.32);
-  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
-  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.25, 0.75, uv.x) * 0.35);
+  vec3 warmGlow = mix(cDarkOrange, cDarkYellow, horizontalFlow);
+  warmGlow = mix(warmGlow, cDeepAmber, smoothstep(0.2, 0.8, uv.x) * 0.45);
 
-  // Fundido que emerge vivo y cálido desde la base hacia el fondo carbón
-  vec3 col = mix(cBg, warmGlow, elevation * 0.76);
+  // Fundido controlado hacia el fondo carbón oscuro: mantiene contraste perfecto para textos del subfooter
+  vec3 col = mix(cBg, warmGlow, elevation * 0.50);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -1014,12 +1014,12 @@ function getFooter(options = {}) {
   if (onlySubfooter) {
     return `
     <footer id="main-footer" class="relative bg-[#07080a] border-t border-white/10 py-6 text-sm text-neutral-400">
-      <div class="w-full px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
-        <p class="order-3 md:order-1 text-center md:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+      <div class="w-full px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-300">
+        <p class="order-3 md:order-1 text-center md:text-left text-neutral-400">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
         <div class="order-1 md:order-2 flex items-center">
-          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-neutral-300')}
         </div>
-        <div class="order-2 md:order-3 flex items-center gap-6">
+        <div class="order-2 md:order-3 flex items-center gap-6 text-neutral-400">
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
           <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
@@ -1059,10 +1059,12 @@ function getFooter(options = {}) {
     
     <!-- Canvas WebGL: Fluid Shader Gradient minimalista que emerge suavemente desde abajo -->
     <div class="absolute inset-x-0 bottom-0 h-[68%] z-0 pointer-events-none overflow-hidden">
-      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-95"></canvas>
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-85"></canvas>
       <!-- Máscara de fundido: 100% negro en la parte superior del gradiente, desvaneciéndose limpiamente -->
       <div class="absolute inset-0 bg-gradient-to-t from-transparent via-[#050608]/40 to-[#050608] pointer-events-none"></div>
       <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
+      <!-- Protección oscura inferior sutil para contraste nítido de tipografía y RRSS en subfooter -->
+      <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#050608]/90 via-[#050608]/45 to-transparent pointer-events-none"></div>
     </div>
 
     <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
@@ -1151,16 +1153,16 @@ function getFooter(options = {}) {
       </div>
 
       <!-- SUBFOOTER / BARRA INFERIOR CON REDES SOCIALES -->
-      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
-        <p class="order-3 md:order-1 text-center md:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-300">
+        <p class="order-3 md:order-1 text-center md:text-left text-neutral-400">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
         
         <!-- Redes Sociales Oficiales en el Subfooter (Iconos directos sin círculos) -->
         <div class="order-1 md:order-2 flex items-center relative z-10">
-          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5')}
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-neutral-300')}
         </div>
 
         <!-- Enlaces Legales -->
-        <div class="order-2 md:order-3 flex items-center gap-6 relative z-10">
+        <div class="order-2 md:order-3 flex items-center gap-6 relative z-10 text-neutral-400">
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
           <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>

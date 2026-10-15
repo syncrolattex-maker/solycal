@@ -939,7 +939,6 @@ precision mediump float;
 varying vec2 v_uv;
 uniform vec2 u_resolution;
 uniform float u_time;
-uniform vec2 u_mouse;
 
 vec2 rotVec(vec2 v, float a) {
   float c = cos(a), s = sin(a);
@@ -961,57 +960,36 @@ float noise(vec2 p) {
   return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
-float fbm(vec2 p) {
-  float val = 0.0;
-  float amp = 0.55;
-  mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-  for (int i = 0; i < 3; i++) {
-    val += amp * noise(p);
-    p = rot * p * 2.05 + vec2(1.2, 0.8);
-    amp *= 0.5;
-  }
-  return val;
-}
-
 void main() {
   vec2 uv = v_uv;
-  float t = u_time * 0.42;
+  float t = u_time * 0.18; // Movimiento más pausado, sedoso y elegante
 
-  // Interacción suave con el cursor del ratón sobre el footer
-  vec2 m = u_mouse;
-  float distToMouse = length(uv - m);
-  float mouseWave = sin(distToMouse * 16.0 - u_time * 2.5) * exp(-distToMouse * 3.5) * 0.12;
+  // Ondulación suave minimalista de baja frecuencia
+  float wave1 = sin(uv.x * 3.2 + t * 0.9) * 0.08;
+  float wave2 = cos(uv.x * 2.1 - t * 0.6) * 0.06;
+  float n = noise(vec2(uv.x * 2.5 + t * 0.3, uv.y * 1.5)) * 0.12;
 
-  // Dinámica de fluidos procedurales multicapa (Framer Shader style)
-  vec2 p = uv * 3.2;
-  p.x += t * 0.35 + mouseWave;
-  
-  float q = fbm(p + vec2(t * 0.2, -t * 0.15));
-  float r = fbm(p + 4.0 * rotVec(vec2(q), t * 0.25) + vec2(1.7, 9.2));
+  // Factor de emergencia: Emerge desde abajo (y=0 en WebGL / y=1) y se disuelve
+  // completamente antes de llegar a la mitad/tercio superior del footer.
+  // v_uv.y va de 0.0 (abajo) a 1.0 (arriba).
+  float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
+  float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  // Ondas dinámicas que surgen desde la base
-  float waveFront = sin(uv.x * 4.5 + t * 0.8 + r * 1.8) * 0.10 + cos(uv.x * 2.8 - t * 0.5) * 0.07;
-  
-  // Elevación: emerge intensamente desde abajo (uv.y cerca de 0) y se desvanece
-  // completamente al llegar a 0.65-0.70 de la altura del canvas
-  float elevation = smoothstep(0.70, 0.05, uv.y + waveFront * 0.7);
+  // Paleta corporativa minimalista y sutil Solycal
+  vec3 cBg = vec3(0.020, 0.024, 0.031);     // #050608 Carbón profundo limpio
+  vec3 cAmber = vec3(0.48, 0.22, 0.04);      // Ámbar forja profundo
+  vec3 cGold = vec3(0.85, 0.60, 0.18);       // Oro suave Solycal
+  vec3 cTitanium = vec3(0.96, 0.84, 0.48);   // Destello plasma cálido sutil
 
-  // Paleta VIVA y luminosa Solycal:
-  // Fondo oscuro (#050608) -> Ámbar Forja Ardiente -> Oro Industrial Brillante (#F1B541) -> Plasma Titanio Incandescente (#FFF0A5)
-  vec3 cBg = vec3(0.020, 0.024, 0.031);          // #050608 Base limpia profunda
-  vec3 cDarkAmber = vec3(0.72, 0.25, 0.02);     // Ámbar forja vivo
-  vec3 cBrightGold = vec3(0.98, 0.74, 0.22);    // Oro corporativo Solycal vibrante (#F1B541)
-  vec3 cTitaniumGlow = vec3(1.0, 0.94, 0.68);   // Destello incandescente plasma
+  // Mezcla horizontal suave de tonos cálidos
+  float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.7 + uv.y * 2.0) * 0.3);
+  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
+  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.3, 0.8, uv.x) * 0.25);
 
-  // Interpolación cromática fluida dependiente de las capas de turbulencia
-  float colorMix = clamp(r * 1.4 + q * 0.6, 0.0, 1.0);
-  vec3 flameGradient = mix(cDarkAmber, cBrightGold, smoothstep(0.15, 0.85, colorMix));
-  flameGradient = mix(flameGradient, cTitaniumGlow, pow(r, 2.2) * 0.85);
+  // Fundido minimalista hacia el fondo oscuro: solo un aura tenue y elegante que emerge desde abajo
+  vec3 col = mix(cBg, warmGlow, elevation * 0.45);
 
-  // Mezcla final con fondo oscuro: alta vivacidad en la base y fundido sedoso
-  vec3 finalColor = mix(cBg, flameGradient, elevation * 0.82);
-
-  gl_FragColor = vec4(finalColor, 1.0);
+  gl_FragColor = vec4(col, 1.0);
 }
 `;
 
@@ -2131,21 +2109,9 @@ function getFooter(options = {}) {
                   const aPosLoc = gl.getAttribLocation(program, 'a_pos');
                   const uResLoc = gl.getUniformLocation(program, 'u_resolution');
                   const uTimeLoc = gl.getUniformLocation(program, 'u_time');
-                  const uMouseLoc = gl.getUniformLocation(program, 'u_mouse');
 
                   let isFooterActive = false;
                   let rafId = null;
-                  let currentMouse = [0.5, 0.2];
-                  let targetMouse = [0.5, 0.2];
-
-                  mainFooter.addEventListener('pointermove', (e) => {
-                    const rect = mainFooter.getBoundingClientRect();
-                    if (rect.width > 0 && rect.height > 0) {
-                      const mx = (e.clientX - rect.left) / rect.width;
-                      const my = 1.0 - ((e.clientY - rect.top) / rect.height);
-                      targetMouse = [Math.max(0.0, Math.min(1.0, mx)), Math.max(0.0, Math.min(1.0, my))];
-                    }
-                  }, { passive: true });
 
                   // Resolución interna optimizada fija/acotada (estilo Framer Canvas Shader)
                   // El canvas mide 100% de ancho x alto con CSS, pero internamente renderiza
@@ -2174,10 +2140,6 @@ function getFooter(options = {}) {
                       return;
                     }
 
-                    // Suavizado inercial del movimiento del ratón
-                    currentMouse[0] += (targetMouse[0] - currentMouse[0]) * 0.08;
-                    currentMouse[1] += (targetMouse[1] - currentMouse[1]) * 0.08;
-
                     gl.useProgram(program);
                     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
                     gl.enableVertexAttribArray(aPosLoc);
@@ -2185,9 +2147,6 @@ function getFooter(options = {}) {
 
                     gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
                     gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
-                    if (uMouseLoc) {
-                      gl.uniform2f(uMouseLoc, currentMouse[0], currentMouse[1]);
-                    }
 
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
 

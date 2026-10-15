@@ -8,6 +8,19 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://solycal.es/media.html">
 
+  <!-- Meta SEO Técnico Profesional -->
+  <meta name="author" content="Soldadura y Calderería Valenciana S.L.">
+  <meta name="publisher" content="SOLYCAL S.L.">
+  <meta name="theme-color" content="#07080a">
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=yes, address=yes, email=yes">
+  <meta name="geo.region" content="ES-VC">
+  <meta name="geo.placename" content="Torrent, Valencia">
+  <meta name="geo.position" content="39.4362;-0.4981">
+  <meta name="ICBM" content="39.4362, -0.4981">
+  <link rel="alternate" hreflang="es" href="https://solycal.es/media.html">
+  <link rel="alternate" hreflang="x-default" href="https://solycal.es/media.html">
+
   <!-- Open Graph / Redes Sociales y Búsqueda -->
   <meta property="og:locale" content="es_ES">
   <meta property="og:type" content="website">
@@ -16,7 +29,11 @@
   <meta property="og:url" content="https://solycal.es/media.html">
   <meta property="og:site_name" content="SOLYCAL | Soldadura y Calderería Valenciana S.L.">
   <meta property="og:image" content="https://solycal.es/assets/instalaciones.jpg">
-  <meta property="og:image:alt" content="Instalaciones de SOLYCAL en Torrent, Valencia">
+  <meta property="og:image:secure_url" content="https://solycal.es/assets/instalaciones.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content="Instalaciones y Calderería Pesada de SOLYCAL en Torrent, Valencia">
 
   <!-- Twitter Meta -->
   <meta name="twitter:card" content="summary_large_image">
@@ -31,6 +48,7 @@
 
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="alternate icon" href="assets/logo-icon.png">
+  <link rel="apple-touch-icon" href="assets/logo-icon.png">
 
   <!-- Editorial & Architectural Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -583,17 +601,52 @@
       transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
+  <!-- SOLYCAL INTERNAL VISITOR ANALYTICS TRACKER (Privacy-first & GDPR compliant) -->
   <script>
     (function() {
-      // Si ya está en la página de acceso, permitir navegación
-      const isAuthPage = window.location.pathname.endsWith('acceso.html') || window.location.pathname.endsWith('/acceso');
-      const isAuthorized = localStorage.getItem('solycal_site_unlocked') === 'true' || sessionStorage.getItem('solycal_auth_user');
-      
-      if (!isAuthorized && !isAuthPage) {
-        // Redirigir de inmediato al portal de acceso con usuario y código
-        const currentTarget = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.replace('acceso.html?redirect=' + currentTarget);
-      }
+      try {
+        const pageKey = window.location.pathname.split('/').pop() || 'index.html';
+        const now = new Date();
+        const dateKey = now.toISOString().split('T')[0];
+        
+        let stats = {};
+        try {
+          stats = JSON.parse(localStorage.getItem('solycal_analytics_data') || '{}');
+        } catch(e) { stats = {}; }
+
+        if (!stats.totalViews) stats.totalViews = 0;
+        if (!stats.pages) stats.pages = {};
+        if (!stats.daily) stats.daily = {};
+        if (!stats.referrers) stats.referrers = {};
+        if (!stats.devices) stats.devices = { desktop: 0, mobile: 0, tablet: 0 };
+        if (!stats.history) stats.history = [];
+
+        // Incrementar vistas
+        stats.totalViews++;
+        stats.pages[pageKey] = (stats.pages[pageKey] || 0) + 1;
+        stats.daily[dateKey] = (stats.daily[dateKey] || 0) + 1;
+
+        // Dispositivo
+        const w = window.innerWidth;
+        const dev = w < 640 ? 'mobile' : (w < 1024 ? 'tablet' : 'desktop');
+        stats.devices[dev] = (stats.devices[dev] || 0) + 1;
+
+        // Origen / Referrer
+        const ref = document.referrer ? (new URL(document.referrer)).hostname : 'Directo / Orgánico';
+        stats.referrers[ref] = (stats.referrers[ref] || 0) + 1;
+
+        // Últimas sesiones (últimas 25 visitas)
+        stats.history.unshift({
+          page: pageKey,
+          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          date: dateKey,
+          device: dev,
+          ref: ref
+        });
+        if (stats.history.length > 35) stats.history.pop();
+
+        localStorage.setItem('solycal_analytics_data', JSON.stringify(stats));
+      } catch(err) {}
     })();
   </script>
 </head>

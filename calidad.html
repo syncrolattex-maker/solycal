@@ -8,6 +8,19 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://solycal.es/calidad.html">
 
+  <!-- Meta SEO Técnico Profesional -->
+  <meta name="author" content="Soldadura y Calderería Valenciana S.L.">
+  <meta name="publisher" content="SOLYCAL S.L.">
+  <meta name="theme-color" content="#07080a">
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=yes, address=yes, email=yes">
+  <meta name="geo.region" content="ES-VC">
+  <meta name="geo.placename" content="Torrent, Valencia">
+  <meta name="geo.position" content="39.4362;-0.4981">
+  <meta name="ICBM" content="39.4362, -0.4981">
+  <link rel="alternate" hreflang="es" href="https://solycal.es/calidad.html">
+  <link rel="alternate" hreflang="x-default" href="https://solycal.es/calidad.html">
+
   <!-- Open Graph / Redes Sociales y Búsqueda -->
   <meta property="og:locale" content="es_ES">
   <meta property="og:type" content="website">
@@ -16,7 +29,11 @@
   <meta property="og:url" content="https://solycal.es/calidad.html">
   <meta property="og:site_name" content="SOLYCAL | Soldadura y Calderería Valenciana S.L.">
   <meta property="og:image" content="https://solycal.es/assets/instalaciones.jpg">
-  <meta property="og:image:alt" content="Instalaciones de SOLYCAL en Torrent, Valencia">
+  <meta property="og:image:secure_url" content="https://solycal.es/assets/instalaciones.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content="Instalaciones y Calderería Pesada de SOLYCAL en Torrent, Valencia">
 
   <!-- Twitter Meta -->
   <meta name="twitter:card" content="summary_large_image">
@@ -31,6 +48,7 @@
 
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="alternate icon" href="assets/logo-icon.png">
+  <link rel="apple-touch-icon" href="assets/logo-icon.png">
 
   <!-- Editorial & Architectural Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -583,17 +601,52 @@
       transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
+  <!-- SOLYCAL INTERNAL VISITOR ANALYTICS TRACKER (Privacy-first & GDPR compliant) -->
   <script>
     (function() {
-      // Si ya está en la página de acceso, permitir navegación
-      const isAuthPage = window.location.pathname.endsWith('acceso.html') || window.location.pathname.endsWith('/acceso');
-      const isAuthorized = localStorage.getItem('solycal_site_unlocked') === 'true' || sessionStorage.getItem('solycal_auth_user');
-      
-      if (!isAuthorized && !isAuthPage) {
-        // Redirigir de inmediato al portal de acceso con usuario y código
-        const currentTarget = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.replace('acceso.html?redirect=' + currentTarget);
-      }
+      try {
+        const pageKey = window.location.pathname.split('/').pop() || 'index.html';
+        const now = new Date();
+        const dateKey = now.toISOString().split('T')[0];
+        
+        let stats = {};
+        try {
+          stats = JSON.parse(localStorage.getItem('solycal_analytics_data') || '{}');
+        } catch(e) { stats = {}; }
+
+        if (!stats.totalViews) stats.totalViews = 0;
+        if (!stats.pages) stats.pages = {};
+        if (!stats.daily) stats.daily = {};
+        if (!stats.referrers) stats.referrers = {};
+        if (!stats.devices) stats.devices = { desktop: 0, mobile: 0, tablet: 0 };
+        if (!stats.history) stats.history = [];
+
+        // Incrementar vistas
+        stats.totalViews++;
+        stats.pages[pageKey] = (stats.pages[pageKey] || 0) + 1;
+        stats.daily[dateKey] = (stats.daily[dateKey] || 0) + 1;
+
+        // Dispositivo
+        const w = window.innerWidth;
+        const dev = w < 640 ? 'mobile' : (w < 1024 ? 'tablet' : 'desktop');
+        stats.devices[dev] = (stats.devices[dev] || 0) + 1;
+
+        // Origen / Referrer
+        const ref = document.referrer ? (new URL(document.referrer)).hostname : 'Directo / Orgánico';
+        stats.referrers[ref] = (stats.referrers[ref] || 0) + 1;
+
+        // Últimas sesiones (últimas 25 visitas)
+        stats.history.unshift({
+          page: pageKey,
+          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          date: dateKey,
+          device: dev,
+          ref: ref
+        });
+        if (stats.history.length > 35) stats.history.pop();
+
+        localStorage.setItem('solycal_analytics_data', JSON.stringify(stats));
+      } catch(err) {}
     })();
   </script>
 </head>
@@ -1397,7 +1450,6 @@
             <li><a href="noticias.html" class="hover:text-brand-yellow transition-colors">06. Noticias y Actualidad</a></li>
             <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">07. Contacto Directo</a></li>
             <li><a href="media.html" class="hover:text-brand-yellow transition-colors">08. Galería Técnica / Media</a></li>
-            <li><a href="acceso.html" class="hover:text-brand-yellow transition-colors text-neutral-400 flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3 text-brand-yellow"></i> 09. Acceso Restringido</a></li>
           </ul>
         </div>
 
@@ -1459,7 +1511,6 @@
 
         <!-- Enlaces Legales -->
         <div class="order-2 md:order-3 flex items-center gap-6 relative z-10">
-          <a href="acceso.html" class="hover:text-brand-yellow transition-colors flex items-center gap-1.5 text-neutral-400"><i data-lucide="lock" class="w-3 h-3 text-brand-yellow"></i> Acceso</a>
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
           <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
@@ -2390,7 +2441,7 @@
 
             if (gl) {
               const vsSource = "\nattribute vec2 a_pos;\nvarying vec2 v_uv;\nvoid main() {\n  v_uv = a_pos * 0.5 + 0.5;\n  gl_Position = vec4(a_pos, 0.0, 1.0);\n}\n";
-              const fsSource = "\nprecision mediump float;\nvarying vec2 v_uv;\nuniform vec2 u_resolution;\nuniform float u_time;\n\nvec2 rotVec(vec2 v, float a) {\n  float c = cos(a), s = sin(a);\n  return vec2(v.x * c - v.y * s, v.x * s + v.y * c);\n}\n\nfloat hash(vec2 p) {\n  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n  vec2 i = floor(p);\n  vec2 f = fract(p);\n  f = f * f * (3.0 - 2.0 * f);\n  float a = hash(i);\n  float b = hash(i + vec2(1.0, 0.0));\n  float c = hash(i + vec2(0.0, 1.0));\n  float d = hash(i + vec2(1.0, 1.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nvoid main() {\n  vec2 uv = v_uv;\n  float t = u_time * 0.18; // Movimiento más pausado, sedoso y elegante\n\n  // Ondulación suave minimalista de baja frecuencia\n  float wave1 = sin(uv.x * 3.2 + t * 0.9) * 0.08;\n  float wave2 = cos(uv.x * 2.1 - t * 0.6) * 0.06;\n  float n = noise(vec2(uv.x * 2.5 + t * 0.3, uv.y * 1.5)) * 0.12;\n\n  // Factor de emergencia: Emerge desde abajo (y=0 en WebGL / y=1) y se disuelve\n  // completamente antes de llegar a la mitad/tercio superior del footer.\n  // v_uv.y va de 0.0 (abajo) a 1.0 (arriba).\n  float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba\n  float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);\n\n  // Paleta corporativa minimalista y sutil Solycal\n  vec3 cBg = vec3(0.020, 0.024, 0.031);     // #050608 Carbón profundo limpio\n  vec3 cAmber = vec3(0.48, 0.22, 0.04);      // Ámbar forja profundo\n  vec3 cGold = vec3(0.85, 0.60, 0.18);       // Oro suave Solycal\n  vec3 cTitanium = vec3(0.96, 0.84, 0.48);   // Destello plasma cálido sutil\n\n  // Mezcla horizontal suave de tonos cálidos\n  float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.7 + uv.y * 2.0) * 0.3);\n  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);\n  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.3, 0.8, uv.x) * 0.25);\n\n  // Fundido minimalista hacia el fondo oscuro: solo un aura tenue y elegante que emerge desde abajo\n  vec3 col = mix(cBg, warmGlow, elevation * 0.45);\n\n  gl_FragColor = vec4(col, 1.0);\n}\n";
+              const fsSource = "\nprecision mediump float;\nvarying vec2 v_uv;\nuniform vec2 u_resolution;\nuniform float u_time;\nuniform vec2 u_mouse;\n\nvec2 rotVec(vec2 v, float a) {\n  float c = cos(a), s = sin(a);\n  return vec2(v.x * c - v.y * s, v.x * s + v.y * c);\n}\n\nfloat hash(vec2 p) {\n  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n  vec2 i = floor(p);\n  vec2 f = fract(p);\n  f = f * f * (3.0 - 2.0 * f);\n  float a = hash(i);\n  float b = hash(i + vec2(1.0, 0.0));\n  float c = hash(i + vec2(0.0, 1.0));\n  float d = hash(i + vec2(1.0, 1.0));\n  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nfloat fbm(vec2 p) {\n  float val = 0.0;\n  float amp = 0.55;\n  mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));\n  for (int i = 0; i < 3; i++) {\n    val += amp * noise(p);\n    p = rot * p * 2.05 + vec2(1.2, 0.8);\n    amp *= 0.5;\n  }\n  return val;\n}\n\nvoid main() {\n  vec2 uv = v_uv;\n  float t = u_time * 0.42;\n\n  // Interacción suave con el cursor del ratón sobre el footer\n  vec2 m = u_mouse;\n  float distToMouse = length(uv - m);\n  float mouseWave = sin(distToMouse * 16.0 - u_time * 2.5) * exp(-distToMouse * 3.5) * 0.12;\n\n  // Dinámica de fluidos procedurales multicapa (Framer Shader style)\n  vec2 p = uv * 3.2;\n  p.x += t * 0.35 + mouseWave;\n  \n  float q = fbm(p + vec2(t * 0.2, -t * 0.15));\n  float r = fbm(p + 4.0 * rotVec(vec2(q), t * 0.25) + vec2(1.7, 9.2));\n\n  // Ondas dinámicas que surgen desde la base\n  float waveFront = sin(uv.x * 4.5 + t * 0.8 + r * 1.8) * 0.10 + cos(uv.x * 2.8 - t * 0.5) * 0.07;\n  \n  // Elevación: emerge intensamente desde abajo (uv.y cerca de 0) y se desvanece\n  // completamente al llegar a 0.65-0.70 de la altura del canvas\n  float elevation = smoothstep(0.70, 0.05, uv.y + waveFront * 0.7);\n\n  // Paleta VIVA y luminosa Solycal:\n  // Fondo oscuro (#050608) -> Ámbar Forja Ardiente -> Oro Industrial Brillante (#F1B541) -> Plasma Titanio Incandescente (#FFF0A5)\n  vec3 cBg = vec3(0.020, 0.024, 0.031);          // #050608 Base limpia profunda\n  vec3 cDarkAmber = vec3(0.72, 0.25, 0.02);     // Ámbar forja vivo\n  vec3 cBrightGold = vec3(0.98, 0.74, 0.22);    // Oro corporativo Solycal vibrante (#F1B541)\n  vec3 cTitaniumGlow = vec3(1.0, 0.94, 0.68);   // Destello incandescente plasma\n\n  // Interpolación cromática fluida dependiente de las capas de turbulencia\n  float colorMix = clamp(r * 1.4 + q * 0.6, 0.0, 1.0);\n  vec3 flameGradient = mix(cDarkAmber, cBrightGold, smoothstep(0.15, 0.85, colorMix));\n  flameGradient = mix(flameGradient, cTitaniumGlow, pow(r, 2.2) * 0.85);\n\n  // Mezcla final con fondo oscuro: alta vivacidad en la base y fundido sedoso\n  vec3 finalColor = mix(cBg, flameGradient, elevation * 0.82);\n\n  gl_FragColor = vec4(finalColor, 1.0);\n}\n";
 
               function createShader(gl, type, source) {
                 const shader = gl.createShader(type);
@@ -2428,9 +2479,21 @@
                   const aPosLoc = gl.getAttribLocation(program, 'a_pos');
                   const uResLoc = gl.getUniformLocation(program, 'u_resolution');
                   const uTimeLoc = gl.getUniformLocation(program, 'u_time');
+                  const uMouseLoc = gl.getUniformLocation(program, 'u_mouse');
 
                   let isFooterActive = false;
                   let rafId = null;
+                  let currentMouse = [0.5, 0.2];
+                  let targetMouse = [0.5, 0.2];
+
+                  mainFooter.addEventListener('pointermove', (e) => {
+                    const rect = mainFooter.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0) {
+                      const mx = (e.clientX - rect.left) / rect.width;
+                      const my = 1.0 - ((e.clientY - rect.top) / rect.height);
+                      targetMouse = [Math.max(0.0, Math.min(1.0, mx)), Math.max(0.0, Math.min(1.0, my))];
+                    }
+                  }, { passive: true });
 
                   // Resolución interna optimizada fija/acotada (estilo Framer Canvas Shader)
                   // El canvas mide 100% de ancho x alto con CSS, pero internamente renderiza
@@ -2459,6 +2522,10 @@
                       return;
                     }
 
+                    // Suavizado inercial del movimiento del ratón
+                    currentMouse[0] += (targetMouse[0] - currentMouse[0]) * 0.08;
+                    currentMouse[1] += (targetMouse[1] - currentMouse[1]) * 0.08;
+
                     gl.useProgram(program);
                     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
                     gl.enableVertexAttribArray(aPosLoc);
@@ -2466,6 +2533,9 @@
 
                     gl.uniform2f(uResLoc, footerShaderCanvas.width, footerShaderCanvas.height);
                     gl.uniform1f(uTimeLoc, (now - startTime) * 0.001);
+                    if (uMouseLoc) {
+                      gl.uniform2f(uMouseLoc, currentMouse[0], currentMouse[1]);
+                    }
 
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
 

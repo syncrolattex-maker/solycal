@@ -123,7 +123,7 @@ function getHead(title, description, canonicalPath = '') {
   <!-- Editorial & Architectural Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -620,10 +620,13 @@ function getHead(title, description, canonicalPath = '') {
       transition: transform 0.90s var(--joby-cubic) 0.24s;
     }
 
-    /* CONTENEDOR PRINCIPAL DEL MENÚ OVERLAY */
+    /* CONTENEDOR PRINCIPAL DEL MENÚ OVERLAY (100vh / 100dvh con scroll suave garantizado) */
     #joby-nav-overlay {
       position: fixed;
       inset: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
       z-index: 105;
       background: transparent;
       opacity: 0;
@@ -632,9 +635,10 @@ function getHead(title, description, canonicalPath = '') {
       transition: opacity 0.3s ease 0s, visibility 0s linear 0.45s;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       overflow-y: auto;
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
     #joby-nav-overlay.is-open {
       opacity: 1;
@@ -646,6 +650,10 @@ function getHead(title, description, canonicalPath = '') {
     .joby-overlay-content {
       position: relative;
       z-index: 10;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     .joby-nav-item {
       display: block;
@@ -662,13 +670,60 @@ function getHead(title, description, canonicalPath = '') {
     #joby-nav-overlay.is-open .joby-nav-link {
       transform: translateY(0);
     }
+    
+    /* Efecto interactivo en versión desktop: de letra fina (font-light / 300) a negrita/media (font-bold / 700) con acento oro */
+    .joby-nav-title {
+      display: inline-block;
+      font-weight: 300; /* Thin / Light en reposo */
+      letter-spacing: -0.02em;
+      transition: font-weight 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s var(--joby-power4), color 0.25s ease, letter-spacing 0.25s ease;
+    }
     .joby-nav-link:hover .joby-nav-title {
+      font-weight: 700; /* Pasa de thin a bold */
+      letter-spacing: -0.01em;
       color: #F1B541;
       transform: translateX(12px);
     }
-    .joby-nav-title {
-      display: inline-block;
-      transition: transform 0.35s var(--joby-power4), color 0.25s ease;
+    .joby-nav-link.is-active-link .joby-nav-title {
+      font-weight: 700;
+      color: #F1B541;
+    }
+
+    /* Pestañas de barra de navegación Desktop (Header): de thin a bold al pasar el cursor */
+    .desktop-nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 0.85rem;
+      border-radius: 9999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
+      color: #94a3b8;
+      font-weight: 300; /* Letra fina en reposo */
+      transition: color 0.2s ease, font-weight 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+    }
+    .desktop-nav-link:hover {
+      color: #ffffff;
+      font-weight: 600; /* Pasa a medium / semibold al hover */
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    .desktop-nav-link.is-active {
+      color: #F1B541;
+      font-weight: 700;
+      background-color: rgba(241, 181, 65, 0.08);
+    }
+    .header-theme-light .desktop-nav-link {
+      color: #4b5563;
+    }
+    .header-theme-light .desktop-nav-link:hover {
+      color: #07080a;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .header-theme-light .desktop-nav-link.is-active {
+      color: #b45309;
+      background-color: rgba(180, 83, 9, 0.1);
     }
   </style>
   <!-- SOLYCAL INTERNAL VISITOR ANALYTICS TRACKER (Privacy-first & GDPR compliant) -->
@@ -763,16 +818,17 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     { num: '04', title: 'Calidad & Normas', href: 'calidad.html', slug: 'calidad' },
     { num: '05', title: 'Equipo', href: 'equipo.html', slug: 'equipo' },
     { num: '06', title: 'Noticias', href: 'noticias.html', slug: 'noticias' },
-    { num: '07', title: 'Contacto', href: 'contacto.html', slug: 'contacto' },
-    { num: '08', title: 'Media', href: 'media.html', slug: 'media' }
+    { num: '07', title: 'Media', href: 'media.html', slug: 'media' },
+    { num: '08', title: 'Contacto', href: 'contacto.html', slug: 'contacto' }
   ];
 
-  const menuItems = links.map(l => {
+  // Barra de pestañas horizontal en versión Desktop con transición thin -> bold / medium al pasar el cursor
+  const desktopNavItems = links.map(l => {
     const isActive = l.slug === activeSlug;
     return `
-      <a href="${l.href}" class="group flex items-baseline gap-2 py-2 transition-all ${isActive ? 'text-brand-yellow font-bold' : 'text-neutral-400 hover:text-white'}">
-        <span class="font-mono text-[10px] tracking-wider opacity-60 group-hover:text-brand-yellow">${l.num}</span>
-        <span class="text-xs uppercase tracking-widest font-semibold">${l.title}</span>
+      <a href="${l.href}" class="desktop-nav-link ${isActive ? 'is-active' : ''}">
+        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">${l.num}</span>
+        <span>${l.title}</span>
       </a>
     `;
   }).join('');
@@ -781,8 +837,8 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     const isActive = l.slug === activeSlug;
     return `
       <div class="joby-nav-item">
-        <a href="${l.href}" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 ${isActive ? 'text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
-          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">${l.num}</span>
+        <a href="${l.href}" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 ${isActive ? 'is-active-link text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
+          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">${l.num}</span>
           <span class="joby-nav-title">${l.title}</span>
         </a>
       </div>
@@ -813,15 +869,20 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     </div>
   </div>
 
-  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA -->
+  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA, NAVEGACIÓN DESKTOP Y MENÚ HAMBURGUESA A LA DERECHA -->
   <header id="main-header" class="${isDarkText ? 'header-theme-light' : ''} ${activeSlug === 'instalaciones' ? 'absolute top-0 left-0 right-0 z-[140] pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto' : 'sticky top-0 z-[140]'} ${isHeaderTransparent ? 'bg-transparent border-transparent' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
-    <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
+    <div class="w-full px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
-      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center">
+      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center flex-shrink-0">
         <img id="brand-logo-icon" src="${isDarkText ? 'assets/logo-icon-black.png' : 'assets/logo-icon.png'}" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
-        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
+        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors ml-2 sm:ml-3">SOLYCAL</span>
       </a>
+
+      <!-- Navegación Desktop con efecto al pasar el cursor (Thin -> Bold/Medium) -->
+      <nav class="hidden xl:flex items-center gap-1 p-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.3)] relative z-[150]" aria-label="Navegación Principal">
+        ${desktopNavItems}
+      </nav>
 
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">
@@ -850,56 +911,56 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     <div class="joby-wave-layer"></div>
   </div>
 
-  <!-- JOBY AVIATION FULLSCREEN CONTENT OVERLAY -->
+  <!-- JOBY AVIATION FULLSCREEN CONTENT OVERLAY (CON RESPONSIVE TOTAL PARA TODOS LOS DISPOSITIVOS) -->
   <div id="joby-nav-overlay" aria-hidden="true">
 
-    <!-- Contenido Frontal del Overlay con backdrop blur -->
-    <div class="joby-overlay-content flex-1 flex flex-col justify-between pt-24 pb-8">
+    <!-- Contenido Frontal del Overlay con scroll natural garantizado -->
+    <div class="joby-overlay-content flex-1 flex flex-col justify-between pt-20 sm:pt-24 pb-6 sm:pb-8">
       
       <!-- Main Navigation Columns (Joby Experience style) -->
-      <div class="w-full px-6 sm:px-12 lg:px-20 py-8 flex-1 flex flex-col justify-center">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div class="w-full px-5 sm:px-10 lg:px-16 py-4 sm:py-8 flex-1 flex flex-col justify-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           
           <!-- Primary Large Nav Links (Animated stagger) -->
-          <div class="lg:col-span-7 space-y-3 sm:space-y-4">
-            <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-2">// NAVEGACIÓN</span>
+          <div class="lg:col-span-7 space-y-1.5 sm:space-y-2.5">
+            <span class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest block mb-2 sm:mb-4">// NAVEGACIÓN</span>
             ${overlayNavItems}
           </div>
 
           <!-- Secondary Information (Contacto y Redes Sociales Oficiales) -->
-          <div class="lg:col-span-5 space-y-8 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12">
+          <div class="lg:col-span-5 space-y-6 sm:space-y-8 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-10">
             
             <!-- Contacto Directo -->
             <div>
-              <p class="font-mono text-xs text-brand-yellow uppercase tracking-widest mb-4">// CONTACTO DIRECTO</p>
-              <div class="space-y-3 font-mono text-xs">
+              <p class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-3 sm:mb-4">// CONTACTO DIRECTO</p>
+              <div class="space-y-2.5 sm:space-y-3 font-mono text-xs">
                 <a href="tel:961504038" class="flex items-center gap-3 text-white hover:text-brand-yellow transition-colors group">
-                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors">
+                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
                     <i data-lucide="phone" class="w-4 h-4"></i>
                   </div>
                   <div>
                     <span class="text-neutral-400 block text-[10px] uppercase tracking-wider">Atención Telefónica</span>
-                    <span class="text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">+34 96 150 40 38</span>
+                    <span class="text-xs sm:text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">+34 96 150 40 38</span>
                   </div>
                 </a>
 
                 <a href="mailto:info@solycal.es" class="flex items-center gap-3 text-white hover:text-brand-yellow transition-colors group">
-                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors">
+                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
                     <i data-lucide="mail" class="w-4 h-4"></i>
                   </div>
                   <div>
                     <span class="text-neutral-400 block text-[10px] uppercase tracking-wider">Oficina Técnica / Email</span>
-                    <span class="text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">info@solycal.es</span>
+                    <span class="text-xs sm:text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">info@solycal.es</span>
                   </div>
                 </a>
 
-                <div class="flex items-start gap-3 text-neutral-300 pt-1">
+                <div class="flex items-start gap-3 text-neutral-300 pt-0.5">
                   <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow flex-shrink-0 mt-0.5">
                     <i data-lucide="map-pin" class="w-4 h-4"></i>
                   </div>
                   <div class="font-sans text-xs text-neutral-400 leading-relaxed">
-                    <span class="font-mono text-[10px] text-neutral-400 block uppercase tracking-wider">Ubicación</span>
-                    Carrer Palmiters, 14 &bull; Pol. Ind. Masía del Juez<br>
+                    <span class="font-mono text-[10px] text-neutral-400 block uppercase tracking-wider">Sede Central y Fábrica</span>
+                    Calle Hort de Soriano, 17A &bull; Pol. Ind. Masía del Juez<br>
                     46900 Torrent, Valencia (España)
                   </div>
                 </div>
@@ -908,13 +969,13 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
 
             <!-- Redes Sociales Oficiales Solycal (solycal.es) - Solo Iconos, sin círculos -->
             <div>
-              <p class="font-mono text-xs text-brand-yellow uppercase tracking-widest mb-3">// REDES SOCIALES</p>
-              ${getSocialIcons('w-6 h-6', 'flex items-center gap-5')}
+              <p class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-2 sm:mb-3">// REDES SOCIALES</p>
+              ${getSocialIcons('w-5 h-5 sm:w-6 sm:h-6', 'flex items-center gap-4 sm:gap-5')}
             </div>
 
             <!-- Botón directo a página de contacto -->
-            <div class="pt-1">
-              <a href="contacto.html" class="inline-flex items-center justify-between w-full p-3.5 rounded-xl bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.2)]">
+            <div class="pt-0 sm:pt-1">
+              <a href="contacto.html" class="inline-flex items-center justify-between w-full p-3 sm:p-3.5 rounded-xl bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.2)]">
                 <span>Ir a Formulario de Contacto</span>
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </a>
@@ -926,8 +987,8 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
       </div>
 
       <!-- Bottom Meta inside overlay -->
-      <div class="w-full px-6 sm:px-12 lg:px-20 py-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-neutral-400">
-        <p>&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Precisión y Solidez</p>
+      <div class="w-full px-5 sm:px-10 lg:px-16 py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-neutral-400">
+        <p class="text-center sm:text-left text-[11px] sm:text-xs">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Precisión y Solidez</p>
         <div class="flex gap-6">
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
@@ -1118,8 +1179,8 @@ function getFooter(options = {}) {
             <li><a href="calidad.html" class="hover:text-brand-yellow transition-colors">04. Calidad y Certificaciones</a></li>
             <li><a href="equipo.html" class="hover:text-brand-yellow transition-colors">05. Equipo Técnico</a></li>
             <li><a href="noticias.html" class="hover:text-brand-yellow transition-colors">06. Noticias y Actualidad</a></li>
-            <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">07. Contacto Directo</a></li>
-            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">08. Galería Técnica / Media</a></li>
+            <li><a href="media.html" class="hover:text-brand-yellow transition-colors">07. Galería Técnica / Media</a></li>
+            <li><a href="contacto.html" class="hover:text-brand-yellow transition-colors">08. Contacto Directo</a></li>
           </ul>
         </div>
 
@@ -4822,7 +4883,7 @@ ${getHeader('contacto', true)}
   <!-- 01 CABECERA FRONTAL: HABLEMOS DE TU PRÓXIMO PROYECTO -->
   <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto mb-16 sm:mb-20 lg:mb-24">
     <div class="max-w-2xl lg:max-w-3xl">
-      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4 sm:mb-6">// 06 CONTACTO &amp; COTIZACIÓN</span>
+      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4 sm:mb-6">// 08 CONTACTO &amp; COTIZACIÓN</span>
       
       <!-- VERSIÓN MÓVIL (< md): Titular estándar nativo, sin efectos, nítido y perfectamente integrado -->
       <h1 class="block md:hidden text-4xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight mb-6">

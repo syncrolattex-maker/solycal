@@ -989,19 +989,19 @@ void main() {
   float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
   float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  // Paleta corporativa viva, cálida e industrial Solycal
-  vec3 cBg = vec3(0.020, 0.024, 0.031);       // #050608 Carbón profundo limpio
-  vec3 cAmber = vec3(0.82, 0.35, 0.04);       // Ámbar forja ardiente vivo
-  vec3 cGold = vec3(1.0, 0.76, 0.22);         // Oro industrial Solycal puro
-  vec3 cTitanium = vec3(1.0, 0.94, 0.62);     // Destello plasma luminoso cálido
+  // Paleta corporativa en gama de naranjas ardientes (tono como el de la izquierda)
+  vec3 cBg = vec3(0.020, 0.024, 0.031);          // #050608 Carbón profundo limpio
+  vec3 cDeepOrange = vec3(0.80, 0.28, 0.03);     // Naranja forja intenso profundo
+  vec3 cVividOrange = vec3(0.88, 0.38, 0.05);    // Naranja ardiente vivo (tono de la izquierda)
+  vec3 cAmberOrange = vec3(0.96, 0.52, 0.08);    // Ámbar anaranjado cálido
 
-  // Mezcla horizontal fluida de tonos cálidos
+  // Mezcla horizontal fluida manteniendo la predominancia de tonos anaranjados
   float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.8 + uv.y * 2.2) * 0.32);
-  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
-  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.25, 0.75, uv.x) * 0.35);
+  vec3 warmGlow = mix(cVividOrange, cDeepOrange, horizontalFlow * 0.5);
+  warmGlow = mix(warmGlow, cAmberOrange, smoothstep(0.15, 0.85, uv.x) * 0.5);
 
-  // Fundido que emerge vivo y cálido desde la base hacia el fondo carbón
-  vec3 col = mix(cBg, warmGlow, elevation * 0.76);
+  // Fundido que emerge vivo y anaranjado desde la base hacia el fondo carbón
+  vec3 col = mix(cBg, warmGlow, elevation * 0.78);
 
   gl_FragColor = vec4(col, 1.0);
 }

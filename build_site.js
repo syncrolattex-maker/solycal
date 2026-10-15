@@ -989,19 +989,19 @@ void main() {
   float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
   float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  // Paleta corporativa minimalista y sutil Solycal
-  vec3 cBg = vec3(0.020, 0.024, 0.031);     // #050608 Carbón profundo limpio
-  vec3 cAmber = vec3(0.48, 0.22, 0.04);      // Ámbar forja profundo
-  vec3 cGold = vec3(0.85, 0.60, 0.18);       // Oro suave Solycal
-  vec3 cTitanium = vec3(0.96, 0.84, 0.48);   // Destello plasma cálido sutil
+  // Paleta corporativa viva, cálida e industrial Solycal
+  vec3 cBg = vec3(0.020, 0.024, 0.031);       // #050608 Carbón profundo limpio
+  vec3 cAmber = vec3(0.82, 0.35, 0.04);       // Ámbar forja ardiente vivo
+  vec3 cGold = vec3(1.0, 0.76, 0.22);         // Oro industrial Solycal puro
+  vec3 cTitanium = vec3(1.0, 0.94, 0.62);     // Destello plasma luminoso cálido
 
-  // Mezcla horizontal suave de tonos cálidos
-  float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.7 + uv.y * 2.0) * 0.3);
+  // Mezcla horizontal fluida de tonos cálidos
+  float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.8 + uv.y * 2.2) * 0.32);
   vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
-  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.3, 0.8, uv.x) * 0.25);
+  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.25, 0.75, uv.x) * 0.35);
 
-  // Fundido minimalista hacia el fondo oscuro: solo un aura tenue y elegante que emerge desde abajo
-  vec3 col = mix(cBg, warmGlow, elevation * 0.45);
+  // Fundido que emerge vivo y cálido desde la base hacia el fondo carbón
+  vec3 col = mix(cBg, warmGlow, elevation * 0.76);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -1055,11 +1055,11 @@ function getFooter(options = {}) {
   ` : ''}
 
   <!-- FOOTER REFINED EDITORIAL WITH SHADER FLUID GRADIENT BACKGROUND -->
-  <footer id="main-footer" class="relative bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
+  <footer id="main-footer" class="relative z-20 bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
     
     <!-- Canvas WebGL: Fluid Shader Gradient minimalista que emerge suavemente desde abajo -->
     <div class="absolute inset-x-0 bottom-0 h-[68%] z-0 pointer-events-none overflow-hidden">
-      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-85"></canvas>
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-95"></canvas>
       <!-- Máscara de fundido: 100% negro en la parte superior del gradiente, desvaneciéndose limpiamente -->
       <div class="absolute inset-0 bg-gradient-to-t from-transparent via-[#050608]/40 to-[#050608] pointer-events-none"></div>
       <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
@@ -1444,7 +1444,8 @@ function getFooter(options = {}) {
         // Exclusivo para h1:not(.hero-title) y h2
         // =========================================================================
         (function initWebGLPixelReveal() {
-          if (typeof THREE === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+          try {
+            if (typeof THREE === 'undefined' || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
           // 1. ESCENA WEBGL SUPERPUESTA CON <canvas id="webgl">
           let webglCanvas = document.getElementById('webgl');
@@ -1776,7 +1777,9 @@ function getFooter(options = {}) {
             camera.updateProjectionMatrix();
             renderer.setSize(newW, newH);
           }, { passive: true });
-
+          } catch (pixelErr) {
+            console.warn('WebGL pixel reveal fallback:', pixelErr);
+          }
         })();
 
         // GSAP ScrollTrigger para secciones y tarjetas editoriales
@@ -2160,6 +2163,7 @@ function getFooter(options = {}) {
                       return;
                     }
 
+                    gl.viewport(0, 0, footerShaderCanvas.width, footerShaderCanvas.height);
                     gl.useProgram(program);
                     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
                     gl.enableVertexAttribArray(aPosLoc);
@@ -2176,13 +2180,18 @@ function getFooter(options = {}) {
                   const footerObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                       isFooterActive = entry.isIntersecting;
-                      if (isFooterActive && !rafId) {
-                        rafId = requestAnimationFrame(renderShader);
+                      if (isFooterActive) {
+                        resizeCanvas();
+                        if (!rafId) {
+                          rafId = requestAnimationFrame(renderShader);
+                        }
                       }
                     });
-                  }, { threshold: 0.02, rootMargin: '100px' });
+                  }, { threshold: 0.01, rootMargin: '100px' });
 
                   footerObserver.observe(mainFooter);
+                  // Renderizado inicial por si ya está visible o al cargar
+                  resizeCanvas();
                 }
               }
             }
@@ -4231,14 +4240,17 @@ ${getHeader('calidad', true)}
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE CALIDAD CON THREE.JS SHADER AURORA HERO (Made for Award Component 0024) -->
 <div id="calidad-page-container" class="relative min-h-screen overflow-hidden">
   
-  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (OpenProcessing #2666434) -->
-  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
-    <canvas id="debris-canvas" class="w-full h-full block"></canvas>
-  </div>
+  <!-- Fondo fijo interactivo de calidad con clipping dinámico antes del footer -->
+  <div id="calidad-fixed-bg" class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="clip-path: inset(0 0 0 0);">
+    <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (OpenProcessing #2666434) -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
+      <canvas id="debris-canvas" class="w-full h-full block"></canvas>
+    </div>
 
-  <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
-  <div class="fixed inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
-  <div class="fixed inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
+    <!-- Máscara de profundidad y contraste corporativo para preservar legibilidad industrial -->
+    <div class="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#07080a]/35 via-[#07080a]/20 to-[#07080a]/85"></div>
+    <div class="absolute inset-0 dot-grid opacity-15 pointer-events-none z-[1]"></div>
+  </div>
 
   <!-- CONTENIDO FRONTAL DE LA PÁGINA (Z-INDEX SUPERIOR) -->
   <div class="relative z-10">
@@ -4594,7 +4606,6 @@ ${getHeader('calidad', true)}
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   (function() {
     if (typeof THREE === 'undefined') return;
@@ -4725,6 +4736,25 @@ ${getHeader('calidad', true)}
       renderer.render(scene, camera);
     }
     requestAnimationFrame(renderLoop);
+
+    // Dynamic clipping of the fixed background so it finishes cleanly before the footer
+    const fixedCalidadBg = document.getElementById('calidad-fixed-bg');
+    function updateCalidadFooterClipping() {
+      const footer = document.getElementById('main-footer');
+      if (footer && fixedCalidadBg) {
+        const footerRect = footer.getBoundingClientRect();
+        const winHeight = window.innerHeight;
+        if (footerRect.top < winHeight) {
+          const bottomClip = Math.max(0, winHeight - Math.max(0, footerRect.top));
+          fixedCalidadBg.style.clipPath = 'inset(0 0 ' + bottomClip + 'px 0)';
+        } else {
+          fixedCalidadBg.style.clipPath = 'inset(0 0 0 0)';
+        }
+      }
+    }
+    window.addEventListener('scroll', updateCalidadFooterClipping, { passive: true });
+    window.addEventListener('resize', updateCalidadFooterClipping);
+    updateCalidadFooterClipping();
   })();
 </script>
 

@@ -15,9 +15,10 @@ function getHead(title, description, canonicalPath = '') {
         "url": "https://solycal.es/",
         "logo": "https://solycal.es/assets/logo-icon.png",
         "image": ogImage,
-        "description": "Empresa especializada en calderería industrial pesada y ligera, corte por plasma HD TrueHole, soldadura homologada TIG/MIG y estructuras metálicas con marcado CE en Valencia.",
+        "description": "Líder en calderería industrial pesada y ligera a nivel nacional en España. Corte por plasma HD TrueHole, soldadura homologada TIG/MIG y estructuras metálicas con marcado CE EN 1090-1. Sede central en Torrent (Valencia).",
         "telephone": "+34961504038",
         "email": "info@solycal.es",
+        "hasMap": "https://maps.app.goo.gl/DUFL3niJ1QoG2gfX8",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Calle Hort de Soriano, 17A, Polígono Industrial Masía del Juez",
@@ -28,18 +29,24 @@ function getHead(title, description, canonicalPath = '') {
         },
         "geo": {
           "@type": "GeoCoordinates",
-          "latitude": 39.4362,
-          "longitude": -0.4981
+          "latitude": 39.44104,
+          "longitude": -0.49751
         },
         "areaServed": [
-          { "@type": "AdministrativeArea", "name": "Comunidad Valenciana" },
-          { "@type": "Country", "name": "España" }
+          {
+            "@type": "Country",
+            "name": "España"
+          },
+          {
+            "@type": "AdministrativeArea",
+            "name": "Comunidad Valenciana"
+          }
         ],
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
-          "name": "Servicios Industriales Metalúrgicos",
+          "name": "Servicios Industriales Metalúrgicos y Calderería Pesada a Nivel Nacional",
           "itemListElement": [
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Calderería Industrial Pesada y Ligera" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Calderería Industrial Pesada y Ligera Nacional" } },
             { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Corte por Plasma de Alta Definición HD TrueHole" } },
             { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Soldadura Homologada TIG / MIG-MAG" } },
             { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Estructuras Metálicas Marcado CE EN 1090-1" } },
@@ -47,7 +54,8 @@ function getHead(title, description, canonicalPath = '') {
           ]
         },
         "sameAs": [
-          "https://solycal.es"
+          "https://solycal.es",
+          "https://maps.app.goo.gl/DUFL3niJ1QoG2gfX8"
         ]
       }
     ]
@@ -58,37 +66,44 @@ function getHead(title, description, canonicalPath = '') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
-  <meta name="description" content="${description}">
+  <title>\${title}</title>
+  <meta name="description" content="\${description}">
+  <meta name="keywords" content="caldereria industrial España, soldadura homologada, caldereria pesada Valencia, corte plasma HD TrueHole, estructuras metalicas EN 1090, caldereria Torrent, fabricacion metalurgica nacional">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <link rel="canonical" href="${url}">
+  <link rel="canonical" href="\${url}">
 
-  <!-- Meta SEO Técnico Profesional -->
+  <!-- Meta SEO Técnico Profesional & Proyección Nacional -->
   <meta name="author" content="Soldadura y Calderería Valenciana S.L.">
   <meta name="publisher" content="SOLYCAL S.L.">
+  <meta name="coverage" content="España">
+  <meta name="distribution" content="Global">
+  <meta name="target" content="all">
   <meta name="theme-color" content="#07080a">
   <meta name="color-scheme" content="dark">
   <meta name="format-detection" content="telephone=yes, address=yes, email=yes">
+  
+  <!-- Geolocalización Oficial Sede Masía del Juez (Torrent, Valencia) -->
   <meta name="geo.region" content="ES-VC">
-  <meta name="geo.placename" content="Torrent, Valencia">
-  <meta name="geo.position" content="39.4362;-0.4981">
-  <meta name="ICBM" content="39.4362, -0.4981">
-  <link rel="alternate" hreflang="es" href="${url}">
-  <link rel="alternate" hreflang="x-default" href="${url}">
+  <meta name="geo.placename" content="Torrent, Valencia, España">
+  <meta name="geo.position" content="39.44104;-0.49751">
+  <meta name="ICBM" content="39.44104, -0.49751">
+  <link rel="alternate" hreflang="es-ES" href="\${url}">
+  <link rel="alternate" hreflang="es" href="\${url}">
+  <link rel="alternate" hreflang="x-default" href="\${url}">
 
   <!-- Open Graph / Redes Sociales y Búsqueda -->
   <meta property="og:locale" content="es_ES">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${description}">
-  <meta property="og:url" content="${url}">
+  <meta property="og:title" content="\${title}">
+  <meta property="og:description" content="\${description}">
+  <meta property="og:url" content="\${url}">
   <meta property="og:site_name" content="SOLYCAL | Soldadura y Calderería Valenciana S.L.">
-  <meta property="og:image" content="${ogImage}">
-  <meta property="og:image:secure_url" content="${ogImage}">
+  <meta property="og:image" content="\${ogImage}">
+  <meta property="og:image:secure_url" content="\${ogImage}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:alt" content="Instalaciones y Calderería Pesada de SOLYCAL en Torrent, Valencia">
+  <meta property="og:image:alt" content="Instalaciones y Calderería Pesada de SOLYCAL en Torrent, Valencia - Servicio Nacional">
 
   <!-- Twitter Meta -->
   <meta name="twitter:card" content="summary_large_image">
@@ -1126,7 +1141,13 @@ function getFooter(options = {}) {
             Pol. Ind. Masía del Juez<br>
             46900 Torrent (Valencia)
           </p>
-          <p class="font-mono text-xs text-brand-yellow pt-2">info@solycal.es</p>
+          <div class="pt-1.5">
+            <a href="https://maps.app.goo.gl/DUFL3niJ1QoG2gfX8" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono text-[11px] text-brand-yellow hover:underline">
+              <span>Google Maps</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <p class="font-mono text-xs text-neutral-400 pt-1">info@solycal.es</p>
         </div>
       </div>
 
@@ -2319,7 +2340,7 @@ function getFooter(options = {}) {
 }
 
 // 1. GENERATE INDEX.HTML (Davide Cattaneo style Homepage)
-const indexHtml = `${getHead('SOLYCAL | Soldadura y Calderería Industrial Valencia', 'Fabricación de calderería industrial pesada y ligera, corte por plasma HD TrueHole, soldadura homologada TIG/MIG y estructuras metálicas con marcado CE en Torrent, Valencia.', '')}
+const indexHtml = `${getHead('SOLYCAL | Calderería Industrial Pesada y Soldadura en España', 'Empresa líder de calderería industrial pesada y ligera a nivel nacional en España. Corte plasma HD TrueHole, soldadura homologada TIG/MIG y estructuras metálicas CE. Planta técnica en Torrent (Valencia).', '')}
 ${getHeader('inicio')}
 
 <!-- HERO SECTION EDITORIAL & BOLD WITH INDUSTRIAL BACKGROUND VIDEO -->
@@ -2357,12 +2378,12 @@ ${getHeader('inicio')}
     
     <!-- Headline con jerarquía equilibrada (más protagonismo al fondo) -->
     <div class="max-w-4xl space-y-4">
-      <span class="hero-tag font-mono text-xs uppercase tracking-widest text-brand-yellow font-semibold block">// CALDERERÍA INDUSTRIAL & SOLDADURA DE PRECISIÓN</span>
+      <span class="hero-tag font-mono text-xs uppercase tracking-widest text-brand-yellow font-semibold block">// CALDERERÍA INDUSTRIAL PESADA & FABRICACIÓN NACIONAL</span>
       <h1 class="hero-title text-3xl sm:text-5xl lg:text-6xl font-display font-bold text-white tracking-tight leading-[1.08]">
         Transformamos el metal en ingeniería <span class="text-brand-yellow">de alta exigencia.</span>
       </h1>
       <p class="hero-desc text-sm sm:text-base text-neutral-300/90 font-sans max-w-2xl leading-relaxed">
-        Desde el desarrollo de planos en nuestra oficina técnica hasta la fabricación en taller y el montaje final en obra civil. Especialistas en acero inoxidable, aluminio, acero al carbono y corte plasma HD TrueHole en Valencia.
+        Desde el desarrollo de planos en nuestra oficina técnica hasta la fabricación en taller y el suministro a nivel nacional en toda España. Especialistas en acero inoxidable, aluminio, calderería pesada y corte plasma HD TrueHole desde nuestra sede central en Torrent (Valencia).
       </p>
     </div>
 
@@ -2900,7 +2921,7 @@ ${getFooter()}
 `;
 
 // 2. GENERATE SERVICIOS.HTML (Detailed Services Page)
-const serviciosHtml = `${getHead('Servicios de Calderería Industrial y Corte Plasma | SOLYCAL Valencia', 'Servicios integrales de calderería pesada y ligera, corte por plasma HD TrueHole, soldadura TIG/MIG homologada y estructuras metálicas con marcado CE.', 'servicios.html')}
+const serviciosHtml = `${getHead('Servicios de Calderería Industrial y Corte Plasma | SOLYCAL España', 'Servicios integrales de calderería pesada y ligera a nivel nacional en España. Corte por plasma HD TrueHole, soldadura TIG/MIG homologada y estructuras metálicas con marcado CE EN 1090-1.', 'servicios.html')}
 ${getHeader('servicios')}
 
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE SERVICIOS CON FONDO BIT PATTERNS (Jason Labbe) -->
@@ -4852,6 +4873,13 @@ ${getHeader('contacto', true)}
             Polígono Industrial Masía del Juez<br>
             46900 Torrent (Valencia) &bull; España
           </p>
+          <div class="pt-3">
+            <a href="https://maps.app.goo.gl/DUFL3niJ1QoG2gfX8" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-brand-yellow/10 border border-white/10 hover:border-brand-yellow/30 text-neutral-300 hover:text-brand-yellow font-mono text-xs transition-colors">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-yellow"></i>
+              <span>Ver Ubicación en Google Maps</span>
+              <i data-lucide="external-link" class="w-3 h-3 opacity-60"></i>
+            </a>
+          </div>
         </div>
 
         <div class="space-y-4 font-mono text-sm">

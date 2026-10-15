@@ -907,48 +907,34 @@ float noise(vec2 p) {
   return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
-vec2 warpUV(vec2 uv) {
-  float a = (uv.x * 2.5 + noise(uv * 1.8 + u_time * 0.15)) * 3.14159;
-  a *= 0.65;
-  return vec2(cos(a) * uv.x - sin(a) * uv.y, sin(a) * uv.x + cos(a) * uv.y);
-}
-
 void main() {
   vec2 uv = v_uv;
-  float ratio = u_resolution.x / max(u_resolution.y, 1.0);
-  float t = u_time * 0.45;
+  float t = u_time * 0.18; // Movimiento más pausado, sedoso y elegante
 
-  vec2 tuv = uv - 0.5;
-  float degree = noise(vec2(t * 0.08, tuv.x * tuv.y * 3.0) + vec2(12.3, 45.6));
-  tuv.y /= ratio;
-  tuv = rotVec(tuv, (degree - 0.5) * 1.8 + 0.6);
-  tuv.y *= ratio;
+  // Ondulación suave minimalista de baja frecuencia
+  float wave1 = sin(uv.x * 3.2 + t * 0.9) * 0.08;
+  float wave2 = cos(uv.x * 2.1 - t * 0.6) * 0.06;
+  float n = noise(vec2(uv.x * 2.5 + t * 0.3, uv.y * 1.5)) * 0.12;
 
-  vec2 uv2 = (uv * 2.0 - 1.0);
-  uv2 = rotVec(uv2, 0.42);
-  vec2 warped = warpUV(uv2) * 0.5;
+  // Factor de emergencia: Emerge desde abajo (y=0 en WebGL / y=1) y se disuelve
+  // completamente antes de llegar a la mitad/tercio superior del footer.
+  // v_uv.y va de 0.0 (abajo) a 1.0 (arriba).
+  float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
+  float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  vec2 blendUV = mix(tuv, warped, 0.52);
+  // Paleta corporativa minimalista y sutil Solycal
+  vec3 cBg = vec3(0.020, 0.024, 0.031);     // #050608 Carbón profundo limpio
+  vec3 cAmber = vec3(0.48, 0.22, 0.04);      // Ámbar forja profundo
+  vec3 cGold = vec3(0.85, 0.60, 0.18);       // Oro suave Solycal
+  vec3 cTitanium = vec3(0.96, 0.84, 0.48);   // Destello plasma cálido sutil
 
-  // Paleta Corporativa Solycal Industrial
-  vec3 c0 = vec3(0.027, 0.031, 0.039); // #07080a carbón profundo
-  vec3 c1 = vec3(0.706, 0.325, 0.035); // #b45309 ámbar forja
-  vec3 c2 = vec3(0.945, 0.710, 0.255); // #F1B541 oro corporativo Solycal
-  vec3 c3 = vec3(0.992, 0.902, 0.541); // #FDE68A destello titanio / plasma
+  // Mezcla horizontal suave de tonos cálidos
+  float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.7 + uv.y * 2.0) * 0.3);
+  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
+  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.3, 0.8, uv.x) * 0.25);
 
-  vec2 r1 = rotVec(blendUV, -0.22);
-  vec2 r2 = rotVec(blendUV, 0.35);
-
-  float s1 = smoothstep(-0.35, 0.35, r1.x);
-  float s2 = smoothstep(-0.35, 0.35, r2.x);
-  float sY = smoothstep(0.4, -0.4, blendUV.y);
-
-  vec3 layer1 = mix(c0, c2, s1);
-  vec3 layer2 = mix(c3, c1, s2);
-  vec3 col = mix(layer1, layer2, sY);
-
-  // Curva de contraste vibrante
-  col = mix(col, col * col + 0.45 * sqrt(max(col, vec3(0.0))), 0.35);
+  // Fundido minimalista hacia el fondo oscuro: solo un aura tenue y elegante que emerge desde abajo
+  vec3 col = mix(cBg, warmGlow, elevation * 0.45);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -1005,12 +991,11 @@ function getFooter(options = {}) {
   <!-- FOOTER REFINED EDITORIAL WITH SHADER FLUID GRADIENT BACKGROUND -->
   <footer id="main-footer" class="relative bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
     
-    <!-- Canvas WebGL Full-Bleed: Fluid Shader Gradient animado abarcando la totalidad del footer -->
-    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-75"></canvas>
-      <!-- Gradientes suaves para integrar armónicamente con la sección superior y con la tipografía -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[#050608] via-transparent via-15% to-[#050608]/80 pointer-events-none"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-[#050608]/70 via-transparent to-transparent pointer-events-none"></div>
+    <!-- Canvas WebGL: Fluid Shader Gradient minimalista que emerge suavemente desde abajo -->
+    <div class="absolute inset-x-0 bottom-0 h-[68%] z-0 pointer-events-none overflow-hidden">
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-85"></canvas>
+      <!-- Máscara de fundido: 100% negro en la parte superior del gradiente, desvaneciéndose limpiamente -->
+      <div class="absolute inset-0 bg-gradient-to-t from-transparent via-[#050608]/40 to-[#050608] pointer-events-none"></div>
       <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
     </div>
 

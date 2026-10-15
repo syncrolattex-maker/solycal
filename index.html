@@ -608,59 +608,13 @@
       transform: translateY(0);
     }
     
-    /* Efecto interactivo en versión desktop: de letra fina (font-light / 300) a negrita/media (font-bold / 700) con acento oro */
-    .joby-nav-title {
-      display: inline-block;
-      font-weight: 300; /* Thin / Light en reposo */
-      letter-spacing: -0.02em;
-      transition: font-weight 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s var(--joby-power4), color 0.25s ease, letter-spacing 0.25s ease;
-    }
     .joby-nav-link:hover .joby-nav-title {
-      font-weight: 700; /* Pasa de thin a bold */
-      letter-spacing: -0.01em;
       color: #F1B541;
       transform: translateX(12px);
     }
-    .joby-nav-link.is-active-link .joby-nav-title {
-      font-weight: 700;
-      color: #F1B541;
-    }
-
-    /* Pestañas de barra de navegación Desktop (Header): de thin a bold al pasar el cursor */
-    .desktop-nav-link {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      padding: 0.5rem 0.85rem;
-      border-radius: 9999px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.8125rem;
-      letter-spacing: 0.02em;
-      color: #94a3b8;
-      font-weight: 300; /* Letra fina en reposo */
-      transition: color 0.2s ease, font-weight 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-      white-space: nowrap;
-    }
-    .desktop-nav-link:hover {
-      color: #ffffff;
-      font-weight: 600; /* Pasa a medium / semibold al hover */
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    .desktop-nav-link.is-active {
-      color: #F1B541;
-      font-weight: 700;
-      background-color: rgba(241, 181, 65, 0.08);
-    }
-    .header-theme-light .desktop-nav-link {
-      color: #4b5563;
-    }
-    .header-theme-light .desktop-nav-link:hover {
-      color: #07080a;
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-    .header-theme-light .desktop-nav-link.is-active {
-      color: #b45309;
-      background-color: rgba(180, 83, 9, 0.1);
+    .joby-nav-title {
+      display: inline-block;
+      transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
   <!-- SOLYCAL INTERNAL VISITOR ANALYTICS TRACKER (Privacy-first & GDPR compliant) -->
@@ -738,60 +692,15 @@
     </div>
   </div>
 
-  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA, NAVEGACIÓN DESKTOP Y MENÚ HAMBURGUESA A LA DERECHA -->
+  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA (EXCLUSIVO) -->
   <header id="main-header" class=" sticky top-0 z-[140] bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5">
-    <div class="w-full px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between relative">
+    <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
-      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center flex-shrink-0">
+      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center">
         <img id="brand-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
-        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider text-white group-hover:text-brand-yellow transition-colors ml-2 sm:ml-3">SOLYCAL</span>
+        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider text-white group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
       </a>
-
-      <!-- Navegación Desktop con efecto al pasar el cursor (Thin -> Bold/Medium) -->
-      <nav class="hidden xl:flex items-center gap-1 p-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.3)] relative z-[150]" aria-label="Navegación Principal">
-        
-      <a href="index.html" class="desktop-nav-link is-active">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">01</span>
-        <span>Inicio</span>
-      </a>
-    
-      <a href="servicios.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">02</span>
-        <span>Servicios</span>
-      </a>
-    
-      <a href="instalaciones.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">03</span>
-        <span>Instalaciones</span>
-      </a>
-    
-      <a href="calidad.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">04</span>
-        <span>Calidad & Normas</span>
-      </a>
-    
-      <a href="equipo.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">05</span>
-        <span>Equipo</span>
-      </a>
-    
-      <a href="noticias.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">06</span>
-        <span>Noticias</span>
-      </a>
-    
-      <a href="media.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">07</span>
-        <span>Media</span>
-      </a>
-    
-      <a href="contacto.html" class="desktop-nav-link ">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">08</span>
-        <span>Contacto</span>
-      </a>
-    
-      </nav>
 
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">
@@ -835,57 +744,57 @@
             <span class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest block mb-2 sm:mb-4">// NAVEGACIÓN</span>
             
       <div class="joby-nav-item">
-        <a href="index.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 is-active-link text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">01</span>
+        <a href="index.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">01</span>
           <span class="joby-nav-title">Inicio</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="servicios.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">02</span>
+        <a href="servicios.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">02</span>
           <span class="joby-nav-title">Servicios</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="instalaciones.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">03</span>
+        <a href="instalaciones.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">03</span>
           <span class="joby-nav-title">Instalaciones</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="calidad.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">04</span>
+        <a href="calidad.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">04</span>
           <span class="joby-nav-title">Calidad & Normas</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="equipo.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">05</span>
+        <a href="equipo.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">05</span>
           <span class="joby-nav-title">Equipo</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="noticias.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">06</span>
+        <a href="noticias.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">06</span>
           <span class="joby-nav-title">Noticias</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="media.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">07</span>
+        <a href="media.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">07</span>
           <span class="joby-nav-title">Media</span>
         </a>
       </div>
     
       <div class="joby-nav-item">
-        <a href="contacto.html" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 text-white hover:text-brand-yellow group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">08</span>
+        <a href="contacto.html" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 text-white hover:text-brand-yellow group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">08</span>
           <span class="joby-nav-title">Contacto</span>
         </a>
       </div>

@@ -671,59 +671,13 @@ function getHead(title, description, canonicalPath = '') {
       transform: translateY(0);
     }
     
-    /* Efecto interactivo en versión desktop: de letra fina (font-light / 300) a negrita/media (font-bold / 700) con acento oro */
-    .joby-nav-title {
-      display: inline-block;
-      font-weight: 300; /* Thin / Light en reposo */
-      letter-spacing: -0.02em;
-      transition: font-weight 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s var(--joby-power4), color 0.25s ease, letter-spacing 0.25s ease;
-    }
     .joby-nav-link:hover .joby-nav-title {
-      font-weight: 700; /* Pasa de thin a bold */
-      letter-spacing: -0.01em;
       color: #F1B541;
       transform: translateX(12px);
     }
-    .joby-nav-link.is-active-link .joby-nav-title {
-      font-weight: 700;
-      color: #F1B541;
-    }
-
-    /* Pestañas de barra de navegación Desktop (Header): de thin a bold al pasar el cursor */
-    .desktop-nav-link {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      padding: 0.5rem 0.85rem;
-      border-radius: 9999px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.8125rem;
-      letter-spacing: 0.02em;
-      color: #94a3b8;
-      font-weight: 300; /* Letra fina en reposo */
-      transition: color 0.2s ease, font-weight 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-      white-space: nowrap;
-    }
-    .desktop-nav-link:hover {
-      color: #ffffff;
-      font-weight: 600; /* Pasa a medium / semibold al hover */
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    .desktop-nav-link.is-active {
-      color: #F1B541;
-      font-weight: 700;
-      background-color: rgba(241, 181, 65, 0.08);
-    }
-    .header-theme-light .desktop-nav-link {
-      color: #4b5563;
-    }
-    .header-theme-light .desktop-nav-link:hover {
-      color: #07080a;
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-    .header-theme-light .desktop-nav-link.is-active {
-      color: #b45309;
-      background-color: rgba(180, 83, 9, 0.1);
+    .joby-nav-title {
+      display: inline-block;
+      transition: transform 0.35s var(--joby-power4), color 0.25s ease;
     }
   </style>
   <!-- SOLYCAL INTERNAL VISITOR ANALYTICS TRACKER (Privacy-first & GDPR compliant) -->
@@ -822,23 +776,12 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     { num: '08', title: 'Contacto', href: 'contacto.html', slug: 'contacto' }
   ];
 
-  // Barra de pestañas horizontal en versión Desktop con transición thin -> bold / medium al pasar el cursor
-  const desktopNavItems = links.map(l => {
-    const isActive = l.slug === activeSlug;
-    return `
-      <a href="${l.href}" class="desktop-nav-link ${isActive ? 'is-active' : ''}">
-        <span class="font-mono text-[10px] text-brand-yellow/80 mr-1.5 opacity-70">${l.num}</span>
-        <span>${l.title}</span>
-      </a>
-    `;
-  }).join('');
-
   const overlayNavItems = links.map(l => {
     const isActive = l.slug === activeSlug;
     return `
       <div class="joby-nav-item">
-        <a href="${l.href}" class="joby-nav-link text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display py-1.5 sm:py-2 ${isActive ? 'is-active-link text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
-          <span class="font-mono text-xs sm:text-base lg:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">${l.num}</span>
+        <a href="${l.href}" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 ${isActive ? 'text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
+          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">${l.num}</span>
           <span class="joby-nav-title">${l.title}</span>
         </a>
       </div>
@@ -869,20 +812,15 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     </div>
   </div>
 
-  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA, NAVEGACIÓN DESKTOP Y MENÚ HAMBURGUESA A LA DERECHA -->
+  <!-- HEADER MINIMALISTA & EDITORIAL CON LOGO A LA IZQUIERDA Y MENÚ HAMBURGUESA A LA DERECHA (EXCLUSIVO) -->
   <header id="main-header" class="${isDarkText ? 'header-theme-light' : ''} ${activeSlug === 'instalaciones' ? 'absolute top-0 left-0 right-0 z-[140] pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto' : 'sticky top-0 z-[140]'} ${isHeaderTransparent ? 'bg-transparent border-transparent' : 'bg-[#07080a]/90 backdrop-blur-xl border-b border-white/5'}">
-    <div class="w-full px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between relative">
+    <div class="w-full px-6 sm:px-12 h-20 flex items-center justify-between relative">
       
       <!-- Brand Ident a la Izquierda Equilibrado -->
-      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center flex-shrink-0">
+      <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative z-[150] flex items-center">
         <img id="brand-logo-icon" src="${isDarkText ? 'assets/logo-icon-black.png' : 'assets/logo-icon.png'}" alt="Solycal" class="brand-logo-icon h-8 sm:h-9 w-auto object-contain">
-        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors ml-2 sm:ml-3">SOLYCAL</span>
+        <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-xl sm:text-2xl tracking-wider ${isDarkText ? 'text-black' : 'text-white'} group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
       </a>
-
-      <!-- Navegación Desktop con efecto al pasar el cursor (Thin -> Bold/Medium) -->
-      <nav class="hidden xl:flex items-center gap-1 p-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.3)] relative z-[150]" aria-label="Navegación Principal">
-        ${desktopNavItems}
-      </nav>
 
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">

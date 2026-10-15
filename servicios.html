@@ -319,6 +319,10 @@
       gap: 12px;
       cursor: pointer;
       user-select: none;
+      pointer-events: auto;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 4px;
     }
     .joby-burger-btn {
       position: relative;
@@ -333,6 +337,7 @@
       transition: transform 0.3s ease;
       cursor: pointer;
       z-index: 150;
+      pointer-events: none;
     }
     .joby-burger-btn:hover {
       background: transparent;
@@ -419,6 +424,20 @@
     }
     .header-theme-light .brand-logo-container:hover #brand-logo-text {
       color: #F1B541 !important;
+    }
+    /* En modo menú abierto sobre fondo oscuro: forzar textos y logos a blanco/oro */
+    .menu-is-open.header-theme-light #brand-logo-text,
+    body.joby-menu-open .header-theme-light #brand-logo-text {
+      color: #ffffff !important;
+    }
+    .menu-is-open.header-theme-light #brand-logo-icon,
+    body.joby-menu-open .header-theme-light #brand-logo-icon {
+      filter: brightness(0) invert(1) !important;
+    }
+    .joby-nav-toggle-wrap.is-active .joby-close-label {
+      color: #F1B541 !important;
+      opacity: 1 !important;
+      transform: translateX(0) !important;
     }
 
     /* PRELOADER INTRO INDUSTRIAL SOLYCAL (ANIMACIÓN 'S' -> IZQUIERDA -> SOLYCAL) */
@@ -621,8 +640,9 @@
       align-items: baseline;
       gap: 0.75rem;
       transform: translateY(110%);
-      transition: transform 0.6s var(--joby-power4), color 0.25s ease;
-      will-change: transform;
+      opacity: 0;
+      transition: transform 0.5s var(--joby-power4), opacity 0.35s ease, color 0.25s ease;
+      will-change: transform, opacity;
     }
     @media (min-width: 640px) {
       .joby-nav-link {
@@ -631,7 +651,18 @@
     }
     #joby-nav-overlay.is-open .joby-nav-link {
       transform: translateY(0);
+      opacity: 1;
     }
+    
+    /* Cascada secuencial fluida acelerada por hardware (Pure CSS GPU Stagger) */
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(1) .joby-nav-link { transition-delay: 0.20s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(2) .joby-nav-link { transition-delay: 0.24s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(3) .joby-nav-link { transition-delay: 0.28s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(4) .joby-nav-link { transition-delay: 0.32s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(5) .joby-nav-link { transition-delay: 0.36s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(6) .joby-nav-link { transition-delay: 0.40s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(7) .joby-nav-link { transition-delay: 0.44s; }
+    #joby-nav-overlay.is-open .joby-nav-item:nth-of-type(8) .joby-nav-link { transition-delay: 0.48s; }
     
     .joby-nav-link:hover .joby-nav-title {
       color: #F1B541;
@@ -734,9 +765,9 @@
 
       <!-- Right: Exclusive Joby Aviation Style Morphing Hamburger Button -->
       <div class="flex items-center relative z-[150]">
-        <div id="joby-toggle-wrap" class="joby-nav-toggle-wrap">
-          <span class="joby-close-label hidden sm:inline-block ">[CERRAR]</span>
-          <button id="joby-toggle" class="joby-burger-btn" aria-label="Abrir menú de navegación" aria-expanded="false">
+        <div id="joby-toggle-wrap" class="joby-nav-toggle-wrap" role="button" tabindex="0" aria-label="Abrir o cerrar menú de navegación" aria-expanded="false">
+          <span class="joby-close-label hidden sm:inline-block">[CERRAR]</span>
+          <button id="joby-toggle" class="joby-burger-btn" type="button" aria-label="Abrir menú de navegación" aria-expanded="false" tabindex="-1">
             <div class="joby-burger-icon">
               <span class="joby-burger-line "></span>
               <span class="joby-burger-line "></span>
@@ -928,6 +959,107 @@
 
     </div>
   </div>
+
+  <!-- SCRIPT CONTROLADOR GLOBAL DEL MENÚ JOBY (Garantizado en el 100% de las páginas) -->
+  <script>
+  (function() {
+    function initJobyMenu() {
+      const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
+      const jobyToggle = document.getElementById('joby-toggle');
+      const jobyBackdrop = document.getElementById('joby-backdrop');
+      const jobyWaves = document.getElementById('joby-color-waves');
+      const jobyOverlay = document.getElementById('joby-nav-overlay');
+      const mainHeader = document.getElementById('main-header');
+
+      if (!jobyToggleWrap || !jobyOverlay) return;
+
+      const toggleJobyMenu = (forceClose = false) => {
+        const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
+
+        if (jobyToggle) {
+          jobyToggle.classList.toggle('is-active', isOpen);
+          jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+        jobyToggleWrap.classList.toggle('is-active', isOpen);
+        jobyToggleWrap.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+        if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
+        if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
+        jobyOverlay.classList.toggle('is-open', isOpen);
+        jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+
+        if (mainHeader) {
+          mainHeader.classList.toggle('menu-is-open', isOpen);
+        }
+        document.body.classList.toggle('joby-menu-open', isOpen);
+
+        if (isOpen) {
+          jobyOverlay.scrollTop = 0;
+        }
+
+        // Prevent body scroll when menu is active
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+        if (window.lenis) {
+          if (isOpen) window.lenis.stop();
+          else window.lenis.start();
+        }
+      };
+
+      // Toggle al hacer click en el wrap (cubre el botón [CERRAR] y el icono hamburguesa)
+      jobyToggleWrap.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleJobyMenu();
+      });
+
+      // Accesibilidad con teclado (Enter o Espacio sobre el wrap)
+      jobyToggleWrap.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleJobyMenu();
+        }
+      });
+
+      // Cerrar al pulsar el backdrop
+      if (jobyBackdrop) {
+        jobyBackdrop.addEventListener('click', function() {
+          toggleJobyMenu(true);
+        });
+      }
+
+      // Cerrar con la tecla ESC
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
+          toggleJobyMenu(true);
+        }
+      });
+
+      // Solo cerrar en click si es enlace a la misma página actual o hash interno
+      jobyOverlay.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          const href = link.getAttribute('href');
+          if (!href) return;
+          const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+          if (href.startsWith('#') || href === currentFile || (href === 'index.html' && (window.location.pathname === '/' || window.location.pathname.endsWith('/')))) {
+            toggleJobyMenu(true);
+          }
+          // En caso de enlace a otra página (ej. servicios.html, contacto.html, tel, mail), dejar navegar naturalmente al navegador
+        });
+      });
+
+      // Renderizar iconos de Lucide dentro del menú overlay si está disponible
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initJobyMenu);
+    } else {
+      initJobyMenu();
+    }
+  })();
+  </script>
 
 <!-- CONTENEDOR PRINCIPAL DE TODA LA PÁGINA DE SERVICIOS CON FONDO BIT PATTERNS (Jason Labbe) -->
 <div id="services-page-container" class="relative bg-[#07080a] overflow-hidden">
@@ -1650,64 +1782,6 @@
   <!-- GLOBAL SCRIPTS WITH GSAP INTERACTIONS -->
   <script>
     lucide.createIcons();
-
-    // JOBY AVIATION FULLSCREEN CURTAIN CONTROLLER (4-Layer Chromatic Cascade)
-    const jobyToggle = document.getElementById('joby-toggle');
-    const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
-    const jobyBackdrop = document.getElementById('joby-backdrop');
-    const jobyWaves = document.getElementById('joby-color-waves');
-    const jobyOverlay = document.getElementById('joby-nav-overlay');
-
-    if (jobyToggle && jobyOverlay) {
-      const toggleJobyMenu = (forceClose = false) => {
-        const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
-        
-        jobyToggle.classList.toggle('is-active', isOpen);
-        if (jobyToggleWrap) jobyToggleWrap.classList.toggle('is-active', isOpen);
-        jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        
-        if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
-        if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
-        jobyOverlay.classList.toggle('is-open', isOpen);
-        jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-
-        if (isOpen) {
-          jobyOverlay.scrollTop = 0;
-        }
-
-        // Prevent body scroll when menu is active
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-        if (window.lenis) {
-          if (isOpen) window.lenis.stop();
-          else window.lenis.start();
-        }
-
-        // GSAP Stagger Entrance for Links with Joby snappy easing
-        if (typeof gsap !== 'undefined') {
-          if (isOpen) {
-            gsap.fromTo('.joby-nav-link', 
-              { y: 35, opacity: 0 }, 
-              { y: 0, opacity: 1, stagger: 0.04, duration: 0.55, ease: "power4.out", delay: 0.25 }
-            );
-          }
-        }
-      };
-
-      jobyToggle.addEventListener('click', () => toggleJobyMenu());
-      if (jobyBackdrop) jobyBackdrop.addEventListener('click', () => toggleJobyMenu(true));
-
-      // Close on ESC key
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
-          toggleJobyMenu(true);
-        }
-      });
-
-      // Auto-close overlay on link click
-      jobyOverlay.querySelectorAll('.joby-nav-link, a').forEach(link => {
-        link.addEventListener('click', () => toggleJobyMenu(true));
-      });
-    }
 
     // GSAP ANIMATIONS
     function initApp() {

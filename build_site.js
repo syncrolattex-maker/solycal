@@ -1005,11 +1005,13 @@ function getFooter(options = {}) {
   <!-- FOOTER REFINED EDITORIAL WITH SHADER FLUID GRADIENT BACKGROUND -->
   <footer id="main-footer" class="relative bg-[#050608] pt-20 pb-12 text-sm text-neutral-400 overflow-hidden">
     
-    <!-- Canvas de Fondo: WavesOnSphere 2.0 que abarca el cuadrante inferior izquierdo y responde al clic -->
-    <div class="absolute -bottom-[22%] sm:-bottom-[25%] -left-12 sm:-left-16 w-[520px] sm:w-[680px] lg:w-[820px] aspect-square pointer-events-auto z-0 opacity-55 hover:opacity-90 transition-opacity duration-700" title="Pulsa para generar ondas en la esfera">
-      <canvas id="footer-bg-sphere" width="600" height="600" class="w-full h-full block"></canvas>
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#050608]/90 pointer-events-none"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-[#050608]/70 pointer-events-none"></div>
+    <!-- Canvas WebGL Full-Bleed: Fluid Shader Gradient animado abarcando la totalidad del footer -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-75"></canvas>
+      <!-- Gradientes suaves para integrar armónicamente con la sección superior y con la tipografía -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#050608] via-transparent via-15% to-[#050608]/80 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050608]/70 via-transparent to-transparent pointer-events-none"></div>
+      <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
     </div>
 
     <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
@@ -1093,16 +1095,8 @@ function getFooter(options = {}) {
       </div>
 
       <!-- SUBFOOTER / BARRA INFERIOR CON REDES SOCIALES -->
-      <div class="pt-8 relative flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
-        
-        <!-- Gradiente fluido animado ubicado abajo a la derecha del subfooter -->
-        <div class="absolute -right-6 -bottom-12 w-[340px] sm:w-[460px] h-[160px] sm:h-[180px] pointer-events-none overflow-hidden z-0 opacity-40">
-          <canvas id="footer-shader-canvas" class="w-full h-full block"></canvas>
-          <div class="absolute inset-0 bg-gradient-to-l from-transparent via-[#050608]/40 to-[#050608]"></div>
-          <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-[#050608]"></div>
-        </div>
-
-        <p class="order-3 md:order-1 text-center md:text-left relative z-10">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-500">
+        <p class="order-3 md:order-1 text-center md:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
         
         <!-- Redes Sociales Oficiales en el Subfooter (Iconos directos sin círculos) -->
         <div class="order-1 md:order-2 flex items-center relative z-10">
@@ -2140,167 +2134,6 @@ function getFooter(options = {}) {
           } catch (e) {
             console.warn('WebGL Footer Shader fallback to CSS gradient:', e);
           }
-        }
-
-        // =========================================================================
-        // WAVESONSPHERE 2.0 (OpenProcessing #406138) COMO ESFERA INFERIOR IZQUIERDA
-        // =========================================================================
-        const footerBgCanvas = document.getElementById('footer-bg-sphere');
-
-        if (footerBgCanvas && mainFooter) {
-          const bgCtx = footerBgCanvas.getContext('2d');
-          
-          let Nmax = 1000;
-          let M = 500;
-          let H = 0.99999;
-
-          let X = new Float32Array(Nmax + 1);
-          let Y = new Float32Array(Nmax + 1);
-          let Z = new Float32Array(Nmax + 1);
-          let VX = new Float32Array(Nmax + 1);
-          let dVX = new Float32Array(Nmax + 1);
-          let VY = new Float32Array(Nmax + 1);
-          let dVY = new Float32Array(Nmax + 1);
-          let VZ = new Float32Array(Nmax + 1);
-          let dVZ = new Float32Array(Nmax + 1);
-          let L;
-          let R = 2 * Math.sqrt((4 * Math.PI * (200 * 200) / Nmax) / (2 * Math.sqrt(3)));
-          let N, NN, KX, KY, KZ;
-          let KVX, KdVX, KVY, KdVY, KVZ, KdVZ;
-
-          // setup()
-          for (N = 0; N <= Nmax; N++) {
-            X[N] = Math.random() * 600 - 300;
-            Y[N] = Math.random() * 600 - 300;
-            Z[N] = Math.random() * 600 - 300;
-            if (Z[N] > 250) {
-              L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-              dVX[N] = dVX[N] + (Y[N] / L);
-              dVY[N] = dVY[N] - (X[N] / L);
-            }
-          }
-
-          // Rotación ambiental continua y orgánica (sin influencia del cursor)
-          let autoAngleX = 0;
-          let autoAngleY = 0;
-
-          // Interacción al hacer clic en el footer
-          mainFooter.addEventListener('pointerdown', () => {
-            for (N = 0; N <= Nmax; N++) {
-              if (Z[N] > 180) {
-                L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-                dVX[N] = dVX[N] + (2.5 * Y[N] / L);
-                dVY[N] = dVY[N] - (2.5 * X[N] / L);
-              }
-            }
-          });
-
-          let isSphereActive = false;
-          let sphereRafId = null;
-
-          function drawSphere() {
-            if (!isSphereActive) {
-              sphereRafId = null;
-              return;
-            }
-
-            bgCtx.clearRect(0, 0, 600, 600);
-            bgCtx.lineWidth = 1;
-
-            // Rotación suave con modulación armónica aleatoria
-            autoAngleX += 0.008;
-            autoAngleY += 0.006;
-            const rotX = Math.sin(autoAngleX) * 0.004 + Math.cos(autoAngleY * 0.7) * 0.002;
-            const rotY = Math.cos(autoAngleY) * 0.004 + Math.sin(autoAngleX * 0.5) * 0.002;
-            const cosX = Math.cos(rotX);
-            const sinX = Math.sin(rotX);
-            const cosY = Math.cos(rotY);
-            const sinY = Math.sin(rotY);
-
-            for (N = 0; N <= Nmax; N++) {
-              for (NN = N + 1; NN <= Nmax; NN++) {
-                L = Math.sqrt(((X[N] - X[NN]) * (X[N] - X[NN])) + ((Y[N] - Y[NN]) * (Y[N] - Y[NN])));
-                L = Math.sqrt(((Z[N] - Z[NN]) * (Z[N] - Z[NN])) + (L * L));
-                if (L < R) {
-                  X[N] = X[N] - ((X[NN] - X[N]) * ((R - L) / (2 * L)));
-                  Y[N] = Y[N] - ((Y[NN] - Y[N]) * ((R - L) / (2 * L)));
-                  Z[N] = Z[N] - ((Z[NN] - Z[N]) * ((R - L) / (2 * L)));
-                  X[NN] = X[NN] + ((X[NN] - X[N]) * ((R - L) / (2 * L)));
-                  Y[NN] = Y[NN] + ((Y[NN] - Y[N]) * ((R - L) / (2 * L)));
-                  Z[NN] = Z[NN] + ((Z[NN] - Z[N]) * ((R - L) / (2 * L)));
-                  dVX[N] = dVX[N] + ((VX[NN] - VX[N]) / M);
-                  dVX[NN] = dVX[NN] - ((VX[NN] - VX[N]) / M);
-                  dVY[N] = dVY[N] + ((VY[NN] - VY[N]) / M);
-                  dVY[NN] = dVY[NN] - ((VY[NN] - VY[N]) / M);
-                  dVZ[N] = dVZ[N] + ((VZ[NN] - VZ[N]) / M);
-                  dVZ[NN] = dVZ[NN] - ((VZ[NN] - VZ[N]) / M);
-                }
-                if (Z[N] > Z[NN]) {
-                  KX = X[N]; KY = Y[N]; KZ = Z[N]; KVX = VX[N]; KdVX = dVX[N];
-                  KVY = VY[N]; KdVY = dVY[N]; KVZ = VZ[N]; KdVZ = dVZ[N];
-                  X[N] = X[NN]; Y[N] = Y[NN]; Z[N] = Z[NN]; VX[N] = VX[NN]; dVX[N] = dVX[NN];
-                  VY[N] = VY[NN]; dVY[N] = dVY[NN]; VZ[N] = VZ[NN]; dVZ[N] = dVZ[NN];
-                  X[NN] = KX; Y[NN] = KY; Z[NN] = KZ; VX[NN] = KVX; dVX[NN] = KdVX;
-                  VY[NN] = KVY; dVY[NN] = KdVY; VZ[NN] = KVZ; dVZ[NN] = KdVZ;
-                }
-              }
-              L = Math.sqrt((X[N] * X[N]) + (Y[N] * Y[N]));
-              L = Math.sqrt((Z[N] * Z[N]) + (L * L));
-              X[N] = X[N] + (X[N] * (200 - L) / (2 * L));
-              Y[N] = Y[N] + (Y[N] * (200 - L) / (2 * L));
-              Z[N] = Z[N] + (Z[N] * (200 - L) / (2 * L));
-              KX = X[N] + VX[N]; KY = Y[N]; KZ = Z[N]; KVX = VX[N];
-              L = Math.sqrt((KX * KX) + (KY * KY));
-              L = Math.sqrt((KZ * KZ) + (L * L));
-              VX[N] = VX[N] - (KX * (L - 200) / (2 * L));
-              VY[N] = VY[N] - (KY * (L - 200) / (2 * L));
-              VZ[N] = VZ[N] - (KZ * (L - 200) / (2 * L));
-              KZ = Z[N]; KX = X[N];
-              Z[N] = (KZ * cosX) - (KX * sinX);
-              X[N] = (KZ * sinX) + (KX * cosX);
-              KZ = Z[N]; KY = Y[N];
-              Z[N] = (KZ * cosY) - (KY * sinY);
-              Y[N] = (KZ * sinY) + (KY * cosY);
-              KVZ = VZ[N]; KVX = VX[N];
-              VZ[N] = (KVZ * cosX) - (KVX * sinX);
-              VX[N] = (KVZ * sinX) + (KVX * cosX);
-              KVZ = VZ[N]; KVY = VY[N];
-              VZ[N] = (KVZ * cosY) - (KVY * sinY);
-              VY[N] = (KVZ * sinY) + (KVY * cosY);
-              KdVZ = dVZ[N]; KdVX = dVX[N];
-              dVZ[N] = (KdVZ * cosX) - (KdVX * sinX);
-              dVX[N] = (KdVZ * sinX) + (KdVX * cosX);
-              KdVZ = dVZ[N]; KdVY = dVY[N];
-              dVZ[N] = (KdVZ * cosY) - (KdVY * sinY);
-              dVY[N] = (KdVZ * sinY) + (KdVY * cosY);
-              VX[N] = VX[N] + dVX[N]; dVX[N] = dVX[N] * H;
-              VY[N] = VY[N] + dVY[N]; dVY[N] = dVY[N] * H;
-              VZ[N] = VZ[N] + dVZ[N]; dVZ[N] = dVZ[N] * H;
-              L = Math.sqrt((VX[N] * VX[N]) + (VY[N] * VY[N]));
-              L = Math.sqrt((VZ[N] * VZ[N]) + (L * L));
-              if (L > 12.5) {
-                const c = Math.floor(125 + (Z[N] / 2));
-                bgCtx.strokeStyle = 'rgb(' + c + ',' + c + ',' + c + ')';
-                bgCtx.beginPath();
-                bgCtx.moveTo((X[N] + (VX[N] * (L - 12.5) / L)) * 1.4 + 300, (Y[N] + (VY[N] * (L - 12.5) / L)) * 1.4 + 300);
-                bgCtx.lineTo(X[N] * 1.4 + 300, Y[N] * 1.4 + 300);
-                bgCtx.stroke();
-              }
-            }
-
-            sphereRafId = requestAnimationFrame(drawSphere);
-          }
-
-          const sphereObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-              isSphereActive = entry.isIntersecting;
-              if (isSphereActive && !sphereRafId) {
-                sphereRafId = requestAnimationFrame(drawSphere);
-              }
-            });
-          }, { threshold: 0.02, rootMargin: '100px' });
-
-          sphereObserver.observe(mainFooter);
         }
 
         // =========================================================================

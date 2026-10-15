@@ -621,13 +621,14 @@ function getHead(title, description, canonicalPath = '') {
     }
 
     /* CONTENEDOR PRINCIPAL DEL MENÚ OVERLAY (100vh / 100dvh con scroll suave garantizado) */
+    /* CONTENEDOR PRINCIPAL DEL MENÚ OVERLAY (100vh / 100dvh con scroll suave garantizado) */
     #joby-nav-overlay {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100vh;
       height: 100dvh;
-      z-index: 105;
+      z-index: 120;
       background: transparent;
       opacity: 0;
       pointer-events: none;
@@ -639,6 +640,19 @@ function getHead(title, description, canonicalPath = '') {
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      touch-action: pan-y;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(241, 181, 65, 0.35) transparent;
+    }
+    #joby-nav-overlay::-webkit-scrollbar {
+      width: 4px;
+    }
+    #joby-nav-overlay::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #joby-nav-overlay::-webkit-scrollbar-thumb {
+      background: rgba(241, 181, 65, 0.3);
+      border-radius: 4px;
     }
     #joby-nav-overlay.is-open {
       opacity: 1;
@@ -651,9 +665,15 @@ function getHead(title, description, canonicalPath = '') {
       position: relative;
       z-index: 10;
       min-height: 100%;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+    }
+    @media (min-width: 1024px) {
+      .joby-overlay-content {
+        justify-content: space-between;
+      }
     }
     .joby-nav-item {
       display: block;
@@ -662,10 +682,15 @@ function getHead(title, description, canonicalPath = '') {
     .joby-nav-link {
       display: inline-flex;
       align-items: baseline;
-      gap: 1.25rem;
+      gap: 0.75rem;
       transform: translateY(110%);
       transition: transform 0.6s var(--joby-power4), color 0.25s ease;
       will-change: transform;
+    }
+    @media (min-width: 640px) {
+      .joby-nav-link {
+        gap: 1.25rem;
+      }
     }
     #joby-nav-overlay.is-open .joby-nav-link {
       transform: translateY(0);
@@ -673,7 +698,12 @@ function getHead(title, description, canonicalPath = '') {
     
     .joby-nav-link:hover .joby-nav-title {
       color: #F1B541;
-      transform: translateX(12px);
+      transform: translateX(8px);
+    }
+    @media (min-width: 640px) {
+      .joby-nav-link:hover .joby-nav-title {
+        transform: translateX(12px);
+      }
     }
     .joby-nav-title {
       display: inline-block;
@@ -780,9 +810,9 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
     const isActive = l.slug === activeSlug;
     return `
       <div class="joby-nav-item">
-        <a href="${l.href}" class="joby-nav-link text-3xl sm:text-5xl lg:text-6xl font-display font-bold py-2 ${isActive ? 'text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
-          <span class="font-mono text-sm sm:text-lg text-neutral-500 group-hover:text-brand-yellow font-normal tracking-widest">${l.num}</span>
-          <span class="joby-nav-title">${l.title}</span>
+        <a href="${l.href}" class="joby-nav-link text-xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold py-1 sm:py-1.5 lg:py-2 ${isActive ? 'text-brand-yellow' : 'text-white hover:text-brand-yellow'} group">
+          <span class="font-mono text-xs sm:text-sm lg:text-base text-neutral-500 group-hover:text-brand-yellow font-normal tracking-wider">${l.num}</span>
+          <span class="joby-nav-title leading-tight">${l.title}</span>
         </a>
       </div>
     `;
@@ -850,73 +880,74 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
   </div>
 
   <!-- JOBY AVIATION FULLSCREEN CONTENT OVERLAY (CON RESPONSIVE TOTAL PARA TODOS LOS DISPOSITIVOS) -->
-  <div id="joby-nav-overlay" aria-hidden="true">
+  <div id="joby-nav-overlay" aria-hidden="true" data-lenis-prevent="true">
 
     <!-- Contenido Frontal del Overlay con scroll natural garantizado -->
-    <div class="joby-overlay-content flex-1 flex flex-col justify-between pt-20 sm:pt-24 pb-6 sm:pb-8">
+    <div class="joby-overlay-content flex-1 flex flex-col justify-start lg:justify-between pt-20 sm:pt-24 pb-8 sm:pb-8">
       
       <!-- Main Navigation Columns (Joby Experience style) -->
-      <div class="w-full px-5 sm:px-10 lg:px-16 py-4 sm:py-8 flex-1 flex flex-col justify-center">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+      <div class="w-full px-5 sm:px-10 lg:px-16 py-3 sm:py-6 lg:py-8 flex-1 flex flex-col justify-start lg:justify-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-14 items-start lg:items-center">
           
           <!-- Primary Large Nav Links (Animated stagger) -->
-          <div class="lg:col-span-7 space-y-1.5 sm:space-y-2.5">
-            <span class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest block mb-2 sm:mb-4">// NAVEGACIÓN</span>
+          <div class="lg:col-span-7 space-y-1 sm:space-y-1.5 lg:space-y-2">
+            <span class="font-mono text-[10px] sm:text-xs text-brand-yellow uppercase tracking-widest block mb-1.5 sm:mb-3">// NAVEGACIÓN</span>
             ${overlayNavItems}
           </div>
 
           <!-- Secondary Information (Contacto y Redes Sociales Oficiales) -->
-          <div class="lg:col-span-5 space-y-6 sm:space-y-8 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-10">
+          <div class="lg:col-span-5 space-y-4 sm:space-y-6 lg:space-y-8 border-t lg:border-t-0 lg:border-l border-white/10 pt-4 sm:pt-6 lg:pt-0 lg:pl-10">
             
             <!-- Contacto Directo -->
             <div>
-              <p class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-3 sm:mb-4">// CONTACTO DIRECTO</p>
-              <div class="space-y-2.5 sm:space-y-3 font-mono text-xs">
-                <a href="tel:961504038" class="flex items-center gap-3 text-white hover:text-brand-yellow transition-colors group">
-                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
-                    <i data-lucide="phone" class="w-4 h-4"></i>
+              <p class="font-mono text-[10px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-2.5 sm:mb-4">// CONTACTO DIRECTO</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 sm:gap-3 font-mono text-xs">
+                
+                <a href="tel:961504038" class="flex items-center gap-2.5 sm:gap-3 p-2 rounded-xl bg-white/[0.03] lg:bg-transparent lg:p-0 text-white hover:text-brand-yellow transition-colors group">
+                  <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                   </div>
                   <div>
-                    <span class="text-neutral-400 block text-[10px] uppercase tracking-wider">Atención Telefónica</span>
+                    <span class="text-neutral-400 block text-[9px] sm:text-[10px] uppercase tracking-wider">Atención Telefónica</span>
                     <span class="text-xs sm:text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">+34 96 150 40 38</span>
                   </div>
                 </a>
 
-                <a href="mailto:info@solycal.es" class="flex items-center gap-3 text-white hover:text-brand-yellow transition-colors group">
-                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
+                <a href="mailto:info@solycal.es" class="flex items-center gap-2.5 sm:gap-3 p-2 rounded-xl bg-white/[0.03] lg:bg-transparent lg:p-0 text-white hover:text-brand-yellow transition-colors group">
+                  <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow group-hover:border-brand-yellow/40 transition-colors flex-shrink-0">
+                    <i data-lucide="mail" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                   </div>
                   <div>
-                    <span class="text-neutral-400 block text-[10px] uppercase tracking-wider">Oficina Técnica / Email</span>
+                    <span class="text-neutral-400 block text-[9px] sm:text-[10px] uppercase tracking-wider">Oficina Técnica</span>
                     <span class="text-xs sm:text-sm font-bold text-white group-hover:text-brand-yellow transition-colors">info@solycal.es</span>
                   </div>
                 </a>
 
-                <div class="flex items-start gap-3 text-neutral-300 pt-0.5">
-                  <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow flex-shrink-0 mt-0.5">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <div class="sm:col-span-2 lg:col-span-1 flex items-start gap-2.5 sm:gap-3 p-2 rounded-xl bg-white/[0.03] lg:bg-transparent lg:p-0 text-neutral-300">
+                  <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-yellow flex-shrink-0 mt-0.5">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                   </div>
-                  <div class="font-sans text-xs text-neutral-400 leading-relaxed">
-                    <span class="font-mono text-[10px] text-neutral-400 block uppercase tracking-wider">Sede Central y Fábrica</span>
-                    Calle Hort de Soriano, 17A &bull; Pol. Ind. Masía del Juez<br>
-                    46900 Torrent, Valencia (España)
+                  <div class="font-sans text-[11px] sm:text-xs text-neutral-400 leading-relaxed">
+                    <span class="font-mono text-[9px] sm:text-[10px] text-neutral-400 block uppercase tracking-wider">Planta de Producción</span>
+                    Calle Hort de Soriano, 17A &bull; Pol. Ind. Masía del Juez, Torrent
                   </div>
                 </div>
+
               </div>
             </div>
 
-            <!-- Redes Sociales Oficiales Solycal (solycal.es) - Solo Iconos, sin círculos -->
-            <div>
-              <p class="font-mono text-[11px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-2 sm:mb-3">// REDES SOCIALES</p>
-              ${getSocialIcons('w-5 h-5 sm:w-6 sm:h-6', 'flex items-center gap-4 sm:gap-5')}
-            </div>
-
-            <!-- Botón directo a página de contacto -->
-            <div class="pt-0 sm:pt-1">
-              <a href="contacto.html" class="inline-flex items-center justify-between w-full p-3 sm:p-3.5 rounded-xl bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.2)]">
-                <span>Ir a Formulario de Contacto</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-              </a>
+            <!-- Redes Sociales Oficiales Solycal (solycal.es) y Botón CTA -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+              <div>
+                <p class="font-mono text-[10px] sm:text-xs text-brand-yellow uppercase tracking-widest mb-2">// REDES SOCIALES</p>
+                ${getSocialIcons('w-4 h-4 sm:w-5 sm:h-5', 'flex items-center gap-3.5 sm:gap-4', 'text-white')}
+              </div>
+              <div class="pt-1 sm:pt-0">
+                <a href="contacto.html" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-yellow text-black font-semibold font-mono text-xs uppercase tracking-wider hover:bg-yellow-300 transition-all shadow-[0_0_20px_rgba(241,181,65,0.2)]">
+                  <span>Pedir Presupuesto</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </div>
 
           </div>
@@ -925,9 +956,9 @@ function getHeader(activeSlug, isTransparent = false, options = {}) {
       </div>
 
       <!-- Bottom Meta inside overlay -->
-      <div class="w-full px-5 sm:px-10 lg:px-16 py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-neutral-400">
-        <p class="text-center sm:text-left text-[11px] sm:text-xs">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Precisión y Solidez</p>
-        <div class="flex gap-6">
+      <div class="w-full px-5 sm:px-10 lg:px-16 py-3 sm:py-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 font-mono text-[11px] text-neutral-400" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
+        <p class="text-center sm:text-left">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Precisión y Solidez</p>
+        <div class="flex gap-5">
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
           <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
@@ -1193,6 +1224,10 @@ function getFooter(options = {}) {
         jobyOverlay.classList.toggle('is-open', isOpen);
         jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
 
+        if (isOpen) {
+          jobyOverlay.scrollTop = 0;
+        }
+
         // Prevent body scroll when menu is active
         document.body.style.overflow = isOpen ? 'hidden' : '';
         if (window.lenis) {
@@ -1204,8 +1239,8 @@ function getFooter(options = {}) {
         if (typeof gsap !== 'undefined') {
           if (isOpen) {
             gsap.fromTo('.joby-nav-link', 
-              { y: 80, opacity: 0 }, 
-              { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: "power4.out", delay: 0.35 }
+              { y: 35, opacity: 0 }, 
+              { y: 0, opacity: 1, stagger: 0.04, duration: 0.55, ease: "power4.out", delay: 0.25 }
             );
           }
         }
@@ -1219,6 +1254,11 @@ function getFooter(options = {}) {
         if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
           toggleJobyMenu(true);
         }
+      });
+
+      // Auto-close overlay on link click
+      jobyOverlay.querySelectorAll('.joby-nav-link, a').forEach(link => {
+        link.addEventListener('click', () => toggleJobyMenu(true));
       });
     }
 
@@ -3675,41 +3715,6 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 0.7, 
         ease: "power3.out" 
       }, "-=0.25");
-  }
-
-  // 2. Joby Menu Controller (Open / Close chromatic wave overlay)
-  const jobyToggle = document.getElementById('joby-toggle');
-  const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
-  const jobyBackdrop = document.getElementById('joby-backdrop');
-  const jobyWaves = document.getElementById('joby-color-waves');
-  const jobyOverlay = document.getElementById('joby-nav-overlay');
-
-  if (jobyToggle && jobyOverlay) {
-    const toggleJobyMenu = (forceClose = false) => {
-      const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
-      jobyToggle.classList.toggle('is-active', isOpen);
-      if (jobyToggleWrap) jobyToggleWrap.classList.toggle('is-active', isOpen);
-      jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
-      if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
-      jobyOverlay.classList.toggle('is-open', isOpen);
-      jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-
-      if (typeof gsap !== 'undefined' && isOpen) {
-        gsap.fromTo('.joby-nav-link', 
-          { y: 80, opacity: 0 }, 
-          { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: "power4.out", delay: 0.35 }
-        );
-      }
-    };
-
-    jobyToggle.addEventListener('click', () => toggleJobyMenu());
-    if (jobyBackdrop) jobyBackdrop.addEventListener('click', () => toggleJobyMenu(true));
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
-        toggleJobyMenu(true);
-      }
-    });
   }
 
   // 3. Three.js Setup
@@ -6604,41 +6609,6 @@ ${getHeader('media', true)}
     } else {
       isIntroDone = true;
       initDraggable();
-    }
-
-    // JOBY NAVIGATION MENU CONTROLLER
-    const jobyToggle = document.getElementById('joby-toggle');
-    const jobyToggleWrap = document.getElementById('joby-toggle-wrap');
-    const jobyBackdrop = document.getElementById('joby-backdrop');
-    const jobyWaves = document.getElementById('joby-color-waves');
-    const jobyOverlay = document.getElementById('joby-nav-overlay');
-
-    if (jobyToggle && jobyOverlay) {
-      const toggleJobyMenu = (forceClose = false) => {
-        const isOpen = forceClose ? false : !jobyOverlay.classList.contains('is-open');
-        jobyToggle.classList.toggle('is-active', isOpen);
-        if (jobyToggleWrap) jobyToggleWrap.classList.toggle('is-active', isOpen);
-        jobyToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        if (jobyBackdrop) jobyBackdrop.classList.toggle('is-open', isOpen);
-        if (jobyWaves) jobyWaves.classList.toggle('is-open', isOpen);
-        jobyOverlay.classList.toggle('is-open', isOpen);
-        jobyOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-
-        if (typeof gsap !== 'undefined' && isOpen) {
-          gsap.fromTo('.joby-nav-link',
-            { y: 80, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.06, duration: 0.7, ease: 'power4.out', delay: 0.35 }
-          );
-        }
-      };
-
-      jobyToggle.addEventListener('click', () => toggleJobyMenu());
-      if (jobyBackdrop) jobyBackdrop.addEventListener('click', () => toggleJobyMenu(true));
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && jobyOverlay.classList.contains('is-open')) {
-          toggleJobyMenu(true);
-        }
-      });
     }
 
     function openSplitView(card, index) {

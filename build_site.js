@@ -989,19 +989,19 @@ void main() {
   float bottomDist = 1.0 - uv.y; // 1.0 abajo, 0.0 arriba
   float elevation = smoothstep(0.72, 0.08, uv.y + wave1 + wave2 + n);
 
-  // Paleta industrial: Naranjas y amarillos oscuros profundos
-  vec3 cBg = vec3(0.020, 0.024, 0.031);          // #050608 Carbón profundo limpio
-  vec3 cDarkOrange = vec3(0.56, 0.22, 0.03);     // Naranja forja oscuro profundo
-  vec3 cDarkYellow = vec3(0.58, 0.38, 0.06);     // Amarillo oro oscuro / latón patinado
-  vec3 cDeepAmber = vec3(0.44, 0.16, 0.02);      // Ámbar quemado profundo
+  // Paleta corporativa viva, cálida e industrial Solycal
+  vec3 cBg = vec3(0.020, 0.024, 0.031);       // #050608 Carbón profundo limpio
+  vec3 cAmber = vec3(0.82, 0.35, 0.04);       // Ámbar forja ardiente vivo
+  vec3 cGold = vec3(1.0, 0.76, 0.22);         // Oro industrial Solycal puro
+  vec3 cTitanium = vec3(1.0, 0.94, 0.62);     // Destello plasma luminoso cálido
 
-  // Mezcla horizontal fluida de tonos oscuros
+  // Mezcla horizontal fluida de tonos cálidos
   float horizontalFlow = smoothstep(-0.2, 1.2, uv.x + sin(t * 0.8 + uv.y * 2.2) * 0.32);
-  vec3 warmGlow = mix(cDarkOrange, cDarkYellow, horizontalFlow);
-  warmGlow = mix(warmGlow, cDeepAmber, smoothstep(0.2, 0.8, uv.x) * 0.45);
+  vec3 warmGlow = mix(cAmber, cGold, horizontalFlow);
+  warmGlow = mix(warmGlow, cTitanium, smoothstep(0.25, 0.75, uv.x) * 0.35);
 
-  // Fundido controlado hacia el fondo carbón oscuro: mantiene contraste perfecto para textos del subfooter
-  vec3 col = mix(cBg, warmGlow, elevation * 0.50);
+  // Fundido que emerge vivo y cálido desde la base hacia el fondo carbón
+  vec3 col = mix(cBg, warmGlow, elevation * 0.76);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -1013,13 +1013,13 @@ function getFooter(options = {}) {
 
   if (onlySubfooter) {
     return `
-    <footer id="main-footer" class="relative bg-[#07080a] border-t border-white/10 py-6 text-sm text-neutral-400">
-      <div class="w-full px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-300">
-        <p class="order-3 md:order-1 text-center md:text-left text-neutral-400">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
-        <div class="order-1 md:order-2 flex items-center">
-          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-neutral-300')}
+    <footer id="main-footer" class="relative bg-[#07080a] border-t border-white/10 py-6 text-sm text-white">
+      <div class="w-full px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-white">
+        <p class="order-3 md:order-1 text-center md:text-left text-white">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+        <div class="order-1 md:order-2 flex items-center text-white">
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-white')}
         </div>
-        <div class="order-2 md:order-3 flex items-center gap-6 text-neutral-400">
+        <div class="order-2 md:order-3 flex items-center gap-6 text-white">
           <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
           <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
           <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
@@ -1059,12 +1059,10 @@ function getFooter(options = {}) {
     
     <!-- Canvas WebGL: Fluid Shader Gradient minimalista que emerge suavemente desde abajo -->
     <div class="absolute inset-x-0 bottom-0 h-[68%] z-0 pointer-events-none overflow-hidden">
-      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-85"></canvas>
+      <canvas id="footer-shader-canvas" class="w-full h-full block opacity-95"></canvas>
       <!-- Máscara de fundido: 100% negro en la parte superior del gradiente, desvaneciéndose limpiamente -->
       <div class="absolute inset-0 bg-gradient-to-t from-transparent via-[#050608]/40 to-[#050608] pointer-events-none"></div>
       <div class="absolute inset-0 dot-grid opacity-10 pointer-events-none"></div>
-      <!-- Protección oscura inferior sutil para contraste nítido de tipografía y RRSS en subfooter -->
-      <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#050608]/90 via-[#050608]/45 to-transparent pointer-events-none"></div>
     </div>
 
     <div class="w-full px-6 relative z-10 pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
@@ -1153,19 +1151,19 @@ function getFooter(options = {}) {
       </div>
 
       <!-- SUBFOOTER / BARRA INFERIOR CON REDES SOCIALES -->
-      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-neutral-300">
-        <p class="order-3 md:order-1 text-center md:text-left text-neutral-400">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-white">
+        <p class="order-3 md:order-1 text-center md:text-left text-white font-medium">&copy; 2026 Soldadura y Calderería Valenciana S.L. &bull; Calidad y Solidez.</p>
         
         <!-- Redes Sociales Oficiales en el Subfooter (Iconos directos sin círculos) -->
-        <div class="order-1 md:order-2 flex items-center relative z-10">
-          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-neutral-300')}
+        <div class="order-1 md:order-2 flex items-center relative z-10 text-white">
+          ${getSocialIcons('w-4 h-4', 'flex items-center gap-5', 'text-white')}
         </div>
 
         <!-- Enlaces Legales -->
-        <div class="order-2 md:order-3 flex items-center gap-6 relative z-10 text-neutral-400">
-          <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors">Aviso Legal</a>
-          <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors">Privacidad</a>
-          <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors">Cookies</a>
+        <div class="order-2 md:order-3 flex items-center gap-6 relative z-10 text-white font-medium">
+          <a href="aviso-legal.html" class="hover:text-brand-yellow transition-colors text-white">Aviso Legal</a>
+          <a href="politica-privacidad.html" class="hover:text-brand-yellow transition-colors text-white">Privacidad</a>
+          <a href="politica-cookies.html" class="hover:text-brand-yellow transition-colors text-white">Cookies</a>
         </div>
       </div>
     </div>

@@ -4844,22 +4844,26 @@ ${getFooter({ showMatrix: false })}
 const equipoHtml = `${getHead('Equipo Técnico y Humano | SOLYCAL Valencia', 'Conoce al equipo técnico de Solycal: ingenieros mecánicos, diseñadores industriales, soldadores homologados y montadores en obra.', 'equipo.html')}
 ${getHeader('equipo')}
 
-<div class="relative pt-20 sm:pt-28 pb-12 sm:pb-20 border-b border-white/5 bg-[#090b0e] dot-grid overflow-hidden">
+<div class="relative min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] flex items-center border-b border-white/5 bg-[#090b0e] dot-grid overflow-hidden">
   
-  <!-- CABECERA: TÍTULO Y DESCRIPCIÓN -->
-  <div class="w-full px-6 sm:px-12 max-w-7xl mx-auto mb-10 sm:mb-14">
-    <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">05 // EQUIPO HUMANO</span>
-    <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-5xl">
-      Especialización, experiencia y cooperación técnica.
-    </h1>
-    <p class="text-neutral-400 font-sans text-base sm:text-lg leading-relaxed max-w-2xl mt-6">
-      En SOLYCAL sabemos que el valor de la empresa reside en las personas: un equipo unido, formado continuamente y habituado a resolver proyectos complejos.
-    </p>
+  <!-- MÁQUINA ISOMÉTRICA EN SEGUNDO PLANO A LA DERECHA, AMPLIADA Y CORTADA 2/3 POR DEBAJO -->
+  <div class="absolute -right-20 sm:-right-24 md:-right-16 lg:-right-8 xl:right-6 2xl:right-16 top-1/2 -translate-y-[35%] w-[580px] sm:w-[720px] md:w-[860px] lg:w-[1020px] xl:w-[1140px] 2xl:w-[1240px] pointer-events-auto select-none z-0 opacity-85 hover:opacity-100 transition-opacity duration-700">
+    <anatomy-plasma-cutter theme="dark" fig="FIG. 05 // CNC" class="w-full block"></anatomy-plasma-cutter>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#090b0e] via-transparent to-transparent pointer-events-none w-1/3"></div>
+    <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#090b0e] to-transparent pointer-events-none opacity-60"></div>
   </div>
 
-  <!-- FIGURA CNC PLASMA CUTTER A ANCHO COMPLETO (FULLWIDTH, SIN RECUADROS NI BORDES) -->
-  <div class="w-full px-4 sm:px-10 max-w-[1400px] mx-auto">
-    <anatomy-plasma-cutter theme="dark" fig="FIG. 05 // CNC" class="w-full block"></anatomy-plasma-cutter>
+  <!-- CONTENIDO PRIMER PLANO: TITULAR EQUIPO HUMANO (LADO IZQUIERDO) -->
+  <div class="w-full px-6 sm:px-12 max-w-7xl mx-auto relative z-10 pointer-events-none py-20 sm:py-28">
+    <div class="max-w-2xl lg:max-w-2xl pointer-events-auto">
+      <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4 sm:mb-5">// 05 EQUIPO HUMANO</span>
+      <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-[1.08] mb-6">
+        Especialización, experiencia y cooperación técnica.
+      </h1>
+      <p class="text-neutral-400 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+        En SOLYCAL sabemos que el valor de la empresa reside en las personas: un equipo unido, formado continuamente y habituado a resolver proyectos complejos.
+      </p>
+    </div>
   </div>
 
 </div>

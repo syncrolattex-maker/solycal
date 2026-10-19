@@ -4844,15 +4844,29 @@ ${getFooter({ showMatrix: false })}
 const equipoHtml = `${getHead('Equipo Técnico y Humano | SOLYCAL Valencia', 'Conoce al equipo técnico de Solycal: ingenieros mecánicos, diseñadores industriales, soldadores homologados y montadores en obra.', 'equipo.html')}
 ${getHeader('equipo')}
 
-<div class="py-20 border-b border-white/5 bg-[#090b0e] dot-grid">
-  <div class="w-full px-6">
-    <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block mb-4">05 // EQUIPO HUMANO</span>
-    <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight max-w-4xl">
-      Especialización, experiencia y cooperación técnica.
-    </h1>
-    <p class="text-neutral-400 max-w-2xl font-sans mt-6 text-base leading-relaxed">
-      En SOLYCAL sabemos que el valor de la empresa reside en las personas: un equipo unido, formado continuamente y habituado a resolver proyectos complejos.
-    </p>
+<div class="relative py-16 sm:py-24 border-b border-white/5 bg-[#090b0e] dot-grid overflow-hidden">
+  <div class="w-full px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+      
+      <!-- LADO IZQUIERDO: TÍTULO Y DESCRIPCIÓN -->
+      <div class="lg:col-span-7 space-y-6">
+        <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">05 // EQUIPO HUMANO</span>
+        <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+          Especialización, experiencia y cooperación técnica.
+        </h1>
+        <p class="text-neutral-400 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+          En SOLYCAL sabemos que el valor de la empresa reside en las personas: un equipo unido, formado continuamente y habituado a resolver proyectos complejos.
+        </p>
+      </div>
+
+      <!-- LADO DERECHO: ELEMENTO ISOMÉTRICO DE ACOMPAÑAMIENTO AL TÍTULO (SIN CONTROLES MANUALES) -->
+      <div class="lg:col-span-5 flex justify-center lg:justify-end">
+        <div class="w-full max-w-[420px] rounded-2xl bg-[#0a0c0e]/80 border border-white/10 p-2 sm:p-3 shadow-2xl relative">
+          <anatomy-plasma-cutter theme="dark" fig="FIG. 05 // CNC" class="w-full block"></anatomy-plasma-cutter>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -4887,122 +4901,6 @@ ${getHeader('equipo')}
 
     </div>
 
-    <!-- 05.1 INTERACTIVE CNC PLASMA CUTTER SIMULATION (Anatomy Figure No. 19) -->
-    <div class="space-y-8 reveal">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/5">
-        <div class="space-y-3">
-          <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">// 05.1 TECNOLOGÍA EN PLANTA · SIMULADOR CNC EN VIVO</span>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
-            Corte Térmico por Plasma CNC de Alta Definición
-          </h2>
-          <p class="text-neutral-400 font-sans text-sm sm:text-base max-w-3xl leading-relaxed">
-            Nuestros operarios técnicos y programadores CAM gestionan en tiempo real la física de corte: arco transferido a alta temperatura, control dinámico de altura (THC), avance coordinado en ejes XY y mesa de agua para disipación térmica y absorción de partículas.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-neutral-400 self-start md:self-auto">
-          <span class="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            ARCO ON-LINE
-          </span>
-          <span class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-neutral-300">
-            TOLERANCIA ±0.2 mm
-          </span>
-        </div>
-      </div>
-
-      <!-- MASTER CNC SIMULATION CARD -->
-      <div class="rounded-3xl bg-[#0a0c0e] border border-white/10 p-4 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
-        
-        <!-- TOP TELEMETRY HUD -->
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/5 font-mono text-xs">
-          <div class="flex items-center gap-3">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-yellow opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-yellow"></span>
-            </span>
-            <span class="text-brand-yellow font-bold uppercase tracking-wider">
-              SOLYCAL CNC-HD // GANTRY AXIS-XY + THC
-            </span>
-          </div>
-          <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-400">
-            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-neutral-300">POTENCIA: 65 A</span>
-            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-neutral-300">VELOCIDAD: 1.12 m/min</span>
-            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-neutral-300">CHAPA: 12 mm Fe</span>
-            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-neutral-300">BANCADA DE AGUA</span>
-          </div>
-        </div>
-
-        <!-- WEBGSL ISOMETRIC ANATOMY FIGURE -->
-        <div class="w-full relative rounded-2xl overflow-hidden bg-[#07080a] border border-white/5">
-          <anatomy-plasma-cutter id="equipo-plasma-cutter" theme="dark" fig="FIG. 05.1 // PLANTA SOLYCAL" class="w-full block"></anatomy-plasma-cutter>
-        </div>
-
-        <!-- TACTILE CONSOLE TOOLBAR -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-[#111317] border border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-xs">
-          <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <button type="button" id="plasma-btn-toggle" class="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-brand-yellow text-black font-semibold uppercase tracking-wider hover:bg-yellow-300 transition-all flex items-center justify-center gap-2 text-xs">
-              <i data-lucide="play" class="w-3.5 h-3.5 fill-black"></i>
-              <span id="plasma-btn-toggle-label">Iniciar / Pausa</span>
-              <span class="text-[10px] opacity-75 font-normal">[Espacio]</span>
-            </button>
-            <button type="button" id="plasma-btn-step-back" class="px-3.5 py-2.5 rounded-xl bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5" title="Retroceder paso de corte">
-              <i data-lucide="skip-back" class="w-3.5 h-3.5"></i>
-              <span>Paso -</span>
-            </button>
-            <button type="button" id="plasma-btn-step-fwd" class="px-3.5 py-2.5 rounded-xl bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5" title="Avanzar paso de corte">
-              <span>Paso +</span>
-              <i data-lucide="skip-forward" class="w-3.5 h-3.5"></i>
-            </button>
-            <button type="button" id="plasma-btn-speed" class="px-3.5 py-2.5 rounded-xl bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5" title="Ciclar velocidad de avance">
-              <i data-lucide="gauge" class="w-3.5 h-3.5"></i>
-              <span>Velocidad [Q]</span>
-            </button>
-            <button type="button" id="plasma-btn-reset" class="px-3.5 py-2.5 rounded-xl bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5" title="Rebobinar al origen">
-              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span>Cero [Home]</span>
-            </button>
-          </div>
-          <div class="flex items-center gap-2 text-neutral-400 text-[11px] self-start md:self-auto">
-            <i data-lucide="hand" class="w-3.5 h-3.5 text-brand-yellow"></i>
-            <span>Arrastre directo sobre chapa o controles de teclado</span>
-          </div>
-        </div>
-
-        <!-- 4 INDUSTRIAL ENGINEERING PILLARS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-          <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
-            <span class="font-mono text-[10px] text-brand-yellow uppercase tracking-widest block">// 01 PRECISIÓN</span>
-            <h4 class="font-display font-semibold text-white text-sm">Compensación de Sangría</h4>
-            <p class="font-sans text-xs text-neutral-400 leading-relaxed">
-              Cálculo dinámico del radio de corte (kerf) en CAM para garantizar tolerancias dimensionales estrictas de ±0.2 mm en conjuntos soldados.
-            </p>
-          </div>
-          <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
-            <span class="font-mono text-[10px] text-brand-yellow uppercase tracking-widest block">// 02 ADAPTACIÓN</span>
-            <h4 class="font-display font-semibold text-white text-sm">Control THC de Altura</h4>
-            <p class="font-sans text-xs text-neutral-400 leading-relaxed">
-              Muestreo por tensión de arco a 50 kHz. Compensa al instante las dilataciones de la chapa manteniendo el arco en ángulo perfecto.
-            </p>
-          </div>
-          <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
-            <span class="font-mono text-[10px] text-brand-yellow uppercase tracking-widest block">// 03 CALIDAD TÉRMICA</span>
-            <h4 class="font-display font-semibold text-white text-sm">Bancada de Agua</h4>
-            <p class="font-sans text-xs text-neutral-400 leading-relaxed">
-              Enfriamiento inmediato en la zona de corte. Disminuye la ZAT (zona afectada térmicamente) y retiene más del 95% de humos metálicos.
-            </p>
-          </div>
-          <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
-            <span class="font-mono text-[10px] text-brand-yellow uppercase tracking-widest block">// 04 EFICIENCIA</span>
-            <h4 class="font-display font-semibold text-white text-sm">Nesting CAD/CAM</h4>
-            <p class="font-sans text-xs text-neutral-400 leading-relaxed">
-              Optimización integral del aprovechamiento de material con corte común y trayectorias inteligentes, reduciendo retal y tiempos de ciclo.
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
     <!-- Experience statement -->
     <div class="p-10 rounded-3xl bg-[#090b0e] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8 reveal">
       <div class="space-y-2">
@@ -5017,17 +4915,17 @@ ${getHeader('equipo')}
   </div>
 </section>
 
-<!-- STYLES & MODULE SCRIPT FOR CNC PLASMA CUTTER -->
+<!-- STYLES & MODULE SCRIPT FOR CNC PLASMA CUTTER FIGURE (HERO COMPANION) -->
 <style>
   anatomy-plasma-cutter {
     display: block;
     width: 100%;
     margin: 0 auto;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     overflow: hidden;
-    background: #0a0c0e;
-    --anatomy-card: #0a0c0e;
-    --anatomy-paper: #0a0c0e;
+    background: transparent;
+    --anatomy-card: transparent;
+    --anatomy-paper: transparent;
     --anatomy-face: #111317;
     --anatomy-top: #161920;
     --anatomy-shade-0: #08090c;
@@ -5053,33 +4951,6 @@ ${getHeader('equipo')}
 </style>
 
 <script type="module" src="assets/plasma-cutter.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const fig = document.getElementById('equipo-plasma-cutter');
-    const toggleBtn = document.getElementById('plasma-btn-toggle');
-    const stepBackBtn = document.getElementById('plasma-btn-step-back');
-    const stepFwdBtn = document.getElementById('plasma-btn-step-fwd');
-    const speedBtn = document.getElementById('plasma-btn-speed');
-    const resetBtn = document.getElementById('plasma-btn-reset');
-
-    function sendStageKey(key) {
-      if (!fig) return;
-      const stage = fig.shadowRoot ? fig.shadowRoot.querySelector('.iso-stage') : fig.querySelector('.iso-stage');
-      if (!stage) return;
-      stage.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true, cancelable: true }));
-    }
-
-    toggleBtn?.addEventListener('click', () => sendStageKey(' '));
-    stepBackBtn?.addEventListener('click', () => sendStageKey('ArrowLeft'));
-    stepFwdBtn?.addEventListener('click', () => sendStageKey('ArrowRight'));
-    speedBtn?.addEventListener('click', () => sendStageKey('q'));
-    resetBtn?.addEventListener('click', () => sendStageKey('Home'));
-
-    if (window.lucide) {
-      window.lucide.createIcons();
-    }
-  });
-</script>
 
 ${getFooter()}
 `;

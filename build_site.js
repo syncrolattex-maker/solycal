@@ -4844,24 +4844,24 @@ ${getFooter({ showMatrix: false })}
 const equipoHtml = `${getHead('Equipo Técnico y Humano | SOLYCAL Valencia', 'Conoce al equipo técnico de Solycal: ingenieros mecánicos, diseñadores industriales, soldadores homologados y montadores en obra.', 'equipo.html')}
 ${getHeader('equipo')}
 
-<div class="relative py-16 sm:py-24 border-b border-white/5 bg-[#090b0e] dot-grid overflow-hidden">
+<div class="relative py-20 lg:py-28 border-b border-white/5 bg-[#090b0e] dot-grid overflow-hidden">
   <div class="w-full px-6 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
       
       <!-- LADO IZQUIERDO: TÍTULO Y DESCRIPCIÓN -->
-      <div class="lg:col-span-7 space-y-6">
+      <div class="lg:col-span-5 space-y-6 z-10">
         <span class="font-mono text-xs text-brand-yellow uppercase tracking-widest block">05 // EQUIPO HUMANO</span>
-        <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-display font-bold text-white tracking-tight leading-tight">
+        <h1 class="hero-title text-4xl sm:text-6xl lg:text-6xl font-display font-bold text-white tracking-tight leading-[1.08]">
           Especialización, experiencia y cooperación técnica.
         </h1>
-        <p class="text-neutral-400 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+        <p class="text-neutral-400 font-sans text-base sm:text-lg leading-relaxed max-w-lg">
           En SOLYCAL sabemos que el valor de la empresa reside en las personas: un equipo unido, formado continuamente y habituado a resolver proyectos complejos.
         </p>
       </div>
 
-      <!-- LADO DERECHO: ELEMENTO ISOMÉTRICO DE ACOMPAÑAMIENTO AL TÍTULO (SIN CONTROLES MANUALES) -->
-      <div class="lg:col-span-5 flex justify-center lg:justify-end">
-        <div class="w-full max-w-[420px] rounded-2xl bg-[#0a0c0e]/80 border border-white/10 p-2 sm:p-3 shadow-2xl relative">
+      <!-- LADO DERECHO: FIGURA ISOMÉTRICA GRANDE, TOTALMENTE INTEGRADA SIN RECUADROS NI BORDES -->
+      <div class="lg:col-span-7 flex justify-center lg:justify-end">
+        <div class="w-full max-w-[720px] lg:scale-105 xl:scale-110 origin-center lg:origin-right">
           <anatomy-plasma-cutter theme="dark" fig="FIG. 05 // CNC" class="w-full block"></anatomy-plasma-cutter>
         </div>
       </div>
@@ -4921,9 +4921,10 @@ ${getHeader('equipo')}
     display: block;
     width: 100%;
     margin: 0 auto;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    background: transparent;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
     --anatomy-card: transparent;
     --anatomy-paper: transparent;
     --anatomy-face: #111317;

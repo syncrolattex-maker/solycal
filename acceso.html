@@ -132,24 +132,25 @@
   </div>
 
   <!-- 01. BARRA SUPERIOR DE TELEMETRÍA Y ENLACE DE RETORNO -->
-  <header class="w-full max-w-6xl mx-auto flex items-center justify-between relative z-10 py-2">
-    <!-- Enlace a la web corporativa -->
-    <a href="index.html" class="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 hover:border-brand-yellow/40 hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-all duration-200">
-      <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-brand-yellow group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-      <span class="font-mono text-xs uppercase tracking-wider">solycal.es</span>
+  <header class="w-full max-w-6xl mx-auto flex items-center justify-between relative z-10 py-2 sm:py-3">
+    <!-- Logo Oficial Solycal en Cabecera (Idéntico al de la web) -->
+    <a href="index.html" id="brand-logo-link" class="brand-logo-container group relative flex items-center gap-2.5 sm:gap-3 hover:opacity-90 transition-opacity">
+      <img id="brand-logo-icon" src="assets/logo-icon.png" alt="Solycal" class="brand-logo-icon h-7 sm:h-8 w-auto object-contain">
+      <span id="brand-logo-text" class="brand-logo-text font-display font-bold text-lg sm:text-xl tracking-wider text-white group-hover:text-brand-yellow transition-colors">SOLYCAL</span>
     </a>
 
-    <!-- Estado del Servidor & Telemetría -->
+    <!-- Estado del Servidor & Retorno a la Web -->
     <div class="flex items-center gap-3">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a0c0e]/80 border border-white/10 backdrop-blur-md">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot shrink-0"></span>
         <span class="font-mono text-[10px] text-neutral-300 uppercase tracking-widest hidden sm:inline">NODO TORRENT //</span>
         <span class="font-mono text-[10px] text-emerald-400 font-semibold tracking-wider">EN LÍNEA</span>
       </div>
-      <div class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/5 font-mono text-[10px] text-neutral-400 uppercase tracking-wider">
-        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
-        <span>SGC-AUTH v2.6</span>
-      </div>
+      <a href="index.html" class="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/10 hover:border-brand-yellow/40 hover:bg-white/[0.06] text-neutral-400 hover:text-white font-mono text-[11px] uppercase tracking-wider transition-all duration-200">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-brand-yellow group-hover:-translate-x-0.5 transition-transform duration-200"></i>
+        <span class="hidden sm:inline">Volver a la Web</span>
+        <span class="sm:hidden">Web</span>
+      </a>
     </div>
   </header>
 
@@ -174,20 +175,10 @@
           </span>
         </div>
 
-        <!-- Identidad Corporativa Solycal -->
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center p-2.5 shrink-0 shadow-inner group">
-            <img src="assets/logo-icon.png" alt="Solycal S.L." class="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(241,181,65,0.4)]">
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-display font-bold text-2xl tracking-tight text-white">SOLYCAL</span>
-              <span class="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">S.L.</span>
-            </div>
-            <p class="font-sans text-xs text-neutral-400 font-light mt-0.5">
-              Portal Técnico de Oficina y Taller
-            </p>
-          </div>
+        <!-- Identidad Corporativa Solycal (Idéntico a la web: icono 'S' + palabra SOLYCAL, centrado, limpio, sin recuadros ni cajas) -->
+        <div class="flex items-center justify-center gap-3 py-1">
+          <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+          <span class="font-display font-bold text-2xl sm:text-3xl tracking-wider text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">SOLYCAL</span>
         </div>
 
       </div>

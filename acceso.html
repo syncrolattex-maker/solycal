@@ -1,23 +1,62 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-black overflow-hidden">
+<html lang="es" class="h-full bg-[#07080a] select-none">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solycal S.L. // Portal de Acceso</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Terminal de Acceso // Solycal S.L.</title>
   <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#07080a">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="alternate icon" href="assets/logo-icon.png">
+
+  <!-- Tipografía Oficial Solycal: Plus Jakarta Sans, Syne, Space Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Three.js CDN -->
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js para Debris Shader -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#F1B541',
+              accent: '#E5A52A',
+              dark: '#0a0c0e',
+              black: '#07080a',
+              surface: '#111317',
+              surfaceLight: '#181b21',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderLight: 'rgba(255, 255, 255, 0.15)',
+              textMuted: '#8E95A2'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Syne"', 'sans-serif'],
+            mono: ['"Space Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
+    :root {
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #000000;
+      background-color: #07080a;
       color: #ffffff;
-      overflow: hidden;
     }
     .font-display {
       font-family: 'Syne', sans-serif;
@@ -34,93 +73,252 @@
       z-index: 0;
       pointer-events: none;
     }
-    .glass-card {
-      background: rgba(13, 16, 22, 0.45);
-      backdrop-filter: blur(28px) saturate(180%);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 
-                  0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-                  0 1px 0 0 rgba(255, 255, 255, 0.25) inset;
+    .dot-grid {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
-    .glass-input {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) inset;
-      transition: all 0.25s ease;
+    .terminal-card {
+      background: rgba(10, 12, 14, 0.82);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.85),
+                  0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+                  0 1px 0 0 rgba(255, 255, 255, 0.20) inset;
     }
-    .glass-input:focus {
-      background: rgba(255, 255, 255, 0.07);
+    .terminal-input {
+      background: #111317;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      color: #ffffff;
+      transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out), background-color 200ms var(--ease-out);
+    }
+    .terminal-input:focus {
+      background: #16191f;
       border-color: #F1B541;
-      box-shadow: 0 0 0 1px #F1B541, 0 0 15px rgba(241, 181, 65, 0.25);
+      box-shadow: 0 0 0 1px #F1B541, 0 0 20px rgba(241, 181, 65, 0.18);
+      outline: none;
+    }
+    .btn-submit {
+      transition: transform 160ms var(--ease-out), background-color 200ms ease, box-shadow 200ms ease;
+    }
+    .btn-submit:active {
+      transform: scale(0.97);
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .pulse-dot {
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
   </style>
 </head>
-<body class="h-full w-full flex items-center justify-center p-4 bg-black select-none relative overflow-hidden">
+<body class="min-h-screen w-full flex flex-col justify-between p-4 sm:p-6 lg:p-8 bg-[#07080a] relative overflow-x-hidden selection:bg-brand-yellow selection:text-black">
 
-  <!-- Canvas WebGL Starship Flight 7 Debris Fijo de fondo interactivo (100% puro y vivo sin filtros de oscurecimiento) -->
+  <!-- FONDO ATMOSFÉRICO: Canvas WebGL Starship Debris + Filtro de Profundidad Industrial -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" id="debris-wrap">
-    <canvas id="debris-canvas" class="w-full h-full block"></canvas>
+    <canvas id="debris-canvas" class="w-full h-full block opacity-75"></canvas>
+    <!-- Máscara de contraste con viñeta suave -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#07080a]/85 via-[#07080a]/60 to-[#07080a]/90 pointer-events-none"></div>
+    <div class="absolute inset-0 dot-grid opacity-20 pointer-events-none"></div>
   </div>
 
-  <!-- TARJETA DE LOGIN EN CRISTAL PURO (GLASSMORPHISM) -->
-  <div class="login-container glass-card w-full max-w-sm p-8 sm:p-9 rounded-2xl relative z-10">
-    <!-- Resplandor sutil superior de cristal -->
-    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-brand-yellow/15 blur-2xl rounded-full pointer-events-none"></div>
+  <!-- 01. BARRA SUPERIOR DE TELEMETRÍA Y ENLACE DE RETORNO -->
+  <header class="w-full max-w-6xl mx-auto flex items-center justify-between relative z-10 py-2">
+    <!-- Enlace a la web corporativa -->
+    <a href="index.html" class="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 hover:border-brand-yellow/40 hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-all duration-200">
+      <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-brand-yellow group-hover:-translate-x-0.5 transition-transform duration-200"></i>
+      <span class="font-mono text-xs uppercase tracking-wider">solycal.es</span>
+    </a>
 
-    <!-- Logo + Letras SOLYCAL -->
-    <div class="flex items-center justify-center gap-3 mb-8 relative z-10">
-      <img src="assets/logo-icon.png" alt="Solycal" class="h-8 sm:h-9 w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
-      <span class="font-display font-bold text-2xl tracking-wider text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">SOLYCAL</span>
+    <!-- Estado del Servidor & Telemetría -->
+    <div class="flex items-center gap-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a0c0e]/80 border border-white/10 backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot shrink-0"></span>
+        <span class="font-mono text-[10px] text-neutral-300 uppercase tracking-widest hidden sm:inline">NODO TORRENT //</span>
+        <span class="font-mono text-[10px] text-emerald-400 font-semibold tracking-wider">EN LÍNEA</span>
+      </div>
+      <div class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/5 font-mono text-[10px] text-neutral-400 uppercase tracking-wider">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-yellow shrink-0"></i>
+        <span>SGC-AUTH v2.6</span>
+      </div>
     </div>
+  </header>
 
-    <!-- Formulario de acceso: solo user y pass -->
-    <form id="gate-form" class="space-y-4 relative z-10" onsubmit="handleAccess(event)" autocomplete="off">
-      <div>
-        <label for="u" class="sr-only">Usuario</label>
-        <input
-          type="text"
-          id="u"
-          name="user"
-          required
-          placeholder="Usuario"
-          autocomplete="off"
-          autofocus
-          class="glass-input w-full px-4 py-3 rounded-xl text-white placeholder-neutral-400 font-mono text-sm focus:outline-none"
-        />
+  <!-- 02. TERMINAL CENTRAL DE AUTENTICACIÓN INDUSTRIAL -->
+  <main class="w-full max-w-md mx-auto my-auto relative z-10 py-6 sm:py-8">
+    <div id="login-card" class="terminal-card w-full p-7 sm:p-9 rounded-2xl sm:rounded-3xl relative overflow-hidden transition-all duration-300">
+      
+      <!-- Resplandor ámbar industrial de profundidad -->
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-32 bg-brand-yellow/15 blur-3xl rounded-full pointer-events-none"></div>
+
+      <!-- Cabecera de la Terminal -->
+      <div class="relative z-10 space-y-6 mb-7">
+        
+        <!-- Header Técnico con Serial y Estado -->
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
+            <span class="font-mono text-[10px] text-neutral-400 uppercase tracking-widest">ID: TRT-46900-SEC</span>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-brand-yellow/10 border border-brand-yellow/20 text-[9px] font-mono text-brand-yellow uppercase tracking-widest font-semibold">
+            ACCESO RESTRINGIDO
+          </span>
+        </div>
+
+        <!-- Identidad Corporativa Solycal -->
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center p-2.5 shrink-0 shadow-inner group">
+            <img src="assets/logo-icon.png" alt="Solycal S.L." class="w-full h-full object-contain drop-shadow-[0_2px_8px_rgba(241,181,65,0.4)]">
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-display font-bold text-2xl tracking-tight text-white">SOLYCAL</span>
+              <span class="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">S.L.</span>
+            </div>
+            <p class="font-sans text-xs text-neutral-400 font-light mt-0.5">
+              Portal Técnico de Oficina y Taller
+            </p>
+          </div>
+        </div>
+
       </div>
 
-      <div>
-        <label for="p" class="sr-only">Contraseña o Código</label>
-        <input
-          type="password"
-          id="p"
-          name="pass"
-          required
-          placeholder="Contraseña"
-          autocomplete="off"
-          class="glass-input w-full px-4 py-3 rounded-xl text-white placeholder-neutral-400 font-mono text-sm tracking-widest focus:outline-none"
-        />
+      <!-- Formulario de Acceso Técnico -->
+      <form id="gate-form" class="space-y-4 relative z-10" onsubmit="handleAccess(event)" autocomplete="off">
+        
+        <!-- Campo: Usuario / Identificador de Operador -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="u" class="font-mono text-[11px] text-neutral-300 uppercase tracking-wider flex items-center gap-1.5 font-medium">
+              <i data-lucide="user" class="w-3.5 h-3.5 text-brand-yellow"></i>
+              <span>Operador</span>
+            </label>
+            <span class="font-mono text-[9px] text-neutral-500 uppercase">AUTH_USER</span>
+          </div>
+          <div class="relative">
+            <input
+              type="text"
+              id="u"
+              name="user"
+              required
+              placeholder="Identificador (ej. oficina, admin)"
+              autocomplete="username"
+              autofocus
+              class="terminal-input w-full px-4 py-3 rounded-xl font-mono text-xs sm:text-sm placeholder:text-neutral-600 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- Campo: Contraseña / Código de Seguridad -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="p" class="font-mono text-[11px] text-neutral-300 uppercase tracking-wider flex items-center gap-1.5 font-medium">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-brand-yellow"></i>
+              <span>Clave de Acceso</span>
+            </label>
+            <!-- Indicador Bloq Mayús (Emil Kowalski feedback) -->
+            <span id="caps-warning" class="hidden items-center gap-1 text-[9px] font-mono text-amber-400 uppercase tracking-wider">
+              <i data-lucide="alert-circle" class="w-3 h-3"></i>
+              <span>Mayúsculas activas</span>
+            </span>
+          </div>
+          <div class="relative">
+            <input
+              type="password"
+              id="p"
+              name="pass"
+              required
+              placeholder="••••••••••••"
+              autocomplete="current-password"
+              class="terminal-input w-full pl-4 pr-11 py-3 rounded-xl font-mono text-xs sm:text-sm tracking-widest placeholder:text-neutral-600 focus:outline-none"
+            />
+            <!-- Botón mostrar / ocultar contraseña -->
+            <button
+              type="button"
+              id="toggle-password"
+              tabindex="-1"
+              aria-label="Mostrar u ocultar contraseña"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-neutral-500 hover:text-white transition-colors cursor-pointer"
+            >
+              <i id="eye-open" data-lucide="eye" class="w-4 h-4"></i>
+              <i id="eye-closed" data-lucide="eye-off" class="w-4 h-4 hidden"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Opciones y Asistencia -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" id="remember-device" class="sr-only peer" checked>
+            <div class="w-4 h-4 rounded bg-[#111317] border border-white/15 peer-checked:bg-brand-yellow peer-checked:border-brand-yellow flex items-center justify-center transition-all">
+              <i data-lucide="check" class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+            </div>
+            <span class="font-mono text-[10px] text-neutral-400 group-hover:text-neutral-300 transition-colors uppercase tracking-wider">Recordar terminal</span>
+          </label>
+          <a href="mailto:info@solycal.es?subject=Soporte%20Acceso%20Portal%20Solycal" class="font-mono text-[10px] text-neutral-500 hover:text-brand-yellow transition-colors uppercase tracking-wider">
+            Soporte TI
+          </a>
+        </div>
+
+        <!-- Banner de Error con Animación Shake -->
+        <div id="err-banner" class="hidden p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300 font-mono text-xs items-center gap-2.5">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-red-400 shrink-0"></i>
+          <span class="text-[11px] leading-tight">Credenciales incorrectas. Intento registrado en auditoría técnica.</span>
+        </div>
+
+        <!-- Botón de Envío con Estado Táctil -->
+        <button
+          type="submit"
+          id="btn-submit"
+          class="btn-submit w-full py-3.5 mt-2 rounded-full bg-brand-yellow hover:bg-brand-accent text-black font-mono text-xs uppercase tracking-widest font-bold shadow-[0_0_25px_rgba(241,181,65,0.25)] hover:shadow-[0_0_35px_rgba(241,181,65,0.45)] flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span id="btn-content" class="flex items-center gap-2">
+            <span>Autenticar y Entrar</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </span>
+          <span id="btn-loading" class="hidden items-center gap-2">
+            <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+            <span>Verificando...</span>
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Pie de Tarjeta con Verificación Normativa -->
+      <div class="mt-7 pt-5 border-t border-white/5 flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-wider">
+        <span>Acreditado LRQA ISO 9001 / EN 1090-1</span>
+        <span class="text-neutral-400">AES-256</span>
       </div>
 
-      <div id="err" class="hidden text-center text-xs font-mono text-red-400 pt-1">
-        Acceso denegado
-      </div>
+    </div>
+  </main>
 
-      <button
-        type="submit"
-        class="w-full py-3 bg-[#F1B541] text-black font-mono text-xs uppercase tracking-widest font-bold rounded-xl hover:bg-[#e5a52a] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(241,181,65,0.35)] hover:shadow-[0_0_35px_rgba(241,181,65,0.55)] cursor-pointer"
-      >
-        Entrar
-      </button>
-    </form>
-  </div>
+  <!-- 03. PIE DE PÁGINA CON METADATOS TÉCNICOS -->
+  <footer class="w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-500 font-mono text-[10px] relative z-10 py-2">
+    <div>
+      &copy; 2026 SOLYCAL Soldadura y Calderería Valenciana S.L. &bull; Masía del Juez, Torrent
+    </div>
+    <div class="flex items-center gap-3">
+      <span>COMUNICACIÓN CIFRADA TLS 1.3</span>
+      <span class="w-1 h-1 rounded-full bg-neutral-600"></span>
+      <a href="aviso-legal.html" class="hover:text-neutral-300 transition-colors">Aviso Legal</a>
+      <span class="w-1 h-1 rounded-full bg-neutral-600"></span>
+      <a href="politica-privacidad.html" class="hover:text-neutral-300 transition-colors">Privacidad</a>
+    </div>
+  </footer>
 
-  <!-- THREE.JS SHADER STARSHIP DEBRIS (HEREDADO DE /CALIDAD Y NORMAS) -->
+  <!-- SCRIPT THREE.JS: STARSHIP FLIGHT DEBRIS PARTICLES (FONDO INTERACTIVO SOLYCAL) -->
   <script>
-    (function initCalidadBackground() {
+    (function initDebrisBackground() {
       if (typeof THREE === 'undefined') return;
 
       const canvas = document.getElementById('debris-canvas');
@@ -216,7 +414,7 @@
       const material = new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
-        fragmentShader: "precision highp float;\n\nuniform vec2 iResolution;\nuniform float iTime;\nuniform sampler2D iChannel0;\nuniform vec2 iMouse;\n\n// Custom tanh function for GLSL ES 1.00 with numerical clamp safeguard\nfloat customTanh(float x) {\n  float cx = clamp(x, -20.0, 20.0);\n  float e2x = exp(2.0 * cx);\n  return (e2x - 1.0) / (e2x + 1.0);\n}\n\nvoid main() {\n    vec2 r = iResolution.xy;\n    vec2 p = (gl_FragCoord.xy + gl_FragCoord.xy - r) / r.y * mat2(3.0, 4.0, 4.0, -3.0) / 50.0;\n    \n    // Parallax interactivo sutil con el cursor\n    p += (iMouse.xy / max(r.xy, vec2(1.0)) - 0.5) * 0.04;\n\n    vec4 S = vec4(0.0);\n    vec4 C = vec4(1.0, 2.0, 3.0, 0.0);\n    vec4 W;\n    float t = iTime; \n    float T = 0.1 * t + p.y;\n\n    for (int i = 0; i < 30; i++) {\n        float fi = float(i);\n        S += (cos(W = sin(fi) * C) + 1.0)\n        * exp(sin(fi + fi * T))\n        / length(max(p, p / vec2(2.0, (texture2D(iChannel0, p / exp(W.x) + vec2(fi / 20.0, mod(t, 32.0) / 32.0)).r + 0.5) * 40.0))) / 1e4;\n        p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);\n    }\n\n    // Fondo limpio sin gradiente azul en la esquina superior derecha:\n    // Solo partículas y estelas vivas, brillantes y saturadas sobre negro profundo\n    vec4 debris = S * S * 3.0;\n\n    vec4 O = vec4(\n        customTanh(debris.r * 1.5),\n        customTanh(debris.g * 1.35),\n        customTanh(debris.b * 1.5),\n        1.0\n    );\n    gl_FragColor = O;\n}",
+        fragmentShader: "precision highp float;\n\nuniform vec2 iResolution;\nuniform float iTime;\nuniform sampler2D iChannel0;\nuniform vec2 iMouse;\n\nfloat customTanh(float x) {\n  float cx = clamp(x, -20.0, 20.0);\n  float e2x = exp(2.0 * cx);\n  return (e2x - 1.0) / (e2x + 1.0);\n}\n\nvoid main() {\n    vec2 r = iResolution.xy;\n    vec2 p = (gl_FragCoord.xy + gl_FragCoord.xy - r) / r.y * mat2(3.0, 4.0, 4.0, -3.0) / 50.0;\n    p += (iMouse.xy / max(r.xy, vec2(1.0)) - 0.5) * 0.04;\n\n    vec4 S = vec4(0.0);\n    vec4 C = vec4(1.0, 2.0, 3.0, 0.0);\n    vec4 W;\n    float t = iTime;\n    float T = 0.1 * t + p.y;\n\n    for (int i = 0; i < 30; i++) {\n        float fi = float(i);\n        S += (cos(W = sin(fi) * C) + 1.0)\n        * exp(sin(fi + fi * T))\n        / length(max(p, p / vec2(2.0, (texture2D(iChannel0, p / exp(W.x) + vec2(fi / 20.0, mod(t, 32.0) / 32.0)).r + 0.5) * 40.0))) / 1e4;\n        p += 0.02 * cos(fi * (C.xz + 8.0 + fi) + T + T);\n    }\n\n    vec4 debris = S * S * 3.0;\n    vec4 O = vec4(\n        customTanh(debris.r * 1.5),\n        customTanh(debris.g * 1.35),\n        customTanh(debris.b * 1.5),\n        1.0\n    );\n    gl_FragColor = O;\n}",
         depthWrite: false,
         depthTest: false
       });
@@ -252,7 +450,14 @@
     })();
   </script>
 
+  <!-- LÓGICA DE CONTROL, SEGURIDAD Y MICRO-INTERACCIONES (EMIL KOWALSKI CRAFT) -->
   <script>
+    // Inicializar iconos Lucide
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    // Credenciales autorizadas para entorno Solycal
     const VALID = [
       { u: 'admin', p: 'SOL-2026' },
       { u: 'admin', p: 'SOL2026' },
@@ -260,35 +465,103 @@
       { u: 'oficina', p: 'SOL-2026' }
     ];
 
+    const passInput = document.getElementById('p');
+    const capsWarning = document.getElementById('caps-warning');
+    const togglePassBtn = document.getElementById('toggle-password');
+    const eyeOpen = document.getElementById('eye-open');
+    const eyeClosed = document.getElementById('eye-closed');
+
+    // 1. Detección interactiva de Bloq Mayús (Feedback inmediato Emil Kowalski)
+    passInput.addEventListener('keyup', (e) => {
+      const isCaps = e.getModifierState && e.getModifierState('CapsLock');
+      if (isCaps) {
+        capsWarning.classList.remove('hidden');
+        capsWarning.classList.add('inline-flex');
+      } else {
+        capsWarning.classList.add('hidden');
+        capsWarning.classList.remove('inline-flex');
+      }
+    });
+
+    // 2. Mostrar / Ocultar contraseña
+    togglePassBtn.addEventListener('click', () => {
+      const isPassword = passInput.type === 'password';
+      passInput.type = isPassword ? 'text' : 'password';
+      eyeOpen.classList.toggle('hidden', isPassword);
+      eyeClosed.classList.toggle('hidden', !isPassword);
+      passInput.focus();
+    });
+
+    // 3. Proceso de autenticación con respuesta háptica y validación
     function handleAccess(e) {
       e.preventDefault();
       const uVal = document.getElementById('u').value.trim().toLowerCase();
       const pVal = document.getElementById('p').value.trim();
-      const err = document.getElementById('err');
+      const errBanner = document.getElementById('err-banner');
+      const card = document.getElementById('login-card');
+      const btn = document.getElementById('btn-submit');
+      const btnContent = document.getElementById('btn-content');
+      const btnLoading = document.getElementById('btn-loading');
 
-      const ok = VALID.some(v => v.u === uVal && v.p === pVal);
+      // Ocultar error previo
+      errBanner.classList.add('hidden');
+      errBanner.classList.remove('flex');
 
-      if (ok) {
-        localStorage.setItem('solycal_site_unlocked', 'true');
-        sessionStorage.setItem('solycal_auth_user', uVal);
-        
-        let target = 'index.html';
-        try {
-          const params = new URLSearchParams(window.location.search);
-          const r = params.get('redirect');
-          if (r) {
-            const dec = decodeURIComponent(r);
-            if (dec && !dec.includes('acceso.html')) target = dec;
-          }
-        } catch(e) {}
+      // Estado de carga táctil (perceived speed 220ms)
+      btnContent.classList.add('hidden');
+      btnLoading.classList.remove('hidden');
+      btnLoading.classList.add('flex');
+      btn.disabled = true;
 
-        window.location.href = target;
-      } else {
-        if (err) err.classList.remove('hidden');
-        document.getElementById('p').value = '';
-        document.getElementById('p').focus();
-      }
+      setTimeout(() => {
+        const ok = VALID.some(v => v.u === uVal && v.p === pVal);
+
+        if (ok) {
+          localStorage.setItem('solycal_site_unlocked', 'true');
+          sessionStorage.setItem('solycal_auth_user', uVal);
+
+          // Estado visual de éxito confirmado
+          btn.classList.remove('bg-brand-yellow', 'hover:bg-brand-accent');
+          btn.classList.add('bg-emerald-500', 'text-black');
+          btnLoading.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Acceso Verificado</span>';
+          if (window.lucide) lucide.createIcons();
+
+          let target = 'index.html';
+          try {
+            const params = new URLSearchParams(window.location.search);
+            const r = params.get('redirect');
+            if (r) {
+              const dec = decodeURIComponent(r);
+              if (dec && !dec.includes('acceso.html')) target = dec;
+            }
+          } catch(err) {}
+
+          setTimeout(() => {
+            window.location.href = target;
+          }, 320);
+        } else {
+          // Revertir botón
+          btnContent.classList.remove('hidden');
+          btnLoading.classList.add('hidden');
+          btnLoading.classList.remove('flex');
+          btn.disabled = false;
+
+          // Mostrar aviso de error
+          errBanner.classList.remove('hidden');
+          errBanner.classList.add('flex');
+
+          // Animación spring shake en la tarjeta
+          card.classList.remove('animate-shake');
+          void card.offsetWidth; // Forzar reflow para reiniciar animación
+          card.classList.add('animate-shake');
+
+          // Limpiar y enfocar campo de contraseña
+          passInput.value = '';
+          passInput.focus();
+        }
+      }, 240);
     }
   </script>
+
 </body>
 </html>

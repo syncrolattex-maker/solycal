@@ -253,7 +253,7 @@
             <div class="w-4 h-4 rounded bg-[#111317] border border-white/15 peer-checked:bg-brand-yellow peer-checked:border-brand-yellow flex items-center justify-center transition-all">
               <i data-lucide="check" class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100 transition-opacity"></i>
             </div>
-            <span class="font-mono text-[10px] text-neutral-400 group-hover:text-neutral-300 transition-colors uppercase tracking-wider">Recordar terminal</span>
+            <span class="font-mono text-[10px] text-neutral-400 group-hover:text-neutral-300 transition-colors uppercase tracking-wider">Mantener sesión activa</span>
           </label>
           <a href="mailto:info@solycal.es?subject=Soporte%20Acceso%20Portal%20Solycal" class="font-mono text-[10px] text-neutral-500 hover:text-brand-yellow transition-colors uppercase tracking-wider">
             Soporte TI
@@ -285,9 +285,17 @@
       </form>
 
       <!-- Pie de Tarjeta con Verificación Normativa -->
-      <div class="mt-7 pt-5 border-t border-white/5 flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-wider">
-        <span>Acreditado LRQA ISO 9001 / EN 1090-1</span>
-        <span class="text-neutral-400">AES-256</span>
+      <div class="mt-7 pt-5 border-t border-white/5 flex flex-col gap-3">
+        <div class="flex items-center justify-between text-neutral-500 font-mono text-[9px] uppercase tracking-wider">
+          <span>Acreditado LRQA ISO 9001 / EN 1090-1</span>
+          <span class="text-neutral-400">AES-256</span>
+        </div>
+        <div class="text-center">
+          <p class="text-[8px] font-mono text-neutral-600 uppercase tracking-widest leading-relaxed">
+            Acceso restringido a personal autorizado. <br>
+            Toda actividad en este nodo es monitorizada y registrada en el log de auditoría técnica.
+          </p>
+        </div>
       </div>
 
     </div>
@@ -514,7 +522,7 @@
           // Estado visual de éxito confirmado
           btn.classList.remove('bg-brand-yellow', 'hover:bg-brand-accent');
           btn.classList.add('bg-emerald-500', 'text-black');
-          btnLoading.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Acceso Verificado</span>';
+          btnLoading.innerHTML = '<i data-lucide="lock-open" class="w-4 h-4"></i><span class="ml-2">Desbloqueando Sistema...</span>';
           if (window.lucide) lucide.createIcons();
 
           let target = 'index.html';

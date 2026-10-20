@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "acceso.html"
+        ],
+        "createdAt": "2026-10-20T12:30:44.557Z",
+        "reason": "user confirmed: the padding has been increased to p-4 (16px) which is the intended balance between industrial density and professional breathing room"
+      }
+    ]
+  }
+}
